@@ -175,6 +175,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Interfaces.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Interfaces.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
