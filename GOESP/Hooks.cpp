@@ -29,10 +29,10 @@ Hooks::Hooks() noexcept
     _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
 
     present.original = **reinterpret_cast<decltype(present.original)**>(memory.present);
-    **reinterpret_cast<void***>(memory.present) = reinterpret_cast<void*>(::present);
+    **reinterpret_cast<decltype(::present)***>(memory.present) = ::present;
 
     reset.original = **reinterpret_cast<decltype(reset.original)**>(memory.reset);
-    **reinterpret_cast<void***>(memory.reset) = reinterpret_cast<void*>(::reset);
+    **reinterpret_cast<decltype(::reset)***>(memory.reset) = ::reset;
 }
 
 bool Hooks::readyForUnload() noexcept

@@ -6,7 +6,7 @@
 Memory memory;
 Hooks hooks;
 
-DWORD WINAPI attach(HMODULE hModule)
+DWORD WINAPI waitOnUnload(HMODULE hModule)
 {
     while (!hooks.readyForUnload())
         Sleep(50);
@@ -18,7 +18,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 {
     if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
         DisableThreadLibraryCalls(hModule);
-        CloseHandle(CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)attach, hModule, 0, nullptr));
+        CloseHandle(CreateThread(nullptr, 0, LPTHREAD_START_ROUTINE(waitOnUnload), hModule, 0, nullptr));
     }
     return TRUE;
 }
