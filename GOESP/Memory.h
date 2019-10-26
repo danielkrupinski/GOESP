@@ -40,3 +40,5 @@ private:
         std::exit(EXIT_FAILURE);
     }
 };
+
+extern Memory memory;

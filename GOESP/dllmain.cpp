@@ -1,5 +1,8 @@
 #include <Windows.h>
 
+#include "Hooks.h"
+#include "Memory.h"
+
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
     switch (ul_reason_for_call) {
@@ -11,3 +14,6 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
     }
     return TRUE;
 }
+
+Memory memory;
+Hooks hooks;
