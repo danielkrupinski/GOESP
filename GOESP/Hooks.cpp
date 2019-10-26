@@ -37,5 +37,13 @@ Hooks::Hooks() noexcept
 
 bool Hooks::readyForUnload() noexcept
 {
-    return !(hooks.present.hookCalled || hooks.reset.hookCalled);
+    return unload && !(hooks.present.hookCalled || hooks.reset.hookCalled);
+}
+
+void Hooks::restore() noexcept
+{
+    **reinterpret_cast<void***>(memory.present) = present.original;
+    **reinterpret_cast<void***>(memory.reset) = reset.original;
+
+    unload = true;
 }

@@ -17,6 +17,11 @@ public:
 
     Hook<HRESULT __stdcall(IDirect3DDevice9*, const RECT*, const RECT*, HWND, const RGNDATA*)> present;
     Hook<HRESULT __stdcall(IDirect3DDevice9*, D3DPRESENT_PARAMETERS*)> reset;
+
+    void restore() noexcept;
+
+private:
+    bool unload{ false };
 };
 
 extern Hooks hooks;
