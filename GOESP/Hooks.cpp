@@ -34,3 +34,8 @@ Hooks::Hooks() noexcept
     reset.original = **reinterpret_cast<decltype(reset.original)**>(memory.reset);
     **reinterpret_cast<void***>(memory.reset) = reinterpret_cast<void*>(::reset);
 }
+
+bool Hooks::readyForUnload() noexcept
+{
+    return !(hooks.present.hookCalled || hooks.reset.hookCalled);
+}

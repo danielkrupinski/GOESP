@@ -13,6 +13,8 @@ class Hooks {
 public:
     Hooks() noexcept;
 
+    bool readyForUnload() noexcept;
+
     Hook<HRESULT __stdcall(IDirect3DDevice9*, const RECT*, const RECT*, HWND, const RGNDATA*)> present;
     Hook<HRESULT __stdcall(IDirect3DDevice9*, D3DPRESENT_PARAMETERS*)> reset;
 };
