@@ -1,10 +1,11 @@
+#include "Hooks.h"
+
 #include <intrin.h>
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx9.h"
 #include "imgui/imgui_impl_win32.h"
 
-#include "Hooks.h"
 #include "Memory.h"
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -63,9 +64,6 @@ Hooks::Hooks() noexcept
 {
     _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
     _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
-
-    ImGui::CreateContext();
-    ImGui_ImplWin32_Init(FindWindowW(L"Valve001", NULL));
 
     wndProc.original = WNDPROC(SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(::wndProc)));
 

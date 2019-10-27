@@ -1,8 +1,10 @@
 #include <Windows.h>
 
-#include "Hooks.h"
+#include "GUI.h"
 #include "Memory.h"
+#include "Hooks.h"
 
+GUI gui;
 Memory memory;
 Hooks hooks;
 
