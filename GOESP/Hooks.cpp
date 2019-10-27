@@ -7,7 +7,10 @@
 #include "imgui/imgui_impl_win32.h"
 
 #include "GUI.h"
+#include "Interfaces.h"
 #include "Memory.h"
+
+#include "SDK/InputSystem.h"
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -15,10 +18,8 @@ static LRESULT __stdcall wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lP
 {
     hooks.wndProc.hookCalled = true;
 
-    if (!ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam) && gui.blockInput) {
-        hooks.wndProc.hookCalled = false;
-        return true;
-    }
+    ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
+    interfaces.inputSystem->enableInput(!gui.blockInput);
 
     auto result = CallWindowProc(hooks.wndProc.original, window, msg, wParam, lParam);
 
