@@ -6,6 +6,7 @@
 #include "imgui/imgui_impl_dx9.h"
 #include "imgui/imgui_impl_win32.h"
 
+#include "GUI.h"
 #include "Memory.h"
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -15,7 +16,7 @@ static LRESULT __stdcall wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lP
     hooks.wndProc.hookCalled = true;
 
     ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
-    auto result{ CallWindowProc(hooks.wndProc.original, window, msg, wParam, lParam) };
+    auto result = CallWindowProc(hooks.wndProc.original, window, msg, wParam, lParam);
 
     hooks.wndProc.hookCalled = false;
     return result;
@@ -25,7 +26,7 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
 {
     hooks.present.hookCalled = true;
 
-    static bool imguiInit{ ImGui_ImplDX9_Init(device) };
+    static auto imguiInit = ImGui_ImplDX9_Init(device);
 
     IDirect3DVertexDeclaration9* vertexDeclaration;
     device->GetVertexDeclaration(&vertexDeclaration);
@@ -34,7 +35,7 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::ShowDemoWindow();
+    gui.render();
 
     ImGui::EndFrame();
 
@@ -44,7 +45,7 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
     device->SetVertexDeclaration(vertexDeclaration);
     vertexDeclaration->Release();
 
-    auto result{ hooks.present.original(device, src, dest, windowOverride, dirtyRegion) };
+    auto result = hooks.present.original(device, src, dest, windowOverride, dirtyRegion);
 
     hooks.present.hookCalled = false;
     return result;
@@ -54,7 +55,7 @@ static HRESULT __stdcall reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* 
 {
     hooks.reset.hookCalled = true;
 
-    auto result{ hooks.reset.original(device, params) };
+    auto result = hooks.reset.original(device, params);
 
     hooks.reset.hookCalled = false;
     return result;
