@@ -25,8 +25,12 @@ GUI::GUI() noexcept
 void GUI::render() noexcept
 {
     if (ImGui::Begin("GOESP")) {
+        blockInput = true;
+
         if (ImGui::Button("Unload"))
             hooks.restore();
         ImGui::End();
+    } else {
+        blockInput = false;
     }
 }

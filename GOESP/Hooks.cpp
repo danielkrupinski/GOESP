@@ -15,7 +15,11 @@ static LRESULT __stdcall wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lP
 {
     hooks.wndProc.hookCalled = true;
 
-    ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
+    if (!ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam) && gui.blockInput) {
+        hooks.wndProc.hookCalled = false;
+        return true;
+    }
+
     auto result = CallWindowProc(hooks.wndProc.original, window, msg, wParam, lParam);
 
     hooks.wndProc.hookCalled = false;
