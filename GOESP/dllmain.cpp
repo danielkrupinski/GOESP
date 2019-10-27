@@ -1,5 +1,9 @@
 #include <Windows.h>
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_dx9.h"
+#include "imgui/imgui_impl_win32.h"
+
 #include "GUI.h"
 #include "Interfaces.h"
 #include "Memory.h"
@@ -18,6 +22,9 @@ DWORD WINAPI waitOnUnload(HMODULE hModule)
         Sleep(50);
 
     interfaces.inputSystem->enableInput(true);
+    ImGui_ImplDX9_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
 
     FreeLibraryAndExitThread(hModule, 0);
 }
