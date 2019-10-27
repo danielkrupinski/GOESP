@@ -35,8 +35,12 @@ void GUI::render() noexcept
 
     blockInput = ImGui::Begin(windowTitle.str().c_str());
 
+    ImGui::TextUnformatted("Build date: " __DATE__ " " __TIME__);
+    ImGui::SameLine(0.0f, 30.0f);
+
     if (ImGui::Button("Unload"))
         hooks.restore();
 
+    ImGui::Separator();
     ImGui::End();
 }
