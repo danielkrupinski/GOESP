@@ -4,16 +4,22 @@
 #include <type_traits>
 #include <Windows.h>
 
+class InputSystem;
+
 class Interfaces {
+public:
+    InputSystem* inputSystem = find<InputSystem>(L"inputsystem", "InputSystemVersion001");
 private:
     template <typename T>
-    static auto find(const wchar_t* module, const char* name)
+    static auto find(const wchar_t* module, const char* name) noexcept
     {
-        if (const auto createInterface{ reinterpret_cast<std::add_pointer_t<T* (const char* name, int* returnCode)>>(GetProcAddress(GetModuleHandleW(module), "CreateInterface")) })
-            if (T* foundInterface{ createInterface(name, nullptr) })
+        if (const auto createInterface = reinterpret_cast<std::add_pointer_t<T* __cdecl (const char* name, int* returnCode)>>(GetProcAddress(GetModuleHandleW(module), "CreateInterface")))
+            if (T* foundInterface = createInterface(name, nullptr))
                 return foundInterface;
 
         MessageBoxA(nullptr, (std::ostringstream{ } << "Failed to find " << name << " interface!").str().c_str(), "GOESP", MB_OK | MB_ICONERROR);
         std::exit(EXIT_FAILURE);
     }
 };
+
+extern Interfaces interfaces;
