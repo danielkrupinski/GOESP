@@ -59,7 +59,9 @@ static HRESULT __stdcall reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* 
 {
     hooks.reset.hookCalled = true;
 
+    ImGui_ImplDX9_InvalidateDeviceObjects();
     auto result = hooks.reset.original(device, params);
+    ImGui_ImplDX9_CreateDeviceObjects();
 
     hooks.reset.hookCalled = false;
     return result;
