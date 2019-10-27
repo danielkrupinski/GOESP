@@ -31,13 +31,10 @@ void GUI::render() noexcept
 
     const auto windowTitle = std::ostringstream{ } << "GOESP [" << localTime->tm_hour << ':' << localTime->tm_min << ':' << localTime->tm_sec << "]###window";
 
-    if (ImGui::Begin(windowTitle.str().c_str())) {
-        blockInput = true;
+    blockInput = ImGui::Begin(windowTitle.str().c_str());
 
-        if (ImGui::Button("Unload"))
-            hooks.restore();
-        ImGui::End();
-    } else {
-        blockInput = false;
-    }
+    if (ImGui::Button("Unload"))
+        hooks.restore();
+
+    ImGui::End();
 }
