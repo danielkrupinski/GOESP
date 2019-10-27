@@ -5,6 +5,8 @@
 
 #include "Hooks.h"
 
+#include <ctime>
+#include <sstream>
 #include <Windows.h>
 
 GUI::GUI() noexcept
@@ -24,7 +26,12 @@ GUI::GUI() noexcept
 
 void GUI::render() noexcept
 {
-    if (ImGui::Begin("GOESP")) {
+    const auto time = std::time(nullptr);
+    const auto localTime = std::localtime(&time);
+
+    const auto windowTitle = std::ostringstream{ } << "GOESP [" << localTime->tm_hour << ':' << localTime->tm_min << ':' << localTime->tm_sec << "]###window";
+
+    if (ImGui::Begin(windowTitle.str().c_str())) {
         blockInput = true;
 
         if (ImGui::Button("Unload"))
