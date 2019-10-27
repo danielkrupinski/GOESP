@@ -12,6 +12,9 @@
     <Filter Include="imgui">
       <UniqueIdentifier>{2891534b-c4ee-42d8-b725-545040d7c65c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SDK">
+      <UniqueIdentifier>{4a39f9e0-a73c-4ee8-a02c-9954b97a5390}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -84,6 +87,9 @@
     </ClInclude>
     <ClInclude Include="GUI.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\InputSystem.h">
+      <Filter>SDK</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

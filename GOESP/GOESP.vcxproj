@@ -204,6 +204,7 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="Interfaces.h" />
     <ClInclude Include="Memory.h" />
+    <ClInclude Include="SDK\InputSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
