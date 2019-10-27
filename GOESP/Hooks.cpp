@@ -86,5 +86,7 @@ void Hooks::restore() noexcept
     **reinterpret_cast<void***>(memory.present) = present.original;
     **reinterpret_cast<void***>(memory.reset) = reset.original;
 
+    SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(wndProc.original));
+
     unload = true;
 }
