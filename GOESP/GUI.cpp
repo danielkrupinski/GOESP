@@ -25,7 +25,8 @@ GUI::GUI() noexcept
 void GUI::render() noexcept
 {
     if (ImGui::Begin("GOESP")) {
-        
+        if (ImGui::Button("Unload"))
+            hooks.restore();
         ImGui::End();
     }
 }
