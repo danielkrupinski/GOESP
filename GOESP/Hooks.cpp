@@ -7,6 +7,19 @@
 #include "Hooks.h"
 #include "Memory.h"
 
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+static LRESULT __stdcall wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+{
+    hooks.wndProc.hookCalled = true;
+
+    ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
+    auto result{ CallWindowProc(hooks.wndProc.original, window, msg, wParam, lParam) };
+
+    hooks.wndProc.hookCalled = false;
+    return result;
+}
+
 static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, const RECT* dest, HWND windowOverride, const RGNDATA* dirtyRegion) noexcept
 {
     hooks.present.hookCalled = true;
@@ -39,7 +52,7 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
 static HRESULT __stdcall reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* params) noexcept
 {
     hooks.reset.hookCalled = true;
-    
+
     auto result{ hooks.reset.original(device, params) };
 
     hooks.reset.hookCalled = false;
@@ -54,6 +67,8 @@ Hooks::Hooks() noexcept
     ImGui::CreateContext();
     ImGui_ImplWin32_Init(FindWindowW(L"Valve001", NULL));
 
+    wndProc.original = WNDPROC(SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(::wndProc)));
+
     present.original = **reinterpret_cast<decltype(present.original)**>(memory.present);
     **reinterpret_cast<decltype(::present)***>(memory.present) = ::present;
 
@@ -63,7 +78,7 @@ Hooks::Hooks() noexcept
 
 bool Hooks::readyForUnload() noexcept
 {
-    return unload && !(hooks.present.hookCalled || hooks.reset.hookCalled);
+    return unload && !(hooks.present.hookCalled || hooks.reset.hookCalled || hooks.wndProc.hookCalled);
 }
 
 void Hooks::restore() noexcept
