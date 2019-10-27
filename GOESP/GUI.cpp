@@ -6,6 +6,7 @@
 #include "Hooks.h"
 
 #include <ctime>
+#include <iomanip>
 #include <sstream>
 #include <Windows.h>
 
@@ -29,7 +30,7 @@ void GUI::render() noexcept
     const auto time = std::time(nullptr);
     const auto localTime = std::localtime(&time);
 
-    const auto windowTitle = std::ostringstream{ } << "GOESP [" << localTime->tm_hour << ':' << localTime->tm_min << ':' << localTime->tm_sec << "]###window";
+    const auto windowTitle = std::ostringstream{ } << "GOESP [" << std::setw(2) << std::setfill('0') << localTime->tm_hour << ':' << std::setw(2) << std::setfill('0') << localTime->tm_min << ':' << std::setw(2) << std::setfill('0') << localTime->tm_sec << "]###window";
 
     blockInput = ImGui::Begin(windowTitle.str().c_str());
 
