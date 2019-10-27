@@ -1,10 +1,14 @@
 #include <Windows.h>
 
 #include "GUI.h"
+#include "Interfaces.h"
 #include "Memory.h"
 #include "Hooks.h"
 
+#include "SDK/InputSystem.h"
+
 GUI gui;
+Interfaces interfaces;
 Memory memory;
 Hooks hooks;
 
@@ -12,6 +16,8 @@ DWORD WINAPI waitOnUnload(HMODULE hModule)
 {
     while (!hooks.readyForUnload())
         Sleep(50);
+
+    interfaces.inputSystem->enableInput(true);
 
     FreeLibraryAndExitThread(hModule, 0);
 }
