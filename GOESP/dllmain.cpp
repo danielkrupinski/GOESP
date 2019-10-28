@@ -12,7 +12,7 @@
 #include "SDK/InputSystem.h"
 
 GUI gui;
-Interfaces interfaces;
+const Interfaces interfaces;
 Memory memory;
 Hooks hooks;
 

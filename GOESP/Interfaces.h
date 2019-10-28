@@ -22,4 +22,4 @@ private:
     }
 };
 
-extern Interfaces interfaces;
+extern const Interfaces interfaces;
