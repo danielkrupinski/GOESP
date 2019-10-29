@@ -1,5 +1,7 @@
 #pragma once
 
-namespace ESP {
+struct ImDrawList;
 
+namespace ESP {
+    void render(ImDrawList* drawList) noexcept;
 }
