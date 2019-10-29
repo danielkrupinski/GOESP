@@ -4,6 +4,7 @@
 #include "Utils.h"
 
 struct Vector;
+class Matrix3x4;
 
 class Collideable {
 public:
@@ -14,7 +15,7 @@ public:
 
 class Entity {
 public:
-    constexpr bool isDormant() noexcept
+    constexpr auto isDormant() noexcept
     {
         return callVirtualMethod<bool>(this + 8, 9);
     }
@@ -24,9 +25,14 @@ public:
         return callVirtualMethod<Collideable*>(this, 3);
     }
 
-    constexpr bool isAlive() noexcept
+    constexpr auto isAlive() noexcept
     {
         return callVirtualMethod<bool>(this, 155) && health() > 0;
+    }
+
+    auto& coordinateFrame() noexcept
+    {
+        return *reinterpret_cast<Matrix3x4*>(this + 0x444);
     }
 
     NETVAR(health, "CBasePlayer", "m_iHealth", int);
