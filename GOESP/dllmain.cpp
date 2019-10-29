@@ -4,6 +4,7 @@
 #include "imgui/imgui_impl_dx9.h"
 #include "imgui/imgui_impl_win32.h"
 
+#include "Config.h"
 #include "GUI.h"
 #include "Interfaces.h"
 #include "Memory.h"
@@ -11,6 +12,7 @@
 
 #include "SDK/InputSystem.h"
 
+Config config{ "GOESP" };
 GUI gui;
 const Interfaces interfaces;
 Memory memory;
