@@ -56,6 +56,9 @@
     <ClCompile Include="ESP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Netvars.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Interfaces.h">
@@ -120,6 +123,9 @@
     </ClInclude>
     <ClInclude Include="SDK\Vector.h">
       <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Netvars.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -194,6 +194,7 @@
     <ClCompile Include="imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="Memory.cpp" />
+    <ClCompile Include="Netvars.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
@@ -211,6 +212,7 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="Interfaces.h" />
     <ClInclude Include="Memory.h" />
+    <ClInclude Include="Netvars.h" />
     <ClInclude Include="SDK\Engine.h" />
     <ClInclude Include="SDK\Entity.h" />
     <ClInclude Include="SDK\EntityList.h" />
