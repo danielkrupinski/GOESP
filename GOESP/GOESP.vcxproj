@@ -199,6 +199,7 @@
   <ItemGroup>
     <ClInclude Include="Config.h" />
     <ClInclude Include="ESP.h" />
+    <ClInclude Include="fnv.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Hooks.h" />
     <ClInclude Include="ImGuiCustom.h" />
