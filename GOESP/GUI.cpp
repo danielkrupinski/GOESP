@@ -95,9 +95,9 @@ void GUI::render() noexcept
             ImGui::Separator();
 
             constexpr auto spacing{ 200.0f };
-            ImGuiCustom::colorPicker("Snaplines", playerConfig.snaplines.color, &playerConfig.snaplines.enabled, &playerConfig.snaplines.rainbow, &playerConfig.snaplines.rainbowSpeed);
+            ImGuiCustom::colorPicker("Snaplines", playerConfig.snaplines);
             ImGui::SameLine(spacing);
-            ImGuiCustom::colorPicker("Box", playerConfig.box.color, &playerConfig.box.enabled, &playerConfig.box.rainbow, &playerConfig.box.rainbowSpeed);
+            ImGuiCustom::colorPicker("Box", playerConfig.box);
             ImGui::SameLine();
             ImGui::SetNextItemWidth(95.0f);
             ImGui::Combo("", &playerConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
