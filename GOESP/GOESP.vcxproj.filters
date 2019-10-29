@@ -109,5 +109,8 @@
     <ClInclude Include="ESP.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SDK\EntityList.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
