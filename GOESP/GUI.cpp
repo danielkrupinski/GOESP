@@ -3,7 +3,9 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_win32.h"
 
+#include "Config.h"
 #include "Hooks.h"
+#include "ImGuiCustom.h"
 
 #include <array>
 #include <ctime>
@@ -79,6 +81,29 @@ void GUI::render() noexcept
             ImGui::PopID();
         }
         ImGui::ListBoxFooter();
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::BeginChild("##child", { 400.0f, 0.0f })) {
+        switch (currentCategory) {
+        case 0:
+        case 1: {
+            auto& playerConfig = config.players[currentCategory * 3 + currentItem];
+
+            ImGui::Checkbox("Enabled", &playerConfig.enabled);
+            ImGui::Separator();
+
+            constexpr auto spacing{ 200.0f };
+            ImGuiCustom::colorPicker("Snaplines", playerConfig.snaplines.color, &playerConfig.snaplines.enabled, &playerConfig.snaplines.rainbow, &playerConfig.snaplines.rainbowSpeed);
+            ImGui::SameLine(spacing);
+            ImGuiCustom::colorPicker("Box", playerConfig.box.color, &playerConfig.box.enabled, &playerConfig.box.rainbow, &playerConfig.box.rainbowSpeed);
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(95.0f);
+            ImGui::Combo("", &playerConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
+        }
+        }
+        ImGui::EndChild();
     }
 
     ImGui::Separator();
