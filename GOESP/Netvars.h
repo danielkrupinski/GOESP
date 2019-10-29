@@ -26,3 +26,5 @@ private:
     void traverseTable(const char*, RecvTable*, const size_t = 0) noexcept;
     std::unordered_map<uint32_t, uint16_t> offsets;
 };
+
+extern Netvars netvars;
