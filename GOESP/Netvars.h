@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <unordered_map>
 
+#include "fnv.h"
 #include "Interfaces.h"
 #include "SDK/Client.h"
 #include "SDK/ClientClass.h"
@@ -28,3 +29,25 @@ private:
 };
 
 extern Netvars netvars;
+
+#define PNETVAR_OFFSET(funcname, class_name, var_name, offset, type) \
+auto funcname() noexcept \
+{ \
+    constexpr auto hash = fnv::hash(class_name "->" var_name); \
+    static auto netvarOffset = netvars[hash]; \
+	return reinterpret_cast<std::add_pointer_t<type>>(this + netvarOffset + offset); \
+}
+
+#define PNETVAR(funcname, class_name, var_name, type) \
+	PNETVAR_OFFSET(funcname, class_name, var_name, 0, type)
+
+#define NETVAR_OFFSET(funcname, class_name, var_name, offset, type) \
+std::add_lvalue_reference_t<type> funcname() noexcept \
+{ \
+    constexpr auto hash = fnv::hash(class_name "->" var_name); \
+    static auto netvarOffset = netvars[hash]; \
+	return *reinterpret_cast<std::add_pointer_t<type>>(this + netvarOffset + offset); \
+}
+
+#define NETVAR(funcname, class_name, var_name, type) \
+	NETVAR_OFFSET(funcname, class_name, var_name, 0, type)
