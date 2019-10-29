@@ -4,15 +4,17 @@
 #include <type_traits>
 #include <Windows.h>
 
-class InputSystem;
+class Client;
 class Engine;
 class EntityList;
+class InputSystem;
 
 class Interfaces {
 public:
-    InputSystem* inputSystem = find<InputSystem>(L"inputsystem", "InputSystemVersion001");
+    Client* client = find<Client>(L"client_panorama", "VClient018");
     Engine* engine = find<Engine>(L"engine", "VEngineClient014");
     EntityList* entityList = find<EntityList>(L"client_panorama", "VClientEntityList003");
+    InputSystem* inputSystem = find<InputSystem>(L"inputsystem", "InputSystemVersion001");
 private:
     template <typename T>
     static auto find(const wchar_t* module, const char* name) noexcept
