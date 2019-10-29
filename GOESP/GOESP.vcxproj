@@ -181,6 +181,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Config.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Hooks.cpp" />
@@ -193,6 +194,7 @@
     <ClCompile Include="Memory.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Config.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Hooks.h" />
     <ClInclude Include="imgui\imconfig.h" />
