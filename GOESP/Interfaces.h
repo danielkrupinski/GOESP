@@ -5,11 +5,13 @@
 #include <Windows.h>
 
 class InputSystem;
+class Engine;
 class EntityList;
 
 class Interfaces {
 public:
     InputSystem* inputSystem = find<InputSystem>(L"inputsystem", "InputSystemVersion001");
+    Engine* engine = find<Engine>(L"engine", "VEngineClient014");
     EntityList* entityList = find<EntityList>(L"client_panorama", "VClientEntityList003");
 private:
     template <typename T>
