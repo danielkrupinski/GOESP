@@ -222,6 +222,7 @@
     <ClInclude Include="SDK\Entity.h" />
     <ClInclude Include="SDK\EntityList.h" />
     <ClInclude Include="SDK\InputSystem.h" />
+    <ClInclude Include="SDK\Matrix3x4.h" />
     <ClInclude Include="SDK\Recv.h" />
     <ClInclude Include="SDK\Utils.h" />
     <ClInclude Include="SDK\Vector.h" />
