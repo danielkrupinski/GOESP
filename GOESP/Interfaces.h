@@ -5,10 +5,12 @@
 #include <Windows.h>
 
 class InputSystem;
+class EntityList;
 
 class Interfaces {
 public:
     InputSystem* inputSystem = find<InputSystem>(L"inputsystem", "InputSystemVersion001");
+    EntityList* entityList = find<EntityList>(L"client_panorama", "VClientEntityList003");
 private:
     template <typename T>
     static auto find(const wchar_t* module, const char* name) noexcept
