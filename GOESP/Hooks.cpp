@@ -6,6 +6,7 @@
 #include "imgui/imgui_impl_dx9.h"
 #include "imgui/imgui_impl_win32.h"
 
+#include "ESP.h"
 #include "GUI.h"
 #include "Interfaces.h"
 #include "Memory.h"
@@ -40,6 +41,7 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
+    ESP::render(ImGui::GetBackgroundDrawList());
     gui.render();
 
     ImGui::EndFrame();
