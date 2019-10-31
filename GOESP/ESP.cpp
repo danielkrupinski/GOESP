@@ -52,6 +52,61 @@ static auto boundingBox(Entity* entity, BoundingBox& out) noexcept
     return true;
 }
 
+static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& bbox, const Config::Shared& config) noexcept
+{
+    if (config.box.enabled) {
+        ImU32 color = config.box.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(10.0f, config.box.rainbowSpeed)) : ImGui::ColorConvertFloat4ToU32(config.box.color);
+
+        switch (config.boxType) {
+        case 0:
+            drawList->AddRect({ bbox.x0, bbox.y0 }, { bbox.x1, bbox.y1 }, color);
+            break;
+            /*
+        case 1:
+            /*
+            drawList->AddLine({ bbox.x0, bbox.y0 }, { bbox.x1, bbox.y1 }, color);
+
+            interfaces.surface->drawLine(bbox.x0, bbox.y0, bbox.x0, bbox.y0 + fabsf(bbox.y1 - bbox.y0) / 4);
+            interfaces.surface->drawLine(bbox.x0, bbox.y0, bbox.x0 + fabsf(bbox.x1 - bbox.x0) / 4, bbox.y0);
+            interfaces.surface->drawLine(bbox.x1, bbox.y0, bbox.x1 - fabsf(bbox.x1 - bbox.x0) / 4, bbox.y0);
+            interfaces.surface->drawLine(bbox.x1, bbox.y0, bbox.x1, bbox.y0 + fabsf(bbox.y1 - bbox.y0) / 4);
+            interfaces.surface->drawLine(bbox.x0, bbox.y1, bbox.x0, bbox.y1 - fabsf(bbox.y1 - bbox.y0) / 4);
+            interfaces.surface->drawLine(bbox.x0, bbox.y1, bbox.x0 + fabsf(bbox.x1 - bbox.x0) / 4, bbox.y1);
+            interfaces.surface->drawLine(bbox.x1, bbox.y1, bbox.x1 - fabsf(bbox.x1 - bbox.x0) / 4, bbox.y1);
+            interfaces.surface->drawLine(bbox.x1, bbox.y1, bbox.x1, bbox.y1 - fabsf(bbox.y1 - bbox.y0) / 4);
+            
+            break;
+        case 2:
+            for (int i = 0; i < 8; i++) {
+                if (!(i & 1))
+                    interfaces.surface->drawLine(bbox.vertices[i].x, bbox.vertices[i].y, bbox.vertices[i + 1].x, bbox.vertices[i + 1].y);
+                if (!(i & 2))
+                    interfaces.surface->drawLine(bbox.vertices[i].x, bbox.vertices[i].y, bbox.vertices[i + 2].x, bbox.vertices[i + 2].y);
+                if (!(i & 4))
+                    interfaces.surface->drawLine(bbox.vertices[i].x, bbox.vertices[i].y, bbox.vertices[i + 4].x, bbox.vertices[i + 4].y);
+            }
+            break;
+        case 3:
+            for (int i = 0; i < 8; i++) {
+                if (!(i & 1)) {
+                    interfaces.surface->drawLine(bbox.vertices[i].x, bbox.vertices[i].y, bbox.vertices[i].x + (bbox.vertices[i + 1].x - bbox.vertices[i].x) * 0.25f, bbox.vertices[i].y + (bbox.vertices[i + 1].y - bbox.vertices[i].y) * 0.25f);
+                    interfaces.surface->drawLine(bbox.vertices[i].x + (bbox.vertices[i + 1].x - bbox.vertices[i].x) * 0.75f, bbox.vertices[i].y + (bbox.vertices[i + 1].y - bbox.vertices[i].y) * 0.75f, bbox.vertices[i + 1].x, bbox.vertices[i + 1].y);
+                }
+                if (!(i & 2)) {
+                    interfaces.surface->drawLine(bbox.vertices[i].x, bbox.vertices[i].y, bbox.vertices[i].x + (bbox.vertices[i + 2].x - bbox.vertices[i].x) * 0.25f, bbox.vertices[i].y + (bbox.vertices[i + 2].y - bbox.vertices[i].y) * 0.25f);
+                    interfaces.surface->drawLine(bbox.vertices[i].x + (bbox.vertices[i + 2].x - bbox.vertices[i].x) * 0.75f, bbox.vertices[i].y + (bbox.vertices[i + 2].y - bbox.vertices[i].y) * 0.75f, bbox.vertices[i + 2].x, bbox.vertices[i + 2].y);
+                }
+                if (!(i & 4)) {
+                    interfaces.surface->drawLine(bbox.vertices[i].x, bbox.vertices[i].y, bbox.vertices[i].x + (bbox.vertices[i + 4].x - bbox.vertices[i].x) * 0.25f, bbox.vertices[i].y + (bbox.vertices[i + 4].y - bbox.vertices[i].y) * 0.25f);
+                    interfaces.surface->drawLine(bbox.vertices[i].x + (bbox.vertices[i + 4].x - bbox.vertices[i].x) * 0.75f, bbox.vertices[i].y + (bbox.vertices[i + 4].y - bbox.vertices[i].y) * 0.75f, bbox.vertices[i + 4].x, bbox.vertices[i + 4].y);
+                }
+            }
+            break;
+            */
+        }
+    }
+}
+
 void ESP::render(ImDrawList* drawList) noexcept
 {
     if (interfaces.engine->isInGame()) {
@@ -66,12 +121,12 @@ void ESP::render(ImDrawList* drawList) noexcept
                 continue;
 
             if (BoundingBox bbox; boundingBox(entity, bbox)) {
-
+                renderBox(drawList, entity, bbox, config.players[0]);
             }
 
         }
     }
     const auto [width, height] = interfaces.engine->getScreenSize();
 
-    drawList->AddCircle({ float(width / 2), float(height / 2) }, 15.0f, packColor(config.players[0].box.color));
+    drawList->AddCircle({ float(width / 2), float(height / 2) }, 15.0f, ImGui::ColorConvertFloat4ToU32(config.players[0].box.color));
 }
