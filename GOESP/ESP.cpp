@@ -12,8 +12,7 @@
 #include "SDK/Vector.h"
 
 struct BoundingBox {
-    float x0, y0;
-    float x1, y1;
+    ImVec2 min, max;
     Vector vertices[8];
 };
 
@@ -21,10 +20,10 @@ static auto boundingBox(Entity* entity, BoundingBox& out) noexcept
 {
     const auto [width, height] = interfaces.engine->getScreenSize();
 
-    out.x0 = static_cast<float>(width * 2);
-    out.y0 = static_cast<float>(height * 2);
-    out.x1 = -static_cast<float>(width * 2);
-    out.y1 = -static_cast<float>(height * 2);
+    out.min.x = static_cast<float>(width * 2);
+    out.min.y = static_cast<float>(height * 2);
+    out.max.x = -static_cast<float>(width * 2);
+    out.max.y = -static_cast<float>(height * 2);
 
     const auto mins = entity->getCollideable()->obbMins();
     const auto maxs = entity->getCollideable()->obbMaxs();
@@ -37,17 +36,17 @@ static auto boundingBox(Entity* entity, BoundingBox& out) noexcept
         if (interfaces.debugOverlay->screenPosition(point.transform(entity->coordinateFrame()), out.vertices[i]))
             return false;
 
-        if (out.x0 > out.vertices[i].x)
-            out.x0 = out.vertices[i].x;
+        if (out.min.x > out.vertices[i].x)
+            out.min.x = out.vertices[i].x;
 
-        if (out.y0 > out.vertices[i].y)
-            out.y0 = out.vertices[i].y;
+        if (out.min.y > out.vertices[i].y)
+            out.min.y = out.vertices[i].y;
 
-        if (out.x1 < out.vertices[i].x)
-            out.x1 = out.vertices[i].x;
+        if (out.max.x < out.vertices[i].x)
+            out.max.x = out.vertices[i].x;
 
-        if (out.y1 < out.vertices[i].y)
-            out.y1 = out.vertices[i].y;
+        if (out.max.y < out.vertices[i].y)
+            out.max.y = out.vertices[i].y;
     }
     return true;
 }
@@ -59,23 +58,23 @@ static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& b
 
         switch (config.boxType) {
         case 0:
-            drawList->AddRect({ bbox.x0, bbox.y0 }, { bbox.x1, bbox.y1 }, color);
+            drawList->AddRect(bbox.min, bbox.max, color);
             break;
-            /*
+           
         case 1:
-            /*
-            drawList->AddLine({ bbox.x0, bbox.y0 }, { bbox.x1, bbox.y1 }, color);
+            drawList->AddLine(bbox.min, { bbox.min.x, bbox.min.y + (bbox.max.y - bbox.min.y) * 0.25f }, color);
+            drawList->AddLine(bbox.min, { bbox.min.x + (bbox.max.x - bbox.min.x) * 0.25f, bbox.min.y }, color);
 
-            interfaces.surface->drawLine(bbox.x0, bbox.y0, bbox.x0, bbox.y0 + fabsf(bbox.y1 - bbox.y0) / 4);
-            interfaces.surface->drawLine(bbox.x0, bbox.y0, bbox.x0 + fabsf(bbox.x1 - bbox.x0) / 4, bbox.y0);
-            interfaces.surface->drawLine(bbox.x1, bbox.y0, bbox.x1 - fabsf(bbox.x1 - bbox.x0) / 4, bbox.y0);
-            interfaces.surface->drawLine(bbox.x1, bbox.y0, bbox.x1, bbox.y0 + fabsf(bbox.y1 - bbox.y0) / 4);
-            interfaces.surface->drawLine(bbox.x0, bbox.y1, bbox.x0, bbox.y1 - fabsf(bbox.y1 - bbox.y0) / 4);
-            interfaces.surface->drawLine(bbox.x0, bbox.y1, bbox.x0 + fabsf(bbox.x1 - bbox.x0) / 4, bbox.y1);
-            interfaces.surface->drawLine(bbox.x1, bbox.y1, bbox.x1 - fabsf(bbox.x1 - bbox.x0) / 4, bbox.y1);
-            interfaces.surface->drawLine(bbox.x1, bbox.y1, bbox.x1, bbox.y1 - fabsf(bbox.y1 - bbox.y0) / 4);
-            
+            drawList->AddLine({ bbox.max.x, bbox.min.y }, { bbox.max.x - (bbox.max.x - bbox.min.x) * 0.25f, bbox.min.y }, color);
+            drawList->AddLine({ bbox.max.x, bbox.min.y }, { bbox.max.x, bbox.min.y + (bbox.max.y - bbox.min.y) * 0.25f }, color);
+
+            drawList->AddLine({ bbox.min.x, bbox.max.y }, { bbox.min.x, bbox.max.y - (bbox.max.y - bbox.min.y) * 0.25f }, color);
+            drawList->AddLine({ bbox.min.x, bbox.max.y }, { bbox.min.x + (bbox.max.x - bbox.min.x) * 0.25f, bbox.max.y}, color);
+
+            drawList->AddLine(bbox.max, { bbox.max.x - (bbox.max.x - bbox.min.x) * 0.25f, bbox.max.y }, color);
+            drawList->AddLine(bbox.max, { bbox.max.x, bbox.max.y - (bbox.max.y - bbox.min.y) * 0.25f }, color);
             break;
+            /*
         case 2:
             for (int i = 0; i < 8; i++) {
                 if (!(i & 1))
@@ -121,7 +120,7 @@ void ESP::render(ImDrawList* drawList) noexcept
                 continue;
 
             if (BoundingBox bbox; boundingBox(entity, bbox)) {
-                renderBox(drawList, entity, bbox, config.players[0]);
+                renderBox(drawList, entity, bbox, config.players[entity->isEnemy() ? 3 : 0]);
             }
 
         }
