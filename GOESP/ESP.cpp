@@ -103,6 +103,24 @@ static void renderPlayerBox(ImDrawList* drawList, Entity* entity, const Config::
     }
 }
 
+enum EspId {
+    ALLIES_ALL = 0,
+    ALLIES_VISIBLE,
+    ALLIES_OCCLUDED,
+
+    ENEMIES_ALL,
+    ENEMIES_VISIBLE,
+    ENEMIES_OCCLUDED
+};
+
+static constexpr bool renderPlayerEsp(ImDrawList* drawList, Entity* entity, EspId id) noexcept
+{
+    if (config.players[id].enabled) {
+        renderPlayerBox(drawList, entity, config.players[id]);
+    }
+    return config.players[id].enabled;
+}
+
 void ESP::render(ImDrawList* drawList) noexcept
 {
     if (interfaces.engine->isInGame()) {
@@ -116,11 +134,19 @@ void ESP::render(ImDrawList* drawList) noexcept
             if (!entity || entity == localPlayer || entity->isDormant() || !entity->isAlive())
                 continue;
 
-            renderPlayerBox(drawList, entity, config.players[0]);
-
+            if (!entity->isEnemy()) {
+                if (!renderPlayerEsp(drawList, entity, ALLIES_ALL)) {
+                    if (entity->isVisible())
+                        renderPlayerEsp(drawList, entity, ALLIES_VISIBLE);
+                    else
+                        renderPlayerEsp(drawList, entity, ALLIES_OCCLUDED);
+                }
+            } else if (!renderPlayerEsp(drawList, entity, ENEMIES_ALL)) {
+                if (entity->isVisible())
+                    renderPlayerEsp(drawList, entity, ENEMIES_VISIBLE);
+                else
+                    renderPlayerEsp(drawList, entity, ENEMIES_OCCLUDED);
+            }
         }
     }
-    const auto [width, height] = interfaces.engine->getScreenSize();
-
-    drawList->AddCircle({ float(width / 2), float(height / 2) }, 15.0f, ImGui::ColorConvertFloat4ToU32(config.players[0].box.color));
 }
