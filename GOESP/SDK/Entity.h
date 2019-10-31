@@ -50,5 +50,15 @@ public:
     {
         return memory.isOtherEnemy(this, interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer()));
     }
+
+    bool isVisible() noexcept
+    {
+        const auto localPlayer = interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer());
+
+        Trace trace;
+        interfaces.engineTrace->traceRay({ localPlayer->getEyePosition(), getEyePosition() }, 0x46004009, localPlayer, trace);
+        return trace.entity == this || trace.fraction > 0.97f;
+    }
+
     NETVAR(health, "CBasePlayer", "m_iHealth", int);
 };
