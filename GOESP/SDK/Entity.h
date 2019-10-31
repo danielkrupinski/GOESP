@@ -1,5 +1,8 @@
 #pragma once
 
+#include "EntityList.h"
+#include "../Interfaces.h"
+#include "../Memory.h"
 #include "../Netvars.h"
 #include "Utils.h"
 
@@ -33,6 +36,11 @@ public:
     auto& coordinateFrame() noexcept
     {
         return *reinterpret_cast<Matrix3x4*>(this + 0x444);
+    }
+
+    bool isEnemy() noexcept
+    {
+        return memory.isOtherEnemy(this, interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer()));
     }
 
     NETVAR(health, "CBasePlayer", "m_iHealth", int);
