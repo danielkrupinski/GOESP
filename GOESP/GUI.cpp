@@ -35,7 +35,8 @@ void GUI::render() noexcept
     const auto localTime = std::localtime(&time);
 
     const auto windowTitle = std::ostringstream{ } << "GOESP [" << std::setw(2) << std::setfill('0') << localTime->tm_hour << ':' << std::setw(2) << std::setfill('0') << localTime->tm_min << ':' << std::setw(2) << std::setfill('0') << localTime->tm_sec << "]###window";
-
+    
+    ImGui::SetNextWindowCollapsed(true, ImGuiCond_FirstUseEver);
     blockInput = ImGui::Begin(windowTitle.str().c_str());
 
     static int currentCategory = 0;
