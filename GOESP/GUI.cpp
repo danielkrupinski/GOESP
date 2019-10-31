@@ -50,7 +50,20 @@ void GUI::render() noexcept
                 currentCategory = i;
                 currentItem = 0;
             }
-            ImGui::PushID(i);
+
+            constexpr auto getConfig = [](int category, int item) constexpr noexcept -> const Config::Shared& {
+                switch (category) {
+                case 0:
+                    return config.players[item];
+                case 1:
+                    return config.players[item + 3];
+                default:
+                    return config.players[0];
+                }
+            };
+
+            if (getConfig(i, 0).enabled)
+                continue;
 
             constexpr auto getItems = [](int index) constexpr noexcept -> std::initializer_list<const char*> {
                 switch (index) {
@@ -66,6 +79,7 @@ void GUI::render() noexcept
                 }
             };
 
+            ImGui::PushID(i);
             ImGui::Indent();
 
             auto items = getItems(i);
