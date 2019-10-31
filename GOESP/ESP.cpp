@@ -74,17 +74,17 @@ static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& b
             drawList->AddLine(bbox.max, { bbox.max.x - (bbox.max.x - bbox.min.x) * 0.25f, bbox.max.y }, color);
             drawList->AddLine(bbox.max, { bbox.max.x, bbox.max.y - (bbox.max.y - bbox.min.y) * 0.25f }, color);
             break;
-            /*
         case 2:
             for (int i = 0; i < 8; i++) {
                 if (!(i & 1))
-                    interfaces.surface->drawLine(bbox.vertices[i].x, bbox.vertices[i].y, bbox.vertices[i + 1].x, bbox.vertices[i + 1].y);
+                    drawList->AddLine(bbox.vertices[i], bbox.vertices[i + 1], color);
                 if (!(i & 2))
-                    interfaces.surface->drawLine(bbox.vertices[i].x, bbox.vertices[i].y, bbox.vertices[i + 2].x, bbox.vertices[i + 2].y);
+                    drawList->AddLine(bbox.vertices[i], bbox.vertices[i + 2], color);
                 if (!(i & 4))
-                    interfaces.surface->drawLine(bbox.vertices[i].x, bbox.vertices[i].y, bbox.vertices[i + 4].x, bbox.vertices[i + 4].y);
+                    drawList->AddLine(bbox.vertices[i], bbox.vertices[i + 4], color);
             }
             break;
+            /*
         case 3:
             for (int i = 0; i < 8; i++) {
                 if (!(i & 1)) {
