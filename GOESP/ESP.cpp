@@ -76,12 +76,10 @@ static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& b
             break;
         case 2:
             for (int i = 0; i < 8; i++) {
-                if (!(i & 1))
-                    drawList->AddLine(bbox.vertices[i], bbox.vertices[i + 1], color);
-                if (!(i & 2))
-                    drawList->AddLine(bbox.vertices[i], bbox.vertices[i + 2], color);
-                if (!(i & 4))
-                    drawList->AddLine(bbox.vertices[i], bbox.vertices[i + 4], color);
+                for (int j = 1; j <= 4; j <<= 1) {
+                    if (!(i & j))
+                        drawList->AddLine(bbox.vertices[i], bbox.vertices[i + j], color);
+                }
             }
             break;
         case 3:
