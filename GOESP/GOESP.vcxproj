@@ -219,6 +219,7 @@
     <ClInclude Include="SDK\ClientClass.h" />
     <ClInclude Include="SDK\DebugOverlay.h" />
     <ClInclude Include="SDK\Engine.h" />
+    <ClInclude Include="SDK\EngineTrace.h" />
     <ClInclude Include="SDK\Entity.h" />
     <ClInclude Include="SDK\EntityList.h" />
     <ClInclude Include="SDK\InputSystem.h" />
