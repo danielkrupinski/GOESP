@@ -1,13 +1,17 @@
 #pragma once
 
+#include "../imgui/imgui.h"
 #include "Utils.h"
-
-struct Vector;
+#include "Vector.h"
 
 class DebugOverlay {
 public:
-    constexpr auto screenPosition(const Vector& point, Vector& screen) noexcept
+    constexpr auto screenPosition(const Vector& point, ImVec2& screen) noexcept
     {
-        return callVirtualMethod<bool, const Vector&, Vector&>(this, 13, point, screen);
+        Vector out{ };
+        auto result = callVirtualMethod<bool, const Vector&, Vector&>(this, 13, point, out);
+        screen.x = out.x;
+        screen.y = out.y;
+        return result;
     }
 };

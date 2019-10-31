@@ -13,7 +13,7 @@
 
 struct BoundingBox {
     ImVec2 min, max;
-    Vector vertices[8];
+    ImVec2 vertices[8];
 };
 
 static auto boundingBox(Entity* entity, BoundingBox& out) noexcept
