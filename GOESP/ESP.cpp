@@ -96,6 +96,13 @@ static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& b
     }
 }
 
+static void renderPlayerBox(ImDrawList* drawList, Entity* entity, const Config::Player& config) noexcept
+{
+    if (BoundingBox bbox; boundingBox(entity, bbox)) {
+        renderBox(drawList, entity, bbox, config);
+    }
+}
+
 void ESP::render(ImDrawList* drawList) noexcept
 {
     if (interfaces.engine->isInGame()) {
@@ -109,9 +116,7 @@ void ESP::render(ImDrawList* drawList) noexcept
             if (!entity || entity == localPlayer || entity->isDormant() || !entity->isAlive())
                 continue;
 
-            if (BoundingBox bbox; boundingBox(entity, bbox)) {
-                renderBox(drawList, entity, bbox, config.players[entity->isEnemy() ? 3 : 0]);
-            }
+            renderPlayerBox(drawList, entity, config.players[0]);
 
         }
     }
