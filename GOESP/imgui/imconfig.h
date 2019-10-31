@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include <tuple>
+
 //---- Define assertion handler. Defaults to calling assert().
 //#define IM_ASSERT(_EXPR)  MyAssert(_EXPR)
 //#define IM_ASSERT(_EXPR)  ((void)(_EXPR))     // Disable asserts
@@ -59,7 +61,9 @@
         ImVec2(const MyVec2& f) { x = f.x; y = f.y; }                       \
         operator MyVec2() const { return MyVec2(x,y); }
 */
-#define IM_VEC4_CLASS_EXTRA  ImVec4(float f[3]) noexcept { x = f[0]; y = f[1]; z = f[2]; w = 1.0f; }
+#define IM_VEC4_CLASS_EXTRA \
+        ImVec4(const float f[3]) noexcept { x = f[0]; y = f[1]; z = f[2]; w = 1.0f; } \
+        ImVec4(std::tuple<float, float, float> color) noexcept { x = std::get<0>(color); y = std::get<1>(color); z = std::get<2>(color); w = 1.0f; }
 
 //---- Using 32-bits vertex indices (default is 16-bits) is one way to allow large meshes with more than 64K vertices. 
 // Your renderer back-end will need to support it (most example renderer back-ends support both 16/32-bits indices).
