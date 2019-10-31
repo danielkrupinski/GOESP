@@ -7,6 +7,7 @@
 class Client;
 class DebugOverlay;
 class Engine;
+class EngineTrace;
 class EntityList;
 class InputSystem;
 
@@ -15,6 +16,7 @@ public:
     Client* client = find<Client>(L"client_panorama", "VClient018");
     DebugOverlay* debugOverlay = find<DebugOverlay>(L"engine", "VDebugOverlay004");
     Engine* engine = find<Engine>(L"engine", "VEngineClient014");
+    EngineTrace* engineTrace = find<EngineTrace>(L"engine", "EngineTraceClient004");
     EntityList* entityList = find<EntityList>(L"client_panorama", "VClientEntityList003");
     InputSystem* inputSystem = find<InputSystem>(L"inputsystem", "InputSystemVersion001");
 private:
