@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EngineTrace.h"
 #include "EntityList.h"
 #include "../Interfaces.h"
 #include "../Memory.h"
@@ -33,6 +34,13 @@ public:
         return callVirtualMethod<bool>(this, 155) && health() > 0;
     }
 
+    constexpr auto getEyePosition() noexcept
+    {
+        Vector vec{ };
+        callVirtualMethod<void, Vector&>(this, 283, vec);
+        return vec;
+    }
+
     auto& coordinateFrame() noexcept
     {
         return *reinterpret_cast<Matrix3x4*>(this + 0x444);
@@ -42,6 +50,5 @@ public:
     {
         return memory.isOtherEnemy(this, interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer()));
     }
-
     NETVAR(health, "CBasePlayer", "m_iHealth", int);
 };
