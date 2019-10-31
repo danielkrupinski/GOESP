@@ -5,6 +5,8 @@
 #include <Psapi.h>
 #include <sstream>
 
+class Entity;
+
 class Memory {
 public:
     Memory() noexcept;
@@ -12,6 +14,7 @@ public:
     uintptr_t present;
     uintptr_t reset;
 
+    bool(__thiscall* isOtherEnemy)(Entity*, Entity*);
 private:
     template <typename T = uintptr_t>
     static auto findPattern(const wchar_t* module, const char* pattern, size_t offset = 0) noexcept
