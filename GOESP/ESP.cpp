@@ -4,7 +4,6 @@
 
 #include "Config.h"
 #include "Interfaces.h"
-#include "SDK/DebugOverlay.h"
 #include "SDK/Engine.h"
 #include "SDK/Entity.h"
 #include "SDK/EntityList.h"
