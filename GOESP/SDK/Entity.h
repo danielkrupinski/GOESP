@@ -29,6 +29,11 @@ public:
         return callVirtualMethod<Collideable*>(this, 3);
     }
 
+    constexpr auto getAbsOrigin() noexcept
+    {
+        return callVirtualMethod<Vector&>(this, 10);
+    }
+
     constexpr auto isAlive() noexcept
     {
         return callVirtualMethod<bool>(this, 155) && health() > 0;
