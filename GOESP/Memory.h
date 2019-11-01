@@ -7,6 +7,7 @@
 #include <sstream>
 
 class Entity;
+struct GlobalVars;
 
 class Memory {
 public:
@@ -16,6 +17,7 @@ public:
     uintptr_t reset;
     bool(__thiscall* isOtherEnemy)(Entity*, Entity*);
     const D3DMATRIX* viewMatrix;
+    const GlobalVars* globalVars;
 private:
     template <typename T = uintptr_t>
     static auto findPattern(const wchar_t* module, const char* pattern, size_t offset = 0) noexcept
