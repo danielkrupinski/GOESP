@@ -14,7 +14,6 @@ class InputSystem;
 class Interfaces {
 public:
     Client* client = find<Client>(L"client_panorama", "VClient018");
-    DebugOverlay* debugOverlay = find<DebugOverlay>(L"engine", "VDebugOverlay004");
     Engine* engine = find<Engine>(L"engine", "VEngineClient014");
     EngineTrace* engineTrace = find<EngineTrace>(L"engine", "EngineTraceClient004");
     EntityList* entityList = find<EntityList>(L"client_panorama", "VClientEntityList003");
