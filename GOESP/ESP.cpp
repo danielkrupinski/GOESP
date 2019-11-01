@@ -11,6 +11,21 @@
 #include "SDK/Utils.h"
 #include "SDK/Vector.h"
 
+static constexpr bool worldToScreen(const Vector& in, ImVec2& out) noexcept
+{
+    const auto matrix = memory.viewMatrix;
+    
+    float w = matrix->_41 * in.x + matrix->_42 * in.y + matrix->_43 * in.z + matrix->_44;
+
+    if (w > 0.001f) {
+        const auto [width, height] = interfaces.engine->getScreenSize();
+        out.x = width / 2 * (1 + (matrix->_11 * in.x + matrix->_12 * in.y + matrix->_13 * in.z + matrix->_14) / w);
+        out.y = height / 2 * (1 - (matrix->_21 * in.x + matrix->_22 * in.y + matrix->_23 * in.z + matrix->_24) / w);
+        return true;
+    }
+    return false;
+}
+
 struct BoundingBox {
     ImVec2 min, max;
     ImVec2 vertices[8];
@@ -33,7 +48,7 @@ static auto boundingBox(Entity* entity, BoundingBox& out) noexcept
                             i & 2 ? maxs.y : mins.y,
                             i & 4 ? maxs.z : mins.z };
 
-        if (interfaces.debugOverlay->screenPosition(point.transform(entity->coordinateFrame()), out.vertices[i]))
+        if (!worldToScreen(point.transform(entity->coordinateFrame()), out.vertices[i]))
             return false;
 
         if (out.min.x > out.vertices[i].x)
