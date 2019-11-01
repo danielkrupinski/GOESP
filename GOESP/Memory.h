@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <d3d9.h>
 #include <Windows.h>
 #include <Psapi.h>
 #include <sstream>
@@ -13,8 +14,8 @@ public:
 
     uintptr_t present;
     uintptr_t reset;
-
     bool(__thiscall* isOtherEnemy)(Entity*, Entity*);
+    const D3DMATRIX* viewMatrix;
 private:
     template <typename T = uintptr_t>
     static auto findPattern(const wchar_t* module, const char* pattern, size_t offset = 0) noexcept
