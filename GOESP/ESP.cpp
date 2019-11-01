@@ -4,9 +4,11 @@
 
 #include "Config.h"
 #include "Interfaces.h"
+#include "Memory.h"
 #include "SDK/Engine.h"
 #include "SDK/Entity.h"
 #include "SDK/EntityList.h"
+#include "SDK/GlobalVars.h"
 #include "SDK/Utils.h"
 #include "SDK/Vector.h"
 
@@ -68,7 +70,7 @@ static auto boundingBox(Entity* entity, BoundingBox& out) noexcept
 static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& bbox, const Config::Shared& config) noexcept
 {
     if (config.box.enabled) {
-        ImU32 color = config.box.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(10.0f, config.box.rainbowSpeed)) : ImGui::ColorConvertFloat4ToU32(config.box.color);
+        ImU32 color = config.box.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.box.rainbowSpeed)) : ImGui::ColorConvertFloat4ToU32(config.box.color);
 
         switch (config.boxType) {
         case 0:
