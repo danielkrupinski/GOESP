@@ -119,6 +119,16 @@ static void renderPlayerBox(ImDrawList* drawList, Entity* entity, const Config::
     }
 }
 
+static void renderSnaplines(ImDrawList* drawList, Entity* entity, const Config::ColorToggle& config) noexcept
+{
+    if (config.enabled) {
+        if (ImVec2 position; worldToScreen(entity->getAbsOrigin(), position)) {
+            const auto [width, height] = interfaces.engine->getScreenSize();
+            drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(height) }, position, config.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.rainbowSpeed)) : ImGui::ColorConvertFloat4ToU32(config.color));
+        }
+    }
+}
+
 enum EspId {
     ALLIES_ALL = 0,
     ALLIES_VISIBLE,
@@ -133,6 +143,7 @@ static constexpr bool renderPlayerEsp(ImDrawList* drawList, Entity* entity, EspI
 {
     if (config.players[id].enabled) {
         renderPlayerBox(drawList, entity, config.players[id]);
+        renderSnaplines(drawList, entity, config.players[id].snaplines);
     }
     return config.players[id].enabled;
 }
