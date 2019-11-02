@@ -43,26 +43,35 @@ void GUI::render() noexcept
 
     static int currentCategory = 0;
     static int currentItem = 0;
+    static int currentSubItem = 0;
 
-    if (ImGui::ListBoxHeader("##list", { 125.0f, 300.0f })) {
-        static constexpr std::array categories{ "Allies", "Enemies" };
+    constexpr auto getConfig = [](int category, int item, int subItem = 0) constexpr noexcept -> Config::Shared& {
+        switch (category) {
+        case 0:
+            return config.players[item];
+        case 1:
+            return config.players[item + 3];
+        case 2:
+            switch (item) {
+            default:
+            case 0:
+                return config.weapons;
+            case 1:
+                return config.pistols[subItem];
+            }
+        default:
+            return config.players[0];
+        }
+    };
+
+    if (ImGui::ListBoxHeader("##list", { 155.0f, 300.0f })) {
+        static constexpr std::array categories{ "Allies", "Enemies", "Weapons" };
 
         for (size_t i = 0; i < categories.size(); i++) {
             if (ImGui::Selectable(categories[i], currentCategory == i && currentItem == 0)) {
                 currentCategory = i;
                 currentItem = 0;
             }
-
-            constexpr auto getConfig = [](int category, int item) constexpr noexcept -> const Config::Shared& {
-                switch (category) {
-                case 0:
-                    return config.players[item];
-                case 1:
-                    return config.players[item + 3];
-                default:
-                    return config.players[0];
-                }
-            };
 
             if (getConfig(i, 0).enabled)
                 continue;
@@ -73,9 +82,7 @@ void GUI::render() noexcept
                 case 1:
                     return { "Visible", "Occluded" };
                 case 2:
-                    // return { "AK-47", "Tec-9" };
-                case 3:
-                    // return { "Smoke", "HE Grenade", "Flashbang" };
+                    return { "Pistols" };
                 default:
                     return { };
                 }
@@ -86,10 +93,39 @@ void GUI::render() noexcept
 
             auto items = getItems(i);
             for (size_t j = 0; j < items.size(); j++) {
-                if (ImGui::Selectable(items[j], currentCategory == i && currentItem == j + 1)) {
+                if (ImGui::Selectable(items[j], currentCategory == i && currentItem == j + 1 && currentSubItem == 0)) {
                     currentCategory = i;
                     currentItem = j + 1;
+                    currentSubItem = 0;
                 }
+
+                constexpr auto getSubItems = [](int category, int item) noexcept -> std::vector<const char*> {
+                    switch (category) {
+                    case 2:
+                        switch (item) {
+                        case 0:
+                            return { "Glock-18", "P2000", "USP-S", "Dual Berettas", "P250", "Tec-9", "Five-SeveN", "CZ75-Auto", "Desert Eagle", "R8 Revolver" };
+                        }
+                    default:
+                        return { };
+                    }
+                };
+
+                if (getConfig(i, j + 1).enabled)
+                    continue;
+
+                ImGui::Indent();
+                   
+                auto subItems = getSubItems(i, j);
+                for (size_t k = 0; k < subItems.size(); k++) {
+                    if (ImGui::Selectable(subItems[k], currentCategory == i && currentItem == j + 1 && currentSubItem == k + 1)) {
+                        currentCategory = i;
+                        currentItem = j + 1;
+                        currentSubItem = k + 1;
+                    }
+                }
+
+                ImGui::Unindent();
             }
 
             ImGui::Unindent();
@@ -116,6 +152,21 @@ void GUI::render() noexcept
             ImGui::SameLine();
             ImGui::SetNextItemWidth(95.0f);
             ImGui::Combo("", &playerConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
+            break;
+        }
+        case 2: {
+            auto& weaponConfig = getConfig(currentCategory, currentItem, currentSubItem);
+
+            ImGui::Checkbox("Enabled", &weaponConfig.enabled);
+            ImGui::Separator();
+
+            constexpr auto spacing{ 200.0f };
+            ImGuiCustom::colorPicker("Snaplines", weaponConfig.snaplines);
+            ImGui::SameLine(spacing);
+            ImGuiCustom::colorPicker("Box", weaponConfig.box);
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(95.0f);
+            ImGui::Combo("", &weaponConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
         }
         }
         ImGui::EndChild();
