@@ -11,6 +11,7 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
+#include <vector>
 #include <Windows.h>
 
 GUI::GUI() noexcept
@@ -66,7 +67,7 @@ void GUI::render() noexcept
             if (getConfig(i, 0).enabled)
                 continue;
 
-            constexpr auto getItems = [](int index) constexpr noexcept -> std::initializer_list<const char*> {
+            constexpr auto getItems = [](int index) noexcept -> std::vector<const char*> {
                 switch (index) {
                 case 0:
                 case 1:
@@ -84,12 +85,10 @@ void GUI::render() noexcept
             ImGui::Indent();
 
             auto items = getItems(i);
-            for (auto it = items.begin(); it != items.end(); it++) {
-                auto itemIndex = std::distance(items.begin(), it) + 1;
-
-                if (ImGui::Selectable(*it, currentCategory == i && currentItem == itemIndex)) {
+            for (size_t j = 0; j < items.size(); j++) {
+                if (ImGui::Selectable(items[j], currentCategory == i && currentItem == j + 1)) {
                     currentCategory = i;
-                    currentItem = itemIndex;
+                    currentItem = j + 1;
                 }
             }
 
