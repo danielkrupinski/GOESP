@@ -155,6 +155,15 @@ static constexpr bool renderPlayerEsp(ImDrawList* drawList, Entity* entity, EspI
     return config.players[id].enabled;
 }
 
+static constexpr bool renderWeaponEsp(ImDrawList* drawList, Entity* entity, const Config::Weapon& config) noexcept
+{
+    if (config.enabled) {
+        renderWeaponBox(drawList, entity, config);
+        renderSnaplines(drawList, entity, config.snaplines);
+    }
+    return config.enabled;
+}
+
 void ESP::render(ImDrawList* drawList) noexcept
 {
     if (interfaces.engine->isInGame()) {
