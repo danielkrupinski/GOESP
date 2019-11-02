@@ -6,6 +6,7 @@
 #include "../Memory.h"
 #include "../Netvars.h"
 #include "Utils.h"
+#include "WeaponId.h"
 
 struct Vector;
 class Matrix3x4;
@@ -73,4 +74,6 @@ public:
     NETVAR(ownerEntity, "CBaseEntity", "m_hOwnerEntity", int);
 
     NETVAR(health, "CBasePlayer", "m_iHealth", int);
+
+    NETVAR(weaponId, "CBaseAttributableItem", "m_iItemDefinitionIndex", WeaponId);
 };
