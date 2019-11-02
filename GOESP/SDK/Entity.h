@@ -39,6 +39,11 @@ public:
         return callVirtualMethod<bool>(this, 155) && health() > 0;
     }
 
+    constexpr auto isWeapon() noexcept
+    {
+        return callVirtualMethod<bool>(this, 165);
+    }
+
     constexpr auto getEyePosition() noexcept
     {
         Vector vec{ };
