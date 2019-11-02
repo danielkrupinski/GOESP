@@ -119,6 +119,13 @@ static void renderPlayerBox(ImDrawList* drawList, Entity* entity, const Config::
     }
 }
 
+static void renderWeaponBox(ImDrawList* drawList, Entity* entity, const Config::Weapon& config) noexcept
+{
+    if (BoundingBox bbox; boundingBox(entity, bbox)) {
+        renderBox(drawList, entity, bbox, config);
+    }
+}
+
 static void renderSnaplines(ImDrawList* drawList, Entity* entity, const Config::ColorToggle& config) noexcept
 {
     if (config.enabled) {
