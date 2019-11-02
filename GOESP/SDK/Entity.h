@@ -70,5 +70,7 @@ public:
         return trace.entity == this || trace.fraction > 0.97f;
     }
 
+    NETVAR(ownerEntity, "CBaseEntity", "m_hOwnerEntity", int);
+
     NETVAR(health, "CBasePlayer", "m_iHealth", int);
 };
