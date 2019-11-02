@@ -28,7 +28,13 @@ public:
 
     };
 
+    struct Weapon : public Shared {
+
+    };
+
     std::array<Player, 6> players;
+    Weapon weapons;
+    std::array<Weapon, 11> pistols;
 
 private:
     std::filesystem::path path;
