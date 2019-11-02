@@ -35,6 +35,7 @@ public:
     std::array<Player, 6> players;
     Weapon weapons;
     std::array<Weapon, 11> pistols;
+    std::array<Weapon, 7> heavy;
 
 private:
     std::filesystem::path path;
