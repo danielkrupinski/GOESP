@@ -204,24 +204,32 @@ void ESP::render(ImDrawList* drawList) noexcept
                     default: return 0;
 
                     case WeaponId::Glock:
+                    case WeaponId::Mac10:
                     case WeaponId::Nova:
                         return 1;
                     case WeaponId::Hkp2000:
+                    case WeaponId::Mp9:
                     case WeaponId::Xm1014:
                         return 2;
                     case WeaponId::Usp_s:
+                    case WeaponId::Mp7:
                     case WeaponId::Sawedoff:
                         return 3;
                     case WeaponId::Elite:
+                    case WeaponId::Mp5sd:
                     case WeaponId::Mag7:
                         return 4;
                     case WeaponId::P250:
+                    case WeaponId::Ump45:
                     case WeaponId::M249:
                         return 5;
                     case WeaponId::Tec9:
+                    case WeaponId::P90:
                     case WeaponId::Negev:
                         return 6;
-                    case WeaponId::Fiveseven: return 7;
+                    case WeaponId::Fiveseven:
+                    case WeaponId::Bizon:
+                        return 7;
                     case WeaponId::Cz75a: return 8;
                     case WeaponId::Deagle: return 9;
                     case WeaponId::Revolver: return 10;
@@ -241,6 +249,16 @@ void ESP::render(ImDrawList* drawList) noexcept
                 case WeaponId::Revolver:
                     if (!renderWeaponEsp(drawList, entity, config.pistols[0]))
                         renderWeaponEsp(drawList, entity, config.pistols[getWeaponIndex(entity->weaponId())]);
+                    break;
+                case WeaponId::Mac10:
+                case WeaponId::Mp9:
+                case WeaponId::Mp7:
+                case WeaponId::Mp5sd:
+                case WeaponId::Ump45:
+                case WeaponId::P90:
+                case WeaponId::Bizon:
+                    if (!renderWeaponEsp(drawList, entity, config.smgs[0]))
+                        renderWeaponEsp(drawList, entity, config.smgs[getWeaponIndex(entity->weaponId())]);
                     break;
                 case WeaponId::Nova:
                 case WeaponId::Xm1014:
