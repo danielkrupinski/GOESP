@@ -206,21 +206,25 @@ void ESP::render(ImDrawList* drawList) noexcept
                     case WeaponId::Glock:
                     case WeaponId::Mac10:
                     case WeaponId::GalilAr:
+                    case WeaponId::Ssg08:
                     case WeaponId::Nova:
                         return 1;
                     case WeaponId::Hkp2000:
                     case WeaponId::Mp9:
                     case WeaponId::Famas:
+                    case WeaponId::Awp:
                     case WeaponId::Xm1014:
                         return 2;
                     case WeaponId::Usp_s:
                     case WeaponId::Mp7:
                     case WeaponId::Ak47:
+                    case WeaponId::G3SG1:
                     case WeaponId::Sawedoff:
                         return 3;
                     case WeaponId::Elite:
                     case WeaponId::Mp5sd:
                     case WeaponId::M4A1:
+                    case WeaponId::Scar20:
                     case WeaponId::Mag7:
                         return 4;
                     case WeaponId::P250:
@@ -276,6 +280,13 @@ void ESP::render(ImDrawList* drawList) noexcept
                 case WeaponId::Aug:
                     if (!renderWeaponEsp(drawList, entity, config.rifles[0]))
                         renderWeaponEsp(drawList, entity, config.rifles[getWeaponIndex(entity->weaponId())]);
+                    break;
+                case WeaponId::Ssg08:
+                case WeaponId::Awp:
+                case WeaponId::G3SG1:
+                case WeaponId::Scar20:
+                    if (!renderWeaponEsp(drawList, entity, config.sniperRifles[0]))
+                        renderWeaponEsp(drawList, entity, config.sniperRifles[getWeaponIndex(entity->weaponId())]);
                     break;
                 case WeaponId::Nova:
                 case WeaponId::Xm1014:
