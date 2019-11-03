@@ -208,12 +208,14 @@ void ESP::render(ImDrawList* drawList) noexcept
                     case WeaponId::GalilAr:
                     case WeaponId::Ssg08:
                     case WeaponId::Nova:
+                    case WeaponId::M249:
                         return 1;
                     case WeaponId::Hkp2000:
                     case WeaponId::Mp9:
                     case WeaponId::Famas:
                     case WeaponId::Awp:
                     case WeaponId::Xm1014:
+                    case WeaponId::Negev:
                         return 2;
                     case WeaponId::Usp_s:
                     case WeaponId::Mp7:
@@ -230,12 +232,10 @@ void ESP::render(ImDrawList* drawList) noexcept
                     case WeaponId::P250:
                     case WeaponId::Ump45:
                     case WeaponId::M4a1_s:
-                    case WeaponId::M249:
                         return 5;
                     case WeaponId::Tec9:
                     case WeaponId::P90:
                     case WeaponId::Sg553:
-                    case WeaponId::Negev:
                         return 6;
                     case WeaponId::Fiveseven:
                     case WeaponId::Bizon:
@@ -292,6 +292,9 @@ void ESP::render(ImDrawList* drawList) noexcept
                 case WeaponId::Xm1014:
                 case WeaponId::Sawedoff:
                 case WeaponId::Mag7:
+                    if (!renderWeaponEsp(drawList, entity, config.shotguns[0]))
+                        renderWeaponEsp(drawList, entity, config.shotguns[getWeaponIndex(entity->weaponId())]);
+                    break;
                 case WeaponId::M249:
                 case WeaponId::Negev:
                     if (!renderWeaponEsp(drawList, entity, config.heavy[0]))
