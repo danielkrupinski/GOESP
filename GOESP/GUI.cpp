@@ -58,6 +58,8 @@ void GUI::render() noexcept
                 return config.weapons;
             case 1:
                 return config.pistols[subItem];
+            case 2:
+                return config.heavy[subItem];
             }
         default:
             return config.players[0];
@@ -82,7 +84,7 @@ void GUI::render() noexcept
                 case 1:
                     return { "Visible", "Occluded" };
                 case 2:
-                    return { "Pistols" };
+                    return { "Pistols", "Heavy" };
                 default:
                     return { };
                 }
@@ -105,6 +107,8 @@ void GUI::render() noexcept
                         switch (item) {
                         case 0:
                             return { "Glock-18", "P2000", "USP-S", "Dual Berettas", "P250", "Tec-9", "Five-SeveN", "CZ75-Auto", "Desert Eagle", "R8 Revolver" };
+                        case 1:
+                            return { "Nova", "XM1014", "Sawed-Off", "MAG-7", "M249", "Negev" };
                         }
                     default:
                         return { };
