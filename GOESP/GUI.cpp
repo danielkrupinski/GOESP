@@ -61,6 +61,8 @@ void GUI::render() noexcept
             case 2:
                 return config.smgs[subItem];
             case 3:
+                return config.rifles[subItem];
+            case 4:
                 return config.heavy[subItem];
             }
         default:
@@ -86,7 +88,7 @@ void GUI::render() noexcept
                 case 1:
                     return { "Visible", "Occluded" };
                 case 2:
-                    return { "Pistols", "SMGs", "Heavy" };
+                    return { "Pistols", "SMGs", "Rifles", "Heavy" };
                 default:
                     return { };
                 }
@@ -112,6 +114,8 @@ void GUI::render() noexcept
                         case 1:
                             return { "MAC-10", "MP9", "MP7", "MP5-SD", "UMP-45", "P90", "PP-Bizon" };
                         case 2:
+                            return { "Galil AR", "FAMAS", "AK-47", "M4A4", "M4A1-S", "SG-553", "AUG" };
+                        case 3:
                             return { "Nova", "XM1014", "Sawed-Off", "MAG-7", "M249", "Negev" };
                         }
                     default:
