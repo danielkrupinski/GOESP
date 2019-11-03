@@ -11,11 +11,12 @@
 #include "SDK/GlobalVars.h"
 #include "SDK/Utils.h"
 #include "SDK/Vector.h"
+#include "SDK/WeaponId.h"
 
 static constexpr bool worldToScreen(const Vector& in, ImVec2& out) noexcept
 {
     const auto matrix = memory.viewMatrix;
-    
+
     float w = matrix->_41 * in.x + matrix->_42 * in.y + matrix->_43 * in.z + matrix->_44;
 
     if (w > 0.001f) {
@@ -76,7 +77,7 @@ static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& b
         case 0:
             drawList->AddRect(bbox.min, bbox.max, color);
             break;
-           
+
         case 1:
             drawList->AddLine(bbox.min, { bbox.min.x, bbox.min.y + (bbox.max.y - bbox.min.y) * 0.25f }, color);
             drawList->AddLine(bbox.min, { bbox.min.x + (bbox.max.x - bbox.min.x) * 0.25f, bbox.min.y }, color);
@@ -85,7 +86,7 @@ static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& b
             drawList->AddLine({ bbox.max.x, bbox.min.y }, { bbox.max.x, bbox.min.y + (bbox.max.y - bbox.min.y) * 0.25f }, color);
 
             drawList->AddLine({ bbox.min.x, bbox.max.y }, { bbox.min.x, bbox.max.y - (bbox.max.y - bbox.min.y) * 0.25f }, color);
-            drawList->AddLine({ bbox.min.x, bbox.max.y }, { bbox.min.x + (bbox.max.x - bbox.min.x) * 0.25f, bbox.max.y}, color);
+            drawList->AddLine({ bbox.min.x, bbox.max.y }, { bbox.min.x + (bbox.max.x - bbox.min.x) * 0.25f, bbox.max.y }, color);
 
             drawList->AddLine(bbox.max, { bbox.max.x - (bbox.max.x - bbox.min.x) * 0.25f, bbox.max.y }, color);
             drawList->AddLine(bbox.max, { bbox.max.x, bbox.max.y - (bbox.max.y - bbox.min.y) * 0.25f }, color);
@@ -189,6 +190,68 @@ void ESP::render(ImDrawList* drawList) noexcept
                     renderPlayerEsp(drawList, entity, ENEMIES_VISIBLE);
                 else
                     renderPlayerEsp(drawList, entity, ENEMIES_OCCLUDED);
+            }
+        }
+
+        for (int i = interfaces.engine->getMaxClients() + 1; i <= interfaces.entityList->getHighestEntityIndex(); i++) {
+            const auto entity = interfaces.entityList->getEntity(i);
+            if (!entity || entity->isDormant() || !entity->isWeapon() || entity->ownerEntity() != -1)
+                continue;
+
+            if (!renderWeaponEsp(drawList, entity, config.weapons)) {
+                constexpr auto getWeaponIndex = [](WeaponId weaponId) constexpr noexcept {
+                    switch (weaponId) {
+                    default: return 0;
+
+                    case WeaponId::Glock:
+                    case WeaponId::Nova:
+                        return 1;
+                    case WeaponId::Hkp2000:
+                    case WeaponId::Xm1014:
+                        return 2;
+                    case WeaponId::Usp_s:
+                    case WeaponId::Sawedoff:
+                        return 3;
+                    case WeaponId::Elite:
+                    case WeaponId::Mag7:
+                        return 4;
+                    case WeaponId::P250:
+                    case WeaponId::M249:
+                        return 5;
+                    case WeaponId::Tec9:
+                    case WeaponId::Negev:
+                        return 6;
+                    case WeaponId::Fiveseven: return 7;
+                    case WeaponId::Cz75a: return 8;
+                    case WeaponId::Deagle: return 9;
+                    case WeaponId::Revolver: return 10;
+                    }
+                };
+
+                switch (entity->weaponId()) {
+                case WeaponId::Glock:
+                case WeaponId::Hkp2000:
+                case WeaponId::Usp_s:
+                case WeaponId::Elite:
+                case WeaponId::P250:
+                case WeaponId::Tec9:
+                case WeaponId::Fiveseven:
+                case WeaponId::Cz75a:
+                case WeaponId::Deagle:
+                case WeaponId::Revolver:
+                    if (!renderWeaponEsp(drawList, entity, config.pistols[0]))
+                        renderWeaponEsp(drawList, entity, config.pistols[getWeaponIndex(entity->weaponId())]);
+                    break;
+                case WeaponId::Nova:
+                case WeaponId::Xm1014:
+                case WeaponId::Sawedoff:
+                case WeaponId::Mag7:
+                case WeaponId::M249:
+                case WeaponId::Negev:
+                    if (!renderWeaponEsp(drawList, entity, config.heavy[0]))
+                        renderWeaponEsp(drawList, entity, config.heavy[getWeaponIndex(entity->weaponId())]);
+                    break;
+                }
             }
         }
     }
