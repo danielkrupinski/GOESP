@@ -65,6 +65,8 @@ void GUI::render() noexcept
             case 4:
                 return config.sniperRifles[subItem];
             case 5:
+                return config.shotguns[subItem];
+            case 6:
                 return config.heavy[subItem];
             }
         default:
@@ -90,7 +92,7 @@ void GUI::render() noexcept
                 case 1:
                     return { "Visible", "Occluded" };
                 case 2:
-                    return { "Pistols", "SMGs", "Rifles", "Sniper Rifles", "Heavy" };
+                    return { "Pistols", "SMGs", "Rifles", "Sniper Rifles", "Shotguns", "Heavy" };
                 default:
                     return { };
                 }
@@ -120,7 +122,9 @@ void GUI::render() noexcept
                         case 3:
                             return { "SSG 08", "AWP", "G3SG1", "SCAR-20" };
                         case 4:
-                            return { "Nova", "XM1014", "Sawed-Off", "MAG-7", "M249", "Negev" };
+                            return { "Nova", "XM1014", "Sawed-Off", "MAG-7" };
+                        case 5:
+                            return { "M249", "Negev" };
                         }
                     default:
                         return { };
