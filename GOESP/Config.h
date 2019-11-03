@@ -37,6 +37,7 @@ public:
     std::array<Weapon, 11> pistols;
     std::array<Weapon, 8> smgs;
     std::array<Weapon, 8> rifles;
+    std::array<Weapon, 5> sniperRifles;
     std::array<Weapon, 7> heavy;
 
 private:
