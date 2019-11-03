@@ -38,7 +38,8 @@ public:
     std::array<Weapon, 8> smgs;
     std::array<Weapon, 8> rifles;
     std::array<Weapon, 5> sniperRifles;
-    std::array<Weapon, 7> heavy;
+    std::array<Weapon, 7> shotguns;
+    std::array<Weapon, 3> heavy;
 
 private:
     std::filesystem::path path;
