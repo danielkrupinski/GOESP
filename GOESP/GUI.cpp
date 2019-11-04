@@ -10,9 +10,15 @@
 #include <array>
 #include <ctime>
 #include <iomanip>
+#include <Pdh.h>
 #include <sstream>
 #include <vector>
 #include <Windows.h>
+
+#pragma comment(lib, "pdh.lib")
+
+static PDH_HQUERY cpuQuery;
+static PDH_HCOUNTER cpuTotal;
 
 GUI::GUI() noexcept
 {
@@ -28,6 +34,10 @@ GUI::GUI() noexcept
     io.IniFilename = nullptr;
     io.LogFilename = nullptr;
     io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+
+    PdhOpenQueryW(nullptr, NULL, &cpuQuery);
+    PdhAddEnglishCounterW(cpuQuery, L"\\Processor(_Total)\\% Processor Time", NULL, &cpuTotal);
+    PdhCollectQueryData(cpuQuery);
 }
 
 void GUI::render() noexcept
@@ -35,7 +45,17 @@ void GUI::render() noexcept
     const auto time = std::time(nullptr);
     const auto localTime = std::localtime(&time);
 
-    const auto windowTitle = std::ostringstream{ } << "GOESP [" << std::setw(2) << std::setfill('0') << localTime->tm_hour << ':' << std::setw(2) << std::setfill('0') << localTime->tm_min << ':' << std::setw(2) << std::setfill('0') << localTime->tm_sec << "]###window";
+    static auto lastSecond = 0;
+    static PDH_FMT_COUNTERVALUE cpuUsage;
+
+    if (lastSecond != localTime->tm_sec) {
+        lastSecond = localTime->tm_sec;
+
+        PdhCollectQueryData(cpuQuery);
+        PdhGetFormattedCounterValue(cpuTotal, PDH_FMT_LONG, nullptr, &cpuUsage);
+    }
+
+    const auto windowTitle = std::ostringstream{ } << "GOESP [" << std::setw(2) << std::setfill('0') << localTime->tm_hour << ':' << std::setw(2) << std::setfill('0') << localTime->tm_min << ':' << std::setw(2) << std::setfill('0') << localTime->tm_sec << ']' << std::string(52, ' ') << "CPU: " << cpuUsage.longValue << "%###window";
 
     ImGui::SetNextWindowCollapsed(true, ImGui::GetIO().KeysDown[VK_SUBTRACT] ? ImGuiCond_Always : ImGuiCond_FirstUseEver);
 
@@ -197,8 +217,10 @@ void GUI::render() noexcept
     ImGui::TextUnformatted("Build date: " __DATE__ " " __TIME__);
     ImGui::SameLine(0.0f, 30.0f);
 
-    if (ImGui::Button("Unload"))
+    if (ImGui::Button("Unload")) {
+        PdhCloseQuery(cpuQuery);
         hooks.restore();
+    }
 
     ImGui::End();
 }
