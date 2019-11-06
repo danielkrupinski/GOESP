@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ClientClass.h"
 #include "EngineTrace.h"
 #include "EntityList.h"
 #include "../Interfaces.h"
@@ -20,6 +21,11 @@ public:
 
 class Entity {
 public:
+    constexpr ClientClass* getClientClass() noexcept
+    {
+        return callVirtualMethod<ClientClass*>(this + 8, 2);
+    }
+
     constexpr auto isDormant() noexcept
     {
         return callVirtualMethod<bool>(this + 8, 9);
