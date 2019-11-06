@@ -41,6 +41,7 @@ public:
     std::array<Weapon, 7> shotguns;
     std::array<Weapon, 3> heavy;
 
+    std::array<Weapon, 2> misc;
 private:
     std::filesystem::path path;
 };
