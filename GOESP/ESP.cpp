@@ -5,6 +5,7 @@
 #include "Config.h"
 #include "Interfaces.h"
 #include "Memory.h"
+#include "SDK/ClassId.h"
 #include "SDK/Engine.h"
 #include "SDK/Entity.h"
 #include "SDK/EntityList.h"
@@ -195,10 +196,10 @@ void ESP::render(ImDrawList* drawList) noexcept
 
         for (int i = interfaces.engine->getMaxClients() + 1; i <= interfaces.entityList->getHighestEntityIndex(); i++) {
             const auto entity = interfaces.entityList->getEntity(i);
-            if (!entity || entity->isDormant() || !entity->isWeapon() || entity->ownerEntity() != -1)
+            if (!entity || entity->isDormant())
                 continue;
 
-            if (!renderWeaponEsp(drawList, entity, config.weapons)) {
+            if (entity->isWeapon() && entity->ownerEntity() == -1 && !renderWeaponEsp(drawList, entity, config.weapons)) {
                 constexpr auto getWeaponIndex = [](WeaponId weaponId) constexpr noexcept {
                     switch (weaponId) {
                     default: return 0;
@@ -300,6 +301,12 @@ void ESP::render(ImDrawList* drawList) noexcept
                     if (!renderWeaponEsp(drawList, entity, config.heavy[0]))
                         renderWeaponEsp(drawList, entity, config.heavy[getWeaponIndex(entity->weaponId())]);
                     break;
+                }
+            } else {
+                switch (entity->getClientClass()->classId) {
+                case ClassId::EconEntity:
+                    if (!renderWeaponEsp(drawList, entity, config.misc[0]))
+                        renderWeaponEsp(drawList, entity, config.misc[1]);
                 }
             }
         }
