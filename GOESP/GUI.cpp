@@ -89,13 +89,15 @@ void GUI::render() noexcept
             case 6:
                 return config.heavy[subItem];
             }
+        case 3:
+            return config.misc[item];
         default:
             return config.players[0];
         }
     };
 
     if (ImGui::ListBoxHeader("##list", { 155.0f, 300.0f })) {
-        static constexpr std::array categories{ "Allies", "Enemies", "Weapons" };
+        static constexpr std::array categories{ "Allies", "Enemies", "Weapons", "Misc" };
 
         for (size_t i = 0; i < categories.size(); i++) {
             if (ImGui::Selectable(categories[i], currentCategory == i && currentItem == 0)) {
@@ -114,7 +116,7 @@ void GUI::render() noexcept
                 case 2:
                     return { "Pistols", "SMGs", "Rifles", "Sniper Rifles", "Shotguns", "Heavy" };
                 default:
-                    return { };
+                    return { "Defuse Kits" };
                 }
             };
 
@@ -207,6 +209,21 @@ void GUI::render() noexcept
             ImGui::SameLine();
             ImGui::SetNextItemWidth(95.0f);
             ImGui::Combo("", &weaponConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
+            break;
+        }
+        case 3: {
+            auto& miscConfig = getConfig(currentCategory, currentItem, currentSubItem);
+
+            ImGui::Checkbox("Enabled", &miscConfig.enabled);
+            ImGui::Separator();
+
+            constexpr auto spacing{ 200.0f };
+            ImGuiCustom::colorPicker("Snaplines", miscConfig.snaplines);
+            ImGui::SameLine(spacing);
+            ImGuiCustom::colorPicker("Box", miscConfig.box);
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(95.0f);
+            ImGui::Combo("", &miscConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
         }
         }
         ImGui::EndChild();
