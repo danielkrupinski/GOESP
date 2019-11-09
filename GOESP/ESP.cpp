@@ -307,6 +307,11 @@ void ESP::render(ImDrawList* drawList) noexcept
                 case ClassId::EconEntity:
                     if (!renderWeaponEsp(drawList, entity, config.misc[0]))
                         renderWeaponEsp(drawList, entity, config.misc[1]);
+                    break;
+                case ClassId::Chicken:
+                    if (!renderWeaponEsp(drawList, entity, config.misc[0]))
+                        renderWeaponEsp(drawList, entity, config.misc[2]);
+                    break;
                 }
             }
         }

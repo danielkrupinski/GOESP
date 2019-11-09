@@ -116,7 +116,7 @@ void GUI::render() noexcept
                 case 2:
                     return { "Pistols", "SMGs", "Rifles", "Sniper Rifles", "Shotguns", "Heavy" };
                 default:
-                    return { "Defuse Kits" };
+                    return { "Defuse Kits", "Chickens" };
                 }
             };
 
