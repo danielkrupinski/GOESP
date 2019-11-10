@@ -8,7 +8,7 @@ public:
     explicit Config(const char* folderName) noexcept;
 
     struct Color {
-        float color[3]{ 1.0f, 1.0f, 1.0f };
+        float color[4]{ 1.0f, 1.0f, 1.0f, 1.0f };
         bool rainbow = false;
         float rainbowSpeed = 0.6f;
     };
