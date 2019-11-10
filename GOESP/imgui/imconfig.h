@@ -64,8 +64,7 @@
 */
 #define IM_VEC4_CLASS_EXTRA \
         ImVec4(const std::array<float, 4>& color) noexcept { x = color[0]; y = color[1]; z = color[2]; w = color[3]; } \
-        ImVec4(const float f[3]) noexcept { x = f[0]; y = f[1]; z = f[2]; w = 1.0f; } \
-        ImVec4(std::tuple<float, float, float> color) noexcept { x = std::get<0>(color); y = std::get<1>(color); z = std::get<2>(color); w = 1.0f; }
+        ImVec4(const std::tuple<float, float, float, float>& color) noexcept { x = std::get<0>(color); y = std::get<1>(color); z = std::get<2>(color); w = std::get<3>(color); }
 
 //---- Using 32-bits vertex indices (default is 16-bits) is one way to allow large meshes with more than 64K vertices. 
 // Your renderer back-end will need to support it (most example renderer back-ends support both 16/32-bits indices).

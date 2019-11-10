@@ -13,11 +13,12 @@
 #include "SDK/Vector.h"
 #include "SDK/WeaponId.h"
 
-static constexpr auto rainbowColor(float time, float speed) noexcept
+static constexpr auto rainbowColor(float time, float speed, float alpha) noexcept
 {
     return std::make_tuple(std::sin(speed * time) * 0.5f + 0.5f,
                            std::sin(speed * time + static_cast<float>(2 * M_PI / 3)) * 0.5f + 0.5f,
-                           std::sin(speed * time + static_cast<float>(4 * M_PI / 3)) * 0.5f + 0.5f);
+                           std::sin(speed * time + static_cast<float>(4 * M_PI / 3)) * 0.5f + 0.5f,
+                           alpha);
 }
 
 static constexpr bool worldToScreen(const Vector& in, ImVec2& out) noexcept
@@ -78,7 +79,7 @@ static auto boundingBox(Entity* entity, BoundingBox& out) noexcept
 static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& bbox, const Config::Shared& config) noexcept
 {
     if (config.box.enabled) {
-        ImU32 color = config.box.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.box.rainbowSpeed)) : ImGui::ColorConvertFloat4ToU32(config.box.color);
+        ImU32 color = config.box.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.box.rainbowSpeed, config.box.color[3])) : ImGui::ColorConvertFloat4ToU32(config.box.color);
 
         switch (config.boxType) {
         case 0:
@@ -139,7 +140,7 @@ static void renderSnaplines(ImDrawList* drawList, Entity* entity, const Config::
     if (config.enabled) {
         if (ImVec2 position; worldToScreen(entity->getAbsOrigin(), position)) {
             const auto [width, height] = interfaces.engine->getScreenSize();
-            drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(height) }, position, config.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.rainbowSpeed)) : ImGui::ColorConvertFloat4ToU32(config.color));
+            drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(height) }, position, config.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.rainbowSpeed, config.color[3])) : ImGui::ColorConvertFloat4ToU32(config.color));
         }
     }
 }
