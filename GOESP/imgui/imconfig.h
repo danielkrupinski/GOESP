@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <array>
 #include <tuple>
 
 //---- Define assertion handler. Defaults to calling assert().
@@ -62,6 +63,7 @@
         operator MyVec2() const { return MyVec2(x,y); }
 */
 #define IM_VEC4_CLASS_EXTRA \
+        ImVec4(const std::array<float, 4>& color) noexcept { x = color[0]; y = color[1]; z = color[2]; w = color[3]; } \
         ImVec4(const float f[3]) noexcept { x = f[0]; y = f[1]; z = f[2]; w = 1.0f; } \
         ImVec4(std::tuple<float, float, float> color) noexcept { x = std::get<0>(color); y = std::get<1>(color); z = std::get<2>(color); w = 1.0f; }
 
