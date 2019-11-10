@@ -3,7 +3,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 
-void ImGuiCustom::colorPicker(const char* name, float color[3], bool* enable, bool* rainbow, float* rainbowSpeed) noexcept
+void ImGuiCustom::colorPicker(const char* name, float color[4], bool* enable, bool* rainbow, float* rainbowSpeed) noexcept
 {
     ImGui::PushID(name);
     if (enable) {
@@ -18,7 +18,7 @@ void ImGuiCustom::colorPicker(const char* name, float color[3], bool* enable, bo
         ImGui::OpenPopup("##popup");
 
     if (ImGui::BeginPopup("##popup")) {
-        ImGui::ColorPicker3("##picker", color, ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_NoSidePreview);
+        ImGui::ColorPicker4("##picker", color, ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_AlphaPreview);
 
         if (rainbow && rainbowSpeed) {
             ImGui::SameLine();
