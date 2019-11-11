@@ -12,6 +12,7 @@ struct ImFont;
 class Config {
 public:
     explicit Config(const char* folderName) noexcept;
+    void save() noexcept;
 
     struct Color {
         std::array<float, 4> color{ 1.0f, 1.0f, 1.0f, 1.0f };
@@ -33,7 +34,6 @@ public:
     };
 
     struct Player : public Shared {
-
     };
 
     struct Weapon : public Shared {

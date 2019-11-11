@@ -1,7 +1,9 @@
 #include "Config.h"
 
 #include "imgui/imgui.h"
+#include "nlohmann/json.hpp"
 
+#include <fstream>
 #include <ShlObj.h>
 #include <Windows.h>
 
@@ -35,6 +37,45 @@ Config::Config(const char* folderName) noexcept
         fontsPath = pathToFonts;
         CoTaskMemFree(pathToFonts);
     }
+    save();
+}
+
+using json = nlohmann::json;
+
+static void to_json(json& j, const Config::Color& c)
+{
+    j = json{ { "Color", c.color },
+              { "Rainbow", c.rainbow },
+              { "Rainbow Speed", c.rainbowSpeed }
+    };
+}
+
+static void to_json(json& j, const Config::ColorToggle& ct)
+{
+    j = static_cast<Config::Color>(ct);
+    j["Enabled"] = ct.enabled;
+}
+
+static void to_json(json& j, const Config::Shared& s)
+{
+    j = json{ { "Enabled", s.enabled },
+              { "Font", s.font },
+              { "Snaplines", s.snaplines }
+    };
+}
+
+static void to_json(json& j, const Config::Player& p)
+{
+    j = static_cast<Config::Shared>(p);
+}
+
+void Config::save() noexcept
+{
+    json j;
+    j["Players"] = players;
+
+    if (std::ofstream in{ path / "test.txt" }; in.good())
+        in << std::setw(4) << j;
 }
 
 void Config::scheduleFontLoad(const std::string& name) noexcept
