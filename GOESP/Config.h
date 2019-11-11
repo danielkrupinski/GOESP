@@ -2,6 +2,12 @@
 
 #include <array>
 #include <filesystem>
+#include <string>
+#include <tuple>
+#include <unordered_map>
+#include <vector>
+
+struct ImFont;
 
 class Config {
 public:
@@ -19,6 +25,8 @@ public:
 
     struct Shared {
         bool enabled = false;
+        std::string font;
+        int fontIndex = 0; // don't save
         ColorToggle snaplines;
         ColorToggle box;
         int boxType = 0;
@@ -42,7 +50,16 @@ public:
     std::array<Weapon, 3> heavy;
 
     std::array<Weapon, 3> misc;
+
+    std::vector<std::pair<std::string, std::string>> systemFonts{ { "Default", "" } };
+    std::unordered_map<std::string, ImFont*> fonts;
+
+    void scheduleFontLoad(const std::string& name) noexcept;
+    bool loadScheduledFonts() noexcept;
+
 private:
+    std::filesystem::path fontsPath;
+    std::vector<std::string> scheduledFonts;
     std::filesystem::path path;
 };
 

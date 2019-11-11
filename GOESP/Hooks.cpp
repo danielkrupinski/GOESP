@@ -6,6 +6,7 @@
 #include "imgui/imgui_impl_dx9.h"
 #include "imgui/imgui_impl_win32.h"
 
+#include "Config.h"
 #include "ESP.h"
 #include "GUI.h"
 #include "Interfaces.h"
@@ -36,6 +37,11 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
 
     IDirect3DVertexDeclaration9* vertexDeclaration;
     device->GetVertexDeclaration(&vertexDeclaration);
+
+    if (config.loadScheduledFonts()) {
+        ImGui_ImplDX9_InvalidateDeviceObjects();
+        ImGui_ImplDX9_CreateDeviceObjects();
+    }
 
     ImGui_ImplDX9_NewFrame();
     ImGui_ImplWin32_NewFrame();

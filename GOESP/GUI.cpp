@@ -206,6 +206,20 @@ void GUI::render() noexcept
                     ImGui::SameLine();
                     ImGui::SetNextItemWidth(95.0f);
                     ImGui::Combo("", &playerConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
+                    ImGui::SetNextItemWidth(200.0f);
+                    if (ImGui::BeginCombo("Font", config.systemFonts[playerConfig.fontIndex].first.c_str())) {
+                        for (size_t i = 0; i < config.systemFonts.size(); i++) {
+                            bool isSelected = config.systemFonts[i].second == playerConfig.font;
+                            if (ImGui::Selectable(config.systemFonts[i].first.c_str(), isSelected, 0, { 300.0f, 0.0f })) {
+                                playerConfig.fontIndex = i;
+                                playerConfig.font = config.systemFonts[i].second;
+                                config.scheduleFontLoad(playerConfig.font);
+                            }
+                            if (isSelected)
+                                ImGui::SetItemDefaultFocus();
+                        }
+                        ImGui::EndCombo();
+                    }
                     break;
                 }
                 case 2: {
@@ -242,14 +256,11 @@ void GUI::render() noexcept
             }
             ImGui::EndTabItem();
         }
-        if (ImGui::BeginTabItem("Fonts")) {
-            ImGui::TextUnformatted("Fonts here...");
-            ImGui::EndTabItem();
-        }
         if (ImGui::BeginTabItem("Configs")) {
             ImGui::TextUnformatted("Configs here...");
             ImGui::EndTabItem();
         }
+        ImGui::EndTabBar();
     }
 
     ImGui::End();
