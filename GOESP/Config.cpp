@@ -48,8 +48,8 @@ static void from_json(const json& j, Config::Color& c)
         c.color = color;
     if (const auto& rainbow = j["Rainbow"]; rainbow.is_boolean())
         c.rainbow = rainbow;
-    if (const auto& rainbow = j["Rainbow Speed"]; rainbow.is_number_float())
-        c.rainbow = rainbow;
+    if (const auto& rainbowSpeed = j["Rainbow Speed"]; rainbowSpeed.is_number_float())
+        c.rainbowSpeed = rainbowSpeed;
 }
 
 static void from_json(const json& j, Config::ColorToggle& ct)
@@ -63,8 +63,15 @@ static void from_json(const json& j, Config::Shared& s)
 {
     if (const auto& enabled = j["Enabled"]; enabled.is_boolean())
         s.enabled = enabled;
-    if (const auto& font = j["Font"]; font.is_string())
+    if (const auto& font = j["Font"]; font.is_string()) {
         s.font = font;
+        if (!s.font.empty())
+            config.scheduleFontLoad(s.font);
+        if (const auto it = std::find_if(std::cbegin(config.systemFonts), std::cend(config.systemFonts), [&s](const auto& e) { return e.second == s.font; }); it != std::cend(config.systemFonts))
+            s.fontIndex = std::distance(std::cbegin(config.systemFonts), it);
+        else
+            s.fontIndex = 0;
+    }
     if (const auto& snaplines = j["Snaplines"]; snaplines.is_object())
         s.snaplines = snaplines;
     if (const auto& box = j["Box"]; box.is_object())
