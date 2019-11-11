@@ -77,6 +77,7 @@ public:
         return trace.entity == this || trace.fraction > 0.97f;
     }
 
+    NETVAR_OFFSET(index, "CBaseEntity", "m_bIsAutoaimTarget", 4, int);
     NETVAR(ownerEntity, "CBaseEntity", "m_hOwnerEntity", int);
 
     NETVAR(health, "CBasePlayer", "m_iHealth", int);
