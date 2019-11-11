@@ -67,6 +67,10 @@ static void from_json(const json& j, Config::Shared& s)
         s.font = font;
     if (const auto& snaplines = j["Snaplines"]; snaplines.is_object())
         s.snaplines = snaplines;
+    if (const auto& box = j["Box"]; box.is_object())
+        s.box = box;
+    if (const auto& boxType = j["Box Type"]; boxType.is_number_integer())
+        s.boxType = boxType;
 }
 
 void Config::load() noexcept
@@ -100,7 +104,9 @@ static void to_json(json& j, const Config::Shared& s)
 {
     j = json{ { "Enabled", s.enabled },
               { "Font", s.font },
-              { "Snaplines", s.snaplines }
+              { "Snaplines", s.snaplines },
+              { "Box", s.box },
+              { "Box Type", s.boxType }
     };
 }
 
