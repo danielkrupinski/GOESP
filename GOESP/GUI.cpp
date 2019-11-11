@@ -258,6 +258,11 @@ void GUI::render() noexcept
         }
         if (ImGui::BeginTabItem("Configs")) {
             ImGui::TextUnformatted("Configs here...");
+
+            if (ImGui::Button("Load"))
+                config.load();
+            if (ImGui::Button("Save"))
+                config.save();
             ImGui::EndTabItem();
         }
         ImGui::EndTabBar();
