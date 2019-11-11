@@ -15,6 +15,9 @@
     <Filter Include="SDK">
       <UniqueIdentifier>{4a39f9e0-a73c-4ee8-a02c-9954b97a5390}</UniqueIdentifier>
     </Filter>
+    <Filter Include="nlohmann">
+      <UniqueIdentifier>{bec31ec2-8568-41a6-9540-a190366ad229}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -153,6 +156,9 @@
     </ClInclude>
     <ClInclude Include="SDK\WeaponId.h">
       <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="nlohmann\json.hpp">
+      <Filter>nlohmann</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
