@@ -197,16 +197,8 @@ void GUI::render() noexcept
                     auto& playerConfig = config.players[currentCategory * 3 + currentItem];
 
                     ImGui::Checkbox("Enabled", &playerConfig.enabled);
-                    ImGui::Separator();
-
-                    constexpr auto spacing{ 200.0f };
-                    ImGuiCustom::colorPicker("Snaplines", playerConfig.snaplines);
-                    ImGui::SameLine(spacing);
-                    ImGuiCustom::colorPicker("Box", playerConfig.box);
-                    ImGui::SameLine();
-                    ImGui::SetNextItemWidth(95.0f);
-                    ImGui::Combo("", &playerConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
-                    ImGui::SetNextItemWidth(200.0f);
+                    ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 260.0f);
+                    ImGui::SetNextItemWidth(220.0f);
                     if (ImGui::BeginCombo("Font", config.systemFonts[playerConfig.fontIndex].first.c_str())) {
                         for (size_t i = 0; i < config.systemFonts.size(); i++) {
                             bool isSelected = config.systemFonts[i].second == playerConfig.font;
@@ -220,6 +212,16 @@ void GUI::render() noexcept
                         }
                         ImGui::EndCombo();
                     }
+
+                    ImGui::Separator();
+
+                    constexpr auto spacing{ 200.0f };
+                    ImGuiCustom::colorPicker("Snaplines", playerConfig.snaplines);
+                    ImGui::SameLine(spacing);
+                    ImGuiCustom::colorPicker("Box", playerConfig.box);
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(95.0f);
+                    ImGui::Combo("", &playerConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
                     break;
                 }
                 case 2: {
@@ -257,8 +259,6 @@ void GUI::render() noexcept
             ImGui::EndTabItem();
         }
         if (ImGui::BeginTabItem("Configs")) {
-            ImGui::TextUnformatted("Configs here...");
-
             if (ImGui::Button("Load"))
                 config.load();
             if (ImGui::Button("Save"))
