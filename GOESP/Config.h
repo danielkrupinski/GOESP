@@ -12,6 +12,7 @@ struct ImFont;
 class Config {
 public:
     explicit Config(const char* folderName) noexcept;
+    void load() noexcept;
     void save() noexcept;
 
     struct Color {

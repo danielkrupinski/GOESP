@@ -42,6 +42,46 @@ Config::Config(const char* folderName) noexcept
 
 using json = nlohmann::json;
 
+static void from_json(const json& j, Config::Color& c)
+{
+    if (const auto& color = j["Color"]; color.is_array() && color.size() == c.color.size())
+        c.color = color;
+    if (const auto& rainbow = j["Rainbow"]; rainbow.is_boolean())
+        c.rainbow = rainbow;
+    if (const auto& rainbow = j["Rainbow Speed"]; rainbow.is_number_float())
+        c.rainbow = rainbow;
+}
+
+static void from_json(const json& j, Config::ColorToggle& ct)
+{
+    if (const auto& enabled = j["Enabled"]; enabled.is_boolean())
+        ct.enabled = enabled;
+    from_json(j, static_cast<Config::Color&>(ct));
+}
+
+static void from_json(const json& j, Config::Shared& s)
+{
+    if (const auto& enabled = j["Enabled"]; enabled.is_boolean())
+        s.enabled = enabled;
+    if (const auto& font = j["Font"]; font.is_string())
+        s.font = font;
+    if (const auto& snaplines = j["Snaplines"]; snaplines.is_object())
+        s.snaplines = snaplines;
+}
+
+void Config::load() noexcept
+{
+    json j;
+
+    if (std::ifstream in{ path / "test.txt" }; in.good())
+        in >> j;
+    else
+        return;
+
+    if (const auto& players = j["Players"]; players.is_array() && players.size() == this->players.size())
+        this->players = players;
+}
+
 static void to_json(json& j, const Config::Color& c)
 {
     j = json{ { "Color", c.color },
@@ -74,8 +114,8 @@ void Config::save() noexcept
     json j;
     j["Players"] = players;
 
-    if (std::ofstream in{ path / "test.txt" }; in.good())
-        in << std::setw(4) << j;
+    if (std::ofstream out{ path / "test.txt" }; out.good())
+        out << std::setw(4) << j;
 }
 
 void Config::scheduleFontLoad(const std::string& name) noexcept
