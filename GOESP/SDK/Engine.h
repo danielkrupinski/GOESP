@@ -32,6 +32,11 @@ public:
         return std::make_pair(w, h);
     }
 
+    constexpr auto getPlayerInfo(int entityIndex, const PlayerInfo& playerInfo) noexcept
+    {
+        return callVirtualMethod<bool, int, const PlayerInfo&>(this, 8, entityIndex, playerInfo);
+    }
+
     constexpr auto getLocalPlayer() noexcept
     {
         return callVirtualMethod<int>(this, 12);
