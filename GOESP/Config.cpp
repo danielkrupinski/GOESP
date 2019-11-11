@@ -141,7 +141,7 @@ bool Config::loadScheduledFonts() noexcept
     bool result = false;
 
     for (const auto& font : scheduledFonts) {
-        if (!fonts[font]) {
+        if (!fonts[font] && !font.empty()) {
             fonts[font] = ImGui::GetIO().Fonts->AddFontFromFileTTF((fontsPath / font).string().c_str(), 30.0f);
             result = true;
         }
