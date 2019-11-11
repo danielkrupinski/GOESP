@@ -37,7 +37,6 @@ Config::Config(const char* folderName) noexcept
         fontsPath = pathToFonts;
         CoTaskMemFree(pathToFonts);
     }
-    save();
 }
 
 using json = nlohmann::json;
@@ -78,6 +77,8 @@ static void from_json(const json& j, Config::Shared& s)
         s.box = box;
     if (const auto& boxType = j["Box Type"]; boxType.is_number_integer())
         s.boxType = boxType;
+    if (const auto& name = j["Name"]; name.is_object())
+        s.name = name;
 }
 
 void Config::load() noexcept
@@ -113,7 +114,8 @@ static void to_json(json& j, const Config::Shared& s)
               { "Font", s.font },
               { "Snaplines", s.snaplines },
               { "Box", s.box },
-              { "Box Type", s.boxType }
+              { "Box Type", s.boxType },
+              { "Name", s.name }
     };
 }
 

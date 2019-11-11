@@ -32,6 +32,7 @@ public:
         ColorToggle snaplines;
         ColorToggle box;
         int boxType = 0;
+        ColorToggle name;
     };
 
     struct Player : public Shared {
