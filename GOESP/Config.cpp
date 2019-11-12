@@ -27,7 +27,7 @@ Config::Config(const char* folderName) noexcept
                 DWORD fontNameLength = 200, fontFilenameLength = 50;
 
                 if (RegEnumValueA(key, i, fontName, &fontNameLength, nullptr, nullptr, PBYTE(fontFilename), &fontFilenameLength) == ERROR_SUCCESS)
-                    systemFonts.push_back(std::make_pair(fontName, fontFilename));
+                    systemFonts.emplace_back(fontName, fontFilename);
             }
         }
         RegCloseKey(key);
