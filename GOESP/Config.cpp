@@ -26,7 +26,7 @@ Config::Config(const char* folderName) noexcept
                 CHAR fontName[200], fontFilename[50];
                 DWORD fontNameLength = 200, fontFilenameLength = 50;
 
-                if (RegEnumValueA(key, i, fontName, &fontNameLength, nullptr, nullptr, PBYTE(fontFilename), &fontFilenameLength) == ERROR_SUCCESS)
+                if (RegEnumValueA(key, i, fontName, &fontNameLength, nullptr, nullptr, PBYTE(fontFilename), &fontFilenameLength) == ERROR_SUCCESS && (std::strstr(fontFilename, ".ttf") || std::strstr(fontFilename, ".TTF")))
                     systemFonts.emplace_back(fontName, fontFilename);
             }
         }
