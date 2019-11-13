@@ -10,6 +10,7 @@ class Engine;
 class EngineTrace;
 class EntityList;
 class InputSystem;
+class Localize;
 
 class Interfaces {
 public:
@@ -18,6 +19,7 @@ public:
     EngineTrace* engineTrace = find<EngineTrace>(L"engine", "EngineTraceClient004");
     EntityList* entityList = find<EntityList>(L"client_panorama", "VClientEntityList003");
     InputSystem* inputSystem = find<InputSystem>(L"inputsystem", "InputSystemVersion001");
+    Localize* localize = find<Localize>(L"localize", "Localize_001");
 private:
     template <typename T>
     static auto find(const wchar_t* module, const char* name) noexcept
