@@ -222,6 +222,7 @@ void GUI::render() noexcept
                     ImGui::SameLine();
                     ImGui::SetNextItemWidth(95.0f);
                     ImGui::Combo("", &playerConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
+                    ImGuiCustom::colorPicker("Name", playerConfig.name);
                     break;
                 }
                 case 2: {
@@ -237,6 +238,7 @@ void GUI::render() noexcept
                     ImGui::SameLine();
                     ImGui::SetNextItemWidth(95.0f);
                     ImGui::Combo("", &weaponConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
+                    ImGuiCustom::colorPicker("Name", weaponConfig.name);
                     break;
                 }
                 case 3: {
@@ -252,6 +254,7 @@ void GUI::render() noexcept
                     ImGui::SameLine();
                     ImGui::SetNextItemWidth(95.0f);
                     ImGui::Combo("", &miscConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
+                    ImGuiCustom::colorPicker("Name", miscConfig.name);
                 }
                 }
                 ImGui::EndChild();
