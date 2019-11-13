@@ -1,6 +1,7 @@
 #include "ESP.h"
 
 #include "imgui/imgui.h"
+#include "imgui/imgui_internal.h"
 
 #include "Config.h"
 #include "Interfaces.h"
@@ -125,6 +126,24 @@ static void renderPlayerBox(ImDrawList* drawList, Entity* entity, const Config::
 {
     if (BoundingBox bbox; boundingBox(entity, bbox)) {
         renderBox(drawList, entity, bbox, config);
+
+        if (config.name.enabled) {
+            if (PlayerInfo playerInfo; interfaces.engine->getPlayerInfo(entity->index(), playerInfo)) {
+                ImGui::PushFont(::config.fonts[config.font]);
+
+                const auto distance = (interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer())->getAbsOrigin() - entity->getAbsOrigin()).length();
+                const auto fontSize = std::clamp(15.0f * 10.0f / std::sqrt(distance), 10.0f, 15.0f);
+                const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
+
+                ImGui::GetCurrentContext()->FontSize = fontSize;
+                const auto textSize = ImGui::CalcTextSize(playerInfo.name);
+                const ImU32 color = config.name.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.name.rainbowSpeed, config.name.color[3])) : ImGui::ColorConvertFloat4ToU32(config.name.color);
+                drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, playerInfo.name);
+                ImGui::GetCurrentContext()->FontSize = oldFontSize;
+
+                ImGui::PopFont();
+            }
+        }
     }
 }
 
