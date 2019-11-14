@@ -160,5 +160,8 @@
     <ClInclude Include="nlohmann\json.hpp">
       <Filter>nlohmann</Filter>
     </ClInclude>
+    <ClInclude Include="SDK\Localize.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

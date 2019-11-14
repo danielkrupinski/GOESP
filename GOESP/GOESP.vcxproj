@@ -164,6 +164,7 @@
     <ClInclude Include="SDK\EntityList.h" />
     <ClInclude Include="SDK\GlobalVars.h" />
     <ClInclude Include="SDK\InputSystem.h" />
+    <ClInclude Include="SDK\Localize.h" />
     <ClInclude Include="SDK\Matrix3x4.h" />
     <ClInclude Include="SDK\Recv.h" />
     <ClInclude Include="SDK\Utils.h" />
