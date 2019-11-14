@@ -169,6 +169,7 @@
     <ClInclude Include="SDK\Recv.h" />
     <ClInclude Include="SDK\Utils.h" />
     <ClInclude Include="SDK\Vector.h" />
+    <ClInclude Include="SDK\WeaponData.h" />
     <ClInclude Include="SDK\WeaponId.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
