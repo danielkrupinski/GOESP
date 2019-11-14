@@ -2,6 +2,20 @@
 
 #include <cstddef>
 
+enum class WeaponType {
+    Knife = 0,
+    Pistol,
+    SubMachinegun,
+    Rifle,
+    Shotgun,
+    SniperRifle,
+    Machinegun,
+    C4,
+    Placeholder,
+    Grenade,
+    Unknown
+};
+
 struct WeaponData {
 private: std::byte pad_0[20];
 public:
@@ -11,7 +25,7 @@ public:
     const char* name;
 private: std::byte pad_2[60];
 public:
-    int type;
+    WeaponType type;
 private: std::byte pad_3[32];
     bool fullAuto;
 private: std::byte pad_4[3];
