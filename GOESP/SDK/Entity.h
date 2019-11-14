@@ -10,6 +10,7 @@
 #include "WeaponId.h"
 
 struct Vector;
+struct WeaponData;
 class Matrix3x4;
 
 class Collideable {
@@ -56,6 +57,11 @@ public:
         Vector vec{ };
         callVirtualMethod<void, Vector&>(this, 283, vec);
         return vec;
+    }
+
+    constexpr auto getWeaponData() noexcept
+    {
+        return callVirtualMethod<WeaponData*>(this, 456);
     }
 
     auto& coordinateFrame() noexcept
