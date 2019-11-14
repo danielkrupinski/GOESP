@@ -229,6 +229,21 @@ void GUI::render() noexcept
                     auto& weaponConfig = getConfig(currentCategory, currentItem, currentSubItem);
 
                     ImGui::Checkbox("Enabled", &weaponConfig.enabled);
+                    ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 260.0f);
+                    ImGui::SetNextItemWidth(220.0f);
+                    if (ImGui::BeginCombo("Font", config.systemFonts[weaponConfig.fontIndex].first.c_str())) {
+                        for (size_t i = 0; i < config.systemFonts.size(); i++) {
+                            bool isSelected = config.systemFonts[i].second == weaponConfig.font;
+                            if (ImGui::Selectable(config.systemFonts[i].first.c_str(), isSelected, 0, { 300.0f, 0.0f })) {
+                                weaponConfig.fontIndex = i;
+                                weaponConfig.font = config.systemFonts[i].second;
+                                config.scheduleFontLoad(weaponConfig.font);
+                            }
+                            if (isSelected)
+                                ImGui::SetItemDefaultFocus();
+                        }
+                        ImGui::EndCombo();
+                    }
                     ImGui::Separator();
 
                     constexpr auto spacing{ 200.0f };
@@ -245,6 +260,21 @@ void GUI::render() noexcept
                     auto& miscConfig = getConfig(currentCategory, currentItem, currentSubItem);
 
                     ImGui::Checkbox("Enabled", &miscConfig.enabled);
+                    ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 260.0f);
+                    ImGui::SetNextItemWidth(220.0f);
+                    if (ImGui::BeginCombo("Font", config.systemFonts[miscConfig.fontIndex].first.c_str())) {
+                        for (size_t i = 0; i < config.systemFonts.size(); i++) {
+                            bool isSelected = config.systemFonts[i].second == miscConfig.font;
+                            if (ImGui::Selectable(config.systemFonts[i].first.c_str(), isSelected, 0, { 300.0f, 0.0f })) {
+                                miscConfig.fontIndex = i;
+                                miscConfig.font = config.systemFonts[i].second;
+                                config.scheduleFontLoad(miscConfig.font);
+                            }
+                            if (isSelected)
+                                ImGui::SetItemDefaultFocus();
+                        }
+                        ImGui::EndCombo();
+                    }
                     ImGui::Separator();
 
                     constexpr auto spacing{ 200.0f };
