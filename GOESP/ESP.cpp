@@ -11,6 +11,7 @@
 #include "SDK/Entity.h"
 #include "SDK/EntityList.h"
 #include "SDK/GlobalVars.h"
+#include "SDK/Localize.h"
 #include "SDK/Vector.h"
 #include "SDK/WeaponData.h"
 #include "SDK/WeaponId.h"
@@ -152,6 +153,26 @@ static void renderWeaponBox(ImDrawList* drawList, Entity* entity, const Config::
 {
     if (BoundingBox bbox; boundingBox(entity, bbox)) {
         renderBox(drawList, entity, bbox, config);
+
+        if (config.name.enabled) {
+            if (const auto weaponData = entity->getWeaponData()) {
+                if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces.localize->find(weaponData->name), -1, weaponName, _countof(weaponName), nullptr, nullptr)) {
+                    ImGui::PushFont(::config.fonts[config.font]);
+
+                    const auto distance = (interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer())->getAbsOrigin() - entity->getAbsOrigin()).length();
+                    const auto fontSize = std::clamp(15.0f * 10.0f / std::sqrt(distance), 10.0f, 15.0f);
+                    const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
+
+                    ImGui::GetCurrentContext()->FontSize = fontSize;
+                    const auto textSize = ImGui::CalcTextSize(weaponName);
+                    const ImU32 color = config.name.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.name.rainbowSpeed, config.name.color[3])) : ImGui::ColorConvertFloat4ToU32(config.name.color);
+                    drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, weaponName);
+                    ImGui::GetCurrentContext()->FontSize = oldFontSize;
+
+                    ImGui::PopFont();
+                }
+            }
+        }
     }
 }
 
