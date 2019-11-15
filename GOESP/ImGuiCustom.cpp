@@ -26,7 +26,7 @@ void ImGuiCustom::colorPicker(const char* name, std::array<float, 4>& color, boo
             if (ImGui::BeginChild("##child", { 100.0f, 0.0f })) {
                 ImGui::Checkbox("Rainbow", rainbow);
                 ImGui::SetNextItemWidth(50.0f);
-                ImGui::InputFloat("Speed", rainbowSpeed, 0.0f, 0.0f, "%.1f");
+                ImGui::InputFloat("Speed", rainbowSpeed, 0.0f, 0.0f, "%.2f");
                 ImGui::EndChild();
             }
         }
