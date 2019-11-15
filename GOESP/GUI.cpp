@@ -226,7 +226,27 @@ void GUI::render() noexcept
                     break;
                 }
                 case 2: {
-                    auto& weaponConfig = getConfig(currentCategory, currentItem, currentSubItem);
+                    constexpr auto getWeaponConfig = [](int item, int subItem) constexpr noexcept -> Config::Weapon& {
+                        switch (item) {
+                        default:
+                        case 0:
+                            return config.weapons;
+                        case 1:
+                            return config.pistols[subItem];
+                        case 2:
+                            return config.smgs[subItem];
+                        case 3:
+                            return config.rifles[subItem];
+                        case 4:
+                            return config.sniperRifles[subItem];
+                        case 5:
+                            return config.shotguns[subItem];
+                        case 6:
+                            return config.heavy[subItem];
+                        }
+                    };
+
+                    auto& weaponConfig = getWeaponConfig(currentItem, currentSubItem);
 
                     ImGui::Checkbox("Enabled", &weaponConfig.enabled);
                     ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 260.0f);
@@ -254,6 +274,8 @@ void GUI::render() noexcept
                     ImGui::SetNextItemWidth(95.0f);
                     ImGui::Combo("", &weaponConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
                     ImGuiCustom::colorPicker("Name", weaponConfig.name);
+                    ImGui::SameLine(spacing);
+                    ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
                     break;
                 }
                 case 3: {
