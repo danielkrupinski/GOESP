@@ -154,25 +154,36 @@ static void renderWeaponBox(ImDrawList* drawList, Entity* entity, const Config::
     if (BoundingBox bbox; boundingBox(entity, bbox)) {
         renderBox(drawList, entity, bbox, config);
 
+        ImGui::PushFont(::config.fonts[config.font]);
+        const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
+
         if (config.name.enabled) {
             if (const auto weaponData = entity->getWeaponData()) {
                 if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces.localize->find(weaponData->name), -1, weaponName, _countof(weaponName), nullptr, nullptr)) {
-                    ImGui::PushFont(::config.fonts[config.font]);
-
                     const auto distance = (interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer())->getAbsOrigin() - entity->getAbsOrigin()).length();
                     const auto fontSize = std::clamp(15.0f * 10.0f / std::sqrt(distance), 10.0f, 15.0f);
-                    const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
 
                     ImGui::GetCurrentContext()->FontSize = fontSize;
                     const auto textSize = ImGui::CalcTextSize(weaponName);
                     const ImU32 color = config.name.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.name.rainbowSpeed, config.name.color[3])) : ImGui::ColorConvertFloat4ToU32(config.name.color);
                     drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, weaponName);
-                    ImGui::GetCurrentContext()->FontSize = oldFontSize;
-
-                    ImGui::PopFont();
                 }
             }
         }
+
+        if (config.ammo.enabled) {
+            const auto text{ std::to_string(entity->clip()) + " / " + std::to_string(entity->reserveAmmoCount()) };
+            const auto distance = (interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer())->getAbsOrigin() - entity->getAbsOrigin()).length();
+            const auto fontSize = std::clamp(15.0f * 10.0f / std::sqrt(distance), 10.0f, 15.0f);
+
+            ImGui::GetCurrentContext()->FontSize = fontSize;
+            const auto textSize = ImGui::CalcTextSize(text.c_str());
+            const ImU32 color = config.ammo.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.ammo.rainbowSpeed, config.ammo.color[3])) : ImGui::ColorConvertFloat4ToU32(config.ammo.color);
+            drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.max.y }, color, text.c_str());
+        }
+
+        ImGui::GetCurrentContext()->FontSize = oldFontSize;
+        ImGui::PopFont();
     }
 }
 
