@@ -91,5 +91,6 @@ public:
     NETVAR_OFFSET(index, "CBaseEntity", "m_bIsAutoaimTarget", 4, int);
     NETVAR(ownerEntity, "CBaseEntity", "m_hOwnerEntity", int);
 
+    NETVAR(aimPunchAngle, "CBasePlayer", "m_aimPunchAngle", Vector);
     NETVAR(health, "CBasePlayer", "m_iHealth", int);
 };
