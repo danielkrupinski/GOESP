@@ -39,7 +39,7 @@ public:
     };
 
     struct Weapon : public Shared {
-
+        ColorToggle ammo;
     };
 
     std::array<Player, 6> players;
