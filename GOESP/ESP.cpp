@@ -239,17 +239,19 @@ static constexpr bool renderPlayerEsp(ImDrawList* drawList, Entity* entity, EspI
     return config.players[id].enabled;
 }
 
-static constexpr bool renderWeaponEsp(ImDrawList* drawList, Entity* entity, const Config::Weapon& config) noexcept
+static constexpr void renderWeaponEsp(ImDrawList* drawList, Entity* entity, const Config::Weapon& parentConfig, const Config::Weapon& itemConfig) noexcept
 {
+    const auto& config = parentConfig.enabled ? parentConfig : itemConfig;
     if (config.enabled) {
         renderWeaponBox(drawList, entity, config);
         renderSnaplines(drawList, entity, config.snaplines);
     }
-    return config.enabled;
 }
 
-static bool renderEntityEsp(ImDrawList* drawList, Entity* entity, const Config::Shared& config, const char* name, const wchar_t* wideName = nullptr) noexcept
+static void renderEntityEsp(ImDrawList* drawList, Entity* entity, const Config::Shared& parentConfig, const Config::Shared& itemConfig, const char* name, const wchar_t* wideName = nullptr) noexcept
 {
+    const auto& config = parentConfig.enabled ? parentConfig : itemConfig;
+
     if (config.enabled) {
         if (name)
             renderEntityBox(drawList, entity, name, config);
@@ -258,7 +260,6 @@ static bool renderEntityEsp(ImDrawList* drawList, Entity* entity, const Config::
 
         renderSnaplines(drawList, entity, config.snaplines);
     }
-    return config.enabled;
 }
 
 void ESP::render(ImDrawList* drawList) noexcept
@@ -294,7 +295,7 @@ void ESP::render(ImDrawList* drawList) noexcept
             if (!entity || entity->isDormant())
                 continue;
 
-            if (entity->isWeapon() && entity->ownerEntity() == -1 && !renderWeaponEsp(drawList, entity, config.weapons)) {
+            if (entity->isWeapon() && entity->ownerEntity() == -1) {
                 constexpr auto getWeaponIndex = [](WeaponId weaponId) constexpr noexcept {
                     switch (weaponId) {
                     default: return 0;
@@ -343,43 +344,37 @@ void ESP::render(ImDrawList* drawList) noexcept
                     }
                 };
 
-                if (const auto weaponData = entity->getWeaponData()) {
+                if (const auto weaponData = entity->getWeaponData(); weaponData && config.weapons.enabled) {
                     switch (weaponData->type) {
                     case WeaponType::Pistol:
-                        if (!renderWeaponEsp(drawList, entity, config.pistols[0]))
-                            renderWeaponEsp(drawList, entity, config.pistols[getWeaponIndex(entity->weaponId())]);
+                        renderWeaponEsp(drawList, entity, config.pistols[0], config.pistols[getWeaponIndex(entity->weaponId())]);
                         break;
                     case WeaponType::SubMachinegun:
-                        if (!renderWeaponEsp(drawList, entity, config.smgs[0]))
-                            renderWeaponEsp(drawList, entity, config.smgs[getWeaponIndex(entity->weaponId())]);
+                        renderWeaponEsp(drawList, entity, config.smgs[0], config.smgs[getWeaponIndex(entity->weaponId())]);
                         break;
                     case WeaponType::Rifle:
-                        if (!renderWeaponEsp(drawList, entity, config.rifles[0]))
-                            renderWeaponEsp(drawList, entity, config.rifles[getWeaponIndex(entity->weaponId())]);
+                        renderWeaponEsp(drawList, entity, config.rifles[0], config.rifles[getWeaponIndex(entity->weaponId())]);
                         break;
                     case WeaponType::SniperRifle:
-                        if (!renderWeaponEsp(drawList, entity, config.sniperRifles[0]))
-                            renderWeaponEsp(drawList, entity, config.sniperRifles[getWeaponIndex(entity->weaponId())]);
+                        renderWeaponEsp(drawList, entity, config.sniperRifles[0], config.sniperRifles[getWeaponIndex(entity->weaponId())]);
                         break;
                     case WeaponType::Shotgun:
-                        if (!renderWeaponEsp(drawList, entity, config.shotguns[0]))
-                            renderWeaponEsp(drawList, entity, config.shotguns[getWeaponIndex(entity->weaponId())]);
+                        renderWeaponEsp(drawList, entity, config.shotguns[0], config.shotguns[getWeaponIndex(entity->weaponId())]);
                         break;
                     case WeaponType::Machinegun:
-                        if (!renderWeaponEsp(drawList, entity, config.heavy[0]))
-                            renderWeaponEsp(drawList, entity, config.heavy[getWeaponIndex(entity->weaponId())]);
+                        renderWeaponEsp(drawList, entity, config.heavy[0], config.heavy[getWeaponIndex(entity->weaponId())]);
                         break;
                     }
+                } else {
+                    renderWeaponEsp(drawList, entity, config.weapons, config.weapons);
                 }
             } else {
                 switch (entity->getClientClass()->classId) {
                 case ClassId::EconEntity:
-                    if (!renderEntityEsp(drawList, entity, config.misc[0], nullptr, interfaces.localize->find("#SFUI_WPNHUD_DEFUSER")))
-                        renderEntityEsp(drawList, entity, config.misc[1], nullptr, interfaces.localize->find("#SFUI_WPNHUD_DEFUSER"));
+                    renderEntityEsp(drawList, entity, config.misc[0], config.misc[1], nullptr, interfaces.localize->find("#SFUI_WPNHUD_DEFUSER"));
                     break;
                 case ClassId::Chicken:
-                    if (!renderEntityEsp(drawList, entity, config.misc[0], "Chicken"))
-                        renderEntityEsp(drawList, entity, config.misc[2], "Chicken");
+                    renderEntityEsp(drawList, entity, config.misc[0], config.misc[2], "Chicken");
                     break;
                 }
             }
