@@ -187,6 +187,29 @@ static void renderWeaponBox(ImDrawList* drawList, Entity* entity, const Config::
     }
 }
 
+static void renderEntityBox(ImDrawList* drawList, Entity* entity, const char* name, const Config::Shared& config) noexcept
+{
+    if (BoundingBox bbox; boundingBox(entity, bbox)) {
+        renderBox(drawList, entity, bbox, config);
+
+        ImGui::PushFont(::config.fonts[config.font]);
+        const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
+
+        if (config.name.enabled) {
+            const auto distance = (interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer())->getAbsOrigin() - entity->getAbsOrigin()).length();
+            const auto fontSize = std::clamp(15.0f * 10.0f / std::sqrt(distance), 10.0f, 15.0f);
+
+            ImGui::GetCurrentContext()->FontSize = fontSize;
+            const auto textSize = ImGui::CalcTextSize(name);
+            const ImU32 color = config.name.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.name.rainbowSpeed, config.name.color[3])) : ImGui::ColorConvertFloat4ToU32(config.name.color);
+            drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, name);
+        }
+
+        ImGui::GetCurrentContext()->FontSize = oldFontSize;
+        ImGui::PopFont();
+    }
+}
+
 static void renderSnaplines(ImDrawList* drawList, Entity* entity, const Config::ColorToggle& config) noexcept
 {
     if (config.enabled) {
@@ -220,6 +243,19 @@ static constexpr bool renderWeaponEsp(ImDrawList* drawList, Entity* entity, cons
 {
     if (config.enabled) {
         renderWeaponBox(drawList, entity, config);
+        renderSnaplines(drawList, entity, config.snaplines);
+    }
+    return config.enabled;
+}
+
+static bool renderEntityEsp(ImDrawList* drawList, Entity* entity, const Config::Shared& config, const char* name, const wchar_t* wideName = nullptr) noexcept
+{
+    if (config.enabled) {
+        if (name)
+            renderEntityBox(drawList, entity, name, config);
+        else if (char nameConverted[100]; WideCharToMultiByte(CP_UTF8, 0, wideName, -1, nameConverted, _countof(nameConverted), nullptr, nullptr))
+            renderEntityBox(drawList, entity, nameConverted, config);
+
         renderSnaplines(drawList, entity, config.snaplines);
     }
     return config.enabled;
@@ -338,12 +374,12 @@ void ESP::render(ImDrawList* drawList) noexcept
             } else {
                 switch (entity->getClientClass()->classId) {
                 case ClassId::EconEntity:
-                    if (!renderWeaponEsp(drawList, entity, config.misc[0]))
-                        renderWeaponEsp(drawList, entity, config.misc[1]);
+                    if (!renderEntityEsp(drawList, entity, config.misc[0], nullptr, interfaces.localize->find("#SFUI_WPNHUD_DEFUSER")))
+                        renderEntityEsp(drawList, entity, config.misc[1], nullptr, interfaces.localize->find("#SFUI_WPNHUD_DEFUSER"));
                     break;
                 case ClassId::Chicken:
-                    if (!renderWeaponEsp(drawList, entity, config.misc[0]))
-                        renderWeaponEsp(drawList, entity, config.misc[2]);
+                    if (!renderEntityEsp(drawList, entity, config.misc[0], "Chicken"))
+                        renderEntityEsp(drawList, entity, config.misc[2], "Chicken");
                     break;
                 }
             }

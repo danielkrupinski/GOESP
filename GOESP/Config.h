@@ -51,7 +51,7 @@ public:
     std::array<Weapon, 7> shotguns;
     std::array<Weapon, 3> heavy;
 
-    std::array<Weapon, 3> misc;
+    std::array<Shared, 3> misc;
 
     std::vector<std::pair<std::string, std::string>> systemFonts{ { "Default", "" } };
     std::unordered_map<std::string, ImFont*> fonts;
