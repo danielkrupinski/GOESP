@@ -14,8 +14,8 @@ struct WeaponData;
 class Matrix3x4;
 
 class Collideable {
+virtual void* pad() = 0;
 public:
-    virtual void* pad() = 0;
     virtual const Vector& obbMins() = 0;
     virtual const Vector& obbMaxs() = 0;
 };
@@ -55,13 +55,13 @@ public:
     constexpr auto getEyePosition() noexcept
     {
         Vector vec{ };
-        callVirtualMethod<void, Vector&>(this, 283, vec);
+        callVirtualMethod<void, Vector&>(this, 284, vec);
         return vec;
     }
 
     constexpr auto getWeaponData() noexcept
     {
-        return callVirtualMethod<WeaponData*>(this, 456);
+        return callVirtualMethod<WeaponData*>(this, 457);
     }
 
     auto& coordinateFrame() noexcept
