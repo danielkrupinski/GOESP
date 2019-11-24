@@ -344,7 +344,7 @@ void ESP::render(ImDrawList* drawList) noexcept
                     }
                 };
 
-                if (const auto weaponData = entity->getWeaponData(); weaponData && config.weapons.enabled) {
+                if (const auto weaponData = entity->getWeaponData(); weaponData && !config.weapons.enabled) {
                     switch (weaponData->type) {
                     case WeaponType::Pistol:
                         renderWeaponEsp(drawList, entity, config.pistols[0], config.pistols[getWeaponIndex(entity->weaponId())]);
@@ -375,6 +375,9 @@ void ESP::render(ImDrawList* drawList) noexcept
                     break;
                 case ClassId::Chicken:
                     renderEntityEsp(drawList, entity, config.misc[0], config.misc[2], "Chicken");
+                    break;
+                case ClassId::PlantedC4:
+                    renderEntityEsp(drawList, entity, config.misc[0], config.misc[3], "Planted C4");
                     break;
                 }
             }
