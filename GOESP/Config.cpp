@@ -22,7 +22,7 @@ Config::Config(const char* folderName) noexcept
 
     if (HKEY key; RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts", 0, KEY_READ, &key) == ERROR_SUCCESS) {
         if (DWORD values; RegQueryInfoKeyW(key, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &values, nullptr, nullptr, nullptr, nullptr) == ERROR_SUCCESS) {
-            for (DWORD i = 0; i < values; i++) {
+            for (DWORD i = 0; i < values; ++i) {
                 CHAR fontName[200], fontFilename[50];
                 DWORD fontNameLength = 200, fontFilenameLength = 50;
 
@@ -92,6 +92,21 @@ void Config::load() noexcept
 
     if (const auto& players = j["Players"]; players.is_array() && players.size() == this->players.size())
         this->players = players;
+
+    if (const auto& weapons = j["Weapons"]; weapons.is_object())
+        this->weapons = weapons;
+    if (const auto& pistols = j["Pistols"]; pistols.is_array() && pistols.size() == this->pistols.size())
+        this->pistols = pistols;
+    if (const auto& smgs = j["SMGs"]; smgs.is_array() && smgs.size() == this->smgs.size())
+        this->smgs = smgs;
+    if (const auto& rifles = j["Rifles"]; rifles.is_array() && rifles.size() == this->rifles.size())
+        this->rifles = rifles;
+    if (const auto& sniperRifles = j["Sniper Rifles"]; sniperRifles.is_array() && sniperRifles.size() == this->sniperRifles.size())
+        this->sniperRifles = sniperRifles;
+    if (const auto& shotguns = j["Shotguns"]; shotguns.is_array() && shotguns.size() == this->shotguns.size())
+        this->shotguns = shotguns;
+    if (const auto& heavy = j["Heavy"]; heavy.is_array() && heavy.size() == this->heavy.size())
+        this->heavy = heavy;
 }
 
 static void to_json(json& j, const Config::Color& c)
@@ -128,6 +143,14 @@ void Config::save() noexcept
 {
     json j;
     j["Players"] = players;
+
+    j["Weapons"] = weapons;
+    j["Pistols"] = pistols;
+    j["SMGs"] = smgs;
+    j["Rifles"] = rifles;
+    j["Sniper Rifles"] = sniperRifles;
+    j["Shotguns"] = shotguns;
+    j["Heavy"] = heavy;
 
     if (std::ofstream out{ path / "test.txt" }; out.good())
         out << std::setw(4) << j;
