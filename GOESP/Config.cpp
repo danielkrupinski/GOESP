@@ -81,6 +81,13 @@ static void from_json(const json& j, Config::Shared& s)
         s.name = name;
 }
 
+static void from_json(const json& j, Config::Weapon& w)
+{
+    if (const auto& ammo = j["Ammo"]; ammo.is_object())
+        w.ammo = ammo;
+    from_json(j, static_cast<Config::Shared&>(w));
+}
+
 void Config::load() noexcept
 {
     json j;
@@ -137,6 +144,12 @@ static void to_json(json& j, const Config::Shared& s)
 static void to_json(json& j, const Config::Player& p)
 {
     j = static_cast<Config::Shared>(p);
+}
+
+static void to_json(json& j, const Config::Weapon& w)
+{
+    j = static_cast<Config::Shared>(w);
+    j["Ammo"] = w.ammo;
 }
 
 void Config::save() noexcept
