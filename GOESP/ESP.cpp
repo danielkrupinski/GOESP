@@ -56,7 +56,7 @@ static auto boundingBox(Entity* entity, BoundingBox& out) noexcept
     const auto mins = entity->getCollideable()->obbMins();
     const auto maxs = entity->getCollideable()->obbMaxs();
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; ++i) {
         const Vector point{ i & 1 ? maxs.x : mins.x,
                             i & 2 ? maxs.y : mins.y,
                             i & 4 ? maxs.z : mins.z };
@@ -86,7 +86,7 @@ static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& b
 
         switch (config.boxType) {
         case 0:
-            drawList->AddRect(bbox.min, bbox.max, color);
+            drawList->AddRect(bbox.min, bbox.max, color, config.box.rounding);
             break;
 
         case 1:
@@ -103,7 +103,7 @@ static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& b
             drawList->AddLine(bbox.max, { bbox.max.x, bbox.max.y - (bbox.max.y - bbox.min.y) * 0.25f }, color);
             break;
         case 2:
-            for (int i = 0; i < 8; i++) {
+            for (int i = 0; i < 8; ++i) {
                 for (int j = 1; j <= 4; j <<= 1) {
                     if (!(i & j))
                         drawList->AddLine(bbox.vertices[i], bbox.vertices[i + j], color);
@@ -111,7 +111,7 @@ static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& b
             }
             break;
         case 3:
-            for (int i = 0; i < 8; i++) {
+            for (int i = 0; i < 8; ++i) {
                 for (int j = 1; j <= 4; j <<= 1) {
                     if (!(i & j)) {
                         drawList->AddLine(bbox.vertices[i], { bbox.vertices[i].x + (bbox.vertices[i + j].x - bbox.vertices[i].x) * 0.25f, bbox.vertices[i].y + (bbox.vertices[i + j].y - bbox.vertices[i].y) * 0.25f }, color);
@@ -270,7 +270,7 @@ void ESP::render(ImDrawList* drawList) noexcept
         if (!localPlayer)
             return;
 
-        for (int i = 1; i <= interfaces.engine->getMaxClients(); i++) {
+        for (int i = 1; i <= interfaces.engine->getMaxClients(); ++i) {
             const auto entity = interfaces.entityList->getEntity(i);
             if (!entity || entity == localPlayer || entity->isDormant() || !entity->isAlive())
                 continue;
@@ -290,7 +290,7 @@ void ESP::render(ImDrawList* drawList) noexcept
             }
         }
 
-        for (int i = interfaces.engine->getMaxClients() + 1; i <= interfaces.entityList->getHighestEntityIndex(); i++) {
+        for (int i = interfaces.engine->getMaxClients() + 1; i <= interfaces.entityList->getHighestEntityIndex(); ++i) {
             const auto entity = interfaces.entityList->getEntity(i);
             if (!entity || entity->isDormant())
                 continue;
