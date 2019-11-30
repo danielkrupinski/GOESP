@@ -23,14 +23,15 @@ void ImGuiCustom::colorPicker(const char* name, std::array<float, 4>& color, boo
         if (rainbow && rainbowSpeed) {
             ImGui::SameLine();
 
-            if (ImGui::BeginChild("##child", { 200.0f, 0.0f })) {
+            if (ImGui::BeginChild("##child", { 150.0f, 0.0f })) {
                 ImGui::Checkbox("Rainbow", rainbow);
-                ImGui::SetNextItemWidth(50.0f);
-                ImGui::InputFloat("Speed", rainbowSpeed, 0.0f, 0.0f, "%.2f");
+                ImGui::SetNextItemWidth(85.0f);
+                ImGui::InputFloat("Speed", rainbowSpeed, 0.01f, 0.15f, "%.2f");
 
                 if (rounding) {
-                    ImGui::SetNextItemWidth(50.0f);
-                    ImGui::InputFloat("Rounding", rounding, 0.0f, 0.0f, "%.1f");
+                    ImGui::SetNextItemWidth(85.0f);
+                    ImGui::InputFloat("Rounding", rounding, 0.1f, 0.0f, "%.1f");
+                    *rounding = std::max(*rounding, 0.0f);
                 }
                 ImGui::EndChild();
             }
