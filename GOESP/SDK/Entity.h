@@ -52,6 +52,11 @@ public:
         return callVirtualMethod<bool>(this, 165);
     }
 
+    constexpr auto getActiveWeapon() noexcept
+    {
+        return callVirtualMethod<Entity*>(this, 267);
+    }
+
     constexpr auto getEyePosition() noexcept
     {
         Vector vec{ };
