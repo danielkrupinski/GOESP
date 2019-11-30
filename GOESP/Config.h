@@ -37,6 +37,7 @@ public:
         ColorToggleRounding box;
         int boxType = 0;
         ColorToggle name;
+        ColorToggleRounding textBackground;
     };
 
     struct Player : public Shared {

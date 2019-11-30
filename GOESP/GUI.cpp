@@ -215,7 +215,7 @@ void GUI::render() noexcept
 
                     ImGui::Separator();
 
-                    constexpr auto spacing{ 200.0f };
+                    constexpr auto spacing = 200.0f;
                     ImGuiCustom::colorPicker("Snaplines", playerConfig.snaplines);
                     ImGui::SameLine(spacing);
                     ImGuiCustom::colorPicker("Box", playerConfig.box);
@@ -223,6 +223,8 @@ void GUI::render() noexcept
                     ImGui::SetNextItemWidth(95.0f);
                     ImGui::Combo("", &playerConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
                     ImGuiCustom::colorPicker("Name", playerConfig.name);
+                    ImGui::SameLine(spacing);
+                    ImGuiCustom::colorPicker("Text Background", playerConfig.textBackground);
                     break;
                 }
                 case 2: {
@@ -266,7 +268,7 @@ void GUI::render() noexcept
                     }
                     ImGui::Separator();
 
-                    constexpr auto spacing{ 200.0f };
+                    constexpr auto spacing = 200.0f;
                     ImGuiCustom::colorPicker("Snaplines", weaponConfig.snaplines);
                     ImGui::SameLine(spacing);
                     ImGuiCustom::colorPicker("Box", weaponConfig.box);
@@ -275,6 +277,7 @@ void GUI::render() noexcept
                     ImGui::Combo("", &weaponConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
                     ImGuiCustom::colorPicker("Name", weaponConfig.name);
                     ImGui::SameLine(spacing);
+                    ImGuiCustom::colorPicker("Text Background", weaponConfig.textBackground);
                     ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
                     break;
                 }
@@ -299,7 +302,7 @@ void GUI::render() noexcept
                     }
                     ImGui::Separator();
 
-                    constexpr auto spacing{ 200.0f };
+                    constexpr auto spacing = 200.0f;
                     ImGuiCustom::colorPicker("Snaplines", miscConfig.snaplines);
                     ImGui::SameLine(spacing);
                     ImGuiCustom::colorPicker("Box", miscConfig.box);
@@ -307,6 +310,8 @@ void GUI::render() noexcept
                     ImGui::SetNextItemWidth(95.0f);
                     ImGui::Combo("", &miscConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
                     ImGuiCustom::colorPicker("Name", miscConfig.name);
+                    ImGui::SameLine(spacing);
+                    ImGuiCustom::colorPicker("Text Background", miscConfig.textBackground);
                 }
                 }
                 ImGui::EndChild();
