@@ -3,7 +3,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 
-void ImGuiCustom::colorPicker(const char* name, std::array<float, 4>& color, bool* enable, bool* rainbow, float* rainbowSpeed) noexcept
+void ImGuiCustom::colorPicker(const char* name, std::array<float, 4>& color, bool* enable, bool* rainbow, float* rainbowSpeed, float* rounding) noexcept
 {
     ImGui::PushID(name);
     if (enable) {
@@ -23,10 +23,15 @@ void ImGuiCustom::colorPicker(const char* name, std::array<float, 4>& color, boo
         if (rainbow && rainbowSpeed) {
             ImGui::SameLine();
 
-            if (ImGui::BeginChild("##child", { 100.0f, 0.0f })) {
+            if (ImGui::BeginChild("##child", { 200.0f, 0.0f })) {
                 ImGui::Checkbox("Rainbow", rainbow);
                 ImGui::SetNextItemWidth(50.0f);
                 ImGui::InputFloat("Speed", rainbowSpeed, 0.0f, 0.0f, "%.2f");
+
+                if (rounding) {
+                    ImGui::SetNextItemWidth(50.0f);
+                    ImGui::InputFloat("Rounding", rounding, 0.0f, 0.0f, "%.1f");
+                }
                 ImGui::EndChild();
             }
         }
@@ -38,4 +43,9 @@ void ImGuiCustom::colorPicker(const char* name, std::array<float, 4>& color, boo
 void ImGuiCustom::colorPicker(const char* name, Config::ColorToggle& colorConfig) noexcept
 {
     colorPicker(name, colorConfig.color, &colorConfig.enabled, &colorConfig.rainbow, &colorConfig.rainbowSpeed);
+}
+
+void ImGuiCustom::colorPicker(const char* name, Config::ColorToggleRounding& colorConfig) noexcept
+{
+    colorPicker(name, colorConfig.color, &colorConfig.enabled, &colorConfig.rainbow, &colorConfig.rainbowSpeed, &colorConfig.rounding);
 }
