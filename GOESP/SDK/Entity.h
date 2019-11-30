@@ -97,6 +97,7 @@ public:
 
     NETVAR(clip, "CBaseCombatWeapon", "m_iClip1", int);
     NETVAR(reserveAmmoCount, "CBaseCombatWeapon", "m_iPrimaryReserveAmmoCount", int);
+    NETVAR(nextPrimaryAttack, "CBaseCombatWeapon", "m_flNextPrimaryAttack", float);
 
     NETVAR_OFFSET(index, "CBaseEntity", "m_bIsAutoaimTarget", 4, int);
     NETVAR(ownerEntity, "CBaseEntity", "m_hOwnerEntity", int);
