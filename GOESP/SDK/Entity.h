@@ -88,6 +88,11 @@ public:
         return trace.entity == this || trace.fraction > 0.97f;
     }
 
+    auto isInReload() noexcept
+    {
+        return *reinterpret_cast<bool*>(uintptr_t(&clip()) + 0x41);
+    }
+
     NETVAR(weaponId, "CBaseAttributableItem", "m_iItemDefinitionIndex", WeaponId);
 
     NETVAR(clip, "CBaseCombatWeapon", "m_iClip1", int);
