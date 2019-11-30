@@ -25,12 +25,16 @@ public:
         bool enabled = false;
     };
 
+    struct ColorToggleRounding : public ColorToggle {
+        float rounding = 5.0f;
+    };
+
     struct Shared {
         bool enabled = false;
         std::string font;
         int fontIndex = 0; // don't save
         ColorToggle snaplines;
-        ColorToggle box;
+        ColorToggleRounding box;
         int boxType = 0;
         ColorToggle name;
     };
