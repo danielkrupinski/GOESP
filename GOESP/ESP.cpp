@@ -141,7 +141,7 @@ static void renderPlayerBox(ImDrawList* drawList, Entity* entity, const Config::
                 const auto textSize = ImGui::CalcTextSize(playerInfo.name);
                 if (config.textBackground.enabled) {
                     const ImU32 color = config.textBackground.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.textBackground.rainbowSpeed, config.textBackground.color[3])) : ImGui::ColorConvertFloat4ToU32(config.textBackground.color);
-                    drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.min.y - 3 }, color, 5.0f);
+                    drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.min.y - 3 }, color, config.textBackground.rounding);
                 }
                 const ImU32 color = config.name.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.name.rainbowSpeed, config.name.color[3])) : ImGui::ColorConvertFloat4ToU32(config.name.color);
                 drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, playerInfo.name);
@@ -171,7 +171,7 @@ static void renderWeaponBox(ImDrawList* drawList, Entity* entity, const Config::
                     const auto textSize = ImGui::CalcTextSize(weaponName);
                     if (config.textBackground.enabled) {
                         const ImU32 color = config.textBackground.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.textBackground.rainbowSpeed, config.textBackground.color[3])) : ImGui::ColorConvertFloat4ToU32(config.textBackground.color);
-                        drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.min.y - 3 }, color, 5.0f);
+                        drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.min.y - 3 }, color, config.textBackground.rounding);
                     }
                     const ImU32 color = config.name.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.name.rainbowSpeed, config.name.color[3])) : ImGui::ColorConvertFloat4ToU32(config.name.color);
                     drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, weaponName);
@@ -188,10 +188,10 @@ static void renderWeaponBox(ImDrawList* drawList, Entity* entity, const Config::
             const auto textSize = ImGui::CalcTextSize(text.c_str());
             if (config.textBackground.enabled) {
                 const ImU32 color = config.textBackground.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.textBackground.rainbowSpeed, config.textBackground.color[3])) : ImGui::ColorConvertFloat4ToU32(config.textBackground.color);
-                drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.min.y - 3 }, color, 5.0f);
+                drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.max.y + 3 }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.max.y + 7 + textSize.y }, color, config.textBackground.rounding);
             }
             const ImU32 color = config.ammo.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.ammo.rainbowSpeed, config.ammo.color[3])) : ImGui::ColorConvertFloat4ToU32(config.ammo.color);
-            drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.max.y }, color, text.c_str());
+            drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.max.y + 5 }, color, text.c_str());
         }
 
         ImGui::GetCurrentContext()->FontSize = oldFontSize;
@@ -215,7 +215,7 @@ static void renderEntityBox(ImDrawList* drawList, Entity* entity, const char* na
             const auto textSize = ImGui::CalcTextSize(name);
             if (config.textBackground.enabled) {
                 const ImU32 color = config.textBackground.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.textBackground.rainbowSpeed, config.textBackground.color[3])) : ImGui::ColorConvertFloat4ToU32(config.textBackground.color);
-                drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.min.y - 3 }, color, 5.0f);
+                drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.min.y - 3 }, color, config.textBackground.rounding);
             }
             const ImU32 color = config.name.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.name.rainbowSpeed, config.name.color[3])) : ImGui::ColorConvertFloat4ToU32(config.name.color);
             drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, name);
