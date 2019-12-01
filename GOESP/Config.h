@@ -55,6 +55,7 @@ public:
     std::array<Weapon, 5> sniperRifles;
     std::array<Weapon, 7> shotguns;
     std::array<Weapon, 3> heavy;
+    std::array<Weapon, 7> grenades;
 
     std::array<Shared, 4> misc;
 
