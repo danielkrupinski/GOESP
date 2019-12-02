@@ -359,6 +359,7 @@ void ESP::render(ImDrawList* drawList) noexcept
                     case WeaponId::Fiveseven:
                     case WeaponId::Bizon:
                     case WeaponId::Aug:
+                    case WeaponId::TaGrenade:
                         return 7;
                     case WeaponId::Cz75a: return 8;
                     case WeaponId::Deagle: return 9;
