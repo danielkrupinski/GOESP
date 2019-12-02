@@ -397,13 +397,13 @@ void ESP::render(ImDrawList* drawList) noexcept
             } else {
                 switch (entity->getClientClass()->classId) {
                 case ClassId::EconEntity:
-                    renderEntityEsp(drawList, entity, config.misc[0], config.misc[1], nullptr, interfaces.localize->find("#SFUI_WPNHUD_DEFUSER"));
+                    renderEntityEsp(drawList, entity, config.otherEntities[0], config.otherEntities[1], nullptr, interfaces.localize->find("#SFUI_WPNHUD_DEFUSER"));
                     break;
                 case ClassId::Chicken:
-                    renderEntityEsp(drawList, entity, config.misc[0], config.misc[2], "Chicken");
+                    renderEntityEsp(drawList, entity, config.otherEntities[0], config.otherEntities[2], "Chicken");
                     break;
                 case ClassId::PlantedC4:
-                    renderEntityEsp(drawList, entity, config.misc[0], config.misc[3], "Planted C4");
+                    renderEntityEsp(drawList, entity, config.otherEntities[0], config.otherEntities[3], "Planted C4");
                     break;
                 }
             }

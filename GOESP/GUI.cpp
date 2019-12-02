@@ -104,14 +104,14 @@ void GUI::render() noexcept
                         return config.grenades[subItem];
                     }
                 case 3:
-                    return config.misc[item];
+                    return config.otherEntities[item];
                 default:
                     return config.players[0];
                 }
             };
 
             if (ImGui::ListBoxHeader("##list", { 155.0f, 300.0f })) {
-                static constexpr std::array categories{ "Allies", "Enemies", "Weapons", "Misc" };
+                static constexpr std::array categories{ "Allies", "Enemies", "Weapons", "Other Entities" };
 
                 for (size_t i = 0; i < categories.size(); i++) {
                     if (ImGui::Selectable(categories[i], currentCategory == i && currentItem == 0)) {

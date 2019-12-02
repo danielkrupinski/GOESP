@@ -7,8 +7,8 @@
 #include "imgui/imgui_impl_win32.h"
 
 #include "Config.h"
-#include "ESP.h"
 #include "GUI.h"
+#include "Hacks/ESP.h"
 #include "Interfaces.h"
 #include "Memory.h"
 
