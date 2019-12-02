@@ -322,6 +322,7 @@ void ESP::render(ImDrawList* drawList) noexcept
                     case WeaponId::Ssg08:
                     case WeaponId::Nova:
                     case WeaponId::M249:
+                    case WeaponId::Flashbang:
                         return 1;
                     case WeaponId::Hkp2000:
                     case WeaponId::Mp9:
@@ -329,26 +330,31 @@ void ESP::render(ImDrawList* drawList) noexcept
                     case WeaponId::Awp:
                     case WeaponId::Xm1014:
                     case WeaponId::Negev:
+                    case WeaponId::HeGrenade:
                         return 2;
                     case WeaponId::Usp_s:
                     case WeaponId::Mp7:
                     case WeaponId::Ak47:
                     case WeaponId::G3SG1:
                     case WeaponId::Sawedoff:
+                    case WeaponId::SmokeGrenade:
                         return 3;
                     case WeaponId::Elite:
                     case WeaponId::Mp5sd:
                     case WeaponId::M4A1:
                     case WeaponId::Scar20:
                     case WeaponId::Mag7:
+                    case WeaponId::Molotov:
                         return 4;
                     case WeaponId::P250:
                     case WeaponId::Ump45:
                     case WeaponId::M4a1_s:
+                    case WeaponId::Decoy:
                         return 5;
                     case WeaponId::Tec9:
                     case WeaponId::P90:
                     case WeaponId::Sg553:
+                    case WeaponId::IncGrenade:
                         return 6;
                     case WeaponId::Fiveseven:
                     case WeaponId::Bizon:
@@ -379,6 +385,9 @@ void ESP::render(ImDrawList* drawList) noexcept
                         break;
                     case WeaponType::Machinegun:
                         renderWeaponEsp(drawList, entity, config.heavy[0], config.heavy[getWeaponIndex(entity->weaponId())]);
+                        break;
+                    case WeaponType::Grenade:
+                        renderWeaponEsp(drawList, entity, config.grenades[0], config.grenades[getWeaponIndex(entity->weaponId())]);
                         break;
                     }
                 } else {

@@ -100,6 +100,8 @@ void GUI::render() noexcept
                         return config.shotguns[subItem];
                     case 6:
                         return config.heavy[subItem];
+                    case 7:
+                        return config.grenades[subItem];
                     }
                 case 3:
                     return config.misc[item];
@@ -126,7 +128,7 @@ void GUI::render() noexcept
                         case 1:
                             return { "Visible", "Occluded" };
                         case 2:
-                            return { "Pistols", "SMGs", "Rifles", "Sniper Rifles", "Shotguns", "Heavy" };
+                            return { "Pistols", "SMGs", "Rifles", "Sniper Rifles", "Shotguns", "Heavy", "Grenades" };
                         default:
                             return { "Defuse Kits", "Chickens", "Planted C4" };
                         }
@@ -159,6 +161,8 @@ void GUI::render() noexcept
                                     return { "Nova", "XM1014", "Sawed-Off", "MAG-7" };
                                 case 5:
                                     return { "M249", "Negev" };
+                                case 6:
+                                    return { "Flashbang", "HE Grenade", "Smoke Grenade", "Molotov", "Decoy Grenade", "Incendiary Grenade" };
                                 }
                             default:
                                 return { };
@@ -245,6 +249,8 @@ void GUI::render() noexcept
                             return config.shotguns[subItem];
                         case 6:
                             return config.heavy[subItem];
+                        case 7:
+                            return config.grenades[subItem];
                         }
                     };
 
