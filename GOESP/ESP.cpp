@@ -179,7 +179,7 @@ static void renderWeaponBox(ImDrawList* drawList, Entity* entity, const Config::
             }
         }
 
-        if (config.ammo.enabled) {
+        if (config.ammo.enabled && entity->clip() != -1) {
             const auto text{ std::to_string(entity->clip()) + " / " + std::to_string(entity->reserveAmmoCount()) };
             const auto distance = (interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer())->getAbsOrigin() - entity->getAbsOrigin()).length();
             const auto fontSize = std::clamp(15.0f * 10.0f / std::sqrt(distance), 10.0f, 15.0f);
