@@ -43,6 +43,7 @@ enum class WeaponId : short {
     Usp_s,
     Cz75a = 63,
     Revolver,
+    TaGrenade = 68,
     GhostKnife = 80,
     Bayonet = 500,
     Flip = 505,
