@@ -59,11 +59,11 @@
     <ClCompile Include="ImGuiCustom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ESP.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Netvars.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hacks\ESP.cpp">
+      <Filter>Hacks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -113,9 +113,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImGuiCustom.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ESP.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SDK\EntityList.h">
@@ -170,6 +167,9 @@
       <Filter>SDK</Filter>
     </ClInclude>
     <ClInclude Include="Hacks\Misc.h">
+      <Filter>Hacks</Filter>
+    </ClInclude>
+    <ClInclude Include="Hacks\ESP.h">
       <Filter>Hacks</Filter>
     </ClInclude>
   </ItemGroup>

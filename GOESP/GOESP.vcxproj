@@ -123,7 +123,7 @@
   <ItemGroup>
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="ESP.cpp" />
+    <ClCompile Include="Hacks\ESP.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Hooks.cpp" />
     <ClCompile Include="ImGuiCustom.cpp" />
@@ -138,7 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
-    <ClInclude Include="ESP.h" />
+    <ClInclude Include="Hacks\ESP.h" />
     <ClInclude Include="fnv.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Hacks\Misc.h" />
