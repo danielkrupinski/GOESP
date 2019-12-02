@@ -6,7 +6,7 @@
 template <typename T>
 struct Hook {
     T* original;
-    bool hookCalled{ false };
+    bool hookCalled = false;
 };
 
 class Hooks {
@@ -22,7 +22,7 @@ public:
     void restore() noexcept;
 
 private:
-    bool unload{ false };
+    bool unload = false;
 };
 
 extern Hooks hooks;
