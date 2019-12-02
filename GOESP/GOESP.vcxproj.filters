@@ -18,6 +18,9 @@
     <Filter Include="nlohmann">
       <UniqueIdentifier>{bec31ec2-8568-41a6-9540-a190366ad229}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Hacks">
+      <UniqueIdentifier>{4498ebc5-607e-4528-acbf-cd79761d7f62}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -165,6 +168,9 @@
     </ClInclude>
     <ClInclude Include="SDK\WeaponData.h">
       <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Hacks\Misc.h">
+      <Filter>Hacks</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
