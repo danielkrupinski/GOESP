@@ -116,6 +116,8 @@ void Config::load() noexcept
         this->heavy = heavy;
     if (const auto& grenades = j["Grenades"]; grenades.is_array() && grenades.size() == this->grenades.size())
         this->grenades = grenades;
+    if (const auto& otherEntities = j["Other Entities"]; otherEntities.is_array() && otherEntities.size() == this->otherEntities.size())
+        this->otherEntities = otherEntities;
 }
 
 static void to_json(json& j, const Config::Color& c)
@@ -167,6 +169,8 @@ void Config::save() noexcept
     j["Shotguns"] = shotguns;
     j["Heavy"] = heavy;
     j["Grenades"] = grenades;
+    
+    j["Other Entities"] = otherEntities;
 
     if (std::ofstream out{ path / "test.txt" }; out.good())
         out << std::setw(4) << j;
