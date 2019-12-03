@@ -4,6 +4,7 @@
 #include "../imgui/imgui_internal.h"
 
 #include "../Config.h"
+#include "../Helpers.h"
 #include "../Interfaces.h"
 #include "../Memory.h"
 #include "../SDK/ClassId.h"
@@ -15,14 +16,6 @@
 #include "../SDK/Vector.h"
 #include "../SDK/WeaponData.h"
 #include "../SDK/WeaponId.h"
-
-static constexpr auto rainbowColor(float time, float speed, float alpha) noexcept
-{
-    return std::make_tuple(std::sin(speed * time) * 0.5f + 0.5f,
-                           std::sin(speed * time + static_cast<float>(2 * M_PI / 3)) * 0.5f + 0.5f,
-                           std::sin(speed * time + static_cast<float>(4 * M_PI / 3)) * 0.5f + 0.5f,
-                           alpha);
-}
 
 static constexpr bool worldToScreen(const Vector& in, ImVec2& out) noexcept
 {
@@ -82,7 +75,7 @@ static auto boundingBox(Entity* entity, BoundingBox& out) noexcept
 static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& bbox, const Config::Shared& config) noexcept
 {
     if (config.box.enabled) {
-        ImU32 color = config.box.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.box.rainbowSpeed, config.box.color[3])) : ImGui::ColorConvertFloat4ToU32(config.box.color);
+        const ImU32 color = Helpers::calculateColor(config.box.color, config.box.rainbow, config.box.rainbowSpeed, memory.globalVars->realtime);
 
         switch (config.boxType) {
         case 0:
@@ -140,10 +133,10 @@ static void renderPlayerBox(ImDrawList* drawList, Entity* entity, const Config::
                 ImGui::GetCurrentContext()->FontSize = fontSize;
                 const auto textSize = ImGui::CalcTextSize(playerInfo.name);
                 if (config.textBackground.enabled) {
-                    const ImU32 color = config.textBackground.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.textBackground.rainbowSpeed, config.textBackground.color[3])) : ImGui::ColorConvertFloat4ToU32(config.textBackground.color);
+                    const ImU32 color = Helpers::calculateColor(config.textBackground.color, config.textBackground.rainbow, config.textBackground.rainbowSpeed, memory.globalVars->realtime);
                     drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.min.y - 3 }, color, config.textBackground.rounding);
                 }
-                const ImU32 color = config.name.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.name.rainbowSpeed, config.name.color[3])) : ImGui::ColorConvertFloat4ToU32(config.name.color);
+                const ImU32 color = Helpers::calculateColor(config.name.color, config.name.rainbow, config.name.rainbowSpeed, memory.globalVars->realtime);
                 drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, playerInfo.name);
                 ImGui::GetCurrentContext()->FontSize = oldFontSize;
 
@@ -170,10 +163,10 @@ static void renderWeaponBox(ImDrawList* drawList, Entity* entity, const Config::
                     ImGui::GetCurrentContext()->FontSize = fontSize;
                     const auto textSize = ImGui::CalcTextSize(weaponName);
                     if (config.textBackground.enabled) {
-                        const ImU32 color = config.textBackground.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.textBackground.rainbowSpeed, config.textBackground.color[3])) : ImGui::ColorConvertFloat4ToU32(config.textBackground.color);
+                        const ImU32 color = Helpers::calculateColor(config.textBackground.color, config.textBackground.rainbow, config.textBackground.rainbowSpeed, memory.globalVars->realtime);
                         drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.min.y - 3 }, color, config.textBackground.rounding);
                     }
-                    const ImU32 color = config.name.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.name.rainbowSpeed, config.name.color[3])) : ImGui::ColorConvertFloat4ToU32(config.name.color);
+                    const ImU32 color = Helpers::calculateColor(config.name.color, config.name.rainbow, config.name.rainbowSpeed, memory.globalVars->realtime);
                     drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, weaponName);
                 }
             }
@@ -187,10 +180,10 @@ static void renderWeaponBox(ImDrawList* drawList, Entity* entity, const Config::
             ImGui::GetCurrentContext()->FontSize = fontSize;
             const auto textSize = ImGui::CalcTextSize(text.c_str());
             if (config.textBackground.enabled) {
-                const ImU32 color = config.textBackground.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.textBackground.rainbowSpeed, config.textBackground.color[3])) : ImGui::ColorConvertFloat4ToU32(config.textBackground.color);
+                const ImU32 color = Helpers::calculateColor(config.textBackground.color, config.textBackground.rainbow, config.textBackground.rainbowSpeed, memory.globalVars->realtime);
                 drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.max.y + 3 }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.max.y + 7 + textSize.y }, color, config.textBackground.rounding);
             }
-            const ImU32 color = config.ammo.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.ammo.rainbowSpeed, config.ammo.color[3])) : ImGui::ColorConvertFloat4ToU32(config.ammo.color);
+            const ImU32 color = Helpers::calculateColor(config.ammo.color, config.ammo.rainbow, config.ammo.rainbowSpeed, memory.globalVars->realtime);
             drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.max.y + 5 }, color, text.c_str());
         }
 
@@ -214,10 +207,10 @@ static void renderEntityBox(ImDrawList* drawList, Entity* entity, const char* na
             ImGui::GetCurrentContext()->FontSize = fontSize;
             const auto textSize = ImGui::CalcTextSize(name);
             if (config.textBackground.enabled) {
-                const ImU32 color = config.textBackground.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.textBackground.rainbowSpeed, config.textBackground.color[3])) : ImGui::ColorConvertFloat4ToU32(config.textBackground.color);
+                const ImU32 color = Helpers::calculateColor(config.textBackground.color, config.textBackground.rainbow, config.textBackground.rainbowSpeed, memory.globalVars->realtime);
                 drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.min.y - 3 }, color, config.textBackground.rounding);
             }
-            const ImU32 color = config.name.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.name.rainbowSpeed, config.name.color[3])) : ImGui::ColorConvertFloat4ToU32(config.name.color);
+            const ImU32 color = Helpers::calculateColor(config.name.color, config.name.rainbow, config.name.rainbowSpeed, memory.globalVars->realtime);
             drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, name);
         }
 
@@ -231,7 +224,8 @@ static void renderSnaplines(ImDrawList* drawList, Entity* entity, const Config::
     if (config.enabled) {
         if (ImVec2 position; worldToScreen(entity->getAbsOrigin(), position)) {
             const auto [width, height] = interfaces.engine->getScreenSize();
-            drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(height) }, position, config.rainbow ? ImGui::ColorConvertFloat4ToU32(rainbowColor(memory.globalVars->realtime, config.rainbowSpeed, config.color[3])) : ImGui::ColorConvertFloat4ToU32(config.color));
+            const ImU32 color = Helpers::calculateColor(config.color, config.rainbow, config.rainbowSpeed, memory.globalVars->realtime);
+            drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(height) }, position, color);
         }
     }
 }
