@@ -324,6 +324,10 @@ void GUI::render() noexcept
             }
             ImGui::EndTabItem();
         }
+        if (ImGui::BeginTabItem("Misc")) {
+            ImGuiCustom::colorPicker("Reload Progress", config.reloadProgress);
+            ImGui::EndTabItem();
+        }
         if (ImGui::BeginTabItem("Configs")) {
             if (ImGui::Button("Load"))
                 config.load();
