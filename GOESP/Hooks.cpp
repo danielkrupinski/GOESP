@@ -9,6 +9,7 @@
 #include "Config.h"
 #include "GUI.h"
 #include "Hacks/ESP.h"
+#include "Hacks/Misc.h"
 #include "Interfaces.h"
 #include "Memory.h"
 
@@ -47,6 +48,8 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
     ImGui::NewFrame();
 
     ESP::render(ImGui::GetBackgroundDrawList());
+    Misc::drawReloadProgress(ImGui::GetBackgroundDrawList());
+
     gui.render();
 
     ImGui::EndFrame();
