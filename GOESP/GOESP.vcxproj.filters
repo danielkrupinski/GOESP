@@ -175,5 +175,8 @@
     <ClInclude Include="Hacks\ESP.h">
       <Filter>Hacks</Filter>
     </ClInclude>
+    <ClInclude Include="Helpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

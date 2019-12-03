@@ -143,6 +143,7 @@
     <ClInclude Include="fnv.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Hacks\Misc.h" />
+    <ClInclude Include="Helpers.h" />
     <ClInclude Include="Hooks.h" />
     <ClInclude Include="ImGuiCustom.h" />
     <ClInclude Include="imgui\imconfig.h" />
