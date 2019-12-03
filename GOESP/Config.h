@@ -32,7 +32,7 @@ public:
     struct Shared {
         bool enabled = false;
         std::string font;
-        int fontIndex = 0; // don't save
+        int fontIndex = 0; // runtime only, don't save
         ColorToggle snaplines;
         ColorToggleRounding box;
         int boxType = 0;
@@ -57,6 +57,8 @@ public:
     std::array<Weapon, 3> heavy;
     std::array<Weapon, 8> grenades;
     std::array<Shared, 4> otherEntities;
+
+    ColorToggle reloadProgress;
 
     std::vector<std::pair<std::string, std::string>> systemFonts{ { "Default", "" } };
     std::unordered_map<std::string, ImFont*> fonts;
