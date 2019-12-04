@@ -116,8 +116,12 @@ void Config::load() noexcept
         this->heavy = heavy;
     if (const auto& grenades = j["Grenades"]; grenades.is_array() && grenades.size() == this->grenades.size())
         this->grenades = grenades;
+
     if (const auto& otherEntities = j["Other Entities"]; otherEntities.is_array() && otherEntities.size() == this->otherEntities.size())
         this->otherEntities = otherEntities;
+
+    if (const auto& reloadProgress = j["Reload Progress"]; reloadProgress.is_object())
+        this->reloadProgress = reloadProgress;
 }
 
 static void to_json(json& j, const Config::Color& c)
@@ -171,6 +175,8 @@ void Config::save() noexcept
     j["Grenades"] = grenades;
     
     j["Other Entities"] = otherEntities;
+
+    j["Reload Progress"] = reloadProgress;
 
     if (std::ofstream out{ path / "test.txt" }; out.good())
         out << std::setw(4) << j;
