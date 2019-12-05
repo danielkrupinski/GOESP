@@ -29,6 +29,7 @@ void ImGuiCustom::colorPicker(const char* name, std::array<float, 4>& color, boo
                 ImGui::InputFloat("Speed", rainbowSpeed, 0.01f, 0.15f, "%.2f");
 
                 if (rounding) {
+                    ImGui::Separator();
                     ImGui::SetNextItemWidth(85.0f);
                     ImGui::InputFloat("Rounding", rounding, 0.1f, 0.0f, "%.1f");
                     *rounding = std::max(*rounding, 0.0f);
