@@ -193,7 +193,8 @@ bool Config::loadScheduledFonts() noexcept
 
     for (const auto& font : scheduledFonts) {
         if (!fonts[font] && !font.empty()) {
-            fonts[font] = ImGui::GetIO().Fonts->AddFontFromFileTTF((fontsPath / font).string().c_str(), 15.0f);
+            static const ImWchar ranges[]{ 0x0020, 0x00FF, 0x0100, 0x017f, 0 };
+            fonts[font] = ImGui::GetIO().Fonts->AddFontFromFileTTF((fontsPath / font).string().c_str(), 15.0f, nullptr, ranges);
             result = true;
         }
     }
