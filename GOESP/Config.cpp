@@ -122,6 +122,8 @@ void Config::load() noexcept
 
     if (const auto& reloadProgress = j["Reload Progress"]; reloadProgress.is_object())
         this->reloadProgress = reloadProgress;
+    if (const auto& recoilCrosshair = j["Recoil Crosshair"]; recoilCrosshair.is_object())
+        this->recoilCrosshair = recoilCrosshair;
 }
 
 static void to_json(json& j, const Config::Color& c)
@@ -177,6 +179,7 @@ void Config::save() noexcept
     j["Other Entities"] = otherEntities;
 
     j["Reload Progress"] = reloadProgress;
+    j["Recoil Crosshair"] = recoilCrosshair;
 
     if (std::ofstream out{ path / "test.txt" }; out.good())
         out << std::setw(4) << j;
