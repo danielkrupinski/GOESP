@@ -326,6 +326,7 @@ void GUI::render() noexcept
         }
         if (ImGui::BeginTabItem("Misc")) {
             ImGuiCustom::colorPicker("Reload Progress", config.reloadProgress);
+            ImGuiCustom::colorPicker("Recoil Crosshair", config.recoilCrosshair);
             ImGui::EndTabItem();
         }
         if (ImGui::BeginTabItem("Configs")) {
