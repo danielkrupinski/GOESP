@@ -36,3 +36,23 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
         }
     }
 }
+
+void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
+{
+    if (config.recoilCrosshair.enabled && interfaces.engine->isInGame()) {
+        const auto localPlayer = interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer());
+
+        if (!localPlayer)
+            return;
+
+        const auto punchAngle = interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer())->aimPunchAngle();
+        const auto [width, height] = interfaces.engine->getScreenSize();
+
+        const float x = width * (0.5f - punchAngle.y / 90.0f);
+        const float y = height * (0.5f + punchAngle.x / 90.0f);
+        const auto color = Helpers::calculateColor(config.recoilCrosshair.color, config.recoilCrosshair.rainbow, config.recoilCrosshair.rainbowSpeed, memory.globalVars->realtime);
+
+        drawList->AddLine({ x, y - 10 }, { x, y + 10 }, color);
+        drawList->AddLine({ x - 10, y }, { x + 10, y }, color);
+    }
+}
