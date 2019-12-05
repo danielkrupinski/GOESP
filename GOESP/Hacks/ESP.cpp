@@ -355,9 +355,17 @@ void ESP::render(ImDrawList* drawList) noexcept
                     case WeaponId::Aug:
                     case WeaponId::TaGrenade:
                         return 7;
-                    case WeaponId::Cz75a: return 8;
-                    case WeaponId::Deagle: return 9;
-                    case WeaponId::Revolver: return 10;
+                    case WeaponId::Cz75a:
+                    case WeaponId::Firebomb:
+                        return 8;
+                    case WeaponId::Deagle:
+                    case WeaponId::Diversion:
+                        return 9;
+                    case WeaponId::Revolver:
+                    case WeaponId::FragGrenade:
+                        return 10;
+                    case WeaponId::Snowball:
+                        return 11;
                     }
                 };
 

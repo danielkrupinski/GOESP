@@ -162,7 +162,7 @@ void GUI::render() noexcept
                                 case 5:
                                     return { "M249", "Negev" };
                                 case 6:
-                                    return { "Flashbang", "HE Grenade", "Smoke Grenade", "Molotov", "Decoy Grenade", "Incendiary", "TA Grenade" };
+                                    return { "Flashbang", "HE Grenade", "Smoke Grenade", "Molotov", "Decoy Grenade", "Incendiary", "TA Grenade", "Fire Bomb", "Diversion", "Frag Grenade", "Snowball" };
                                 }
                             default:
                                 return { };
