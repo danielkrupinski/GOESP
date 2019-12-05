@@ -49,6 +49,7 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
 
     ESP::render(ImGui::GetBackgroundDrawList());
     Misc::drawReloadProgress(ImGui::GetBackgroundDrawList());
+    Misc::drawRecoilCrosshair(ImGui::GetBackgroundDrawList());
 
     gui.render();
 
