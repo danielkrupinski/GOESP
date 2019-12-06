@@ -53,9 +53,34 @@ static void from_json(const json& j, Config::Color& c)
 
 static void from_json(const json& j, Config::ColorToggle& ct)
 {
+    from_json(j, static_cast<Config::Color&>(ct));
+
     if (const auto& enabled = j["Enabled"]; enabled.is_boolean())
         ct.enabled = enabled;
-    from_json(j, static_cast<Config::Color&>(ct));
+}
+
+static void from_json(const json& j, Config::ColorToggleRounding& ctr)
+{
+    from_json(j, static_cast<Config::ColorToggle&>(ctr));
+
+    if (const auto& rounding = j["Rounding"]; rounding.is_number_float())
+        ctr.rounding = rounding;
+}
+
+static void from_json(const json& j, Config::ColorToggleThickness& ctt)
+{
+    from_json(j, static_cast<Config::ColorToggle&>(ctt));
+
+    if (const auto& thickness = j["Thickness"]; thickness.is_number_float())
+        ctt.thickness = thickness;
+}
+
+static void from_json(const json& j, Config::ColorToggleThicknessRounding& cttr)
+{
+    from_json(j, static_cast<Config::ColorToggleRounding&>(cttr));
+
+    if (const auto& thickness = j["Thickness"]; thickness.is_number_float())
+        cttr.thickness = thickness;
 }
 
 static void from_json(const json& j, Config::Shared& s)
@@ -139,6 +164,25 @@ static void to_json(json& j, const Config::ColorToggle& ct)
     j = static_cast<Config::Color>(ct);
     j["Enabled"] = ct.enabled;
 }
+
+static void to_json(json& j, const Config::ColorToggleRounding& ctr)
+{
+    j = static_cast<Config::ColorToggle>(ctr);
+    j["Rounding"] = ctr.rounding;
+}
+
+static void to_json(json& j, const Config::ColorToggleThickness& ctt)
+{
+    j = static_cast<Config::ColorToggle>(ctt);
+    j["Thickness"] = ctt.thickness;
+}
+
+static void to_json(json& j, const Config::ColorToggleThicknessRounding& cttr)
+{
+    j = static_cast<Config::ColorToggleRounding>(cttr);
+    j["Thickness"] = cttr.thickness;
+}
+
 
 static void to_json(json& j, const Config::Shared& s)
 {
