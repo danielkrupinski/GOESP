@@ -52,7 +52,7 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
         const float y = height * (0.5f + punchAngle.x / 90.0f);
         const auto color = Helpers::calculateColor(config.recoilCrosshair.color, config.recoilCrosshair.rainbow, config.recoilCrosshair.rainbowSpeed, memory.globalVars->realtime);
 
-        drawList->AddLine({ x, y - 10 }, { x, y + 10 }, color);
-        drawList->AddLine({ x - 10, y }, { x + 10, y }, color);
+        drawList->AddLine({ x, y - 10 }, { x, y + 10 }, color, config.recoilCrosshair.thickness);
+        drawList->AddLine({ x - 10, y }, { x + 10, y }, color, config.recoilCrosshair.thickness);
     }
 }

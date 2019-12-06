@@ -67,7 +67,7 @@ public:
     std::array<Shared, 4> otherEntities;
 
     ColorToggleThickness reloadProgress;
-    ColorToggle recoilCrosshair;
+    ColorToggleThickness recoilCrosshair;
 
     std::vector<std::pair<std::string, std::string>> systemFonts{ { "Default", "" } };
     std::unordered_map<std::string, ImFont*> fonts;
