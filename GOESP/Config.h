@@ -25,16 +25,24 @@ public:
         bool enabled = false;
     };
 
+    struct ColorToggleThickness : public ColorToggle {
+        float thickness = 1.0f;
+    };
+
     struct ColorToggleRounding : public ColorToggle {
         float rounding = 5.0f;
+    };
+
+    struct ColorToggleThicknessRounding : public ColorToggleRounding {
+        float thickness = 1.0f;
     };
 
     struct Shared {
         bool enabled = false;
         std::string font;
         int fontIndex = 0; // runtime only, don't save
-        ColorToggle snaplines;
-        ColorToggleRounding box;
+        ColorToggleThickness snaplines;
+        ColorToggleThicknessRounding box;
         int boxType = 0;
         ColorToggle name;
         ColorToggleRounding textBackground;

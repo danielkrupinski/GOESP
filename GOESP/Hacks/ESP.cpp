@@ -79,27 +79,27 @@ static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& b
 
         switch (config.boxType) {
         case 0:
-            drawList->AddRect(bbox.min, bbox.max, color, config.box.rounding);
+            drawList->AddRect(bbox.min, bbox.max, color, config.box.rounding, ImDrawCornerFlags_All, config.box.thickness);
             break;
 
         case 1:
-            drawList->AddLine(bbox.min, { bbox.min.x, bbox.min.y + (bbox.max.y - bbox.min.y) * 0.25f }, color);
-            drawList->AddLine(bbox.min, { bbox.min.x + (bbox.max.x - bbox.min.x) * 0.25f, bbox.min.y }, color);
+            drawList->AddLine(bbox.min, { bbox.min.x, bbox.min.y + (bbox.max.y - bbox.min.y) * 0.25f }, color, config.box.thickness);
+            drawList->AddLine(bbox.min, { bbox.min.x + (bbox.max.x - bbox.min.x) * 0.25f, bbox.min.y }, color, config.box.thickness);
 
-            drawList->AddLine({ bbox.max.x, bbox.min.y }, { bbox.max.x - (bbox.max.x - bbox.min.x) * 0.25f, bbox.min.y }, color);
-            drawList->AddLine({ bbox.max.x, bbox.min.y }, { bbox.max.x, bbox.min.y + (bbox.max.y - bbox.min.y) * 0.25f }, color);
+            drawList->AddLine({ bbox.max.x, bbox.min.y }, { bbox.max.x - (bbox.max.x - bbox.min.x) * 0.25f, bbox.min.y }, color, config.box.thickness);
+            drawList->AddLine({ bbox.max.x, bbox.min.y }, { bbox.max.x, bbox.min.y + (bbox.max.y - bbox.min.y) * 0.25f }, color, config.box.thickness);
 
-            drawList->AddLine({ bbox.min.x, bbox.max.y }, { bbox.min.x, bbox.max.y - (bbox.max.y - bbox.min.y) * 0.25f }, color);
-            drawList->AddLine({ bbox.min.x, bbox.max.y }, { bbox.min.x + (bbox.max.x - bbox.min.x) * 0.25f, bbox.max.y }, color);
+            drawList->AddLine({ bbox.min.x, bbox.max.y }, { bbox.min.x, bbox.max.y - (bbox.max.y - bbox.min.y) * 0.25f }, color, config.box.thickness);
+            drawList->AddLine({ bbox.min.x, bbox.max.y }, { bbox.min.x + (bbox.max.x - bbox.min.x) * 0.25f, bbox.max.y }, color, config.box.thickness);
 
-            drawList->AddLine(bbox.max, { bbox.max.x - (bbox.max.x - bbox.min.x) * 0.25f, bbox.max.y }, color);
-            drawList->AddLine(bbox.max, { bbox.max.x, bbox.max.y - (bbox.max.y - bbox.min.y) * 0.25f }, color);
+            drawList->AddLine(bbox.max, { bbox.max.x - (bbox.max.x - bbox.min.x) * 0.25f, bbox.max.y }, color, config.box.thickness);
+            drawList->AddLine(bbox.max, { bbox.max.x, bbox.max.y - (bbox.max.y - bbox.min.y) * 0.25f }, color, config.box.thickness);
             break;
         case 2:
             for (int i = 0; i < 8; ++i) {
                 for (int j = 1; j <= 4; j <<= 1) {
                     if (!(i & j))
-                        drawList->AddLine(bbox.vertices[i], bbox.vertices[i + j], color);
+                        drawList->AddLine(bbox.vertices[i], bbox.vertices[i + j], color, config.box.thickness);
                 }
             }
             break;
@@ -107,8 +107,8 @@ static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& b
             for (int i = 0; i < 8; ++i) {
                 for (int j = 1; j <= 4; j <<= 1) {
                     if (!(i & j)) {
-                        drawList->AddLine(bbox.vertices[i], { bbox.vertices[i].x + (bbox.vertices[i + j].x - bbox.vertices[i].x) * 0.25f, bbox.vertices[i].y + (bbox.vertices[i + j].y - bbox.vertices[i].y) * 0.25f }, color);
-                        drawList->AddLine({ bbox.vertices[i].x + (bbox.vertices[i + j].x - bbox.vertices[i].x) * 0.75f, bbox.vertices[i].y + (bbox.vertices[i + j].y - bbox.vertices[i].y) * 0.75f }, bbox.vertices[i + j], color);
+                        drawList->AddLine(bbox.vertices[i], { bbox.vertices[i].x + (bbox.vertices[i + j].x - bbox.vertices[i].x) * 0.25f, bbox.vertices[i].y + (bbox.vertices[i + j].y - bbox.vertices[i].y) * 0.25f }, color, config.box.thickness);
+                        drawList->AddLine({ bbox.vertices[i].x + (bbox.vertices[i + j].x - bbox.vertices[i].x) * 0.75f, bbox.vertices[i].y + (bbox.vertices[i + j].y - bbox.vertices[i].y) * 0.75f }, bbox.vertices[i + j], color, config.box.thickness);
                     }
                 }
             }
@@ -219,13 +219,13 @@ static void renderEntityBox(ImDrawList* drawList, Entity* entity, const char* na
     }
 }
 
-static void renderSnaplines(ImDrawList* drawList, Entity* entity, const Config::ColorToggle& config) noexcept
+static void renderSnaplines(ImDrawList* drawList, Entity* entity, const Config::ColorToggleThickness& config) noexcept
 {
     if (config.enabled) {
         if (ImVec2 position; worldToScreen(entity->getAbsOrigin(), position)) {
             const auto [width, height] = interfaces.engine->getScreenSize();
             const ImU32 color = Helpers::calculateColor(config.color, config.rainbow, config.rainbowSpeed, memory.globalVars->realtime);
-            drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(height) }, position, color);
+            drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(height) }, position, color, config.thickness);
         }
     }
 }
