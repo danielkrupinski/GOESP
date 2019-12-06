@@ -66,7 +66,7 @@ public:
     std::array<Weapon, 12> grenades;
     std::array<Shared, 4> otherEntities;
 
-    ColorToggle reloadProgress;
+    ColorToggleThickness reloadProgress;
     ColorToggle recoilCrosshair;
 
     std::vector<std::pair<std::string, std::string>> systemFonts{ { "Default", "" } };
