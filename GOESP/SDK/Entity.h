@@ -20,6 +20,11 @@ public:
     virtual const Vector& obbMaxs() = 0;
 };
 
+struct Model {
+    void* handle;
+    char name[260];
+};
+
 class Entity {
 public:
     constexpr ClientClass* getClientClass() noexcept
