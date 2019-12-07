@@ -7,6 +7,8 @@
 #include "../Helpers.h"
 #include "../Interfaces.h"
 #include "../Memory.h"
+#include "../SDK/ConVar.h"
+#include "../SDK/Cvar.h"
 #include "../SDK/Engine.h"
 #include "../SDK/Entity.h"
 #include "../SDK/EntityList.h"
@@ -45,11 +47,13 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
         if (!localPlayer)
             return;
 
-        const auto punchAngle = interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer())->aimPunchAngle();
+        static auto weaponRecoilScale = interfaces.cvar->findVar("weapon_recoil_scale");
+
+        const auto punchAngle = interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer())->aimPunchAngle() * weaponRecoilScale->getFloat();
         const auto [width, height] = interfaces.engine->getScreenSize();
 
-        const float x = width * (0.5f - punchAngle.y / 90.0f);
-        const float y = height * (0.5f + punchAngle.x / 90.0f);
+        const float x = width * (0.5f - punchAngle.y / 180.0f);
+        const float y = height * (0.5f + punchAngle.x / 180.0f);
         const auto color = Helpers::calculateColor(config.recoilCrosshair.color, config.recoilCrosshair.rainbow, config.recoilCrosshair.rainbowSpeed, memory.globalVars->realtime);
 
         drawList->AddLine({ x, y - 10 }, { x, y + 10 }, color, config.recoilCrosshair.thickness);
