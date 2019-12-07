@@ -5,6 +5,7 @@
 #include <Windows.h>
 
 class Client;
+class Cvar;
 class DebugOverlay;
 class Engine;
 class EngineTrace;
@@ -15,6 +16,7 @@ class Localize;
 class Interfaces {
 public:
     Client* client = find<Client>(L"client_panorama", "VClient018");
+    Cvar* cvar = find<Cvar>(L"vstdlib", "VEngineCvar007");
     Engine* engine = find<Engine>(L"engine", "VEngineClient014");
     EngineTrace* engineTrace = find<EngineTrace>(L"engine", "EngineTraceClient004");
     EntityList* entityList = find<EntityList>(L"client_panorama", "VClientEntityList003");
