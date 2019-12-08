@@ -37,6 +37,11 @@ public:
         return callVirtualMethod<bool>(this + 8, 9);
     }
 
+    constexpr auto getModel() noexcept
+    {
+        return callVirtualMethod<const Model*>(this + 4, 8);
+    }
+
     constexpr auto getCollideable() noexcept
     {
         return callVirtualMethod<Collideable*>(this, 3);
