@@ -398,6 +398,12 @@ void ESP::render(ImDrawList* drawList) noexcept
                 }
             } else {
                 switch (entity->getClientClass()->classId) {
+                case ClassId::BaseCSGrenadeProjectile:
+                    if (std::strstr(entity->getModel()->name, "flashbang"))
+                        renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[1], nullptr, interfaces.localize->find("#SFUI_WPNHUD_Flashbang"));
+                    else
+                        renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[2], nullptr, interfaces.localize->find("#SFUI_WPNHUD_HE_Grenade"));
+                    break;
                 case ClassId::EconEntity:
                     renderEntityEsp(drawList, entity, config.otherEntities[0], config.otherEntities[1], nullptr, interfaces.localize->find("#SFUI_WPNHUD_DEFUSER"));
                     break;

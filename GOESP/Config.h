@@ -64,6 +64,7 @@ public:
     std::array<Weapon, 7> shotguns;
     std::array<Weapon, 3> heavy;
     std::array<Weapon, 12> grenades;
+    std::array<Shared, 3> projectiles;
     std::array<Shared, 4> otherEntities;
 
     ColorToggleThickness reloadProgress;

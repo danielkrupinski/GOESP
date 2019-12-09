@@ -104,6 +104,8 @@ void GUI::render() noexcept
                         return config.grenades[subItem];
                     }
                 case 3:
+                    return config.projectiles[item];
+                case 4:
                     return config.otherEntities[item];
                 default:
                     return config.players[0];
@@ -111,7 +113,7 @@ void GUI::render() noexcept
             };
 
             if (ImGui::ListBoxHeader("##list", { 155.0f, 300.0f })) {
-                static constexpr std::array categories{ "Allies", "Enemies", "Weapons", "Other Entities" };
+                static constexpr std::array categories{ "Allies", "Enemies", "Weapons", "Projectiles", "Other Entities" };
 
                 for (size_t i = 0; i < categories.size(); i++) {
                     if (ImGui::Selectable(categories[i], currentCategory == i && currentItem == 0)) {
@@ -129,8 +131,12 @@ void GUI::render() noexcept
                             return { "Visible", "Occluded" };
                         case 2:
                             return { "Pistols", "SMGs", "Rifles", "Sniper Rifles", "Shotguns", "Heavy", "Grenades" };
-                        default:
+                        case 3:
+                            return { "Flashbang", "HE Grenade" };
+                        case 4:
                             return { "Defuse Kits", "Chickens", "Planted C4" };
+                        default:
+                            return { };
                         }
                     };
 
@@ -287,7 +293,8 @@ void GUI::render() noexcept
                     ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
                     break;
                 }
-                case 3: {
+                case 3:
+                case 4: {
                     auto& miscConfig = getConfig(currentCategory, currentItem, currentSubItem);
 
                     ImGui::Checkbox("Enabled", &miscConfig.enabled);
