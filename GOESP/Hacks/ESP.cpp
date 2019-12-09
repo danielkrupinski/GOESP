@@ -404,6 +404,18 @@ void ESP::render(ImDrawList* drawList) noexcept
                     else
                         renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[2], nullptr, interfaces.localize->find("#SFUI_WPNHUD_HE_Grenade"));
                     break;
+                case ClassId::BreachChargeProjectile:
+                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[3], nullptr, interfaces.localize->find("#SFUI_WPNHUD_BreachCharge"));
+                    break;
+                case ClassId::BumpMineProjectile:
+                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[4], nullptr, interfaces.localize->find("#SFUI_WPNHUD_BumpMine"));
+                    break;
+                case ClassId::DecoyProjectile:
+                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[5], nullptr, interfaces.localize->find("#SFUI_WPNHUD_Decoy"));
+                    break;
+                case ClassId::MolotovProjectile:
+                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[6], nullptr, interfaces.localize->find("#SFUI_WPNHUD_Molotov"));
+                    break;
                 case ClassId::EconEntity:
                     renderEntityEsp(drawList, entity, config.otherEntities[0], config.otherEntities[1], nullptr, interfaces.localize->find("#SFUI_WPNHUD_DEFUSER"));
                     break;
