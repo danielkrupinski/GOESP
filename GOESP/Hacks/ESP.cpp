@@ -258,18 +258,20 @@ static constexpr void renderWeaponEsp(ImDrawList* drawList, Entity* entity, cons
     }
 }
 
-static void renderEntityEsp(ImDrawList* drawList, Entity* entity, const Config::Shared& parentConfig, const Config::Shared& itemConfig, const char* name, const wchar_t* wideName = nullptr) noexcept
+static void renderEntityEsp(ImDrawList* drawList, Entity* entity, const Config::Shared& parentConfig, const Config::Shared& itemConfig, const char* name) noexcept
 {
     const auto& config = parentConfig.enabled ? parentConfig : itemConfig;
 
     if (config.enabled) {
-        if (name)
-            renderEntityBox(drawList, entity, name, config);
-        else if (char nameConverted[100]; WideCharToMultiByte(CP_UTF8, 0, wideName, -1, nameConverted, _countof(nameConverted), nullptr, nullptr))
-            renderEntityBox(drawList, entity, nameConverted, config);
-
+        renderEntityBox(drawList, entity, name, config);
         renderSnaplines(drawList, entity, config.snaplines);
     }
+}
+
+static void renderEntityEsp(ImDrawList* drawList, Entity* entity, const Config::Shared& parentConfig, const Config::Shared& itemConfig, const wchar_t* name) noexcept
+{
+    if (char nameConverted[100]; WideCharToMultiByte(CP_UTF8, 0, name, -1, nameConverted, _countof(nameConverted), nullptr, nullptr))
+        renderEntityEsp(drawList, entity, parentConfig, itemConfig, nameConverted);
 }
 
 void ESP::render(ImDrawList* drawList) noexcept
@@ -400,33 +402,33 @@ void ESP::render(ImDrawList* drawList) noexcept
                 switch (entity->getClientClass()->classId) {
                 case ClassId::BaseCSGrenadeProjectile:
                     if (const auto model = entity->getModel(); model && std::strstr(model->name, "flashbang"))
-                        renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[1], nullptr, interfaces.localize->find("#SFUI_WPNHUD_Flashbang"));
+                        renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[1], interfaces.localize->find("#SFUI_WPNHUD_Flashbang"));
                     else
-                        renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[2], nullptr, interfaces.localize->find("#SFUI_WPNHUD_HE_Grenade"));
+                        renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[2], interfaces.localize->find("#SFUI_WPNHUD_HE_Grenade"));
                     break;
                 case ClassId::BreachChargeProjectile:
-                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[3], nullptr, interfaces.localize->find("#SFUI_WPNHUD_BreachCharge"));
+                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[3], interfaces.localize->find("#SFUI_WPNHUD_BreachCharge"));
                     break;
                 case ClassId::BumpMineProjectile:
-                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[4], nullptr, interfaces.localize->find("#SFUI_WPNHUD_BumpMine"));
+                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[4], interfaces.localize->find("#SFUI_WPNHUD_BumpMine"));
                     break;
                 case ClassId::DecoyProjectile:
-                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[5], nullptr, interfaces.localize->find("#SFUI_WPNHUD_Decoy"));
+                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[5], interfaces.localize->find("#SFUI_WPNHUD_Decoy"));
                     break;
                 case ClassId::MolotovProjectile:
-                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[6], nullptr, interfaces.localize->find("#SFUI_WPNHUD_Molotov"));
+                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[6], interfaces.localize->find("#SFUI_WPNHUD_Molotov"));
                     break;
                 case ClassId::SensorGrenadeProjectile:
-                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[7], nullptr, interfaces.localize->find("#SFUI_WPNHUD_TAGrenade"));
+                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[7], interfaces.localize->find("#SFUI_WPNHUD_TAGrenade"));
                     break;
                 case ClassId::SmokeGrenadeProjectile:
-                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[8], nullptr, interfaces.localize->find("#SFUI_WPNHUD_SmokeGrenade"));
+                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[8], interfaces.localize->find("#SFUI_WPNHUD_SmokeGrenade"));
                     break;
                 case ClassId::SnowballProjectile:
-                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[9], nullptr, interfaces.localize->find("#SFUI_WPNHUD_Snowball"));
+                    renderEntityEsp(drawList, entity, config.projectiles[0], config.projectiles[9], interfaces.localize->find("#SFUI_WPNHUD_Snowball"));
                     break;
                 case ClassId::EconEntity:
-                    renderEntityEsp(drawList, entity, config.otherEntities[0], config.otherEntities[1], nullptr, interfaces.localize->find("#SFUI_WPNHUD_DEFUSER"));
+                    renderEntityEsp(drawList, entity, config.otherEntities[0], config.otherEntities[1], interfaces.localize->find("#SFUI_WPNHUD_DEFUSER"));
                     break;
                 case ClassId::Chicken:
                     renderEntityEsp(drawList, entity, config.otherEntities[0], config.otherEntities[2], "Chicken");
