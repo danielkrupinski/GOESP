@@ -18,6 +18,7 @@
 #include "../SDK/WeaponId.h"
 
 #include <optional>
+#include <tuple>
 
 static constexpr bool worldToScreen(const Vector& in, ImVec2& out) noexcept
 {
@@ -374,29 +375,21 @@ void ESP::render(ImDrawList* drawList) noexcept
                 };
 
                 if (const auto weaponData = entity->getWeaponData(); weaponData && !config.weapons.enabled) {
-                    switch (weaponData->type) {
-                    case WeaponType::Pistol:
-                        renderWeaponEsp(drawList, entity, config.pistols[0], config.pistols[getWeaponIndex(entity->weaponId())]);
-                        break;
-                    case WeaponType::SubMachinegun:
-                        renderWeaponEsp(drawList, entity, config.smgs[0], config.smgs[getWeaponIndex(entity->weaponId())]);
-                        break;
-                    case WeaponType::Rifle:
-                        renderWeaponEsp(drawList, entity, config.rifles[0], config.rifles[getWeaponIndex(entity->weaponId())]);
-                        break;
-                    case WeaponType::SniperRifle:
-                        renderWeaponEsp(drawList, entity, config.sniperRifles[0], config.sniperRifles[getWeaponIndex(entity->weaponId())]);
-                        break;
-                    case WeaponType::Shotgun:
-                        renderWeaponEsp(drawList, entity, config.shotguns[0], config.shotguns[getWeaponIndex(entity->weaponId())]);
-                        break;
-                    case WeaponType::Machinegun:
-                        renderWeaponEsp(drawList, entity, config.heavy[0], config.heavy[getWeaponIndex(entity->weaponId())]);
-                        break;
-                    case WeaponType::Grenade:
-                        renderWeaponEsp(drawList, entity, config.grenades[0], config.grenades[getWeaponIndex(entity->weaponId())]);
-                        break;
-                    }
+                    constexpr auto dispatchWeapon = [](WeaponType type, int idx) -> std::optional<std::pair<const Config::Weapon&, const Config::Weapon&>> {
+                        switch (type) {
+                        case WeaponType::Pistol: return std::make_pair(config.pistols[0], config.pistols[idx]);
+                        case WeaponType::SubMachinegun: return std::make_pair(config.smgs[0], config.smgs[idx]);
+                        case WeaponType::Rifle: return std::make_pair(config.rifles[0], config.rifles[idx]);
+                        case WeaponType::SniperRifle: return std::make_pair(config.sniperRifles[0], config.sniperRifles[idx]);
+                        case WeaponType::Shotgun: return std::make_pair(config.shotguns[0], config.shotguns[idx]);
+                        case WeaponType::Machinegun: return std::make_pair(config.heavy[0], config.heavy[idx]);
+                        case WeaponType::Grenade: return std::make_pair(config.grenades[0], config.grenades[idx]);
+                        default: return std::nullopt;
+                        }
+                    };
+
+                    if (const auto w = dispatchWeapon(weaponData->type, getWeaponIndex(entity->weaponId())))
+                        renderWeaponEsp(drawList, entity, w->first, w->second);
                 } else {
                     renderWeaponEsp(drawList, entity, config.weapons, config.weapons);
                 }
@@ -421,8 +414,8 @@ void ESP::render(ImDrawList* drawList) noexcept
                     }
                 };
 
-                if (const auto a = dispatchEntity(entity->getClientClass()->classId, entity->getModel() && std::strstr(entity->getModel()->name, "flashbang")))
-                    renderEntityEsp(drawList, entity, std::get<0>(*a), std::get<1>(*a), std::get<2>(*a));
+                if (const auto e = dispatchEntity(entity->getClientClass()->classId, entity->getModel() && std::strstr(entity->getModel()->name, "flashbang")))
+                    renderEntityEsp(drawList, entity, std::get<0>(*e), std::get<1>(*e), std::get<2>(*e));
             }
         }
     }
