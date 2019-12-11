@@ -134,7 +134,7 @@ void GUI::render() noexcept
                         case 3:
                             return { "Flashbang", "HE Grenade", "Breach Charge", "Bump Mine", "Decoy Grenade", "Molotov", "TA Grenade", "Smoke Grenade", "Snowball" };
                         case 4:
-                            return { "Defuse Kits", "Chickens", "Planted C4" };
+                            return { "Defuse Kit", "Chicken", "Planted C4" };
                         default:
                             return { };
                         }
