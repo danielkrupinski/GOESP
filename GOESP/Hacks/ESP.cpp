@@ -382,7 +382,7 @@ void ESP::render(ImDrawList* drawList) noexcept
                         case WeaponType::Rifle: return std::make_pair(config.rifles[0], config.rifles[idx]);
                         case WeaponType::SniperRifle: return std::make_pair(config.sniperRifles[0], config.sniperRifles[idx]);
                         case WeaponType::Shotgun: return std::make_pair(config.shotguns[0], config.shotguns[idx]);
-                        case WeaponType::Machinegun: return std::make_pair(config.heavy[0], config.heavy[idx]);
+                        case WeaponType::Machinegun: return std::make_pair(config.machineguns[0], config.machineguns[idx]);
                         case WeaponType::Grenade: return std::make_pair(config.grenades[0], config.grenades[idx]);
                         default: return std::nullopt;
                         }

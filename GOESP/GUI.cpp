@@ -99,7 +99,7 @@ void GUI::render() noexcept
                     case 5:
                         return config.shotguns[subItem];
                     case 6:
-                        return config.heavy[subItem];
+                        return config.machineguns[subItem];
                     case 7:
                         return config.grenades[subItem];
                     }
@@ -130,7 +130,7 @@ void GUI::render() noexcept
                         case 1:
                             return { "Visible", "Occluded" };
                         case 2:
-                            return { "Pistols", "SMGs", "Rifles", "Sniper Rifles", "Shotguns", "Heavy", "Grenades" };
+                            return { "Pistols", "SMGs", "Rifles", "Sniper Rifles", "Shotguns", "Machineguns", "Grenades" };
                         case 3:
                             return { "Flashbang", "HE Grenade", "Breach Charge", "Bump Mine", "Decoy Grenade", "Molotov", "TA Grenade", "Smoke Grenade", "Snowball" };
                         case 4:
@@ -254,7 +254,7 @@ void GUI::render() noexcept
                         case 5:
                             return config.shotguns[subItem];
                         case 6:
-                            return config.heavy[subItem];
+                            return config.machineguns[subItem];
                         case 7:
                             return config.grenades[subItem];
                         }

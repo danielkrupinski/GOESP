@@ -137,8 +137,8 @@ void Config::load() noexcept
         this->sniperRifles = sniperRifles;
     if (const auto& shotguns = j["Shotguns"]; shotguns.is_array() && shotguns.size() == this->shotguns.size())
         this->shotguns = shotguns;
-    if (const auto& heavy = j["Heavy"]; heavy.is_array() && heavy.size() == this->heavy.size())
-        this->heavy = heavy;
+    if (const auto& machineguns = j["Machineguns"]; machineguns.is_array() && machineguns.size() == this->machineguns.size())
+        this->machineguns = machineguns;
     if (const auto& grenades = j["Grenades"]; grenades.is_array() && grenades.size() == this->grenades.size())
         this->grenades = grenades;
 
@@ -217,7 +217,7 @@ void Config::save() noexcept
     j["Rifles"] = rifles;
     j["Sniper Rifles"] = sniperRifles;
     j["Shotguns"] = shotguns;
-    j["Heavy"] = heavy;
+    j["Machineguns"] = machineguns;
     j["Grenades"] = grenades;
     
     j["Other Entities"] = otherEntities;
