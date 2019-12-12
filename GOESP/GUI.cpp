@@ -28,7 +28,7 @@ GUI::GUI() noexcept
     ImGui::StyleColorsClassic();
     ImGuiStyle& style = ImGui::GetStyle();
 
-    style.ScrollbarSize = 9.0f;
+    style.ScrollbarSize = 13.0f;
 
     ImGuiIO& io = ImGui::GetIO();
     io.IniFilename = nullptr;
