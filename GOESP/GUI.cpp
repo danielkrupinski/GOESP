@@ -112,7 +112,7 @@ void GUI::render() noexcept
                 }
             };
 
-            if (ImGui::ListBoxHeader("##list", { 155.0f, 300.0f })) {
+            if (ImGui::ListBoxHeader("##list", { 170.0f, 300.0f })) {
                 static constexpr std::array categories{ "Allies", "Enemies", "Weapons", "Projectiles", "Other Entities" };
 
                 for (size_t i = 0; i < categories.size(); i++) {
