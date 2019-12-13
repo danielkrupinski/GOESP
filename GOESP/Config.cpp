@@ -113,6 +113,14 @@ static void from_json(const json& j, Config::Weapon& w)
     from_json(j, static_cast<Config::Shared&>(w));
 }
 
+static void from_json(const json& j, Config::Player& p)
+{
+    from_json(j, static_cast<Config::Shared&>(p));
+
+    if (const auto& weapon = j["Weapon"]; weapon.is_object())
+        p.weapon = weapon;
+}
+
 void Config::load() noexcept
 {
     json j;
@@ -183,7 +191,6 @@ static void to_json(json& j, const Config::ColorToggleThicknessRounding& cttr)
     j["Thickness"] = cttr.thickness;
 }
 
-
 static void to_json(json& j, const Config::Shared& s)
 {
     j = json{ { "Enabled", s.enabled },
@@ -198,6 +205,7 @@ static void to_json(json& j, const Config::Shared& s)
 static void to_json(json& j, const Config::Player& p)
 {
     j = static_cast<Config::Shared>(p);
+    j["Weapon"] = p.weapon;
 }
 
 static void to_json(json& j, const Config::Weapon& w)

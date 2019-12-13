@@ -51,6 +51,7 @@ public:
     };
 
     struct Player : public Shared {
+        ColorToggle weapon;
     };
 
     struct Weapon : public Shared {
