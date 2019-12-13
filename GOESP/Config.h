@@ -26,6 +26,8 @@ public:
     };
 
     struct ColorToggleThickness : public ColorToggle {
+        ColorToggleThickness() = default;
+        ColorToggleThickness(float thickness) : thickness{ thickness } { }
         float thickness = 1.0f;
     };
 
@@ -67,7 +69,7 @@ public:
     std::array<Shared, 10> projectiles;
     std::array<Shared, 4> otherEntities;
 
-    ColorToggleThickness reloadProgress;
+    ColorToggleThickness reloadProgress{ 5.0f };
     ColorToggleThickness recoilCrosshair;
 
     std::vector<std::pair<std::string, std::string>> systemFonts{ { "Default", "" } };
