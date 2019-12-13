@@ -201,43 +201,39 @@ void GUI::render() noexcept
             ImGui::SameLine();
 
             if (ImGui::BeginChild("##child", { 400.0f, 0.0f })) {
-                switch (currentCategory) {
-                case 0:
-                case 1: {
-                    auto& playerConfig = config.players[currentCategory * 3 + currentItem];
+                auto& sharedConfig = getConfig(currentCategory, currentItem, currentSubItem);
 
-                    ImGui::Checkbox("Enabled", &playerConfig.enabled);
-                    ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 260.0f);
-                    ImGui::SetNextItemWidth(220.0f);
-                    if (ImGui::BeginCombo("Font", config.systemFonts[playerConfig.fontIndex].first.c_str())) {
-                        for (size_t i = 0; i < config.systemFonts.size(); i++) {
-                            bool isSelected = config.systemFonts[i].second == playerConfig.font;
-                            if (ImGui::Selectable(config.systemFonts[i].first.c_str(), isSelected, 0, { 300.0f, 0.0f })) {
-                                playerConfig.fontIndex = i;
-                                playerConfig.font = config.systemFonts[i].second;
-                                config.scheduleFontLoad(playerConfig.font);
-                            }
-                            if (isSelected)
-                                ImGui::SetItemDefaultFocus();
+                ImGui::Checkbox("Enabled", &sharedConfig.enabled);
+                ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 260.0f);
+                ImGui::SetNextItemWidth(220.0f);
+                if (ImGui::BeginCombo("Font", config.systemFonts[sharedConfig.fontIndex].first.c_str())) {
+                    for (size_t i = 0; i < config.systemFonts.size(); i++) {
+                        bool isSelected = config.systemFonts[i].second == sharedConfig.font;
+                        if (ImGui::Selectable(config.systemFonts[i].first.c_str(), isSelected, 0, { 300.0f, 0.0f })) {
+                            sharedConfig.fontIndex = i;
+                            sharedConfig.font = config.systemFonts[i].second;
+                            config.scheduleFontLoad(sharedConfig.font);
                         }
-                        ImGui::EndCombo();
+                        if (isSelected)
+                            ImGui::SetItemDefaultFocus();
                     }
-
-                    ImGui::Separator();
-
-                    constexpr auto spacing = 200.0f;
-                    ImGuiCustom::colorPicker("Snaplines", playerConfig.snaplines);
-                    ImGui::SameLine(spacing);
-                    ImGuiCustom::colorPicker("Box", playerConfig.box);
-                    ImGui::SameLine();
-                    ImGui::SetNextItemWidth(95.0f);
-                    ImGui::Combo("", &playerConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
-                    ImGuiCustom::colorPicker("Name", playerConfig.name);
-                    ImGui::SameLine(spacing);
-                    ImGuiCustom::colorPicker("Text Background", playerConfig.textBackground);
-                    break;
+                    ImGui::EndCombo();
                 }
-                case 2: {
+
+                ImGui::Separator();
+
+                constexpr auto spacing = 200.0f;
+                ImGuiCustom::colorPicker("Snaplines", sharedConfig.snaplines);
+                ImGui::SameLine(spacing);
+                ImGuiCustom::colorPicker("Box", sharedConfig.box);
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(95.0f);
+                ImGui::Combo("", &sharedConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
+                ImGuiCustom::colorPicker("Name", sharedConfig.name);
+                ImGui::SameLine(spacing);
+                ImGuiCustom::colorPicker("Text Background", sharedConfig.textBackground);
+
+                if (currentCategory == 2) {
                     constexpr auto getWeaponConfig = [](int item, int subItem) constexpr noexcept -> Config::Weapon& {
                         switch (item) {
                         default:
@@ -259,76 +255,14 @@ void GUI::render() noexcept
                             return config.grenades[subItem];
                         }
                     };
-
                     auto& weaponConfig = getWeaponConfig(currentItem, currentSubItem);
 
-                    ImGui::Checkbox("Enabled", &weaponConfig.enabled);
-                    ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 260.0f);
-                    ImGui::SetNextItemWidth(220.0f);
-                    if (ImGui::BeginCombo("Font", config.systemFonts[weaponConfig.fontIndex].first.c_str())) {
-                        for (size_t i = 0; i < config.systemFonts.size(); i++) {
-                            bool isSelected = config.systemFonts[i].second == weaponConfig.font;
-                            if (ImGui::Selectable(config.systemFonts[i].first.c_str(), isSelected, 0, { 300.0f, 0.0f })) {
-                                weaponConfig.fontIndex = i;
-                                weaponConfig.font = config.systemFonts[i].second;
-                                config.scheduleFontLoad(weaponConfig.font);
-                            }
-                            if (isSelected)
-                                ImGui::SetItemDefaultFocus();
-                        }
-                        ImGui::EndCombo();
-                    }
-                    ImGui::Separator();
-
-                    constexpr auto spacing = 200.0f;
-                    ImGuiCustom::colorPicker("Snaplines", weaponConfig.snaplines);
-                    ImGui::SameLine(spacing);
-                    ImGuiCustom::colorPicker("Box", weaponConfig.box);
-                    ImGui::SameLine();
-                    ImGui::SetNextItemWidth(95.0f);
-                    ImGui::Combo("", &weaponConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
-                    ImGuiCustom::colorPicker("Name", weaponConfig.name);
-                    ImGui::SameLine(spacing);
-                    ImGuiCustom::colorPicker("Text Background", weaponConfig.textBackground);
                     ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
-                    break;
                 }
-                case 3:
-                case 4: {
-                    auto& miscConfig = getConfig(currentCategory, currentItem, currentSubItem);
 
-                    ImGui::Checkbox("Enabled", &miscConfig.enabled);
-                    ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 260.0f);
-                    ImGui::SetNextItemWidth(220.0f);
-                    if (ImGui::BeginCombo("Font", config.systemFonts[miscConfig.fontIndex].first.c_str())) {
-                        for (size_t i = 0; i < config.systemFonts.size(); i++) {
-                            bool isSelected = config.systemFonts[i].second == miscConfig.font;
-                            if (ImGui::Selectable(config.systemFonts[i].first.c_str(), isSelected, 0, { 300.0f, 0.0f })) {
-                                miscConfig.fontIndex = i;
-                                miscConfig.font = config.systemFonts[i].second;
-                                config.scheduleFontLoad(miscConfig.font);
-                            }
-                            if (isSelected)
-                                ImGui::SetItemDefaultFocus();
-                        }
-                        ImGui::EndCombo();
-                    }
-                    ImGui::Separator();
-
-                    constexpr auto spacing = 200.0f;
-                    ImGuiCustom::colorPicker("Snaplines", miscConfig.snaplines);
-                    ImGui::SameLine(spacing);
-                    ImGuiCustom::colorPicker("Box", miscConfig.box);
-                    ImGui::SameLine();
-                    ImGui::SetNextItemWidth(95.0f);
-                    ImGui::Combo("", &miscConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
-                    ImGuiCustom::colorPicker("Name", miscConfig.name);
-                    ImGui::SameLine(spacing);
-                    ImGuiCustom::colorPicker("Text Background", miscConfig.textBackground);
-                }
-                }
                 ImGui::EndChild();
             }
+
             ImGui::EndTabItem();
         }
         if (ImGui::BeginTabItem("Misc")) {
