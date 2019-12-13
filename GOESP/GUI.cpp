@@ -257,7 +257,8 @@ void GUI::render() noexcept
                     };
                     auto& weaponConfig = getWeaponConfig(currentItem, currentSubItem);
 
-                    ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
+                    if (currentItem != 7)
+                        ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
                 }
 
                 ImGui::EndChild();
