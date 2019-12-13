@@ -233,7 +233,11 @@ void GUI::render() noexcept
                 ImGui::SameLine(spacing);
                 ImGuiCustom::colorPicker("Text Background", sharedConfig.textBackground);
 
-                if (currentCategory == 2) {
+                if (currentCategory < 2) {
+                    auto& playerConfig = config.players[currentCategory * 3 + currentItem];
+
+                    ImGuiCustom::colorPicker("Weapon", playerConfig.weapon);
+                } else if (currentCategory == 2) {
                     constexpr auto getWeaponConfig = [](int item, int subItem) constexpr noexcept -> Config::Weapon& {
                         switch (item) {
                         default:

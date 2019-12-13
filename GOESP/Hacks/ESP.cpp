@@ -125,13 +125,13 @@ static void renderPlayerBox(ImDrawList* drawList, Entity* entity, const Config::
     if (BoundingBox bbox; boundingBox(entity, bbox)) {
         renderBox(drawList, entity, bbox, config);
 
+        ImGui::PushFont(::config.fonts[config.font]);
+        const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
+
         if (config.name.enabled) {
             if (PlayerInfo playerInfo; interfaces.engine->getPlayerInfo(entity->index(), playerInfo)) {
-                ImGui::PushFont(::config.fonts[config.font]);
-
                 const auto distance = (interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer())->getAbsOrigin() - entity->getAbsOrigin()).length();
                 const auto fontSize = std::clamp(15.0f * 10.0f / std::sqrt(distance), 10.0f, 15.0f);
-                const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
 
                 ImGui::GetCurrentContext()->FontSize = fontSize;
                 const auto textSize = ImGui::CalcTextSize(playerInfo.name);
@@ -141,11 +141,31 @@ static void renderPlayerBox(ImDrawList* drawList, Entity* entity, const Config::
                 }
                 const ImU32 color = Helpers::calculateColor(config.name.color, config.name.rainbow, config.name.rainbowSpeed, memory.globalVars->realtime);
                 drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, playerInfo.name);
-                ImGui::GetCurrentContext()->FontSize = oldFontSize;
-
-                ImGui::PopFont();
             }
         }
+
+        if (config.weapon.enabled) {
+            if (const auto weapon = entity->getActiveWeapon()) {
+                if (const auto weaponData = weapon->getWeaponData()) {
+                    if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces.localize->find(weaponData->name), -1, weaponName, _countof(weaponName), nullptr, nullptr)) {
+                        const auto distance = (interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer())->getAbsOrigin() - entity->getAbsOrigin()).length();
+                        const auto fontSize = std::clamp(15.0f * 10.0f / std::sqrt(distance), 10.0f, 15.0f);
+
+                        ImGui::GetCurrentContext()->FontSize = fontSize;
+                        const auto textSize = ImGui::CalcTextSize(weaponName);
+                        if (config.textBackground.enabled) {
+                            const ImU32 color = Helpers::calculateColor(config.textBackground.color, config.textBackground.rainbow, config.textBackground.rainbowSpeed, memory.globalVars->realtime);
+                            drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.max.y + 3 }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.max.y + 7 + textSize.y }, color, config.textBackground.rounding);
+                        }
+                        const ImU32 color = Helpers::calculateColor(config.weapon.color, config.weapon.rainbow, config.weapon.rainbowSpeed, memory.globalVars->realtime);
+                        drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.max.y + 5 }, color, weaponName);
+                    }
+                }
+            }
+        }
+
+        ImGui::GetCurrentContext()->FontSize = oldFontSize;
+        ImGui::PopFont();
     }
 }
 
