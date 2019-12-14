@@ -42,7 +42,7 @@ private:
             if (!*second)
                 return reinterpret_cast<T>(const_cast<char*>(start) + offset);
         }
-        MessageBoxA(NULL, (std::ostringstream{ } << "Failed to find pattern in " << module << '!').str().c_str(), "GOESP", MB_OK | MB_ICONERROR);
+        MessageBoxW(NULL, (std::wostringstream{ } << L"Failed to find pattern in " << module << L'!').str().c_str(), L"GOESP", MB_OK | MB_ICONERROR);
         std::exit(EXIT_FAILURE);
     }
 };
