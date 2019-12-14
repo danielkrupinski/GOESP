@@ -23,11 +23,11 @@ private:
     static auto findPattern(const wchar_t* module, const char* pattern, size_t offset = 0) noexcept
     {
         if (MODULEINFO moduleInfo; GetModuleInformation(GetCurrentProcess(), GetModuleHandleW(module), &moduleInfo, sizeof(moduleInfo))) {
-            auto start{ static_cast<const char*>(moduleInfo.lpBaseOfDll) };
-            auto end{ start + moduleInfo.SizeOfImage };
+            auto start = static_cast<const char*>(moduleInfo.lpBaseOfDll);
+            const auto end = start + moduleInfo.SizeOfImage;
 
-            auto first{ start };
-            auto second{ pattern };
+            auto first = start;
+            auto second = pattern;
 
             while (first < end && *second) {
                 if (*first == *second || *second == '?') {
