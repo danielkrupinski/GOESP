@@ -276,6 +276,7 @@ void GUI::render() noexcept
             ImGui::EndTabItem();
         }
         if (ImGui::BeginTabItem("Configs")) {
+            ImGui::TextUnformatted("Config is saved as \"config.txt\" inside GOESP directory in Documents");
             if (ImGui::Button("Load"))
                 config.load();
             if (ImGui::Button("Save"))
