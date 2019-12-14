@@ -137,10 +137,10 @@ static void renderPlayerBox(ImDrawList* drawList, Entity* entity, const Config::
                 const auto textSize = ImGui::CalcTextSize(playerInfo.name);
                 if (config.textBackground.enabled) {
                     const ImU32 color = Helpers::calculateColor(config.textBackground.color, config.textBackground.rainbow, config.textBackground.rainbowSpeed, memory.globalVars->realtime);
-                    drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.min.y - 3 }, color, config.textBackground.rounding);
+                    drawList->AddRectFilled({ (bbox.min.x + bbox.max.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { (bbox.min.x + bbox.max.x  + textSize.x) / 2 + textSize.x + 2, bbox.min.y - 3 }, color, config.textBackground.rounding);
                 }
                 const ImU32 color = Helpers::calculateColor(config.name.color, config.name.rainbow, config.name.rainbowSpeed, memory.globalVars->realtime);
-                drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, playerInfo.name);
+                drawList->AddText(nullptr, fontSize, { (bbox.min.x + bbox.max.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, playerInfo.name);
             }
         }
 
@@ -155,10 +155,10 @@ static void renderPlayerBox(ImDrawList* drawList, Entity* entity, const Config::
                         const auto textSize = ImGui::CalcTextSize(weaponName);
                         if (config.textBackground.enabled) {
                             const ImU32 color = Helpers::calculateColor(config.textBackground.color, config.textBackground.rainbow, config.textBackground.rainbowSpeed, memory.globalVars->realtime);
-                            drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.max.y + 3 }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.max.y + 7 + textSize.y }, color, config.textBackground.rounding);
+                            drawList->AddRectFilled({ (bbox.min.x + bbox.max.x - textSize.x) / 2 - 2, bbox.max.y + 3 }, { (bbox.min.x + bbox.max.x + textSize.x) / 2 + 2, bbox.max.y + 7 + textSize.y }, color, config.textBackground.rounding);
                         }
                         const ImU32 color = Helpers::calculateColor(config.weapon.color, config.weapon.rainbow, config.weapon.rainbowSpeed, memory.globalVars->realtime);
-                        drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.max.y + 5 }, color, weaponName);
+                        drawList->AddText(nullptr, fontSize, { (bbox.min.x + bbox.max.x - textSize.x) / 2, bbox.max.y + 5 }, color, weaponName);
                     }
                 }
             }
@@ -187,10 +187,10 @@ static void renderWeaponBox(ImDrawList* drawList, Entity* entity, const Config::
                     const auto textSize = ImGui::CalcTextSize(weaponName);
                     if (config.textBackground.enabled) {
                         const ImU32 color = Helpers::calculateColor(config.textBackground.color, config.textBackground.rainbow, config.textBackground.rainbowSpeed, memory.globalVars->realtime);
-                        drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.min.y - 3 }, color, config.textBackground.rounding);
+                        drawList->AddRectFilled({ (bbox.min.x + bbox.max.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { (bbox.min.x + bbox.max.x + textSize.x) / 2 + 2, bbox.min.y - 3 }, color, config.textBackground.rounding);
                     }
                     const ImU32 color = Helpers::calculateColor(config.name.color, config.name.rainbow, config.name.rainbowSpeed, memory.globalVars->realtime);
-                    drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, weaponName);
+                    drawList->AddText(nullptr, fontSize, { (bbox.min.x + bbox.max.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, weaponName);
                 }
             }
         }
@@ -204,10 +204,10 @@ static void renderWeaponBox(ImDrawList* drawList, Entity* entity, const Config::
             const auto textSize = ImGui::CalcTextSize(text.c_str());
             if (config.textBackground.enabled) {
                 const ImU32 color = Helpers::calculateColor(config.textBackground.color, config.textBackground.rainbow, config.textBackground.rainbowSpeed, memory.globalVars->realtime);
-                drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.max.y + 3 }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.max.y + 7 + textSize.y }, color, config.textBackground.rounding);
+                drawList->AddRectFilled({ (bbox.min.x + bbox.max.x - textSize.x) / 2 - 2, bbox.max.y + 3 }, { (bbox.min.x + bbox.max.x + textSize.x) / 2 + 2, bbox.max.y + 7 + textSize.y }, color, config.textBackground.rounding);
             }
             const ImU32 color = Helpers::calculateColor(config.ammo.color, config.ammo.rainbow, config.ammo.rainbowSpeed, memory.globalVars->realtime);
-            drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.max.y + 5 }, color, text.c_str());
+            drawList->AddText(nullptr, fontSize, { (bbox.min.x + bbox.max.x - textSize.x) / 2, bbox.max.y + 5 }, color, text.c_str());
         }
 
         ImGui::GetCurrentContext()->FontSize = oldFontSize;
@@ -231,10 +231,10 @@ static void renderEntityBox(ImDrawList* drawList, Entity* entity, const char* na
             const auto textSize = ImGui::CalcTextSize(name);
             if (config.textBackground.enabled) {
                 const ImU32 color = Helpers::calculateColor(config.textBackground.color, config.textBackground.rainbow, config.textBackground.rainbowSpeed, memory.globalVars->realtime);
-                drawList->AddRectFilled({ bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2 + textSize.x + 2, bbox.min.y - 3 }, color, config.textBackground.rounding);
+                drawList->AddRectFilled({ (bbox.min.x + bbox.max.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { (bbox.min.x + bbox.max.x + textSize.x) / 2 + 2, bbox.min.y - 3 }, color, config.textBackground.rounding);
             }
             const ImU32 color = Helpers::calculateColor(config.name.color, config.name.rainbow, config.name.rainbowSpeed, memory.globalVars->realtime);
-            drawList->AddText(nullptr, fontSize, { bbox.min.x + (bbox.max.x - bbox.min.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, name);
+            drawList->AddText(nullptr, fontSize, { (bbox.min.x + bbox.max.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, name);
         }
 
         ImGui::GetCurrentContext()->FontSize = oldFontSize;
