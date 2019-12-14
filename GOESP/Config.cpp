@@ -125,7 +125,7 @@ void Config::load() noexcept
 {
     json j;
 
-    if (std::ifstream in{ path / "test.txt" }; in.good())
+    if (std::ifstream in{ path / "config.txt" }; in.good())
         in >> j;
     else
         return;
@@ -233,7 +233,7 @@ void Config::save() noexcept
     j["Reload Progress"] = reloadProgress;
     j["Recoil Crosshair"] = recoilCrosshair;
 
-    if (std::ofstream out{ path / "test.txt" }; out.good())
+    if (std::ofstream out{ path / "config.txt" }; out.good())
         out << std::setw(4) << j;
 }
 
