@@ -19,7 +19,7 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
     if (config.reloadProgress.enabled && interfaces.engine->isInGame()) {
         const auto localPlayer = interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer());
 
-        if (!localPlayer)
+        if (!localPlayer || !localPlayer->isAlive())
             return;
 
         static float reloadLength = 0.0f;
@@ -44,7 +44,7 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
     if (config.recoilCrosshair.enabled && interfaces.engine->isInGame()) {
         const auto localPlayer = interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer());
 
-        if (!localPlayer)
+        if (!localPlayer || !localPlayer->isAlive())
             return;
 
         static auto weaponRecoilScale = interfaces.cvar->findVar("weapon_recoil_scale");
