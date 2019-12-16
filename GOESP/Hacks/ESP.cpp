@@ -137,7 +137,7 @@ static void renderPlayerBox(ImDrawList* drawList, Entity* entity, const Config::
                 const auto textSize = ImGui::CalcTextSize(playerInfo.name);
                 if (config.textBackground.enabled) {
                     const ImU32 color = Helpers::calculateColor(config.textBackground.color, config.textBackground.rainbow, config.textBackground.rainbowSpeed, memory.globalVars->realtime);
-                    drawList->AddRectFilled({ (bbox.min.x + bbox.max.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { (bbox.min.x + bbox.max.x  + textSize.x) / 2 + textSize.x + 2, bbox.min.y - 3 }, color, config.textBackground.rounding);
+                    drawList->AddRectFilled({ (bbox.min.x + bbox.max.x - textSize.x) / 2 - 2, bbox.min.y - 7 - textSize.y }, { (bbox.min.x + bbox.max.x  + textSize.x) / 2 + 2, bbox.min.y - 3 }, color, config.textBackground.rounding);
                 }
                 const ImU32 color = Helpers::calculateColor(config.name.color, config.name.rainbow, config.name.rainbowSpeed, memory.globalVars->realtime);
                 drawList->AddText(nullptr, fontSize, { (bbox.min.x + bbox.max.x - textSize.x) / 2, bbox.min.y - 5 - textSize.y }, color, playerInfo.name);
