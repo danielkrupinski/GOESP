@@ -67,9 +67,9 @@ public:
         return callVirtualMethod<Entity*>(this, 267);
     }
 
-    constexpr auto getEyePosition() noexcept
+    auto getEyePosition() noexcept
     {
-        Vector vec{ };
+        Vector vec;
         callVirtualMethod<void, Vector&>(this, 284, vec);
         return vec;
     }
