@@ -21,21 +21,21 @@ public:
         float rainbowSpeed = 0.6f;
     };
 
-    struct ColorToggle : public Color {
+    struct ColorToggle : Color {
         bool enabled = false;
     };
 
-    struct ColorToggleThickness : public ColorToggle {
+    struct ColorToggleThickness : ColorToggle {
         ColorToggleThickness() = default;
         ColorToggleThickness(float thickness) : thickness{ thickness } { }
         float thickness = 1.0f;
     };
 
-    struct ColorToggleRounding : public ColorToggle {
+    struct ColorToggleRounding : ColorToggle {
         float rounding = 5.0f;
     };
 
-    struct ColorToggleThicknessRounding : public ColorToggleRounding {
+    struct ColorToggleThicknessRounding : ColorToggleRounding {
         float thickness = 1.0f;
     };
 
@@ -50,11 +50,11 @@ public:
         ColorToggleRounding textBackground{ 0.0f, 0.0f, 0.0f, 1.0f };
     };
 
-    struct Player : public Shared {
+    struct Player : Shared {
         ColorToggle weapon;
     };
 
-    struct Weapon : public Shared {
+    struct Weapon : Shared {
         ColorToggle ammo;
     };
 
