@@ -1,6 +1,10 @@
 # GOESP
 Stream-proof ESP hack for CS:GO.
 
+## Screenshots
+
+![Menu](https://i.imgur.com/eJ1oDaL.png)
+
 ## FAQ
 
 ### Can I use custom font in the ESP?
@@ -11,7 +15,6 @@ Nope. Only functions GOESP hooks are DirectX Present and Reset and game window W
 
 ### Is the ESP visible on recording?
 Nope, but you have to uncheck 'Capture external overlays' option in your recording software.
-
 
 ## License
 
