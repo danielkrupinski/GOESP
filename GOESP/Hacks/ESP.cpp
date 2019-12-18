@@ -132,7 +132,7 @@ static void renderText(ImDrawList* drawList, Entity* entity, const Config::Color
 
     if (backgroundCfg.enabled) {
         const ImU32 color = Helpers::calculateColor(backgroundCfg.color, backgroundCfg.rainbow, backgroundCfg.rainbowSpeed, memory.globalVars->realtime);
-        drawList->AddRectFilled({ pos.x - horizontalOffset - 2, pos.y - verticalOffset - 2 }, { pos.x - horizontalOffset + textSize.x + 2, pos.y - verticalOffset + textSize.y - 2 }, color, backgroundCfg.rounding);
+        drawList->AddRectFilled({ pos.x - horizontalOffset - 2, pos.y - verticalOffset - 2 }, { pos.x - horizontalOffset + textSize.x + 2, pos.y - verticalOffset + textSize.y + 2 }, color, backgroundCfg.rounding);
     }
     const ImU32 color = Helpers::calculateColor(textCfg.color, textCfg.rainbow, textCfg.rainbowSpeed, memory.globalVars->realtime);
     drawList->AddText(nullptr, fontSize, { pos.x - horizontalOffset, pos.y - verticalOffset }, color, text);
