@@ -74,6 +74,11 @@ public:
         return vec;
     }
 
+    constexpr auto getObserverTarget() noexcept
+    {
+        return callVirtualMethod<Entity*>(this, 294);
+    }
+
     constexpr auto getWeaponData() noexcept
     {
         return callVirtualMethod<WeaponData*>(this, 457);
