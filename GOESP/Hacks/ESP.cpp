@@ -120,7 +120,7 @@ static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& b
     }
 }
 
-static void renderText(ImDrawList* drawList, Entity* entity, const Config::Shared& config, const char* text, const ImVec2& pos, bool centered = true, bool adjustHeight = true) noexcept
+static void renderText(ImDrawList* drawList, Entity* entity, const Config::Color& textCfg, const Config::ColorToggleRounding& backgroundCfg, const char* text, const ImVec2& pos, bool centered = true, bool adjustHeight = true) noexcept
 {
     const auto distance = (interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer())->getAbsOrigin() - entity->getAbsOrigin()).length();
     const auto fontSize = std::clamp(15.0f * 10.0f / std::sqrt(distance), 10.0f, 15.0f);
@@ -130,11 +130,11 @@ static void renderText(ImDrawList* drawList, Entity* entity, const Config::Share
     const auto horizontalOffset = centered ? textSize.x / 2 : 0.0f;
     const auto verticalOffset = adjustHeight ? textSize.y : 0.0f;
 
-    if (config.textBackground.enabled) {
-        const ImU32 color = Helpers::calculateColor(config.textBackground.color, config.textBackground.rainbow, config.textBackground.rainbowSpeed, memory.globalVars->realtime);
-        drawList->AddRectFilled({ pos.x - horizontalOffset - 2, pos.y - verticalOffset - 2 }, { pos.x - horizontalOffset + textSize.x + 2, pos.y - verticalOffset + textSize.y - 2 }, color, config.textBackground.rounding);
+    if (backgroundCfg.enabled) {
+        const ImU32 color = Helpers::calculateColor(backgroundCfg.color, backgroundCfg.rainbow, backgroundCfg.rainbowSpeed, memory.globalVars->realtime);
+        drawList->AddRectFilled({ pos.x - horizontalOffset - 2, pos.y - verticalOffset - 2 }, { pos.x - horizontalOffset + textSize.x + 2, pos.y - verticalOffset + textSize.y - 2 }, color, backgroundCfg.rounding);
     }
-    const ImU32 color = Helpers::calculateColor(config.name.color, config.name.rainbow, config.name.rainbowSpeed, memory.globalVars->realtime);
+    const ImU32 color = Helpers::calculateColor(textCfg.color, textCfg.rainbow, textCfg.rainbowSpeed, memory.globalVars->realtime);
     drawList->AddText(nullptr, fontSize, { pos.x - horizontalOffset, pos.y - verticalOffset }, color, text);
 }
 
@@ -148,14 +148,14 @@ static void renderPlayerBox(ImDrawList* drawList, Entity* entity, const Config::
 
         if (config.name.enabled) {
             if (PlayerInfo playerInfo; interfaces.engine->getPlayerInfo(entity->index(), playerInfo))
-                renderText(drawList, entity, config, playerInfo.name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+                renderText(drawList, entity, config.name, config.textBackground, playerInfo.name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
         }
 
         if (config.weapon.enabled) {
             if (const auto weapon = entity->getActiveWeapon()) {
                 if (const auto weaponData = weapon->getWeaponData()) {
                     if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces.localize->find(weaponData->name), -1, weaponName, _countof(weaponName), nullptr, nullptr))
-                        renderText(drawList, entity, config, weaponName, { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
+                        renderText(drawList, entity, config.weapon, config.textBackground, weaponName, { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
                 }
             }
         }
@@ -176,13 +176,13 @@ static void renderWeaponBox(ImDrawList* drawList, Entity* entity, const Config::
         if (config.name.enabled) {
             if (const auto weaponData = entity->getWeaponData()) {
                 if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces.localize->find(weaponData->name), -1, weaponName, _countof(weaponName), nullptr, nullptr))
-                    renderText(drawList, entity, config, weaponName, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+                    renderText(drawList, entity, config.name, config.textBackground, weaponName, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
             }
         }
 
         if (config.ammo.enabled && entity->clip() != -1) {
             const auto text{ std::to_string(entity->clip()) + " / " + std::to_string(entity->reserveAmmoCount()) };
-            renderText(drawList, entity, config, text.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
+            renderText(drawList, entity, config.ammo, config.textBackground, text.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
         }
 
         ImGui::GetCurrentContext()->FontSize = oldFontSize;
@@ -199,7 +199,7 @@ static void renderEntityBox(ImDrawList* drawList, Entity* entity, const char* na
         const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
 
         if (config.name.enabled)
-            renderText(drawList, entity, config, name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+            renderText(drawList, entity, config.name, config.textBackground, name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
 
         ImGui::GetCurrentContext()->FontSize = oldFontSize;
         ImGui::PopFont();
