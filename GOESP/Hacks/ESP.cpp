@@ -269,9 +269,12 @@ void ESP::render(ImDrawList* drawList) noexcept
         if (!localPlayer)
             return;
 
+        const auto observerTarget = localPlayer->getObserverTarget();
+
         for (int i = 1; i <= interfaces.engine->getMaxClients(); ++i) {
             const auto entity = interfaces.entityList->getEntity(i);
-            if (!entity || entity == localPlayer || entity->isDormant() || !entity->isAlive())
+            if (!entity || entity == localPlayer || entity == observerTarget
+                || entity->isDormant() || !entity->isAlive())
                 continue;
 
             if (!entity->isEnemy()) {
