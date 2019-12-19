@@ -33,7 +33,7 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
 {
     hooks.present.hookCalled = true;
 
-    static auto imguiInit = ImGui_ImplDX9_Init(device);
+    static auto _ = ImGui_ImplDX9_Init(device);
 
     IDirect3DVertexDeclaration9* vertexDeclaration;
     device->GetVertexDeclaration(&vertexDeclaration);
