@@ -127,7 +127,6 @@
     <ClCompile Include="imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="Memory.cpp" />
-    <ClCompile Include="Netvars.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
@@ -148,7 +147,6 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="Interfaces.h" />
     <ClInclude Include="Memory.h" />
-    <ClInclude Include="Netvars.h" />
     <ClInclude Include="nlohmann\json.hpp" />
     <ClInclude Include="SDK\ClassId.h" />
     <ClInclude Include="SDK\Client.h" />

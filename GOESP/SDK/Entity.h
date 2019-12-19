@@ -5,7 +5,6 @@
 #include "EntityList.h"
 #include "../Interfaces.h"
 #include "../Memory.h"
-#include "../Netvars.h"
 #include "Utils.h"
 #include "WeaponId.h"
 
@@ -25,7 +24,7 @@ struct Model {
     char name[260];
 };
 
-#define NETVAR_V2(func_name, var_name, offset, type) \
+#define NETVAR(func_name, offset, type) \
 std::add_lvalue_reference_t<type> func_name() noexcept \
 { \
     return *reinterpret_cast<std::add_pointer_t<type>>(this + offset); \
@@ -90,11 +89,6 @@ public:
         return callVirtualMethod<WeaponData*>(this, 457);
     }
 
-    auto& coordinateFrame() noexcept
-    {
-        return *reinterpret_cast<Matrix3x4*>(this + 0x444);
-    }
-
     bool isEnemy() noexcept
     {
         return memory.isOtherEnemy(this, interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer()));
@@ -109,17 +103,14 @@ public:
         return trace.entity == this || trace.fraction > 0.97f;
     }
 
-    auto isInReload() noexcept
-    {
-        return *reinterpret_cast<bool*>(uintptr_t(&clip()) + 0x41);
-    }
-
-    NETVAR_V2(weaponId, "CBaseAttributableItem->m_iItemDefinitionIndex", 0x2FAA, WeaponId);
-    NETVAR_V2(clip, "CBaseCombatWeapon->m_iClip1", 0x3244, int);
-    NETVAR_V2(reserveAmmoCount, "CBaseCombatWeapon->m_iPrimaryReserveAmmoCount", 0x324C, int);
-    NETVAR_V2(nextPrimaryAttack, "CBaseCombatWeapon->m_flNextPrimaryAttack", 0x3218, float);
-    NETVAR_V2(index, "CBaseEntity->m_bIsAutoaimTarget", 0x64, int);
-    NETVAR_V2(ownerEntity, "CBaseEntity->m_hOwnerEntity", 0x14C, int);
-    NETVAR_V2(aimPunchAngle, "CBasePlayer->m_aimPunchAngle", 0x302C, Vector);
-    NETVAR_V2(health, "CBasePlayer->m_iHealth", 0x100, int);
+    NETVAR(weaponId, 0x2FAA, WeaponId) // CBaseAttributableItem->m_iItemDefinitionIndex
+    NETVAR(clip, 0x3244, int) // CBaseCombatWeapon->m_iClip1
+    NETVAR(isInReload, 0x3244 + 0x41, bool) // CBaseCombatWeapon->m_iClip1 + 0x41
+    NETVAR(reserveAmmoCount, 0x324C, int) // CBaseCombatWeapon->m_iPrimaryReserveAmmoCount
+    NETVAR(nextPrimaryAttack, 0x3218, float) // CBaseCombatWeapon->m_flNextPrimaryAttack
+    NETVAR(index, 0x64, int) // CBaseEntity->m_bIsAutoaimTarget + 0x4
+    NETVAR(ownerEntity, 0x14C, int) // CBaseEntity->m_hOwnerEntity
+    NETVAR(aimPunchAngle, 0x302C, Vector) // CBasePlayer->m_aimPunchAngle
+    NETVAR(health, 0x100, int) // CBasePlayer->m_iHealth
+    NETVAR(coordinateFrame, 0x444, Matrix3x4)
 };

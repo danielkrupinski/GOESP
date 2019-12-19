@@ -8,7 +8,6 @@
 #include "GUI.h"
 #include "Interfaces.h"
 #include "Memory.h"
-#include "Netvars.h"
 #include "Hooks.h"
 
 #include "SDK/InputSystem.h"
@@ -17,7 +16,6 @@ Config config{ "GOESP" };
 GUI gui;
 const Interfaces interfaces;
 Memory memory;
-Netvars netvars;
 Hooks hooks;
 
 DWORD WINAPI waitOnUnload(HMODULE hModule)
