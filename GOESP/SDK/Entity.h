@@ -89,7 +89,7 @@ public:
         return callVirtualMethod<WeaponData*>(this, 457);
     }
 
-    bool isVisible(Entity* other) noexcept
+    bool visibleTo(Entity* other) noexcept
     {
         Trace trace;
         interfaces.engineTrace->traceRay({ other->getEyePosition(), getEyePosition() }, 0x46004009, other, trace);

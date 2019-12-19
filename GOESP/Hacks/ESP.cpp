@@ -279,13 +279,13 @@ void ESP::render(ImDrawList* drawList) noexcept
 
             if (!memory.isOtherEnemy(entity, localPlayer)) {
                 if (!renderPlayerEsp(drawList, entity, ALLIES_ALL)) {
-                    if (entity->isVisible(localPlayer))
+                    if (entity->visibleTo(localPlayer))
                         renderPlayerEsp(drawList, entity, ALLIES_VISIBLE);
                     else
                         renderPlayerEsp(drawList, entity, ALLIES_OCCLUDED);
                 }
             } else if (!renderPlayerEsp(drawList, entity, ENEMIES_ALL)) {
-                if (entity->isVisible(localPlayer))
+                if (entity->visibleTo(localPlayer))
                     renderPlayerEsp(drawList, entity, ENEMIES_VISIBLE);
                 else
                     renderPlayerEsp(drawList, entity, ENEMIES_OCCLUDED);
