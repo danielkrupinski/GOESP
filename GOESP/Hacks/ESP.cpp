@@ -277,7 +277,7 @@ void ESP::render(ImDrawList* drawList) noexcept
                 || entity->isDormant() || !entity->isAlive())
                 continue;
 
-            if (!entity->isEnemy()) {
+            if (!memory.isOtherEnemy(entity, localPlayer)) {
                 if (!renderPlayerEsp(drawList, entity, ALLIES_ALL)) {
                     if (entity->isVisible())
                         renderPlayerEsp(drawList, entity, ALLIES_VISIBLE);

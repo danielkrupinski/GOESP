@@ -89,11 +89,6 @@ public:
         return callVirtualMethod<WeaponData*>(this, 457);
     }
 
-    bool isEnemy() noexcept
-    {
-        return memory.isOtherEnemy(this, interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer()));
-    }
-
     bool isVisible() noexcept
     {
         const auto localPlayer = interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer());
