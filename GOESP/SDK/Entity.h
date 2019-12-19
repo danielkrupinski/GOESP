@@ -25,6 +25,12 @@ struct Model {
     char name[260];
 };
 
+#define NETVAR_V2(func_name, var_name, offset, type) \
+std::add_lvalue_reference_t<type> func_name() noexcept \
+{ \
+    return *reinterpret_cast<std::add_pointer_t<type>>(this + offset); \
+}
+
 class Entity {
 public:
     constexpr ClientClass* getClientClass() noexcept
@@ -108,15 +114,12 @@ public:
         return *reinterpret_cast<bool*>(uintptr_t(&clip()) + 0x41);
     }
 
-    NETVAR(weaponId, "CBaseAttributableItem", "m_iItemDefinitionIndex", WeaponId);
-
-    NETVAR(clip, "CBaseCombatWeapon", "m_iClip1", int);
-    NETVAR(reserveAmmoCount, "CBaseCombatWeapon", "m_iPrimaryReserveAmmoCount", int);
-    NETVAR(nextPrimaryAttack, "CBaseCombatWeapon", "m_flNextPrimaryAttack", float);
-
-    NETVAR_OFFSET(index, "CBaseEntity", "m_bIsAutoaimTarget", 4, int);
-    NETVAR(ownerEntity, "CBaseEntity", "m_hOwnerEntity", int);
-
-    NETVAR(aimPunchAngle, "CBasePlayer", "m_aimPunchAngle", Vector);
-    NETVAR(health, "CBasePlayer", "m_iHealth", int);
+    NETVAR_V2(weaponId, "CBaseAttributableItem->m_iItemDefinitionIndex", 0x2FAA, WeaponId);
+    NETVAR_V2(clip, "CBaseCombatWeapon->m_iClip1", 0x3244, int);
+    NETVAR_V2(reserveAmmoCount, "CBaseCombatWeapon->m_iPrimaryReserveAmmoCount", 0x324C, int);
+    NETVAR_V2(nextPrimaryAttack, "CBaseCombatWeapon->m_flNextPrimaryAttack", 0x3218, float);
+    NETVAR_V2(index, "CBaseEntity->m_bIsAutoaimTarget", 0x64, int);
+    NETVAR_V2(ownerEntity, "CBaseEntity->m_hOwnerEntity", 0x14C, int);
+    NETVAR_V2(aimPunchAngle, "CBasePlayer->m_aimPunchAngle", 0x302C, Vector);
+    NETVAR_V2(health, "CBasePlayer->m_iHealth", 0x100, int);
 };
