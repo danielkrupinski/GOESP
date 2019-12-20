@@ -2,6 +2,7 @@
 
 #include <array>
 #include <filesystem>
+#include <memory>
 #include <string>
 #include <tuple>
 #include <unordered_map>
@@ -85,4 +86,4 @@ private:
     std::filesystem::path path;
 };
 
-extern Config config;
+extern std::unique_ptr<Config> config;

@@ -143,7 +143,7 @@ static void renderPlayerBox(ImDrawList* drawList, Entity* entity, const Config::
     if (BoundingBox bbox; boundingBox(entity, bbox)) {
         renderBox(drawList, entity, bbox, config);
 
-        ImGui::PushFont(::config.fonts[config.font]);
+        ImGui::PushFont(::config->fonts[config.font]);
         const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
 
         if (config.name.enabled) {
@@ -170,7 +170,7 @@ static void renderWeaponBox(ImDrawList* drawList, Entity* entity, const Config::
     if (BoundingBox bbox; boundingBox(entity, bbox)) {
         renderBox(drawList, entity, bbox, config);
 
-        ImGui::PushFont(::config.fonts[config.font]);
+        ImGui::PushFont(::config->fonts[config.font]);
         const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
 
         if (config.name.enabled) {
@@ -195,7 +195,7 @@ static void renderEntityBox(ImDrawList* drawList, Entity* entity, const char* na
     if (BoundingBox bbox; boundingBox(entity, bbox)) {
         renderBox(drawList, entity, bbox, config);
 
-        ImGui::PushFont(::config.fonts[config.font]);
+        ImGui::PushFont(::config->fonts[config.font]);
         const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
 
         if (config.name.enabled)
@@ -229,11 +229,11 @@ enum EspId {
 
 static constexpr bool renderPlayerEsp(ImDrawList* drawList, Entity* entity, EspId id) noexcept
 {
-    if (config.players[id].enabled) {
-        renderPlayerBox(drawList, entity, config.players[id]);
-        renderSnaplines(drawList, entity, config.players[id].snaplines);
+    if (config->players[id].enabled) {
+        renderPlayerBox(drawList, entity, config->players[id]);
+        renderSnaplines(drawList, entity, config->players[id].snaplines);
     }
-    return config.players[id].enabled;
+    return config->players[id].enabled;
 }
 
 static constexpr void renderWeaponEsp(ImDrawList* drawList, Entity* entity, const Config::Weapon& parentConfig, const Config::Weapon& itemConfig) noexcept
@@ -361,16 +361,16 @@ void ESP::render(ImDrawList* drawList) noexcept
                     }
                 };
 
-                if (const auto weaponData = entity->getWeaponData(); weaponData && !config.weapons.enabled) {
+                if (const auto weaponData = entity->getWeaponData(); weaponData && !config->weapons.enabled) {
                     constexpr auto dispatchWeapon = [](WeaponType type, int idx) -> std::optional<std::pair<const Config::Weapon&, const Config::Weapon&>> {
                         switch (type) {
-                        case WeaponType::Pistol: return { { config.pistols[0], config.pistols[idx] } };
-                        case WeaponType::SubMachinegun: return { { config.smgs[0], config.smgs[idx] } };
-                        case WeaponType::Rifle: return { { config.rifles[0], config.rifles[idx] } };
-                        case WeaponType::SniperRifle: return { { config.sniperRifles[0], config.sniperRifles[idx] } };
-                        case WeaponType::Shotgun: return { { config.shotguns[0], config.shotguns[idx] } };
-                        case WeaponType::Machinegun: return { { config.machineguns[0], config.machineguns[idx] } };
-                        case WeaponType::Grenade: return { { config.grenades[0], config.grenades[idx] } };
+                        case WeaponType::Pistol: return { { config->pistols[0], config->pistols[idx] } };
+                        case WeaponType::SubMachinegun: return { { config->smgs[0], config->smgs[idx] } };
+                        case WeaponType::Rifle: return { { config->rifles[0], config->rifles[idx] } };
+                        case WeaponType::SniperRifle: return { { config->sniperRifles[0], config->sniperRifles[idx] } };
+                        case WeaponType::Shotgun: return { { config->shotguns[0], config->shotguns[idx] } };
+                        case WeaponType::Machinegun: return { { config->machineguns[0], config->machineguns[idx] } };
+                        case WeaponType::Grenade: return { { config->grenades[0], config->grenades[idx] } };
                         default: return std::nullopt;
                         }
                     };
@@ -378,25 +378,25 @@ void ESP::render(ImDrawList* drawList) noexcept
                     if (const auto w = dispatchWeapon(weaponData->type, getWeaponIndex(entity->weaponId())))
                         renderWeaponEsp(drawList, entity, w->first, w->second);
                 } else {
-                    renderWeaponEsp(drawList, entity, config.weapons, config.weapons);
+                    renderWeaponEsp(drawList, entity, config->weapons, config->weapons);
                 }
             } else {
                 constexpr auto dispatchEntity = [](ClassId classId, bool flashbang) -> std::optional<std::tuple<const Config::Shared&, const Config::Shared&, const char*>> {
                     switch (classId) {
                     case ClassId::BaseCSGrenadeProjectile:
-                        if (flashbang) return  { { config.projectiles[0], config.projectiles[1], "Flashbang" } };
-                        else return  { { config.projectiles[0], config.projectiles[2], "HE Grenade" } };
-                    case ClassId::BreachChargeProjectile: return { { config.projectiles[0], config.projectiles[3], "Breach Charge" } };
-                    case ClassId::BumpMineProjectile: return { { config.projectiles[0], config.projectiles[4], "Bump Mine" } };
-                    case ClassId::DecoyProjectile: return  { { config.projectiles[0], config.projectiles[5], "Decoy Grenade" } };
-                    case ClassId::MolotovProjectile: return { { config.projectiles[0], config.projectiles[6], "Molotov" } };
-                    case ClassId::SensorGrenadeProjectile: return { { config.projectiles[0], config.projectiles[7], "TA Grenade" } };
-                    case ClassId::SmokeGrenadeProjectile: return { { config.projectiles[0], config.projectiles[8], "Smoke Grenade" } };
-                    case ClassId::SnowballProjectile: return { { config.projectiles[0], config.projectiles[9], "Snowball" } };
+                        if (flashbang) return  { { config->projectiles[0], config->projectiles[1], "Flashbang" } };
+                        else return  { { config->projectiles[0], config->projectiles[2], "HE Grenade" } };
+                    case ClassId::BreachChargeProjectile: return { { config->projectiles[0], config->projectiles[3], "Breach Charge" } };
+                    case ClassId::BumpMineProjectile: return { { config->projectiles[0], config->projectiles[4], "Bump Mine" } };
+                    case ClassId::DecoyProjectile: return  { { config->projectiles[0], config->projectiles[5], "Decoy Grenade" } };
+                    case ClassId::MolotovProjectile: return { { config->projectiles[0], config->projectiles[6], "Molotov" } };
+                    case ClassId::SensorGrenadeProjectile: return { { config->projectiles[0], config->projectiles[7], "TA Grenade" } };
+                    case ClassId::SmokeGrenadeProjectile: return { { config->projectiles[0], config->projectiles[8], "Smoke Grenade" } };
+                    case ClassId::SnowballProjectile: return { { config->projectiles[0], config->projectiles[9], "Snowball" } };
 
-                    case ClassId::EconEntity: return { { config.otherEntities[0], config.otherEntities[1], "Defuse Kit" } };
-                    case ClassId::Chicken: return { { config.otherEntities[0], config.otherEntities[2], "Chicken" } };
-                    case ClassId::PlantedC4: return { { config.otherEntities[0], config.otherEntities[3], "Planted C4" } };
+                    case ClassId::EconEntity: return { { config->otherEntities[0], config->otherEntities[1], "Defuse Kit" } };
+                    case ClassId::Chicken: return { { config->otherEntities[0], config->otherEntities[2], "Chicken" } };
+                    case ClassId::PlantedC4: return { { config->otherEntities[0], config->otherEntities[3], "Planted C4" } };
                     default: return std::nullopt;
                     }
                 };

@@ -90,9 +90,9 @@ static void from_json(const json& j, Config::Shared& s)
     if (const auto& font = j["Font"]; font.is_string()) {
         s.font = font;
         if (!s.font.empty())
-            config.scheduleFontLoad(s.font);
-        if (const auto it = std::find_if(std::cbegin(config.systemFonts), std::cend(config.systemFonts), [&s](const auto& e) { return e.second == s.font; }); it != std::cend(config.systemFonts))
-            s.fontIndex = std::distance(std::cbegin(config.systemFonts), it);
+            config->scheduleFontLoad(s.font);
+        if (const auto it = std::find_if(std::cbegin(config->systemFonts), std::cend(config->systemFonts), [&s](const auto& e) { return e.second == s.font; }); it != std::cend(config->systemFonts))
+            s.fontIndex = std::distance(std::cbegin(config->systemFonts), it);
         else
             s.fontIndex = 0;
     }

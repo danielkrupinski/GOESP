@@ -38,7 +38,7 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
     IDirect3DVertexDeclaration9* vertexDeclaration;
     device->GetVertexDeclaration(&vertexDeclaration);
 
-    if (config.loadScheduledFonts()) {
+    if (config->loadScheduledFonts()) {
         ImGui_ImplDX9_InvalidateDeviceObjects();
         ImGui_ImplDX9_CreateDeviceObjects();
     }

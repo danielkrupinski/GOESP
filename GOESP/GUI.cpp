@@ -80,35 +80,35 @@ void GUI::render() noexcept
             constexpr auto getConfig = [](int category, int item, int subItem = 0) constexpr noexcept -> Config::Shared& {
                 switch (category) {
                 case 0:
-                    return config.players[item];
+                    return config->players[item];
                 case 1:
-                    return config.players[item + 3];
+                    return config->players[item + 3];
                 case 2:
                     switch (item) {
                     default:
                     case 0:
-                        return config.weapons;
+                        return config->weapons;
                     case 1:
-                        return config.pistols[subItem];
+                        return config->pistols[subItem];
                     case 2:
-                        return config.smgs[subItem];
+                        return config->smgs[subItem];
                     case 3:
-                        return config.rifles[subItem];
+                        return config->rifles[subItem];
                     case 4:
-                        return config.sniperRifles[subItem];
+                        return config->sniperRifles[subItem];
                     case 5:
-                        return config.shotguns[subItem];
+                        return config->shotguns[subItem];
                     case 6:
-                        return config.machineguns[subItem];
+                        return config->machineguns[subItem];
                     case 7:
-                        return config.grenades[subItem];
+                        return config->grenades[subItem];
                     }
                 case 3:
-                    return config.projectiles[item];
+                    return config->projectiles[item];
                 case 4:
-                    return config.otherEntities[item];
+                    return config->otherEntities[item];
                 default:
-                    return config.players[0];
+                    return config->players[0];
                 }
             };
 
@@ -206,13 +206,13 @@ void GUI::render() noexcept
                 ImGui::Checkbox("Enabled", &sharedConfig.enabled);
                 ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 260.0f);
                 ImGui::SetNextItemWidth(220.0f);
-                if (ImGui::BeginCombo("Font", config.systemFonts[sharedConfig.fontIndex].first.c_str())) {
-                    for (size_t i = 0; i < config.systemFonts.size(); i++) {
-                        bool isSelected = config.systemFonts[i].second == sharedConfig.font;
-                        if (ImGui::Selectable(config.systemFonts[i].first.c_str(), isSelected, 0, { 300.0f, 0.0f })) {
+                if (ImGui::BeginCombo("Font", config->systemFonts[sharedConfig.fontIndex].first.c_str())) {
+                    for (size_t i = 0; i < config->systemFonts.size(); i++) {
+                        bool isSelected = config->systemFonts[i].second == sharedConfig.font;
+                        if (ImGui::Selectable(config->systemFonts[i].first.c_str(), isSelected, 0, { 300.0f, 0.0f })) {
                             sharedConfig.fontIndex = i;
-                            sharedConfig.font = config.systemFonts[i].second;
-                            config.scheduleFontLoad(sharedConfig.font);
+                            sharedConfig.font = config->systemFonts[i].second;
+                            config->scheduleFontLoad(sharedConfig.font);
                         }
                         if (isSelected)
                             ImGui::SetItemDefaultFocus();
@@ -234,7 +234,7 @@ void GUI::render() noexcept
                 ImGuiCustom::colorPicker("Text Background", sharedConfig.textBackground);
 
                 if (currentCategory < 2) {
-                    auto& playerConfig = config.players[currentCategory * 3 + currentItem];
+                    auto& playerConfig = config->players[currentCategory * 3 + currentItem];
 
                     ImGuiCustom::colorPicker("Weapon", playerConfig.weapon);
                 } else if (currentCategory == 2) {
@@ -242,21 +242,21 @@ void GUI::render() noexcept
                         switch (item) {
                         default:
                         case 0:
-                            return config.weapons;
+                            return config->weapons;
                         case 1:
-                            return config.pistols[subItem];
+                            return config->pistols[subItem];
                         case 2:
-                            return config.smgs[subItem];
+                            return config->smgs[subItem];
                         case 3:
-                            return config.rifles[subItem];
+                            return config->rifles[subItem];
                         case 4:
-                            return config.sniperRifles[subItem];
+                            return config->sniperRifles[subItem];
                         case 5:
-                            return config.shotguns[subItem];
+                            return config->shotguns[subItem];
                         case 6:
-                            return config.machineguns[subItem];
+                            return config->machineguns[subItem];
                         case 7:
-                            return config.grenades[subItem];
+                            return config->grenades[subItem];
                         }
                     };
                     auto& weaponConfig = getWeaponConfig(currentItem, currentSubItem);
@@ -271,16 +271,16 @@ void GUI::render() noexcept
             ImGui::EndTabItem();
         }
         if (ImGui::BeginTabItem("Misc")) {
-            ImGuiCustom::colorPicker("Reload Progress", config.reloadProgress);
-            ImGuiCustom::colorPicker("Recoil Crosshair", config.recoilCrosshair);
+            ImGuiCustom::colorPicker("Reload Progress", config->reloadProgress);
+            ImGuiCustom::colorPicker("Recoil Crosshair", config->recoilCrosshair);
             ImGui::EndTabItem();
         }
         if (ImGui::BeginTabItem("Configs")) {
             ImGui::TextUnformatted("Config is saved as \"config.txt\" inside GOESP directory in Documents");
             if (ImGui::Button("Load"))
-                config.load();
+                config->load();
             if (ImGui::Button("Save"))
-                config.save();
+                config->save();
             ImGui::EndTabItem();
         }
         ImGui::EndTabBar();
