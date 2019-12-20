@@ -93,11 +93,6 @@ Hooks::Hooks() noexcept
     **reinterpret_cast<decltype(::reset)***>(memory.reset) = ::reset;
 }
 
-bool Hooks::readyForUnload() noexcept
-{
-    return unload && !(present.hookCalled || reset.hookCalled || wndProc.hookCalled);
-}
-
 void Hooks::restore() noexcept
 {
     **reinterpret_cast<void***>(memory.present) = present.original;
