@@ -10,4 +10,4 @@ public:
     bool blockInput = false;
 };
 
-extern std::unique_ptr<GUI> gui;
+inline std::unique_ptr<GUI> gui;

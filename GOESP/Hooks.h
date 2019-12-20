@@ -29,4 +29,4 @@ private:
     bool unload = false;
 };
 
-extern std::unique_ptr<Hooks> hooks;
+inline std::unique_ptr<Hooks> hooks;

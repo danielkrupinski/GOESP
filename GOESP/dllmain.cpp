@@ -12,12 +12,6 @@
 
 #include "SDK/InputSystem.h"
 
-std::unique_ptr<Config> config;
-std::unique_ptr<GUI> gui;
-std::unique_ptr<const Interfaces> interfaces;
-std::unique_ptr<Memory> memory;
-std::unique_ptr<Hooks> hooks;
-
 DWORD WINAPI waitOnUnload(HMODULE hModule)
 {
     while (!hooks->readyForUnload())

@@ -86,4 +86,4 @@ private:
     std::filesystem::path path;
 };
 
-extern std::unique_ptr<Config> config;
+inline std::unique_ptr<Config> config;
