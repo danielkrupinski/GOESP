@@ -95,7 +95,7 @@ Hooks::Hooks() noexcept
 
 bool Hooks::readyForUnload() noexcept
 {
-    return unload && !(hooks.present.hookCalled || hooks.reset.hookCalled || hooks.wndProc.hookCalled);
+    return unload && !(present.hookCalled || reset.hookCalled || wndProc.hookCalled);
 }
 
 void Hooks::restore() noexcept
