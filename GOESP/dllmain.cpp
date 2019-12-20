@@ -13,7 +13,7 @@
 #include "SDK/InputSystem.h"
 
 Config config{ "GOESP" };
-GUI gui;
+std::unique_ptr<GUI> gui;
 std::unique_ptr<const Interfaces> interfaces;
 std::unique_ptr<Memory> memory;
 std::unique_ptr<Hooks> hooks;
@@ -37,6 +37,7 @@ static HMODULE module;
 static LRESULT WINAPI init(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
     SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(originalWndproc));
+    gui = std::make_unique<GUI>();
     interfaces = std::make_unique<const Interfaces>();
     memory = std::make_unique<Memory>();
     hooks = std::make_unique<Hooks>();

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 class GUI {
 public:
     GUI() noexcept;
@@ -8,4 +10,4 @@ public:
     bool blockInput = false;
 };
 
-extern GUI gui;
+extern std::unique_ptr<GUI> gui;
