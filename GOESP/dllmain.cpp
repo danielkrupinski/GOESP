@@ -22,6 +22,12 @@ DWORD WINAPI waitOnUnload(HMODULE hModule)
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
 
+    hooks.reset();
+    memory.reset();
+    interfaces.reset();
+    gui.reset();
+    config.reset();
+
     FreeLibraryAndExitThread(hModule, 0);
 }
 
