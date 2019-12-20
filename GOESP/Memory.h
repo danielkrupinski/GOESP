@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <d3d9.h>
+#include <memory>
 #include <Windows.h>
 #include <Psapi.h>
 #include <sstream>
@@ -47,4 +48,4 @@ private:
     }
 };
 
-extern Memory memory;
+extern std::unique_ptr<Memory> memory;

@@ -15,7 +15,7 @@
 Config config{ "GOESP" };
 GUI gui;
 const Interfaces interfaces;
-Memory memory;
+std::unique_ptr<Memory> memory;
 std::unique_ptr<Hooks> hooks;
 
 DWORD WINAPI waitOnUnload(HMODULE hModule)
@@ -37,6 +37,7 @@ static HMODULE module;
 static LRESULT WINAPI init(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
     SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(originalWndproc));
+    memory = std::make_unique<Memory>();
     hooks = std::make_unique<Hooks>();
 
     if (HANDLE thread = CreateThread(nullptr, 0, LPTHREAD_START_ROUTINE(waitOnUnload), module, 0, nullptr))

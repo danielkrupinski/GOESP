@@ -20,9 +20,9 @@
 #include <optional>
 #include <tuple>
 
-static constexpr bool worldToScreen(const Vector& in, ImVec2& out) noexcept
+static bool worldToScreen(const Vector& in, ImVec2& out) noexcept
 {
-    const auto matrix = memory.viewMatrix;
+    const auto matrix = memory->viewMatrix;
 
     float w = matrix->_41 * in.x + matrix->_42 * in.y + matrix->_43 * in.z + matrix->_44;
 
@@ -78,7 +78,7 @@ static auto boundingBox(Entity* entity, BoundingBox& out) noexcept
 static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& bbox, const Config::Shared& config) noexcept
 {
     if (config.box.enabled) {
-        const ImU32 color = Helpers::calculateColor(config.box.color, config.box.rainbow, config.box.rainbowSpeed, memory.globalVars->realtime);
+        const ImU32 color = Helpers::calculateColor(config.box.color, config.box.rainbow, config.box.rainbowSpeed, memory->globalVars->realtime);
 
         switch (config.boxType) {
         case 0:
@@ -131,10 +131,10 @@ static void renderText(ImDrawList* drawList, Entity* entity, const Config::Color
     const auto verticalOffset = adjustHeight ? textSize.y : 0.0f;
 
     if (backgroundCfg.enabled) {
-        const ImU32 color = Helpers::calculateColor(backgroundCfg.color, backgroundCfg.rainbow, backgroundCfg.rainbowSpeed, memory.globalVars->realtime);
+        const ImU32 color = Helpers::calculateColor(backgroundCfg.color, backgroundCfg.rainbow, backgroundCfg.rainbowSpeed, memory->globalVars->realtime);
         drawList->AddRectFilled({ pos.x - horizontalOffset - 2, pos.y - verticalOffset - 2 }, { pos.x - horizontalOffset + textSize.x + 2, pos.y - verticalOffset + textSize.y + 2 }, color, backgroundCfg.rounding);
     }
-    const ImU32 color = Helpers::calculateColor(textCfg.color, textCfg.rainbow, textCfg.rainbowSpeed, memory.globalVars->realtime);
+    const ImU32 color = Helpers::calculateColor(textCfg.color, textCfg.rainbow, textCfg.rainbowSpeed, memory->globalVars->realtime);
     drawList->AddText(nullptr, fontSize, { pos.x - horizontalOffset, pos.y - verticalOffset }, color, text);
 }
 
@@ -211,7 +211,7 @@ static void renderSnaplines(ImDrawList* drawList, Entity* entity, const Config::
     if (config.enabled) {
         if (ImVec2 position; worldToScreen(entity->getAbsOrigin(), position)) {
             const auto [width, height] = interfaces.engine->getScreenSize();
-            const ImU32 color = Helpers::calculateColor(config.color, config.rainbow, config.rainbowSpeed, memory.globalVars->realtime);
+            const ImU32 color = Helpers::calculateColor(config.color, config.rainbow, config.rainbowSpeed, memory->globalVars->realtime);
             drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(height) }, position, color, config.thickness);
         }
     }
@@ -277,7 +277,7 @@ void ESP::render(ImDrawList* drawList) noexcept
                 || entity->isDormant() || !entity->isAlive())
                 continue;
 
-            if (!memory.isOtherEnemy(entity, localPlayer)) {
+            if (!memory->isOtherEnemy(entity, localPlayer)) {
                 if (!renderPlayerEsp(drawList, entity, ALLIES_ALL)) {
                     if (entity->visibleTo(localPlayer))
                         renderPlayerEsp(drawList, entity, ALLIES_VISIBLE);

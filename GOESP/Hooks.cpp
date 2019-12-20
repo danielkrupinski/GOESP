@@ -86,17 +86,17 @@ Hooks::Hooks() noexcept
 
     wndProc.original = WNDPROC(SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(::wndProc)));
 
-    present.original = **reinterpret_cast<decltype(present.original)**>(memory.present);
-    **reinterpret_cast<decltype(::present)***>(memory.present) = ::present;
+    present.original = **reinterpret_cast<decltype(present.original)**>(memory->present);
+    **reinterpret_cast<decltype(::present)***>(memory->present) = ::present;
 
-    reset.original = **reinterpret_cast<decltype(reset.original)**>(memory.reset);
-    **reinterpret_cast<decltype(::reset)***>(memory.reset) = ::reset;
+    reset.original = **reinterpret_cast<decltype(reset.original)**>(memory->reset);
+    **reinterpret_cast<decltype(::reset)***>(memory->reset) = ::reset;
 }
 
 void Hooks::restore() noexcept
 {
-    **reinterpret_cast<void***>(memory.present) = present.original;
-    **reinterpret_cast<void***>(memory.reset) = reset.original;
+    **reinterpret_cast<void***>(memory->present) = present.original;
+    **reinterpret_cast<void***>(memory->reset) = reset.original;
 
     SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(wndProc.original));
 
