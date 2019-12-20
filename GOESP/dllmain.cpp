@@ -14,7 +14,7 @@
 
 Config config{ "GOESP" };
 GUI gui;
-const Interfaces interfaces;
+std::unique_ptr<const Interfaces> interfaces;
 std::unique_ptr<Memory> memory;
 std::unique_ptr<Hooks> hooks;
 
@@ -23,7 +23,7 @@ DWORD WINAPI waitOnUnload(HMODULE hModule)
     while (!hooks->readyForUnload())
         Sleep(50);
 
-    interfaces.inputSystem->enableInput(true);
+    interfaces->inputSystem->enableInput(true);
     ImGui_ImplDX9_Shutdown();
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
@@ -37,6 +37,7 @@ static HMODULE module;
 static LRESULT WINAPI init(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
     SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(originalWndproc));
+    interfaces = std::make_unique<const Interfaces>();
     memory = std::make_unique<Memory>();
     hooks = std::make_unique<Hooks>();
 

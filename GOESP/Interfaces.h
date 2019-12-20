@@ -35,4 +35,4 @@ private:
     }
 };
 
-extern const Interfaces interfaces;
+extern std::unique_ptr<const Interfaces> interfaces;

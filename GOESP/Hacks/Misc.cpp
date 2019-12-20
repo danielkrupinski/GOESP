@@ -16,8 +16,8 @@
 
 void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
 {
-    if (config.reloadProgress.enabled && interfaces.engine->isInGame()) {
-        const auto localPlayer = interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer());
+    if (config.reloadProgress.enabled && interfaces->engine->isInGame()) {
+        const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
 
         if (!localPlayer || !localPlayer->isAlive())
             return;
@@ -28,7 +28,7 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
             if (!reloadLength)
                 reloadLength = activeWeapon->nextPrimaryAttack() - memory->globalVars->currenttime;
 
-            const auto [width, height] = interfaces.engine->getScreenSize();
+            const auto [width, height] = interfaces->engine->getScreenSize();
             constexpr int segments = 20;
             drawList->PathArcTo({ width / 2.0f, height / 2.0f }, 20.0f, -IM_PI / 2, std::clamp(IM_PI * 2 * (0.75f - (activeWeapon->nextPrimaryAttack() - memory->globalVars->currenttime) / reloadLength), -IM_PI / 2, -IM_PI / 2 + IM_PI * 2), segments);
             const ImU32 color = Helpers::calculateColor(config.reloadProgress.color, config.reloadProgress.rainbow, config.reloadProgress.rainbowSpeed, memory->globalVars->realtime);
@@ -41,16 +41,16 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
 
 void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
 {
-    if (config.recoilCrosshair.enabled && interfaces.engine->isInGame()) {
-        const auto localPlayer = interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer());
+    if (config.recoilCrosshair.enabled && interfaces->engine->isInGame()) {
+        const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
 
         if (!localPlayer || !localPlayer->isAlive())
             return;
 
-        static auto weaponRecoilScale = interfaces.cvar->findVar("weapon_recoil_scale");
+        static auto weaponRecoilScale = interfaces->cvar->findVar("weapon_recoil_scale");
 
-        const auto punchAngle = interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer())->aimPunchAngle() * weaponRecoilScale->getFloat();
-        const auto [width, height] = interfaces.engine->getScreenSize();
+        const auto punchAngle = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer())->aimPunchAngle() * weaponRecoilScale->getFloat();
+        const auto [width, height] = interfaces->engine->getScreenSize();
 
         const float x = width * (0.5f - punchAngle.y / 180.0f);
         const float y = height * (0.5f + punchAngle.x / 180.0f);

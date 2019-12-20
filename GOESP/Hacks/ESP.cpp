@@ -27,7 +27,7 @@ static bool worldToScreen(const Vector& in, ImVec2& out) noexcept
     float w = matrix->_41 * in.x + matrix->_42 * in.y + matrix->_43 * in.z + matrix->_44;
 
     if (w > 0.001f) {
-        const auto [width, height] = interfaces.engine->getScreenSize();
+        const auto [width, height] = interfaces->engine->getScreenSize();
         out.x = width / 2 * (1 + (matrix->_11 * in.x + matrix->_12 * in.y + matrix->_13 * in.z + matrix->_14) / w);
         out.y = height / 2 * (1 - (matrix->_21 * in.x + matrix->_22 * in.y + matrix->_23 * in.z + matrix->_24) / w);
         return true;
@@ -42,7 +42,7 @@ struct BoundingBox {
 
 static auto boundingBox(Entity* entity, BoundingBox& out) noexcept
 {
-    const auto [width, height] = interfaces.engine->getScreenSize();
+    const auto [width, height] = interfaces->engine->getScreenSize();
 
     out.min.x = static_cast<float>(width * 2);
     out.min.y = static_cast<float>(height * 2);
@@ -122,7 +122,7 @@ static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& b
 
 static void renderText(ImDrawList* drawList, Entity* entity, const Config::Color& textCfg, const Config::ColorToggleRounding& backgroundCfg, const char* text, const ImVec2& pos, bool centered = true, bool adjustHeight = true) noexcept
 {
-    const auto distance = (interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer())->getAbsOrigin() - entity->getAbsOrigin()).length();
+    const auto distance = (interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer())->getAbsOrigin() - entity->getAbsOrigin()).length();
     const auto fontSize = std::clamp(15.0f * 10.0f / std::sqrt(distance), 10.0f, 15.0f);
 
     ImGui::GetCurrentContext()->FontSize = fontSize;
@@ -147,14 +147,14 @@ static void renderPlayerBox(ImDrawList* drawList, Entity* entity, const Config::
         const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
 
         if (config.name.enabled) {
-            if (PlayerInfo playerInfo; interfaces.engine->getPlayerInfo(entity->index(), playerInfo))
+            if (PlayerInfo playerInfo; interfaces->engine->getPlayerInfo(entity->index(), playerInfo))
                 renderText(drawList, entity, config.name, config.textBackground, playerInfo.name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
         }
 
         if (config.weapon.enabled) {
             if (const auto weapon = entity->getActiveWeapon()) {
                 if (const auto weaponData = weapon->getWeaponData()) {
-                    if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces.localize->find(weaponData->name), -1, weaponName, _countof(weaponName), nullptr, nullptr))
+                    if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponData->name), -1, weaponName, _countof(weaponName), nullptr, nullptr))
                         renderText(drawList, entity, config.weapon, config.textBackground, weaponName, { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
                 }
             }
@@ -175,7 +175,7 @@ static void renderWeaponBox(ImDrawList* drawList, Entity* entity, const Config::
 
         if (config.name.enabled) {
             if (const auto weaponData = entity->getWeaponData()) {
-                if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces.localize->find(weaponData->name), -1, weaponName, _countof(weaponName), nullptr, nullptr))
+                if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponData->name), -1, weaponName, _countof(weaponName), nullptr, nullptr))
                     renderText(drawList, entity, config.name, config.textBackground, weaponName, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
             }
         }
@@ -210,7 +210,7 @@ static void renderSnaplines(ImDrawList* drawList, Entity* entity, const Config::
 {
     if (config.enabled) {
         if (ImVec2 position; worldToScreen(entity->getAbsOrigin(), position)) {
-            const auto [width, height] = interfaces.engine->getScreenSize();
+            const auto [width, height] = interfaces->engine->getScreenSize();
             const ImU32 color = Helpers::calculateColor(config.color, config.rainbow, config.rainbowSpeed, memory->globalVars->realtime);
             drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(height) }, position, color, config.thickness);
         }
@@ -263,16 +263,16 @@ static void renderEntityEsp(ImDrawList* drawList, Entity* entity, const Config::
 
 void ESP::render(ImDrawList* drawList) noexcept
 {
-    if (interfaces.engine->isInGame()) {
-        const auto localPlayer = interfaces.entityList->getEntity(interfaces.engine->getLocalPlayer());
+    if (interfaces->engine->isInGame()) {
+        const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
 
         if (!localPlayer)
             return;
 
         const auto observerTarget = localPlayer->getObserverTarget();
 
-        for (int i = 1; i <= interfaces.engine->getMaxClients(); ++i) {
-            const auto entity = interfaces.entityList->getEntity(i);
+        for (int i = 1; i <= interfaces->engine->getMaxClients(); ++i) {
+            const auto entity = interfaces->entityList->getEntity(i);
             if (!entity || entity == localPlayer || entity == observerTarget
                 || entity->isDormant() || !entity->isAlive())
                 continue;
@@ -292,8 +292,8 @@ void ESP::render(ImDrawList* drawList) noexcept
             }
         }
 
-        for (int i = interfaces.engine->getMaxClients() + 1; i <= interfaces.entityList->getHighestEntityIndex(); ++i) {
-            const auto entity = interfaces.entityList->getEntity(i);
+        for (int i = interfaces->engine->getMaxClients() + 1; i <= interfaces->entityList->getHighestEntityIndex(); ++i) {
+            const auto entity = interfaces->entityList->getEntity(i);
             if (!entity || entity->isDormant())
                 continue;
 

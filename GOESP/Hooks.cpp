@@ -21,7 +21,7 @@ static LRESULT __stdcall wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lP
 
     LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
-    interfaces.inputSystem->enableInput(!gui.blockInput);
+    interfaces->inputSystem->enableInput(!gui.blockInput);
 
     auto result = CallWindowProc(hooks->wndProc.original, window, msg, wParam, lParam);
 
