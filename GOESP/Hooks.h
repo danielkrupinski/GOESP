@@ -1,6 +1,7 @@
 #pragma once
 
 #include <d3d9.h>
+#include <memory>
 #include <type_traits>
 
 template <typename T>
@@ -28,4 +29,4 @@ private:
     bool unload = false;
 };
 
-extern Hooks hooks;
+extern std::unique_ptr<Hooks> hooks;

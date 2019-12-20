@@ -17,21 +17,21 @@
 
 static LRESULT __stdcall wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
-    hooks.wndProc.hookCalled = true;
+    hooks->wndProc.hookCalled = true;
 
     LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
     interfaces.inputSystem->enableInput(!gui.blockInput);
 
-    auto result = CallWindowProc(hooks.wndProc.original, window, msg, wParam, lParam);
+    auto result = CallWindowProc(hooks->wndProc.original, window, msg, wParam, lParam);
 
-    hooks.wndProc.hookCalled = false;
+    hooks->wndProc.hookCalled = false;
     return result;
 }
 
 static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, const RECT* dest, HWND windowOverride, const RGNDATA* dirtyRegion) noexcept
 {
-    hooks.present.hookCalled = true;
+    hooks->present.hookCalled = true;
 
     static auto _ = ImGui_ImplDX9_Init(device);
 
@@ -61,21 +61,21 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
     device->SetVertexDeclaration(vertexDeclaration);
     vertexDeclaration->Release();
 
-    auto result = hooks.present.original(device, src, dest, windowOverride, dirtyRegion);
+    auto result = hooks->present.original(device, src, dest, windowOverride, dirtyRegion);
 
-    hooks.present.hookCalled = false;
+    hooks->present.hookCalled = false;
     return result;
 }
 
 static HRESULT __stdcall reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* params) noexcept
 {
-    hooks.reset.hookCalled = true;
+    hooks->reset.hookCalled = true;
 
     ImGui_ImplDX9_InvalidateDeviceObjects();
-    auto result = hooks.reset.original(device, params);
+    auto result = hooks->reset.original(device, params);
     ImGui_ImplDX9_CreateDeviceObjects();
 
-    hooks.reset.hookCalled = false;
+    hooks->reset.hookCalled = false;
     return result;
 }
 

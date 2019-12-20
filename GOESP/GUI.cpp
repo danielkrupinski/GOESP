@@ -69,7 +69,7 @@ void GUI::render() noexcept
 
         if (ImGui::Button("Unload")) {
             PdhCloseQuery(cpuQuery);
-            hooks.restore();
+            hooks->restore();
         }
 
         if (ImGui::BeginTabItem("ESP")) {

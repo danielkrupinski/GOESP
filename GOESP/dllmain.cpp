@@ -16,11 +16,11 @@ Config config{ "GOESP" };
 GUI gui;
 const Interfaces interfaces;
 Memory memory;
-Hooks hooks;
+std::unique_ptr<Hooks> hooks;
 
 DWORD WINAPI waitOnUnload(HMODULE hModule)
 {
-    while (!hooks.readyForUnload())
+    while (!hooks->readyForUnload())
         Sleep(50);
 
     interfaces.inputSystem->enableInput(true);
@@ -31,12 +31,25 @@ DWORD WINAPI waitOnUnload(HMODULE hModule)
     FreeLibraryAndExitThread(hModule, 0);
 }
 
+static WNDPROC originalWndproc;
+static HMODULE module;
+
+static LRESULT WINAPI init(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+{
+    SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(originalWndproc));
+    hooks = std::make_unique<Hooks>();
+
+    if (HANDLE thread = CreateThread(nullptr, 0, LPTHREAD_START_ROUTINE(waitOnUnload), module, 0, nullptr))
+        CloseHandle(thread);
+
+    return CallWindowProc(originalWndproc, window, msg, wParam, lParam);
+}
+
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
     if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
-        DisableThreadLibraryCalls(hModule);
-        if (HANDLE thread = CreateThread(nullptr, 0, LPTHREAD_START_ROUTINE(waitOnUnload), hModule, 0, nullptr))
-            CloseHandle(thread);
+        module = hModule;
+        originalWndproc = WNDPROC(SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(init)));
     }
     return TRUE;
 }
