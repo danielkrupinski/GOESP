@@ -6,6 +6,7 @@
 #include <Windows.h>
 #include <Psapi.h>
 #include <sstream>
+#include <type_traits>
 
 class Entity;
 struct GlobalVars;
@@ -19,6 +20,7 @@ public:
     bool(__thiscall* isOtherEnemy)(Entity*, Entity*);
     const D3DMATRIX* viewMatrix;
     const GlobalVars* globalVars;
+    std::add_pointer_t<void __cdecl(const char* msg, ...)> debugMsg;
 private:
     template <typename T = uintptr_t>
     static auto findPattern(const wchar_t* module, const char* pattern, size_t offset = 0) noexcept
