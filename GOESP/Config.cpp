@@ -248,7 +248,14 @@ bool Config::loadScheduledFonts() noexcept
 
     for (const auto& font : scheduledFonts) {
         if (!fonts[font] && !font.empty()) {
-            static const ImWchar ranges[]{ 0x0020, 0x00FF, 0x0100, 0x017f, 0 };
+            static constexpr ImWchar ranges[]{
+                0x0020, 0x00FF, // Basic Latin + Latin Supplement
+                0x0100, 0x017F, // Latin Extended-A
+                0x0400, 0x052F, // Cyrillic + Cyrillic Supplement
+                0x2DE0, 0x2DFF, // Cyrillic Extended-A
+                0xA640, 0xA69F, // Cyrillic Extended-B
+                0
+            };
             fonts[font] = ImGui::GetIO().Fonts->AddFontFromFileTTF((fontsPath / font).string().c_str(), 15.0f, nullptr, ranges);
             result = true;
         }
