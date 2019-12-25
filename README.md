@@ -40,6 +40,9 @@ Nope. Only functions GOESP hooks are DirectX Present and Reset and game window W
 ### Is the ESP visible on recording?
 Nope, but you have to uncheck 'Capture external overlays' option in your recording software.
 
+### My game crashes with ESP enabled, what should I do?
+Disable `Multicore rendering` in game settings. This issue will be resolved soon.
+
 ## License
 
 > Copyright (c) 2019 Daniel Krupiński
