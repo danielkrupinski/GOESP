@@ -22,14 +22,14 @@
 
 static bool worldToScreen(const Vector& in, ImVec2& out) noexcept
 {
-    const auto matrix = memory->viewMatrix;
+    const auto& matrix = memory->viewMatrix;
 
-    float w = matrix->_41 * in.x + matrix->_42 * in.y + matrix->_43 * in.z + matrix->_44;
+    float w = matrix._41 * in.x + matrix._42 * in.y + matrix._43 * in.z + matrix._44;
 
     if (w > 0.001f) {
         const auto [width, height] = interfaces->engine->getScreenSize();
-        out.x = width / 2 * (1 + (matrix->_11 * in.x + matrix->_12 * in.y + matrix->_13 * in.z + matrix->_14) / w);
-        out.y = height / 2 * (1 - (matrix->_21 * in.x + matrix->_22 * in.y + matrix->_23 * in.z + matrix->_24) / w);
+        out.x = width / 2 * (1 + (matrix._11 * in.x + matrix._12 * in.y + matrix._13 * in.z + matrix._14) / w);
+        out.y = height / 2 * (1 - (matrix._21 * in.x + matrix._22 * in.y + matrix._23 * in.z + matrix._24) / w);
         return true;
     }
     return false;

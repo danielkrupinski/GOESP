@@ -18,7 +18,7 @@ public:
     uintptr_t present;
     uintptr_t reset;
     bool(__thiscall* isOtherEnemy)(Entity*, Entity*);
-    const D3DMATRIX* viewMatrix;
+    D3DMATRIX viewMatrix;
     const GlobalVars* globalVars;
     std::add_pointer_t<void __cdecl(const char* msg, ...)> debugMsg;
 private:

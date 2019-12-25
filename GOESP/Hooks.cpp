@@ -13,11 +13,14 @@
 #include "Interfaces.h"
 #include "Memory.h"
 
+#include "SDK/Engine.h"
 #include "SDK/InputSystem.h"
 
 static LRESULT __stdcall wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
     hooks->wndProc.hookCalled = true;
+
+    memory->viewMatrix = interfaces->engine->worldToScreenMatrix();
 
     LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
