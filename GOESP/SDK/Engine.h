@@ -2,6 +2,7 @@
 
 #include "Utils.h"
 
+#include <d3d9types.h>
 #include <tuple>
 
 struct PlayerInfo {
@@ -50,5 +51,10 @@ public:
     constexpr auto isInGame() noexcept
     {
         return callVirtualMethod<bool>(this, 26);
+    }
+
+    constexpr auto worldToScreenMatrix() noexcept
+    {
+        return callVirtualMethod<const D3DMATRIX&>(this, 37);
     }
 };
