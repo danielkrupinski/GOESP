@@ -20,7 +20,6 @@ static LRESULT __stdcall wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lP
 {
     hooks->wndProc.hookCalled = true;
 
-    memory->viewMatrix = interfaces->engine->worldToScreenMatrix();
     ESP::collectData();
 
     LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -51,7 +50,6 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
-   // ESP::render(ImGui::GetBackgroundDrawList());
     ESP::render2(ImGui::GetBackgroundDrawList());
     Misc::drawReloadProgress(ImGui::GetBackgroundDrawList());
     Misc::drawRecoilCrosshair(ImGui::GetBackgroundDrawList());

@@ -21,9 +21,11 @@
 #include <optional>
 #include <tuple>
 
+static D3DMATRIX viewMatrix;
+
 static bool worldToScreen(const Vector& in, ImVec2& out) noexcept
 {
-    const auto& matrix = memory->viewMatrix;
+    const auto& matrix = viewMatrix;
 
     float w = matrix._41 * in.x + matrix._42 * in.y + matrix._43 * in.z + matrix._44;
 
@@ -77,6 +79,7 @@ static std::mutex dataMutex;
 void ESP::collectData() noexcept
 {
     std::scoped_lock(dataMutex);
+
     players.clear();
     weapons.clear();
     entities.clear();
@@ -86,6 +89,8 @@ void ESP::collectData() noexcept
 
         if (!localPlayer)
             return;
+
+        viewMatrix = interfaces->engine->worldToScreenMatrix();
 
         const auto observerTarget = localPlayer->getObserverTarget();
 
@@ -383,6 +388,7 @@ static void renderEntityEsp(ImDrawList* drawList, const EntityData& entityData, 
 void ESP::render2(ImDrawList* drawList) noexcept
 {
     std::scoped_lock(dataMutex);
+
     for (const auto& player : players) {
         if (!player.enemy) {
             if (!renderPlayerEsp(drawList, player, ALLIES_ALL)) {
