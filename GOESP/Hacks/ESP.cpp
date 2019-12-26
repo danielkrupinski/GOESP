@@ -17,6 +17,7 @@
 #include "../SDK/WeaponInfo.h"
 #include "../SDK/WeaponId.h"
 
+#include <mutex>
 #include <optional>
 #include <tuple>
 
@@ -71,9 +72,11 @@ struct WeaponData : BaseData {
 static std::vector<PlayerData> players;
 static std::vector<WeaponData> weapons;
 static std::vector<EntityData> entities;
+static std::mutex dataMutex;
 
 void ESP::collectData() noexcept
 {
+    std::scoped_lock(dataMutex);
     players.clear();
     weapons.clear();
     entities.clear();
@@ -379,6 +382,7 @@ static void renderEntityEsp(ImDrawList* drawList, const EntityData& entityData, 
 
 void ESP::render2(ImDrawList* drawList) noexcept
 {
+    std::scoped_lock(dataMutex);
     for (const auto& player : players) {
         if (!player.enemy) {
             if (!renderPlayerEsp(drawList, player, ALLIES_ALL)) {
