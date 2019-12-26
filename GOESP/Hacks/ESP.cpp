@@ -138,20 +138,36 @@ void ESP::collectData() noexcept
                     weapons.push_back(data);
                 }
             } else {
-                EntityData data;
-                data.absOrigin = entity->getAbsOrigin();
-                data.coordinateFrame = entity->coordinateFrame();
-                data.obbMins = entity->getCollideable()->obbMins();
-                data.obbMaxs = entity->getCollideable()->obbMaxs();
-                data.distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
-                data.classId = entity->getClientClass()->classId;
+                const auto classId = entity->getClientClass()->classId;
 
-                if (const auto model = entity->getModel(); model && std::strstr(model->name, "flashbang"))
-                    data.flashbang = true;
-                else
-                    data.flashbang = false;
+                switch (classId) {
+                case ClassId::BaseCSGrenadeProjectile:
+                case ClassId::BreachChargeProjectile:
+                case ClassId::BumpMineProjectile:
+                case ClassId::DecoyProjectile:
+                case ClassId::MolotovProjectile:
+                case ClassId::SensorGrenadeProjectile:
+                case ClassId::SmokeGrenadeProjectile:
+                case ClassId::SnowballProjectile:
 
-                entities.push_back(data);
+                case ClassId::EconEntity:
+                case ClassId::Chicken:
+                case ClassId::PlantedC4:
+                    EntityData data;
+                    data.absOrigin = entity->getAbsOrigin();
+                    data.coordinateFrame = entity->coordinateFrame();
+                    data.obbMins = entity->getCollideable()->obbMins();
+                    data.obbMaxs = entity->getCollideable()->obbMaxs();
+                    data.distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
+                    data.classId = classId;
+
+                    if (const auto model = entity->getModel(); model && std::strstr(model->name, "flashbang"))
+                        data.flashbang = true;
+                    else
+                        data.flashbang = false;
+
+                    entities.push_back(data);
+                }
             }
         }
     }
