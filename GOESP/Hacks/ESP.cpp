@@ -14,7 +14,7 @@
 #include "../SDK/GlobalVars.h"
 #include "../SDK/Localize.h"
 #include "../SDK/Vector.h"
-#include "../SDK/WeaponData.h"
+#include "../SDK/WeaponInfo.h"
 #include "../SDK/WeaponId.h"
 
 #include <optional>
@@ -57,7 +57,7 @@ struct PlayerData : EntityInfo {
     std::string activeWeapon;
 };
 
-struct WeaponInfo : EntityInfo {
+struct WeaponData : EntityInfo {
     std::string name;
     WeaponType type = WeaponType::Unknown;
     WeaponId id;
@@ -66,7 +66,7 @@ struct WeaponInfo : EntityInfo {
 };
 
 static std::vector<PlayerData> players;
-static std::vector<WeaponInfo> weapons;
+static std::vector<WeaponData> weapons;
 static std::vector<EntityInfo> entities;
 
 void ESP::collectData() noexcept
@@ -118,7 +118,7 @@ void ESP::collectData() noexcept
 
             if (entity->isWeapon()) {
                 if (entity->ownerEntity() == -1) {
-                    WeaponInfo data;
+                    WeaponData data;
                     data.absOrigin = entity->getAbsOrigin();
                     data.coordinateFrame = entity->coordinateFrame();
                     data.obbMins = entity->getCollideable()->obbMins();
@@ -270,7 +270,7 @@ static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, 
     }
 }
 
-static void renderWeaponBox(ImDrawList* drawList, const WeaponInfo& weaponData, const Config::Weapon& config) noexcept
+static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, const Config::Weapon& config) noexcept
 {
     if (BoundingBox bbox; boundingBox(weaponData, bbox)) {
         renderBox(drawList, bbox, config);
@@ -339,7 +339,7 @@ static constexpr bool renderPlayerEsp(ImDrawList* drawList, const PlayerData& pl
     return config->players[id].enabled;
 }
 
-static constexpr void renderWeaponEsp(ImDrawList* drawList, const WeaponInfo& weaponData, const Config::Weapon& parentConfig, const Config::Weapon& itemConfig) noexcept
+static constexpr void renderWeaponEsp(ImDrawList* drawList, const WeaponData& weaponData, const Config::Weapon& parentConfig, const Config::Weapon& itemConfig) noexcept
 {
     const auto& config = parentConfig.enabled ? parentConfig : itemConfig;
     if (config.enabled) {

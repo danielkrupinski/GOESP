@@ -9,7 +9,7 @@
 #include "WeaponId.h"
 
 struct Vector;
-struct WeaponData;
+struct WeaponInfo;
 class Matrix3x4;
 
 class Collideable {
@@ -86,7 +86,7 @@ public:
 
     constexpr auto getWeaponData() noexcept
     {
-        return callVirtualMethod<WeaponData*>(this, 457);
+        return callVirtualMethod<WeaponInfo*>(this, 457);
     }
 
     bool visibleTo(Entity* other) noexcept

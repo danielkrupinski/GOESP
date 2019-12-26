@@ -16,7 +16,7 @@ enum class WeaponType {
     Unknown
 };
 
-struct WeaponData {
+struct WeaponInfo {
 private: std::byte pad_0[20];
 public:
     int maxClip;

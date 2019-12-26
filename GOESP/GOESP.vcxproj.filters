@@ -160,9 +160,6 @@
     <ClInclude Include="SDK\Localize.h">
       <Filter>SDK</Filter>
     </ClInclude>
-    <ClInclude Include="SDK\WeaponData.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
     <ClInclude Include="Hacks\Misc.h">
       <Filter>Hacks</Filter>
     </ClInclude>
@@ -176,6 +173,9 @@
       <Filter>SDK</Filter>
     </ClInclude>
     <ClInclude Include="SDK\Cvar.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\WeaponInfo.h">
       <Filter>SDK</Filter>
     </ClInclude>
   </ItemGroup>
