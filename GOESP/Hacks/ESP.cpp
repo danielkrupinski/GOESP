@@ -40,7 +40,7 @@ struct BoundingBox {
     ImVec2 vertices[8];
 };
 
-struct EntityInfo {
+struct EntityData {
     Vector absOrigin;
     Matrix3x4 coordinateFrame;
     Vector obbMins;
@@ -50,14 +50,14 @@ struct EntityInfo {
     bool flashbang;
 };
 
-struct PlayerData : EntityInfo {
+struct PlayerData : EntityData {
     bool enemy;
     bool visible;
     std::string name;
     std::string activeWeapon;
 };
 
-struct WeaponData : EntityInfo {
+struct WeaponData : EntityData {
     std::string name;
     WeaponType type = WeaponType::Unknown;
     WeaponId id;
@@ -67,7 +67,7 @@ struct WeaponData : EntityInfo {
 
 static std::vector<PlayerData> players;
 static std::vector<WeaponData> weapons;
-static std::vector<EntityInfo> entities;
+static std::vector<EntityData> entities;
 
 void ESP::collectData() noexcept
 {
@@ -135,7 +135,7 @@ void ESP::collectData() noexcept
                     weapons.push_back(data);
                 }
             } else {
-                EntityInfo data;
+                EntityData data;
                 data.absOrigin = entity->getAbsOrigin();
                 data.coordinateFrame = entity->coordinateFrame();
                 data.obbMins = entity->getCollideable()->obbMins();
@@ -154,7 +154,7 @@ void ESP::collectData() noexcept
     }
 }
 
-static auto boundingBox(const EntityInfo& entityData, BoundingBox& out) noexcept
+static auto boundingBox(const EntityData& entityData, BoundingBox& out) noexcept
 {
     const auto [width, height] = interfaces->engine->getScreenSize();
 
@@ -293,7 +293,7 @@ static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, 
     }
 }
 
-static void renderEntityBox(ImDrawList* drawList, const EntityInfo& entityData, const char* name, const Config::Shared& config) noexcept
+static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, const char* name, const Config::Shared& config) noexcept
 {
     if (BoundingBox bbox; boundingBox(entityData, bbox)) {
         renderBox(drawList, bbox, config);
@@ -309,7 +309,7 @@ static void renderEntityBox(ImDrawList* drawList, const EntityInfo& entityData, 
     }
 }
 
-static void renderSnaplines(ImDrawList* drawList, const EntityInfo& entityData, const Config::ColorToggleThickness& config) noexcept
+static void renderSnaplines(ImDrawList* drawList, const EntityData& entityData, const Config::ColorToggleThickness& config) noexcept
 {
     if (config.enabled) {
         if (ImVec2 position; worldToScreen(entityData.absOrigin, position)) {
@@ -348,7 +348,7 @@ static constexpr void renderWeaponEsp(ImDrawList* drawList, const WeaponData& we
     }
 }
 
-static void renderEntityEsp(ImDrawList* drawList, const EntityInfo& entityData, const Config::Shared& parentConfig, const Config::Shared& itemConfig, const char* name) noexcept
+static void renderEntityEsp(ImDrawList* drawList, const EntityData& entityData, const Config::Shared& parentConfig, const Config::Shared& itemConfig, const char* name) noexcept
 {
     const auto& config = parentConfig.enabled ? parentConfig : itemConfig;
 
