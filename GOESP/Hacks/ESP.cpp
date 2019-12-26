@@ -40,221 +40,6 @@ struct BoundingBox {
     ImVec2 vertices[8];
 };
 
-static auto boundingBox(Entity* entity, BoundingBox& out) noexcept
-{
-    const auto [width, height] = interfaces->engine->getScreenSize();
-
-    out.min.x = static_cast<float>(width * 2);
-    out.min.y = static_cast<float>(height * 2);
-    out.max.x = -static_cast<float>(width * 2);
-    out.max.y = -static_cast<float>(height * 2);
-
-    const auto mins = entity->getCollideable()->obbMins();
-    const auto maxs = entity->getCollideable()->obbMaxs();
-
-    for (int i = 0; i < 8; ++i) {
-        const Vector point{ i & 1 ? maxs.x : mins.x,
-                            i & 2 ? maxs.y : mins.y,
-                            i & 4 ? maxs.z : mins.z };
-
-        if (!worldToScreen(point.transform(entity->coordinateFrame()), out.vertices[i]))
-            return false;
-
-        if (out.min.x > out.vertices[i].x)
-            out.min.x = out.vertices[i].x;
-
-        if (out.min.y > out.vertices[i].y)
-            out.min.y = out.vertices[i].y;
-
-        if (out.max.x < out.vertices[i].x)
-            out.max.x = out.vertices[i].x;
-
-        if (out.max.y < out.vertices[i].y)
-            out.max.y = out.vertices[i].y;
-    }
-    return true;
-}
-
-static void renderBox(ImDrawList* drawList, Entity* entity, const BoundingBox& bbox, const Config::Shared& config) noexcept
-{
-    if (config.box.enabled) {
-        const ImU32 color = Helpers::calculateColor(config.box.color, config.box.rainbow, config.box.rainbowSpeed, memory->globalVars->realtime);
-
-        switch (config.boxType) {
-        case 0:
-            drawList->AddRect(bbox.min, bbox.max, color, config.box.rounding, ImDrawCornerFlags_All, config.box.thickness);
-            break;
-
-        case 1:
-            drawList->AddLine(bbox.min, { bbox.min.x, bbox.min.y + (bbox.max.y - bbox.min.y) * 0.25f }, color, config.box.thickness);
-            drawList->AddLine(bbox.min, { bbox.min.x + (bbox.max.x - bbox.min.x) * 0.25f, bbox.min.y }, color, config.box.thickness);
-
-            drawList->AddLine({ bbox.max.x, bbox.min.y }, { bbox.max.x - (bbox.max.x - bbox.min.x) * 0.25f, bbox.min.y }, color, config.box.thickness);
-            drawList->AddLine({ bbox.max.x, bbox.min.y }, { bbox.max.x, bbox.min.y + (bbox.max.y - bbox.min.y) * 0.25f }, color, config.box.thickness);
-
-            drawList->AddLine({ bbox.min.x, bbox.max.y }, { bbox.min.x, bbox.max.y - (bbox.max.y - bbox.min.y) * 0.25f }, color, config.box.thickness);
-            drawList->AddLine({ bbox.min.x, bbox.max.y }, { bbox.min.x + (bbox.max.x - bbox.min.x) * 0.25f, bbox.max.y }, color, config.box.thickness);
-
-            drawList->AddLine(bbox.max, { bbox.max.x - (bbox.max.x - bbox.min.x) * 0.25f, bbox.max.y }, color, config.box.thickness);
-            drawList->AddLine(bbox.max, { bbox.max.x, bbox.max.y - (bbox.max.y - bbox.min.y) * 0.25f }, color, config.box.thickness);
-            break;
-        case 2:
-            for (int i = 0; i < 8; ++i) {
-                for (int j = 1; j <= 4; j <<= 1) {
-                    if (!(i & j))
-                        drawList->AddLine(bbox.vertices[i], bbox.vertices[i + j], color, config.box.thickness);
-                }
-            }
-            break;
-        case 3:
-            for (int i = 0; i < 8; ++i) {
-                for (int j = 1; j <= 4; j <<= 1) {
-                    if (!(i & j)) {
-                        drawList->AddLine(bbox.vertices[i], { bbox.vertices[i].x + (bbox.vertices[i + j].x - bbox.vertices[i].x) * 0.25f, bbox.vertices[i].y + (bbox.vertices[i + j].y - bbox.vertices[i].y) * 0.25f }, color, config.box.thickness);
-                        drawList->AddLine({ bbox.vertices[i].x + (bbox.vertices[i + j].x - bbox.vertices[i].x) * 0.75f, bbox.vertices[i].y + (bbox.vertices[i + j].y - bbox.vertices[i].y) * 0.75f }, bbox.vertices[i + j], color, config.box.thickness);
-                    }
-                }
-            }
-            break;
-        }
-    }
-}
-
-static void renderText(ImDrawList* drawList, Entity* entity, const Config::Color& textCfg, const Config::ColorToggleRounding& backgroundCfg, const char* text, const ImVec2& pos, bool centered = true, bool adjustHeight = true) noexcept
-{
-    const auto distance = (interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer())->getAbsOrigin() - entity->getAbsOrigin()).length();
-    const auto fontSize = std::clamp(15.0f * 10.0f / std::sqrt(distance), 10.0f, 15.0f);
-
-    ImGui::GetCurrentContext()->FontSize = fontSize;
-    const auto textSize = ImGui::CalcTextSize(text);
-    const auto horizontalOffset = centered ? textSize.x / 2 : 0.0f;
-    const auto verticalOffset = adjustHeight ? textSize.y : 0.0f;
-
-    if (backgroundCfg.enabled) {
-        const ImU32 color = Helpers::calculateColor(backgroundCfg.color, backgroundCfg.rainbow, backgroundCfg.rainbowSpeed, memory->globalVars->realtime);
-        drawList->AddRectFilled({ pos.x - horizontalOffset - 2, pos.y - verticalOffset - 2 }, { pos.x - horizontalOffset + textSize.x + 2, pos.y - verticalOffset + textSize.y + 2 }, color, backgroundCfg.rounding);
-    }
-    const ImU32 color = Helpers::calculateColor(textCfg.color, textCfg.rainbow, textCfg.rainbowSpeed, memory->globalVars->realtime);
-    drawList->AddText(nullptr, fontSize, { pos.x - horizontalOffset, pos.y - verticalOffset }, color, text);
-}
-
-static void renderPlayerBox(ImDrawList* drawList, Entity* entity, const Config::Player& config) noexcept
-{
-    if (BoundingBox bbox; boundingBox(entity, bbox)) {
-        renderBox(drawList, entity, bbox, config);
-
-        ImGui::PushFont(::config->fonts[config.font]);
-        const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
-
-        if (config.name.enabled) {
-            if (PlayerInfo playerInfo; interfaces->engine->getPlayerInfo(entity->index(), playerInfo))
-                renderText(drawList, entity, config.name, config.textBackground, playerInfo.name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
-        }
-
-        if (config.weapon.enabled) {
-            if (const auto weapon = entity->getActiveWeapon()) {
-                if (const auto weaponData = weapon->getWeaponData()) {
-                    if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponData->name), -1, weaponName, _countof(weaponName), nullptr, nullptr))
-                        renderText(drawList, entity, config.weapon, config.textBackground, weaponName, { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
-                }
-            }
-        }
-
-        ImGui::GetCurrentContext()->FontSize = oldFontSize;
-        ImGui::PopFont();
-    }
-}
-
-static void renderWeaponBox(ImDrawList* drawList, Entity* entity, const Config::Weapon& config) noexcept
-{
-    if (BoundingBox bbox; boundingBox(entity, bbox)) {
-        renderBox(drawList, entity, bbox, config);
-
-        ImGui::PushFont(::config->fonts[config.font]);
-        const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
-
-        if (config.name.enabled) {
-            if (const auto weaponData = entity->getWeaponData()) {
-                if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponData->name), -1, weaponName, _countof(weaponName), nullptr, nullptr))
-                    renderText(drawList, entity, config.name, config.textBackground, weaponName, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
-            }
-        }
-
-        if (config.ammo.enabled && entity->clip() != -1) {
-            const auto text{ std::to_string(entity->clip()) + " / " + std::to_string(entity->reserveAmmoCount()) };
-            renderText(drawList, entity, config.ammo, config.textBackground, text.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
-        }
-
-        ImGui::GetCurrentContext()->FontSize = oldFontSize;
-        ImGui::PopFont();
-    }
-}
-
-static void renderEntityBox(ImDrawList* drawList, Entity* entity, const char* name, const Config::Shared& config) noexcept
-{
-    if (BoundingBox bbox; boundingBox(entity, bbox)) {
-        renderBox(drawList, entity, bbox, config);
-
-        ImGui::PushFont(::config->fonts[config.font]);
-        const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
-
-        if (config.name.enabled)
-            renderText(drawList, entity, config.name, config.textBackground, name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
-
-        ImGui::GetCurrentContext()->FontSize = oldFontSize;
-        ImGui::PopFont();
-    }
-}
-
-static void renderSnaplines(ImDrawList* drawList, Entity* entity, const Config::ColorToggleThickness& config) noexcept
-{
-    if (config.enabled) {
-        if (ImVec2 position; worldToScreen(entity->getAbsOrigin(), position)) {
-            const auto [width, height] = interfaces->engine->getScreenSize();
-            const ImU32 color = Helpers::calculateColor(config.color, config.rainbow, config.rainbowSpeed, memory->globalVars->realtime);
-            drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(height) }, position, color, config.thickness);
-        }
-    }
-}
-
-enum EspId {
-    ALLIES_ALL = 0,
-    ALLIES_VISIBLE,
-    ALLIES_OCCLUDED,
-
-    ENEMIES_ALL,
-    ENEMIES_VISIBLE,
-    ENEMIES_OCCLUDED
-};
-
-static constexpr bool renderPlayerEsp(ImDrawList* drawList, Entity* entity, EspId id) noexcept
-{
-    if (config->players[id].enabled) {
-        renderPlayerBox(drawList, entity, config->players[id]);
-        renderSnaplines(drawList, entity, config->players[id].snaplines);
-    }
-    return config->players[id].enabled;
-}
-
-static constexpr void renderWeaponEsp(ImDrawList* drawList, Entity* entity, const Config::Weapon& parentConfig, const Config::Weapon& itemConfig) noexcept
-{
-    const auto& config = parentConfig.enabled ? parentConfig : itemConfig;
-    if (config.enabled) {
-        renderWeaponBox(drawList, entity, config);
-        renderSnaplines(drawList, entity, config.snaplines);
-    }
-}
-
-static void renderEntityEsp(ImDrawList* drawList, Entity* entity, const Config::Shared& parentConfig, const Config::Shared& itemConfig, const char* name) noexcept
-{
-    const auto& config = parentConfig.enabled ? parentConfig : itemConfig;
-
-    if (config.enabled) {
-        renderEntityBox(drawList, entity, name, config);
-        renderSnaplines(drawList, entity, config.snaplines);
-    }
-}
-
 struct EntityInfo {
     Vector absOrigin;
     Matrix3x4 coordinateFrame;
@@ -535,6 +320,16 @@ static void renderSnaplines(ImDrawList* drawList, const EntityInfo& entityData, 
     }
 }
 
+enum EspId {
+    ALLIES_ALL = 0,
+    ALLIES_VISIBLE,
+    ALLIES_OCCLUDED,
+
+    ENEMIES_ALL,
+    ENEMIES_VISIBLE,
+    ENEMIES_OCCLUDED
+};
+
 static constexpr bool renderPlayerEsp(ImDrawList* drawList, const PlayerData& playerData, EspId id) noexcept
 {
     if (config->players[id].enabled) {
@@ -689,48 +484,5 @@ void ESP::render2(ImDrawList* drawList) noexcept
 
         if (const auto e = dispatchEntity(entity.classId, entity.flashbang))
             renderEntityEsp(drawList, entity, std::get<0>(*e), std::get<1>(*e), std::get<2>(*e));
-    }
-}
-
-void ESP::render(ImDrawList* drawList) noexcept
-{
-    if (interfaces->engine->isInGame()) {
-        const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
-
-        if (!localPlayer)
-            return;
-
-        for (int i = interfaces->engine->getMaxClients() + 1; i <= interfaces->entityList->getHighestEntityIndex(); ++i) {
-            const auto entity = interfaces->entityList->getEntity(i);
-            if (!entity || entity->isDormant())
-                continue;
-
-            if (entity->isWeapon() && entity->ownerEntity() == -1) {
-
-            } else {
-                constexpr auto dispatchEntity = [](ClassId classId, bool flashbang) -> std::optional<std::tuple<const Config::Shared&, const Config::Shared&, const char*>> {
-                    switch (classId) {
-                    case ClassId::BaseCSGrenadeProjectile:
-                        if (flashbang) return  { { config->projectiles[0], config->projectiles[1], "Flashbang" } };
-                        else return  { { config->projectiles[0], config->projectiles[2], "HE Grenade" } };
-                    case ClassId::BreachChargeProjectile: return { { config->projectiles[0], config->projectiles[3], "Breach Charge" } };
-                    case ClassId::BumpMineProjectile: return { { config->projectiles[0], config->projectiles[4], "Bump Mine" } };
-                    case ClassId::DecoyProjectile: return  { { config->projectiles[0], config->projectiles[5], "Decoy Grenade" } };
-                    case ClassId::MolotovProjectile: return { { config->projectiles[0], config->projectiles[6], "Molotov" } };
-                    case ClassId::SensorGrenadeProjectile: return { { config->projectiles[0], config->projectiles[7], "TA Grenade" } };
-                    case ClassId::SmokeGrenadeProjectile: return { { config->projectiles[0], config->projectiles[8], "Smoke Grenade" } };
-                    case ClassId::SnowballProjectile: return { { config->projectiles[0], config->projectiles[9], "Snowball" } };
-
-                    case ClassId::EconEntity: return { { config->otherEntities[0], config->otherEntities[1], "Defuse Kit" } };
-                    case ClassId::Chicken: return { { config->otherEntities[0], config->otherEntities[2], "Chicken" } };
-                    case ClassId::PlantedC4: return { { config->otherEntities[0], config->otherEntities[3], "Planted C4" } };
-                    default: return std::nullopt;
-                    }
-                };
-
-                if (const auto e = dispatchEntity(entity->getClientClass()->classId, entity->getModel() && std::strstr(entity->getModel()->name, "flashbang")))
-                    renderEntityEsp(drawList, entity, std::get<0>(*e), std::get<1>(*e), std::get<2>(*e));
-            }
-        }
     }
 }
