@@ -103,7 +103,7 @@ void ESP::collectData() noexcept
                 data.name = playerInfo.name;
 
             if (const auto weapon = entity->getActiveWeapon()) {
-                if (const auto weaponData = weapon->getWeaponData()) {
+                if (const auto weaponData = weapon->getWeaponInfo()) {
                     if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponData->name), -1, weaponName, _countof(weaponName), nullptr, nullptr))
                         data.activeWeapon = weaponName;
                 }
@@ -125,7 +125,7 @@ void ESP::collectData() noexcept
                     data.obbMaxs = entity->getCollideable()->obbMaxs();
                     data.distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
 
-                    if (const auto weaponData = entity->getWeaponData()) {
+                    if (const auto weaponData = entity->getWeaponInfo()) {
                         data.name = weaponData->name;
                         data.type = weaponData->type;
                     }

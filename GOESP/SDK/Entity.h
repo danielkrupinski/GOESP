@@ -84,7 +84,7 @@ public:
         return callVirtualMethod<Entity*>(this, 294);
     }
 
-    constexpr auto getWeaponData() noexcept
+    constexpr auto getWeaponInfo() noexcept
     {
         return callVirtualMethod<WeaponInfo*>(this, 457);
     }
