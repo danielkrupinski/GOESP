@@ -14,23 +14,54 @@
 #include "../SDK/EntityList.h"
 #include "../SDK/GlobalVars.h"
 
+#include <mutex>
+
+struct LocalPlayerData {
+    bool exists;
+    bool alive;
+    bool inReload;
+    float nextWeaponAttack;
+    Vector aimPunch;
+};
+
+static LocalPlayerData localPlayer;
+static std::mutex dataMutex;
+
+void Misc::collectData() noexcept
+{
+    std::scoped_lock(dataMutex);
+    const auto local = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
+
+    localPlayer.exists = local;
+
+    if (local) {
+        localPlayer.alive = local->isAlive();
+
+        if (const auto activeWeapon = local->getActiveWeapon()) {
+            localPlayer.inReload = activeWeapon->isInReload();
+            localPlayer.nextWeaponAttack = activeWeapon->nextPrimaryAttack();
+        } else {
+            localPlayer.inReload = false;
+            localPlayer.nextWeaponAttack = 0.0f;
+        }
+        localPlayer.aimPunch = local->aimPunchAngle();
+    }
+}
+
 void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
 {
     if (config->reloadProgress.enabled && interfaces->engine->isInGame()) {
-        const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
-
-        if (!localPlayer || !localPlayer->isAlive())
-            return;
+        std::scoped_lock(dataMutex);
 
         static float reloadLength = 0.0f;
 
-        if (const auto activeWeapon = localPlayer->getActiveWeapon(); activeWeapon && activeWeapon->isInReload()) {
+        if (localPlayer.inReload) {
             if (!reloadLength)
-                reloadLength = activeWeapon->nextPrimaryAttack() - memory->globalVars->currenttime;
+                reloadLength = localPlayer.nextWeaponAttack - memory->globalVars->currenttime;
 
             const auto [width, height] = interfaces->engine->getScreenSize();
             constexpr int segments = 20;
-            drawList->PathArcTo({ width / 2.0f, height / 2.0f }, 20.0f, -IM_PI / 2, std::clamp(IM_PI * 2 * (0.75f - (activeWeapon->nextPrimaryAttack() - memory->globalVars->currenttime) / reloadLength), -IM_PI / 2, -IM_PI / 2 + IM_PI * 2), segments);
+            drawList->PathArcTo({ width / 2.0f, height / 2.0f }, 20.0f, -IM_PI / 2, std::clamp(IM_PI * 2 * (0.75f - (localPlayer.nextWeaponAttack - memory->globalVars->currenttime) / reloadLength), -IM_PI / 2, -IM_PI / 2 + IM_PI * 2), segments);
             const ImU32 color = Helpers::calculateColor(config->reloadProgress.color, config->reloadProgress.rainbow, config->reloadProgress.rainbowSpeed, memory->globalVars->realtime);
             drawList->PathStroke(color, false, config->reloadProgress.thickness);
         } else {
@@ -42,14 +73,11 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
 void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
 {
     if (config->recoilCrosshair.enabled && interfaces->engine->isInGame()) {
-        const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
-
-        if (!localPlayer || !localPlayer->isAlive())
-            return;
+        std::scoped_lock(dataMutex);
 
         static auto weaponRecoilScale = interfaces->cvar->findVar("weapon_recoil_scale");
 
-        const auto punchAngle = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer())->aimPunchAngle() * weaponRecoilScale->getFloat();
+        const auto punchAngle = localPlayer.aimPunch * weaponRecoilScale->getFloat();
         const auto [width, height] = interfaces->engine->getScreenSize();
 
         const float x = width * (0.5f - punchAngle.y / 180.0f);
