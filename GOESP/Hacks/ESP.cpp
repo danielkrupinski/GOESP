@@ -40,24 +40,27 @@ struct BoundingBox {
     ImVec2 vertices[8];
 };
 
-struct EntityData {
+struct BaseData {
     Vector absOrigin;
     Matrix3x4 coordinateFrame;
     Vector obbMins;
     Vector obbMaxs;
     float distanceToLocal;
+};
+
+struct EntityData : BaseData {
     ClassId classId;
     bool flashbang;
 };
 
-struct PlayerData : EntityData {
+struct PlayerData : BaseData {
     bool enemy;
     bool visible;
     std::string name;
     std::string activeWeapon;
 };
 
-struct WeaponData : EntityData {
+struct WeaponData : BaseData {
     std::string name;
     WeaponType type = WeaponType::Unknown;
     WeaponId id;
@@ -154,7 +157,7 @@ void ESP::collectData() noexcept
     }
 }
 
-static auto boundingBox(const EntityData& entityData, BoundingBox& out) noexcept
+static auto boundingBox(const BaseData& entityData, BoundingBox& out) noexcept
 {
     const auto [width, height] = interfaces->engine->getScreenSize();
 
@@ -309,7 +312,7 @@ static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, 
     }
 }
 
-static void renderSnaplines(ImDrawList* drawList, const EntityData& entityData, const Config::ColorToggleThickness& config) noexcept
+static void renderSnaplines(ImDrawList* drawList, const BaseData& entityData, const Config::ColorToggleThickness& config) noexcept
 {
     if (config.enabled) {
         if (ImVec2 position; worldToScreen(entityData.absOrigin, position)) {
