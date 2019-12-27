@@ -17,6 +17,8 @@ public:
 
     uintptr_t present;
     uintptr_t reset;
+    uintptr_t setCursorPos;
+
     bool(__thiscall* isOtherEnemy)(Entity*, Entity*);
     const GlobalVars* globalVars;
     std::add_pointer_t<void __cdecl(const char* msg, ...)> debugMsg;
