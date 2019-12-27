@@ -83,6 +83,16 @@ static HRESULT __stdcall reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* 
     return result;
 }
 
+static BOOL WINAPI setCursorPos(int X, int Y) noexcept
+{
+    hooks->setCursorPos.hookCalled = true;
+
+    auto result = /* gui->blockInput ? TRUE : */ hooks->setCursorPos.original(X, Y);
+
+    hooks->setCursorPos.hookCalled = false;
+    return result;
+}
+
 Hooks::Hooks() noexcept
 {
     _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
@@ -95,12 +105,16 @@ Hooks::Hooks() noexcept
 
     reset.original = **reinterpret_cast<decltype(reset.original)**>(memory->reset);
     **reinterpret_cast<decltype(::reset)***>(memory->reset) = ::reset;
+
+    setCursorPos.original = *reinterpret_cast<decltype(setCursorPos.original)*>(memory->setCursorPos);
+    *reinterpret_cast<decltype(::setCursorPos)**>(memory->setCursorPos) = ::setCursorPos;
 }
 
 void Hooks::restore() noexcept
 {
     **reinterpret_cast<void***>(memory->present) = present.original;
     **reinterpret_cast<void***>(memory->reset) = reset.original;
+    *reinterpret_cast<void**>(memory->setCursorPos) = setCursorPos.original;
 
     SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(wndProc.original));
 
