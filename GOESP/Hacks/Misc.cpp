@@ -29,9 +29,9 @@ static std::mutex dataMutex;
 
 void Misc::collectData() noexcept
 {
-    std::scoped_lock(dataMutex);
-    const auto local = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
+    std::scoped_lock _{ dataMutex };
 
+    const auto local = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
     localPlayer.exists = local;
 
     if (local) {
@@ -51,7 +51,7 @@ void Misc::collectData() noexcept
 void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
 {
     if (config->reloadProgress.enabled && interfaces->engine->isInGame()) {
-        std::scoped_lock(dataMutex);
+        std::scoped_lock _{ dataMutex };
 
         static float reloadLength = 0.0f;
 
@@ -73,7 +73,7 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
 void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
 {
     if (config->recoilCrosshair.enabled && interfaces->engine->isInGame()) {
-        std::scoped_lock(dataMutex);
+        std::scoped_lock _{ dataMutex };
 
         static auto weaponRecoilScale = interfaces->cvar->findVar("weapon_recoil_scale");
 

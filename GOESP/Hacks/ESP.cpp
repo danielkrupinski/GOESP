@@ -78,7 +78,7 @@ static std::mutex dataMutex;
 
 void ESP::collectData() noexcept
 {
-    std::scoped_lock(dataMutex);
+    std::scoped_lock _{ dataMutex };
 
     players.clear();
     weapons.clear();
@@ -387,7 +387,7 @@ static void renderEntityEsp(ImDrawList* drawList, const EntityData& entityData, 
 
 void ESP::render2(ImDrawList* drawList) noexcept
 {
-    std::scoped_lock(dataMutex);
+    std::scoped_lock _{ dataMutex };
 
     for (const auto& player : players) {
         if (!player.enemy) {
