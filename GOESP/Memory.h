@@ -18,6 +18,7 @@ public:
     uintptr_t present;
     uintptr_t reset;
     uintptr_t setCursorPos;
+    uintptr_t setCursor;
 
     bool(__thiscall* isOtherEnemy)(Entity*, Entity*);
     const GlobalVars* globalVars;
