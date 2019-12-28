@@ -278,10 +278,20 @@ static void renderText(ImDrawList* drawList, float distance, const Config::Color
     drawList->AddText(nullptr, fontSize, { pos.x - horizontalOffset, pos.y - verticalOffset }, color, text);
 }
 
+static void renderSnaplines(ImDrawList* drawList, const BoundingBox& bbox, const Config::ColorToggleThickness& config) noexcept
+{
+    if (config.enabled) {
+        const auto [width, height] = interfaces->engine->getScreenSize();
+        const ImU32 color = Helpers::calculateColor(config.color, config.rainbow, config.rainbowSpeed, memory->globalVars->realtime);
+        drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(height) }, { (bbox.min.x + bbox.max.x) / 2, bbox.max.y }, color, config.thickness);
+    }
+}
+
 static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, const Config::Player& config) noexcept
 {
     if (BoundingBox bbox; boundingBox(playerData, bbox)) {
         renderBox(drawList, bbox, config);
+        renderSnaplines(drawList, bbox, config.snaplines);
 
         ImGui::PushFont(::config->fonts[config.font]);
         const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
@@ -301,6 +311,7 @@ static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, 
 {
     if (BoundingBox bbox; boundingBox(weaponData, bbox)) {
         renderBox(drawList, bbox, config);
+        renderSnaplines(drawList, bbox, config.snaplines);
 
         ImGui::PushFont(::config->fonts[config.font]);
         const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
@@ -324,6 +335,7 @@ static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, 
 {
     if (BoundingBox bbox; boundingBox(entityData, bbox)) {
         renderBox(drawList, bbox, config);
+        renderSnaplines(drawList, bbox, config.snaplines);
 
         ImGui::PushFont(::config->fonts[config.font]);
         const auto oldFontSize = ImGui::GetCurrentContext()->FontSize;
@@ -333,17 +345,6 @@ static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, 
 
         ImGui::GetCurrentContext()->FontSize = oldFontSize;
         ImGui::PopFont();
-    }
-}
-
-static void renderSnaplines(ImDrawList* drawList, const BaseData& entityData, const Config::ColorToggleThickness& config) noexcept
-{
-    if (config.enabled) {
-        if (ImVec2 position; worldToScreen(entityData.absOrigin, position)) {
-            const auto [width, height] = interfaces->engine->getScreenSize();
-            const ImU32 color = Helpers::calculateColor(config.color, config.rainbow, config.rainbowSpeed, memory->globalVars->realtime);
-            drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(height) }, position, color, config.thickness);
-        }
     }
 }
 
@@ -361,7 +362,6 @@ static constexpr bool renderPlayerEsp(ImDrawList* drawList, const PlayerData& pl
 {
     if (config->players[id].enabled) {
         renderPlayerBox(drawList, playerData, config->players[id]);
-        renderSnaplines(drawList, playerData, config->players[id].snaplines);
     }
     return config->players[id].enabled;
 }
@@ -371,7 +371,6 @@ static constexpr void renderWeaponEsp(ImDrawList* drawList, const WeaponData& we
     const auto& config = parentConfig.enabled ? parentConfig : itemConfig;
     if (config.enabled) {
         renderWeaponBox(drawList, weaponData, config);
-        renderSnaplines(drawList, weaponData, config.snaplines);
     }
 }
 
@@ -381,7 +380,6 @@ static void renderEntityEsp(ImDrawList* drawList, const EntityData& entityData, 
 
     if (config.enabled) {
         renderEntityBox(drawList, entityData, name, config);
-        renderSnaplines(drawList, entityData, config.snaplines);
     }
 }
 
