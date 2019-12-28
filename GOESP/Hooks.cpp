@@ -57,6 +57,10 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
 
     gui->render();
 
+    if (ImGui::IsKeyPressed(VK_INSERT, false))
+        gui->blockInput = !gui->blockInput;
+    ImGui::GetIO().MouseDrawCursor = gui->blockInput;
+
     ImGui::EndFrame();
 
     ImGui::Render();
@@ -87,7 +91,7 @@ static BOOL WINAPI setCursorPos(int X, int Y) noexcept
 {
     hooks->setCursorPos.hookCalled = true;
 
-    auto result = /* gui->blockInput ? TRUE : */ hooks->setCursorPos.original(X, Y);
+    auto result = gui->blockInput ? TRUE : hooks->setCursorPos.original(X, Y);
 
     hooks->setCursorPos.hookCalled = false;
     return result;
