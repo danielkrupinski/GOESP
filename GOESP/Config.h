@@ -45,6 +45,7 @@ public:
         std::string font;
         int fontIndex = 0; // runtime only, don't save
         ColorToggleThickness snaplines;
+        int snaplineType = 0;
         ColorToggleThicknessRounding box;
         int boxType = 0;
         ColorToggle name;

@@ -197,11 +197,14 @@ void GUI::render() noexcept
 
                     constexpr auto spacing = 200.0f;
                     ImGuiCustom::colorPicker("Snaplines", sharedConfig.snaplines);
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(75.0f);
+                    ImGui::Combo("##1", &sharedConfig.snaplineType, "Bottom\0Top\0");
                     ImGui::SameLine(spacing);
                     ImGuiCustom::colorPicker("Box", sharedConfig.box);
                     ImGui::SameLine();
                     ImGui::SetNextItemWidth(95.0f);
-                    ImGui::Combo("", &sharedConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
+                    ImGui::Combo("##2", &sharedConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
                     ImGuiCustom::colorPicker("Name", sharedConfig.name);
                     ImGui::SameLine(spacing);
                     ImGuiCustom::colorPicker("Text Background", sharedConfig.textBackground);
