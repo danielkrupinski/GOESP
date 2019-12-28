@@ -7,7 +7,7 @@ public:
     GUI() noexcept;
     void render() noexcept;
 
-    bool blockInput = true;
+    bool open = true;
 };
 
 inline std::unique_ptr<GUI> gui;

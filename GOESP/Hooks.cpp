@@ -25,7 +25,7 @@ static LRESULT __stdcall wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lP
 
     LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
-    interfaces->inputSystem->enableInput(!gui->blockInput);
+    interfaces->inputSystem->enableInput(!gui->open);
 
     auto result = CallWindowProc(hooks->wndProc.original, window, msg, wParam, lParam);
 
@@ -58,8 +58,8 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
     gui->render();
 
     if (ImGui::IsKeyPressed(VK_INSERT, false))
-        gui->blockInput = !gui->blockInput;
-    ImGui::GetIO().MouseDrawCursor = gui->blockInput;
+        gui->open = !gui->open;
+    ImGui::GetIO().MouseDrawCursor = gui->open;
 
     ImGui::EndFrame();
 
@@ -91,7 +91,7 @@ static BOOL WINAPI setCursorPos(int X, int Y) noexcept
 {
     hooks->setCursorPos.hookCalled = true;
 
-    auto result = gui->blockInput ? TRUE : hooks->setCursorPos.original(X, Y);
+    auto result = gui->open ? TRUE : hooks->setCursorPos.original(X, Y);
 
     hooks->setCursorPos.hookCalled = false;
     return result;
