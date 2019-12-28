@@ -150,6 +150,8 @@ void Config::load() noexcept
     if (const auto& grenades = j["Grenades"]; grenades.is_array() && grenades.size() == this->grenades.size())
         this->grenades = grenades;
 
+    if (const auto& projectiles = j["Projectiles"]; projectiles.is_array() && projectiles.size() == this->projectiles.size())
+        this->projectiles = projectiles;
     if (const auto& otherEntities = j["Other Entities"]; otherEntities.is_array() && otherEntities.size() == this->otherEntities.size())
         this->otherEntities = otherEntities;
 
@@ -227,7 +229,8 @@ void Config::save() noexcept
     j["Shotguns"] = shotguns;
     j["Machineguns"] = machineguns;
     j["Grenades"] = grenades;
-    
+
+    j["Projectiles"] = projectiles;
     j["Other Entities"] = otherEntities;
 
     j["Reload Progress"] = reloadProgress;
