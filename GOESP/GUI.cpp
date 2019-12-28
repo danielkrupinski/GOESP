@@ -34,7 +34,7 @@ GUI::GUI() noexcept
 void GUI::render() noexcept
 {
     if (blockInput) {
-        ImGui::Begin("GOESP", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+        ImGui::Begin("GOESP", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
 
         if (ImGui::BeginTabBar("##tabbar", ImGuiTabBarFlags_Reorderable)) {
             ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 350.0f);
