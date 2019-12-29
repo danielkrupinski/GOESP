@@ -127,9 +127,6 @@
     <ClInclude Include="SDK\Vector.h">
       <Filter>SDK</Filter>
     </ClInclude>
-    <ClInclude Include="SDK\Recv.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
     <ClInclude Include="fnv.h">
       <Filter>Header Files</Filter>
     </ClInclude>
