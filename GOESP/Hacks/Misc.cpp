@@ -53,6 +53,9 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
     if (config->reloadProgress.enabled && interfaces->engine->isInGame()) {
         std::scoped_lock _{ dataMutex };
 
+        if (!(localPlayer.exists && localPlayer.alive))
+            return;
+
         static float reloadLength = 0.0f;
 
         if (localPlayer.inReload) {
@@ -74,6 +77,9 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
 {
     if (config->recoilCrosshair.enabled && interfaces->engine->isInGame()) {
         std::scoped_lock _{ dataMutex };
+
+        if (!(localPlayer.exists && localPlayer.alive))
+            return;
 
         static auto weaponRecoilScale = interfaces->cvar->findVar("weapon_recoil_scale");
 
