@@ -40,85 +40,88 @@ Config::Config(const char* folderName) noexcept
 }
 
 using json = nlohmann::json;
+using value_t = json::value_t;
+
+template <value_t Type, typename T>
+static constexpr std::enable_if_t<Type != value_t::array> read(const json& j, const char* key, T& o) noexcept
+{
+    if (j.contains(key) && j[key].type() == Type)
+        o = j[key];
+}
+
+template <value_t Type, typename T, size_t Size>
+static constexpr void read(const json& j, const char* key, std::array<T, Size>& o) noexcept
+{
+    if (j.contains(key) && j[key].type() == Type && j[key].size() == o.size())
+        o = j[key];
+}
 
 static void from_json(const json& j, Config::Color& c)
 {
-    if (const auto& color = j["Color"]; color.is_array() && color.size() == c.color.size())
-        c.color = color;
-    if (const auto& rainbow = j["Rainbow"]; rainbow.is_boolean())
-        c.rainbow = rainbow;
-    if (const auto& rainbowSpeed = j["Rainbow Speed"]; rainbowSpeed.is_number_float())
-        c.rainbowSpeed = rainbowSpeed;
+    read<value_t::array>(j, "Color", c.color);
+    read<value_t::boolean>(j, "Rainbow", c.rainbow);
+    read<value_t::number_float>(j, "Rainbow Speed", c.rainbowSpeed);
 }
 
 static void from_json(const json& j, Config::ColorToggle& ct)
 {
     from_json(j, static_cast<Config::Color&>(ct));
 
-    if (const auto& enabled = j["Enabled"]; enabled.is_boolean())
-        ct.enabled = enabled;
+    read<value_t::boolean>(j, "Enabled", ct.enabled);
 }
 
 static void from_json(const json& j, Config::ColorToggleRounding& ctr)
 {
     from_json(j, static_cast<Config::ColorToggle&>(ctr));
 
-    if (const auto& rounding = j["Rounding"]; rounding.is_number_float())
-        ctr.rounding = rounding;
+    read<value_t::number_float>(j, "Rounding", ctr.rounding);
 }
 
 static void from_json(const json& j, Config::ColorToggleThickness& ctt)
 {
     from_json(j, static_cast<Config::ColorToggle&>(ctt));
 
-    if (const auto& thickness = j["Thickness"]; thickness.is_number_float())
-        ctt.thickness = thickness;
+    read<value_t::number_float>(j, "Thickness", ctt.thickness);
 }
 
 static void from_json(const json& j, Config::ColorToggleThicknessRounding& cttr)
 {
     from_json(j, static_cast<Config::ColorToggleRounding&>(cttr));
 
-    if (const auto& thickness = j["Thickness"]; thickness.is_number_float())
-        cttr.thickness = thickness;
+    read<value_t::number_float>(j, "Thickness", cttr.thickness);
 }
 
 static void from_json(const json& j, Config::Shared& s)
 {
-    if (const auto& enabled = j["Enabled"]; enabled.is_boolean())
-        s.enabled = enabled;
-    if (const auto& font = j["Font"]; font.is_string()) {
-        s.font = font;
-        if (!s.font.empty())
-            config->scheduleFontLoad(s.font);
-        if (const auto it = std::find_if(std::cbegin(config->systemFonts), std::cend(config->systemFonts), [&s](const auto& e) { return e.second == s.font; }); it != std::cend(config->systemFonts))
-            s.fontIndex = std::distance(std::cbegin(config->systemFonts), it);
-        else
-            s.fontIndex = 0;
-    }
-    if (const auto& snaplines = j["Snaplines"]; snaplines.is_object())
-        s.snaplines = snaplines;
-    if (const auto& box = j["Box"]; box.is_object())
-        s.box = box;
-    if (const auto& boxType = j["Box Type"]; boxType.is_number_integer())
-        s.boxType = boxType;
-    if (const auto& name = j["Name"]; name.is_object())
-        s.name = name;
+    read<value_t::boolean>(j, "Enabled", s.enabled);
+    read<value_t::string>(j, "Font", s.font);
+
+    if (!s.font.empty())
+        config->scheduleFontLoad(s.font);
+    if (const auto it = std::find_if(std::cbegin(config->systemFonts), std::cend(config->systemFonts), [&s](const auto& e) { return e.second == s.font; }); it != std::cend(config->systemFonts))
+        s.fontIndex = std::distance(std::cbegin(config->systemFonts), it);
+    else
+        s.fontIndex = 0;
+
+    read<value_t::object>(j, "Snaplines", s.snaplines);
+    read<value_t::number_integer>(j, "Snapline Type", s.snaplineType);
+    read<value_t::object>(j, "Box", s.box);
+    read<value_t::number_integer>(j, "Box Type", s.boxType);
+    read<value_t::object>(j, "Name", s.name);
 }
 
 static void from_json(const json& j, Config::Weapon& w)
 {
-    if (const auto& ammo = j["Ammo"]; ammo.is_object())
-        w.ammo = ammo;
     from_json(j, static_cast<Config::Shared&>(w));
+
+    read<value_t::object>(j, "Ammo", w.ammo);
 }
 
 static void from_json(const json& j, Config::Player& p)
 {
     from_json(j, static_cast<Config::Shared&>(p));
 
-    if (const auto& weapon = j["Weapon"]; weapon.is_object())
-        p.weapon = weapon;
+    read<value_t::object>(j, "Weapon", p.weapon);
 }
 
 void Config::load() noexcept
@@ -130,35 +133,22 @@ void Config::load() noexcept
     else
         return;
 
-    if (const auto& players = j["Players"]; players.is_array() && players.size() == this->players.size())
-        this->players = players;
+    read<value_t::array>(j, "Players", players);
 
-    if (const auto& weapons = j["Weapons"]; weapons.is_object())
-        this->weapons = weapons;
-    if (const auto& pistols = j["Pistols"]; pistols.is_array() && pistols.size() == this->pistols.size())
-        this->pistols = pistols;
-    if (const auto& smgs = j["SMGs"]; smgs.is_array() && smgs.size() == this->smgs.size())
-        this->smgs = smgs;
-    if (const auto& rifles = j["Rifles"]; rifles.is_array() && rifles.size() == this->rifles.size())
-        this->rifles = rifles;
-    if (const auto& sniperRifles = j["Sniper Rifles"]; sniperRifles.is_array() && sniperRifles.size() == this->sniperRifles.size())
-        this->sniperRifles = sniperRifles;
-    if (const auto& shotguns = j["Shotguns"]; shotguns.is_array() && shotguns.size() == this->shotguns.size())
-        this->shotguns = shotguns;
-    if (const auto& machineguns = j["Machineguns"]; machineguns.is_array() && machineguns.size() == this->machineguns.size())
-        this->machineguns = machineguns;
-    if (const auto& grenades = j["Grenades"]; grenades.is_array() && grenades.size() == this->grenades.size())
-        this->grenades = grenades;
+    read<value_t::object>(j, "Weapons", weapons);
+    read<value_t::array>(j, "Pistols", pistols);
+    read<value_t::array>(j, "SMGs", smgs);
+    read<value_t::array>(j, "Rifles", rifles);
+    read<value_t::array>(j, "Sniper Rifles", sniperRifles);
+    read<value_t::array>(j, "Shotguns", shotguns);
+    read<value_t::array>(j, "Machineguns", machineguns);
+    read<value_t::array>(j, "Grenades", grenades);
 
-    if (const auto& projectiles = j["Projectiles"]; projectiles.is_array() && projectiles.size() == this->projectiles.size())
-        this->projectiles = projectiles;
-    if (const auto& otherEntities = j["Other Entities"]; otherEntities.is_array() && otherEntities.size() == this->otherEntities.size())
-        this->otherEntities = otherEntities;
+    read<value_t::array>(j, "Projectiles", projectiles);
+    read<value_t::array>(j, "Other Entities", otherEntities);
 
-    if (const auto& reloadProgress = j["Reload Progress"]; reloadProgress.is_object())
-        this->reloadProgress = reloadProgress;
-    if (const auto& recoilCrosshair = j["Recoil Crosshair"]; recoilCrosshair.is_object())
-        this->recoilCrosshair = recoilCrosshair;
+    read<value_t::object>(j, "Reload Progress", reloadProgress);
+    read<value_t::object>(j, "Recoil Crosshair", recoilCrosshair);
 }
 
 static void to_json(json& j, const Config::Color& c)
@@ -198,6 +188,7 @@ static void to_json(json& j, const Config::Shared& s)
     j = json{ { "Enabled", s.enabled },
               { "Font", s.font },
               { "Snaplines", s.snaplines },
+              { "Snapline Type", s.snaplineType },
               { "Box", s.box },
               { "Box Type", s.boxType },
               { "Name", s.name }
