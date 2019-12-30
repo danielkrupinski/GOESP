@@ -24,7 +24,8 @@ GUI::GUI() noexcept
     ImGuiStyle& style = ImGui::GetStyle();
 
     style.ScrollbarSize = 13.0f;
-    
+    style.WindowTitleAlign = { 0.5f, 0.5f };
+
     ImGuiIO& io = ImGui::GetIO();
     io.IniFilename = nullptr;
     io.LogFilename = nullptr;
