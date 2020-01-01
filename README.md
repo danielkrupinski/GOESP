@@ -45,6 +45,6 @@ Nope, but you have to uncheck 'Capture external overlays' option in your recordi
 
 ## License
 
-> Copyright (c) 2019 Daniel Krupiński
+> Copyright (c) 2019-2020 Daniel Krupiński
 
 This project is licensed under the [MIT License](https://opensource.org/licenses/mit-license.php) - see the [LICENSE](LICENSE) file for details.
