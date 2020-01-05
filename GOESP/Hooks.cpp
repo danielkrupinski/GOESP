@@ -113,7 +113,7 @@ static BOOL WINAPI setCursorPos(int X, int Y) noexcept
 {
     ++hooksEntered;
 
-    auto result = gui->open ? TRUE : hooks->setCursorPos(X, Y);
+    auto result = gui->open || hooks->setCursorPos(X, Y);
 
     --hooksEntered;
     return result;
