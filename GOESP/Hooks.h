@@ -5,30 +5,19 @@
 #include <type_traits>
 #include <Windows.h>
 
-template <typename T>
-struct Hook {
-    T* original;
-    bool hookCalled = false;
-};
-
 class Hooks {
 public:
-    Hooks() noexcept;
-
-    constexpr auto readyForUnload() noexcept
-    {
-        return unload && !(present.hookCalled || reset.hookCalled || wndProc.hookCalled || setCursorPos.hookCalled);
-    }
-
-    Hook<HRESULT __stdcall(IDirect3DDevice9*, const RECT*, const RECT*, HWND, const RGNDATA*)> present;
-    Hook<HRESULT __stdcall(IDirect3DDevice9*, D3DPRESENT_PARAMETERS*)> reset;
-    Hook<std::remove_pointer_t<WNDPROC>> wndProc;
-    Hook<BOOL WINAPI(int, int)> setCursorPos;
+    Hooks(HMODULE module) noexcept;
+    
+    std::add_pointer_t<HRESULT D3DAPI(IDirect3DDevice9*, const RECT*, const RECT*, HWND, const RGNDATA*)> present;
+    std::add_pointer_t<HRESULT D3DAPI(IDirect3DDevice9*, D3DPRESENT_PARAMETERS*)> reset;
+    WNDPROC wndProc;
+    std::add_pointer_t<BOOL WINAPI(int, int)> setCursorPos;
 
     void restore() noexcept;
 
 private:
-    bool unload = false;
+    HMODULE module;
 };
 
 inline std::unique_ptr<Hooks> hooks;

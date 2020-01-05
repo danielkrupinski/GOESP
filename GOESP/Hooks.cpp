@@ -1,7 +1,5 @@
 #include "Hooks.h"
 
-#include <intrin.h>
-
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx9.h"
 #include "imgui/imgui_impl_win32.h"
@@ -16,9 +14,33 @@
 #include "SDK/Engine.h"
 #include "SDK/InputSystem.h"
 
-static LRESULT __stdcall wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+#include <atomic>
+#include <intrin.h>
+
+static std::atomic_int hooksEntered;
+
+static DWORD WINAPI waitOnUnload(HMODULE hModule) noexcept
 {
-    hooks->wndProc.hookCalled = true;
+    while (hooksEntered)
+        Sleep(50);
+
+    interfaces->inputSystem->enableInput(true);
+    ImGui_ImplDX9_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
+
+    hooks.reset();
+    memory.reset();
+    interfaces.reset();
+    gui.reset();
+    config.reset();
+
+    FreeLibraryAndExitThread(hModule, 0);
+}
+
+static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+{
+    ++hooksEntered;
 
     ESP::collectData();
     Misc::collectData();
@@ -27,15 +49,15 @@ static LRESULT __stdcall wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lP
     ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
     interfaces->inputSystem->enableInput(!gui->open);
 
-    auto result = CallWindowProc(hooks->wndProc.original, window, msg, wParam, lParam);
+    auto result = CallWindowProc(hooks->wndProc, window, msg, wParam, lParam);
 
-    hooks->wndProc.hookCalled = false;
+    --hooksEntered;
     return result;
 }
 
-static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, const RECT* dest, HWND windowOverride, const RGNDATA* dirtyRegion) noexcept
+static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const RECT* dest, HWND windowOverride, const RGNDATA* dirtyRegion) noexcept
 {
-    hooks->present.hookCalled = true;
+    ++hooksEntered;
 
     static auto _ = ImGui_ImplDX9_Init(device);
 
@@ -69,58 +91,61 @@ static HRESULT __stdcall present(IDirect3DDevice9* device, const RECT* src, cons
     device->SetVertexDeclaration(vertexDeclaration);
     vertexDeclaration->Release();
 
-    auto result = hooks->present.original(device, src, dest, windowOverride, dirtyRegion);
+    auto result = hooks->present(device, src, dest, windowOverride, dirtyRegion);
 
-    hooks->present.hookCalled = false;
+    --hooksEntered;
     return result;
 }
 
-static HRESULT __stdcall reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* params) noexcept
+static HRESULT D3DAPI reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* params) noexcept
 {
-    hooks->reset.hookCalled = true;
+    ++hooksEntered;
 
     ImGui_ImplDX9_InvalidateDeviceObjects();
-    auto result = hooks->reset.original(device, params);
+    auto result = hooks->reset(device, params);
     ImGui_ImplDX9_CreateDeviceObjects();
 
-    hooks->reset.hookCalled = false;
+    --hooksEntered;
     return result;
 }
 
 static BOOL WINAPI setCursorPos(int X, int Y) noexcept
 {
-    hooks->setCursorPos.hookCalled = true;
+    ++hooksEntered;
 
-    auto result = gui->open ? TRUE : hooks->setCursorPos.original(X, Y);
+    auto result = gui->open ? TRUE : hooks->setCursorPos(X, Y);
 
-    hooks->setCursorPos.hookCalled = false;
+    --hooksEntered;
     return result;
 }
 
-Hooks::Hooks() noexcept
+Hooks::Hooks(HMODULE module) noexcept
 {
+    this->module = module;
+
     _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
     _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
 
-    wndProc.original = WNDPROC(SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(::wndProc)));
+    wndProc = WNDPROC(SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(::wndProc)));
 
-    present.original = **reinterpret_cast<decltype(present.original)**>(memory->present);
+    present = **reinterpret_cast<decltype(present)**>(memory->present);
     **reinterpret_cast<decltype(::present)***>(memory->present) = ::present;
 
-    reset.original = **reinterpret_cast<decltype(reset.original)**>(memory->reset);
+    reset = **reinterpret_cast<decltype(reset)**>(memory->reset);
     **reinterpret_cast<decltype(::reset)***>(memory->reset) = ::reset;
 
-    setCursorPos.original = *reinterpret_cast<decltype(setCursorPos.original)*>(memory->setCursorPos);
+    setCursorPos = *reinterpret_cast<decltype(setCursorPos)*>(memory->setCursorPos);
     *reinterpret_cast<decltype(::setCursorPos)**>(memory->setCursorPos) = ::setCursorPos;
 }
 
 void Hooks::restore() noexcept
 {
-    **reinterpret_cast<void***>(memory->present) = present.original;
-    **reinterpret_cast<void***>(memory->reset) = reset.original;
-    *reinterpret_cast<void**>(memory->setCursorPos) = setCursorPos.original;
+    **reinterpret_cast<void***>(memory->present) = present;
+    **reinterpret_cast<void***>(memory->reset) = reset;
+    *reinterpret_cast<void**>(memory->setCursorPos) = setCursorPos;
 
-    SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(wndProc.original));
+    SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(wndProc));
 
-    unload = true;
+    if (HANDLE thread = CreateThread(nullptr, 0, LPTHREAD_START_ROUTINE(waitOnUnload), module, 0, nullptr))
+        CloseHandle(thread);
 }
