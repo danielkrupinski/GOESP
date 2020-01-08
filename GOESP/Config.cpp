@@ -108,6 +108,7 @@ static void from_json(const json& j, Config::Shared& s)
     read<value_t::object>(j, "Box", s.box);
     read<value_t::number_integer>(j, "Box Type", s.boxType);
     read<value_t::object>(j, "Name", s.name);
+    read<value_t::object>(j, "Text Background", s.textBackground);
 }
 
 static void from_json(const json& j, Config::Weapon& w)
@@ -191,7 +192,8 @@ static void to_json(json& j, const Config::Shared& s)
               { "Snapline Type", s.snaplineType },
               { "Box", s.box },
               { "Box Type", s.boxType },
-              { "Name", s.name }
+              { "Name", s.name }, 
+              { "Text Background", s.textBackground }
     };
 }
 
