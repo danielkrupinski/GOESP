@@ -17,11 +17,18 @@
 #include <atomic>
 #include <intrin.h>
 
-static std::atomic_int hooksEntered;
+class HookGuard {
+public:
+    HookGuard() { ++atomic; }
+    ~HookGuard() { --atomic; }
+    static bool freed() { return atomic == 0; }
+private:
+    inline static std::atomic_int atomic;
+};
 
 static DWORD WINAPI waitOnUnload(HMODULE hModule) noexcept
 {
-    while (hooksEntered)
+    while (!HookGuard::freed())
         Sleep(50);
 
     interfaces->inputSystem->enableInput(true);
@@ -40,7 +47,7 @@ static DWORD WINAPI waitOnUnload(HMODULE hModule) noexcept
 
 static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
-    ++hooksEntered;
+    HookGuard guard;
 
     ESP::collectData();
     Misc::collectData();
@@ -49,15 +56,12 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
     ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
     interfaces->inputSystem->enableInput(!gui->open);
 
-    auto result = CallWindowProc(hooks->wndProc, window, msg, wParam, lParam);
-
-    --hooksEntered;
-    return result;
+    return CallWindowProc(hooks->wndProc, window, msg, wParam, lParam);
 }
 
 static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const RECT* dest, HWND windowOverride, const RGNDATA* dirtyRegion) noexcept
 {
-    ++hooksEntered;
+    HookGuard guard;
 
     static auto _ = ImGui_ImplDX9_Init(device);
 
@@ -91,32 +95,25 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     device->SetVertexDeclaration(vertexDeclaration);
     vertexDeclaration->Release();
 
-    auto result = hooks->present(device, src, dest, windowOverride, dirtyRegion);
-
-    --hooksEntered;
-    return result;
+    return hooks->present(device, src, dest, windowOverride, dirtyRegion);
 }
 
 static HRESULT D3DAPI reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* params) noexcept
 {
-    ++hooksEntered;
+    HookGuard guard;
 
     ImGui_ImplDX9_InvalidateDeviceObjects();
     auto result = hooks->reset(device, params);
     ImGui_ImplDX9_CreateDeviceObjects();
 
-    --hooksEntered;
     return result;
 }
 
 static BOOL WINAPI setCursorPos(int X, int Y) noexcept
 {
-    ++hooksEntered;
+    HookGuard guard;
 
-    auto result = gui->open || hooks->setCursorPos(X, Y);
-
-    --hooksEntered;
-    return result;
+    return gui->open || hooks->setCursorPos(X, Y);
 }
 
 Hooks::Hooks(HMODULE module) noexcept
