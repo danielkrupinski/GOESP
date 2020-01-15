@@ -261,8 +261,11 @@ static void renderBox(ImDrawList* drawList, const BoundingBox& bbox, const Confi
     }
 }
 
-static void renderText(ImDrawList* drawList, float distance, const Config::Color& textCfg, const Config::ColorToggleRounding& backgroundCfg, const char* text, const ImVec2& pos, bool centered = true, bool adjustHeight = true) noexcept
+static void renderText(ImDrawList* drawList, float distance, float cullDistance, const Config::Color& textCfg, const Config::ColorToggleRounding& backgroundCfg, const char* text, const ImVec2& pos, bool centered = true, bool adjustHeight = true) noexcept
 {
+    if (cullDistance && Helpers::units2meters(distance) > cullDistance)
+        return;
+
     const auto fontSize = std::clamp(15.0f * 10.0f / std::sqrt(distance), 10.0f, 15.0f);
 
     const auto textSize = ImGui::GetFont()->CalcTextSizeA(fontSize, FLT_MAX, -1.0f, text);
@@ -295,10 +298,10 @@ static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, 
         ImGui::PushFont(::config->fonts[config.font]);
 
         if (config.name.enabled && !playerData.name.empty())
-            renderText(drawList, playerData.distanceToLocal, config.name, config.textBackground, playerData.name.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+            renderText(drawList, playerData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, playerData.name.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
 
         if (config.weapon.enabled && !playerData.activeWeapon.empty())
-            renderText(drawList, playerData.distanceToLocal, config.weapon, config.textBackground, playerData.activeWeapon.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
+            renderText(drawList, playerData.distanceToLocal, config.textCullDistance, config.weapon, config.textBackground, playerData.activeWeapon.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
 
         ImGui::PopFont();
     }
@@ -314,12 +317,12 @@ static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, 
 
         if (config.name.enabled && !weaponData.name.empty()) {
             if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponData.name.c_str()), -1, weaponName, _countof(weaponName), nullptr, nullptr))
-                renderText(drawList, weaponData.distanceToLocal, config.name, config.textBackground, weaponName, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+                renderText(drawList, weaponData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, weaponName, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
         }
 
         if (config.ammo.enabled && weaponData.clip != -1) {
             const auto text{ std::to_string(weaponData.clip) + " / " + std::to_string(weaponData.reserveAmmo) };
-            renderText(drawList, weaponData.distanceToLocal, config.ammo, config.textBackground, text.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
+            renderText(drawList, weaponData.distanceToLocal, config.textCullDistance, config.ammo, config.textBackground, text.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
         }
 
         ImGui::PopFont();
@@ -335,7 +338,7 @@ static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, 
         ImGui::PushFont(::config->fonts[config.font]);
 
         if (config.name.enabled)
-            renderText(drawList, entityData.distanceToLocal, config.name, config.textBackground, name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+            renderText(drawList, entityData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
 
         ImGui::PopFont();
     }
