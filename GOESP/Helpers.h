@@ -22,4 +22,9 @@ namespace Helpers
         else
             return ImGui::ColorConvertFloat4ToU32(color);
     }
+
+    constexpr auto units2meters(float units) noexcept
+    {
+        return units * 0.0254f;
+    }
 }
