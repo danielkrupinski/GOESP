@@ -50,6 +50,7 @@ public:
         int boxType = 0;
         ColorToggle name;
         ColorToggleRounding textBackground{ 0.0f, 0.0f, 0.0f, 1.0f };
+        float textCullDistance = 0.0f;
     };
 
     struct Player : Shared {

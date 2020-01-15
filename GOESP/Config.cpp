@@ -109,6 +109,7 @@ static void from_json(const json& j, Config::Shared& s)
     read<value_t::number_integer>(j, "Box Type", s.boxType);
     read<value_t::object>(j, "Name", s.name);
     read<value_t::object>(j, "Text Background", s.textBackground);
+    read<value_t::number_float>(j, "Text Cull Distance", s.textCullDistance);
 }
 
 static void from_json(const json& j, Config::Weapon& w)
@@ -193,7 +194,8 @@ static void to_json(json& j, const Config::Shared& s)
               { "Box", s.box },
               { "Box Type", s.boxType },
               { "Name", s.name }, 
-              { "Text Background", s.textBackground }
+              { "Text Background", s.textBackground },
+              { "Text Cull Distance", s.textCullDistance }
     };
 }
 
