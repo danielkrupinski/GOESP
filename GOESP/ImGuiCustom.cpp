@@ -3,6 +3,29 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 
+void ImGuiCustom::colorPopup(const char* name, std::array<float, 4>& color, bool* enable, std::function<void()> popupFn) noexcept
+{
+    ImGui::PushID(name);
+    if (enable) {
+        ImGui::Checkbox("##check", enable);
+        ImGui::SameLine(0.0f, 5.0f);
+    }
+    bool openPopup = ImGui::ColorButton("##btn", ImColor{ color[0], color[1], color[2] }, ImGuiColorEditFlags_NoTooltip);
+    ImGui::SameLine(0.0f, 5.0f);
+    ImGui::TextUnformatted(name);
+
+    if (openPopup)
+        ImGui::OpenPopup("##popup");
+
+    if (ImGui::BeginPopup("##popup")) {
+        ImGui::ColorPicker4("##picker", color.data(), ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_AlphaPreview);
+        if (popupFn)
+            popupFn();
+        ImGui::EndPopup();
+    }
+    ImGui::PopID();
+}
+
 void ImGuiCustom::colorPicker(const char* name, std::array<float, 4>& color, bool* enable, bool* rainbow, float* rainbowSpeed, float* rounding, float* thickness) noexcept
 {
     ImGui::PushID(name);
