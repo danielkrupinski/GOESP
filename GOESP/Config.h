@@ -75,6 +75,7 @@ public:
 
     ColorToggleThickness reloadProgress{ 5.0f };
     ColorToggleThickness recoilCrosshair;
+    bool normalizePlayerNames = true;
 
     std::vector<std::pair<std::string, std::string>> systemFonts{ { "Default", "" } };
     std::unordered_map<std::string, ImFont*> fonts;

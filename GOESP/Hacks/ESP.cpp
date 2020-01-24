@@ -110,9 +110,18 @@ void ESP::collectData() noexcept
             data.enemy = memory->isOtherEnemy(entity, localPlayer);
             data.visible = entity->visibleTo(localPlayer);
 
-            if (PlayerInfo playerInfo; interfaces->engine->getPlayerInfo(entity->index(), playerInfo))
-                data.name = playerInfo.name;
-
+            if (PlayerInfo playerInfo; interfaces->engine->getPlayerInfo(entity->index(), playerInfo)) {
+                if (config->normalizePlayerNames) {
+                    if (wchar_t nameWide[128]; MultiByteToWideChar(CP_UTF8, 0, playerInfo.name, 128, nameWide, 128)) {
+                        if (wchar_t nameNormalized[128]; NormalizeString(NormalizationKC, nameWide, -1, nameNormalized, 128)) {
+                            if (WideCharToMultiByte(CP_UTF8, 0, nameNormalized, -1, playerInfo.name, 128, nullptr, nullptr))
+                                data.name = playerInfo.name;
+                        }
+                    }
+                } else {
+                    data.name = playerInfo.name;
+                }
+            }
             if (const auto weapon = entity->getActiveWeapon()) {
                 if (const auto weaponData = weapon->getWeaponInfo()) {
                     if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponData->name), -1, weaponName, _countof(weaponName), nullptr, nullptr))

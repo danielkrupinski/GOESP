@@ -151,6 +151,7 @@ void Config::load() noexcept
 
     read<value_t::object>(j, "Reload Progress", reloadProgress);
     read<value_t::object>(j, "Recoil Crosshair", recoilCrosshair);
+    read<value_t::boolean>(j, "Normalize Player Names", normalizePlayerNames);
 }
 
 static void to_json(json& j, const Config::Color& c)
@@ -230,6 +231,7 @@ void Config::save() noexcept
 
     j["Reload Progress"] = reloadProgress;
     j["Recoil Crosshair"] = recoilCrosshair;
+    j["Normalize Player Names"] = normalizePlayerNames;
 
     if (std::ofstream out{ path / "config.txt" }; out.good())
         out << std::setw(4) << j;
