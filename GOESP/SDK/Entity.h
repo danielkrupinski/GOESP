@@ -86,7 +86,7 @@ public:
 
     constexpr auto getWeaponInfo() noexcept
     {
-        return callVirtualMethod<WeaponInfo*>(this, 457);
+        return callVirtualMethod<WeaponInfo*>(this, 459);
     }
 
     bool visibleTo(Entity* other) noexcept
