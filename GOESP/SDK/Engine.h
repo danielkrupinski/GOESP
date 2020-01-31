@@ -3,6 +3,7 @@
 #include "Utils.h"
 
 #include <d3d9types.h>
+#include <functional>
 #include <tuple>
 
 struct PlayerInfo {
@@ -29,13 +30,13 @@ public:
     constexpr auto getScreenSize() noexcept
     {
         int w = 0, h = 0;
-        callVirtualMethod<void, int&, int&>(this, 5, w, h);
+        callVirtualMethod<void>(this, 5, std::ref(w), std::ref(h));
         return std::make_pair(w, h);
     }
 
-    constexpr auto getPlayerInfo(int entityIndex, const PlayerInfo& playerInfo) noexcept
+    constexpr auto getPlayerInfo(int entityIndex, PlayerInfo& playerInfo) noexcept
     {
-        return callVirtualMethod<bool, int, const PlayerInfo&>(this, 8, entityIndex, playerInfo);
+        return callVirtualMethod<bool>(this, 8, entityIndex, std::ref(playerInfo));
     }
 
     constexpr auto getLocalPlayer() noexcept
