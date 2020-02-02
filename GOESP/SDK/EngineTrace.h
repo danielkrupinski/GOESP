@@ -4,6 +4,7 @@
 #include "Vector.h"
 
 #include <cstddef>
+#include <functional>
 
 struct Ray {
     Ray(const Vector& src, const Vector& dest) : start(src), delta(dest - src) { isSwept = delta.x || delta.y || delta.z; }
@@ -49,6 +50,6 @@ class EngineTrace {
 public:
     constexpr void traceRay(const Ray& ray, unsigned int mask, const TraceFilter& filter, Trace& trace) noexcept
     {
-        callVirtualMethod<void, const Ray&, unsigned int, const TraceFilter&, Trace&>(this, 5, ray, mask, filter, trace);
+        callVirtualMethod<void, 5>(this, std::cref(ray), mask, std::cref(filter), std::ref(trace));
     }
 };

@@ -8,16 +8,16 @@ class EntityList {
 public:
     constexpr auto getEntity(int index) noexcept
     {
-        return callVirtualMethod<Entity*, int>(this, 3, index);
+        return callVirtualMethod<Entity*, 3>(this, index);
     }
 
     constexpr auto getEntityFromHandle(int handle) noexcept
     {
-        return callVirtualMethod<Entity*, int>(this, 4, handle);
+        return callVirtualMethod<Entity*, 4>(this, handle);
     }
 
     constexpr auto getHighestEntityIndex() noexcept
     {
-        return callVirtualMethod<int>(this, 6);
+        return callVirtualMethod<int, 6>(this);
     }
 };

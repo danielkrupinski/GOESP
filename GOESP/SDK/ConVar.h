@@ -4,6 +4,6 @@
 struct ConVar {
     constexpr float getFloat() noexcept
     {
-        return callVirtualMethod<float>(this, 12);
+        return callVirtualMethod<float, 12>(this);
     }
 };

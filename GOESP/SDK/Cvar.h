@@ -8,6 +8,6 @@ class Cvar {
 public:
     constexpr auto findVar(const char* name) noexcept
     {
-        return callVirtualMethod<ConVar*, const char*>(this, 15, name);
+        return callVirtualMethod<ConVar*, 15>(this, name);
     }
 };

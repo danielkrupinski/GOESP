@@ -34,59 +34,59 @@ class Entity {
 public:
     constexpr ClientClass* getClientClass() noexcept
     {
-        return callVirtualMethod<ClientClass*>(this + 8, 2);
+        return callVirtualMethod<ClientClass*, 2>(this + 8);
     }
 
     constexpr auto isDormant() noexcept
     {
-        return callVirtualMethod<bool>(this + 8, 9);
+        return callVirtualMethod<bool, 9>(this + 8);
     }
 
     constexpr auto getModel() noexcept
     {
-        return callVirtualMethod<const Model*>(this + 4, 8);
+        return callVirtualMethod<const Model*, 8>(this + 4);
     }
 
     constexpr auto getCollideable() noexcept
     {
-        return callVirtualMethod<Collideable*>(this, 3);
+        return callVirtualMethod<Collideable*, 3>(this);
     }
 
     constexpr auto getAbsOrigin() noexcept
     {
-        return callVirtualMethod<Vector&>(this, 10);
+        return callVirtualMethod<Vector&, 10>(this);
     }
 
     constexpr auto isAlive() noexcept
     {
-        return callVirtualMethod<bool>(this, 155) && health() > 0;
+        return callVirtualMethod<bool, 155>(this);
     }
 
     constexpr auto isWeapon() noexcept
     {
-        return callVirtualMethod<bool>(this, 165);
+        return callVirtualMethod<bool, 165>(this);
     }
 
     constexpr auto getActiveWeapon() noexcept
     {
-        return callVirtualMethod<Entity*>(this, 267);
+        return callVirtualMethod<Entity*, 267>(this);
     }
 
     auto getEyePosition() noexcept
     {
         Vector vec;
-        callVirtualMethod<void, Vector&>(this, 284, vec);
+        callVirtualMethod<void, 284>(this, std::ref(vec));
         return vec;
     }
 
     constexpr auto getObserverTarget() noexcept
     {
-        return callVirtualMethod<Entity*>(this, 294);
+        return callVirtualMethod<Entity*, 294>(this);
     }
 
     constexpr auto getWeaponInfo() noexcept
     {
-        return callVirtualMethod<WeaponInfo*>(this, 459);
+        return callVirtualMethod<WeaponInfo*, 459>(this);
     }
 
     bool visibleTo(Entity* other) noexcept
