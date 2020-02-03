@@ -291,11 +291,12 @@ static void renderText(ImDrawList* drawList, float distance, float cullDistance,
 
 static void renderSnaplines(ImDrawList* drawList, const BoundingBox& bbox, const Config::ColorToggleThickness& config, int type) noexcept
 {
-    if (config.enabled) {
-        const auto [width, height] = interfaces->engine->getScreenSize();
-        const ImU32 color = Helpers::calculateColor(config.color, config.rainbow, config.rainbowSpeed, memory->globalVars->realtime);
-        drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(type ? 0 : height) }, { (bbox.min.x + bbox.max.x) / 2, type ? bbox.min.y : bbox.max.y }, color, config.thickness);
-    }
+    if (!config.enabled)
+        return;
+
+    const auto [width, height] = interfaces->engine->getScreenSize();
+    const ImU32 color = Helpers::calculateColor(config.color, config.rainbow, config.rainbowSpeed, memory->globalVars->realtime);
+    drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(type ? 0 : height) }, { (bbox.min.x + bbox.max.x) / 2, type ? bbox.min.y : bbox.max.y }, color, config.thickness);
 }
 
 static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, const Config::Player& config) noexcept
