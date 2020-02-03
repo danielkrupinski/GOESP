@@ -84,107 +84,105 @@ void ESP::collectData() noexcept
     weapons.clear();
     entities.clear();
 
-    if (interfaces->engine->isInGame()) {
-        const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
+    const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
 
-        if (!localPlayer)
-            return;
+    if (!localPlayer)
+        return;
 
-        viewMatrix = interfaces->engine->worldToScreenMatrix();
+    viewMatrix = interfaces->engine->worldToScreenMatrix();
 
-        const auto observerTarget = localPlayer->getObserverTarget();
+    const auto observerTarget = localPlayer->getObserverTarget();
 
-        for (int i = 1; i <= interfaces->engine->getMaxClients(); ++i) {
-            const auto entity = interfaces->entityList->getEntity(i);
-            if (!entity || entity == localPlayer || entity == observerTarget
-                || entity->isDormant() || !entity->isAlive())
-                continue;
+    for (int i = 1; i <= interfaces->engine->getMaxClients(); ++i) {
+        const auto entity = interfaces->entityList->getEntity(i);
+        if (!entity || entity == localPlayer || entity == observerTarget
+            || entity->isDormant() || !entity->isAlive())
+            continue;
 
-            PlayerData data;
-            data.absOrigin = entity->getAbsOrigin();
-            data.coordinateFrame = entity->coordinateFrame();
-            data.obbMins = entity->getCollideable()->obbMins();
-            data.obbMaxs = entity->getCollideable()->obbMaxs();
-            data.distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
+        PlayerData data;
+        data.absOrigin = entity->getAbsOrigin();
+        data.coordinateFrame = entity->coordinateFrame();
+        data.obbMins = entity->getCollideable()->obbMins();
+        data.obbMaxs = entity->getCollideable()->obbMaxs();
+        data.distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
 
-            data.enemy = memory->isOtherEnemy(entity, localPlayer);
-            data.visible = entity->visibleTo(localPlayer);
+        data.enemy = memory->isOtherEnemy(entity, localPlayer);
+        data.visible = entity->visibleTo(localPlayer);
 
-            if (PlayerInfo playerInfo; interfaces->engine->getPlayerInfo(entity->index(), playerInfo)) {
-                if (config->normalizePlayerNames) {
-                    if (wchar_t nameWide[128]; MultiByteToWideChar(CP_UTF8, 0, playerInfo.name, 128, nameWide, 128)) {
-                        if (wchar_t nameNormalized[128]; NormalizeString(NormalizationKC, nameWide, -1, nameNormalized, 128)) {
-                            if (WideCharToMultiByte(CP_UTF8, 0, nameNormalized, -1, playerInfo.name, 128, nullptr, nullptr))
-                                data.name = playerInfo.name;
-                        }
+        if (PlayerInfo playerInfo; interfaces->engine->getPlayerInfo(entity->index(), playerInfo)) {
+            if (config->normalizePlayerNames) {
+                if (wchar_t nameWide[128]; MultiByteToWideChar(CP_UTF8, 0, playerInfo.name, 128, nameWide, 128)) {
+                    if (wchar_t nameNormalized[128]; NormalizeString(NormalizationKC, nameWide, -1, nameNormalized, 128)) {
+                        if (WideCharToMultiByte(CP_UTF8, 0, nameNormalized, -1, playerInfo.name, 128, nullptr, nullptr))
+                            data.name = playerInfo.name;
                     }
-                } else {
-                    data.name = playerInfo.name;
-                }
-            }
-            if (const auto weapon = entity->getActiveWeapon()) {
-                if (const auto weaponData = weapon->getWeaponInfo()) {
-                    if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponData->name), -1, weaponName, _countof(weaponName), nullptr, nullptr))
-                        data.activeWeapon = weaponName;
-                }
-            }
-            players.push_back(data);
-        }
-
-        for (int i = interfaces->engine->getMaxClients() + 1; i <= interfaces->entityList->getHighestEntityIndex(); ++i) {
-            const auto entity = interfaces->entityList->getEntity(i);
-            if (!entity || entity->isDormant())
-                continue;
-
-            if (entity->isWeapon()) {
-                if (entity->ownerEntity() == -1) {
-                    WeaponData data;
-                    data.absOrigin = entity->getAbsOrigin();
-                    data.coordinateFrame = entity->coordinateFrame();
-                    data.obbMins = entity->getCollideable()->obbMins();
-                    data.obbMaxs = entity->getCollideable()->obbMaxs();
-                    data.distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
-
-                    if (const auto weaponData = entity->getWeaponInfo()) {
-                        data.name = weaponData->name;
-                        data.type = weaponData->type;
-                    }
-                    data.id = entity->weaponId();
-                    data.clip = entity->clip();
-                    data.reserveAmmo = entity->reserveAmmoCount();
-                    weapons.push_back(data);
                 }
             } else {
-                const auto classId = entity->getClientClass()->classId;
+                data.name = playerInfo.name;
+            }
+        }
+        if (const auto weapon = entity->getActiveWeapon()) {
+            if (const auto weaponData = weapon->getWeaponInfo()) {
+                if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponData->name), -1, weaponName, _countof(weaponName), nullptr, nullptr))
+                    data.activeWeapon = weaponName;
+            }
+        }
+        players.push_back(data);
+    }
 
-                switch (classId) {
-                case ClassId::BaseCSGrenadeProjectile:
-                case ClassId::BreachChargeProjectile:
-                case ClassId::BumpMineProjectile:
-                case ClassId::DecoyProjectile:
-                case ClassId::MolotovProjectile:
-                case ClassId::SensorGrenadeProjectile:
-                case ClassId::SmokeGrenadeProjectile:
-                case ClassId::SnowballProjectile:
+    for (int i = interfaces->engine->getMaxClients() + 1; i <= interfaces->entityList->getHighestEntityIndex(); ++i) {
+        const auto entity = interfaces->entityList->getEntity(i);
+        if (!entity || entity->isDormant())
+            continue;
 
-                case ClassId::EconEntity:
-                case ClassId::Chicken:
-                case ClassId::PlantedC4:
-                    EntityData data;
-                    data.absOrigin = entity->getAbsOrigin();
-                    data.coordinateFrame = entity->coordinateFrame();
-                    data.obbMins = entity->getCollideable()->obbMins();
-                    data.obbMaxs = entity->getCollideable()->obbMaxs();
-                    data.distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
-                    data.classId = classId;
+        if (entity->isWeapon()) {
+            if (entity->ownerEntity() == -1) {
+                WeaponData data;
+                data.absOrigin = entity->getAbsOrigin();
+                data.coordinateFrame = entity->coordinateFrame();
+                data.obbMins = entity->getCollideable()->obbMins();
+                data.obbMaxs = entity->getCollideable()->obbMaxs();
+                data.distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
 
-                    if (const auto model = entity->getModel(); model && std::strstr(model->name, "flashbang"))
-                        data.flashbang = true;
-                    else
-                        data.flashbang = false;
-
-                    entities.push_back(data);
+                if (const auto weaponData = entity->getWeaponInfo()) {
+                    data.name = weaponData->name;
+                    data.type = weaponData->type;
                 }
+                data.id = entity->weaponId();
+                data.clip = entity->clip();
+                data.reserveAmmo = entity->reserveAmmoCount();
+                weapons.push_back(data);
+            }
+        } else {
+            const auto classId = entity->getClientClass()->classId;
+
+            switch (classId) {
+            case ClassId::BaseCSGrenadeProjectile:
+            case ClassId::BreachChargeProjectile:
+            case ClassId::BumpMineProjectile:
+            case ClassId::DecoyProjectile:
+            case ClassId::MolotovProjectile:
+            case ClassId::SensorGrenadeProjectile:
+            case ClassId::SmokeGrenadeProjectile:
+            case ClassId::SnowballProjectile:
+
+            case ClassId::EconEntity:
+            case ClassId::Chicken:
+            case ClassId::PlantedC4:
+                EntityData data;
+                data.absOrigin = entity->getAbsOrigin();
+                data.coordinateFrame = entity->coordinateFrame();
+                data.obbMins = entity->getCollideable()->obbMins();
+                data.obbMaxs = entity->getCollideable()->obbMaxs();
+                data.distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
+                data.classId = classId;
+
+                if (const auto model = entity->getModel(); model && std::strstr(model->name, "flashbang"))
+                    data.flashbang = true;
+                else
+                    data.flashbang = false;
+
+                entities.push_back(data);
             }
         }
     }
