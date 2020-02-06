@@ -16,8 +16,5 @@ public:
         return VirtualMethod::call<Entity*, 4>(this, handle);
     }
 
-    constexpr auto getHighestEntityIndex() noexcept
-    {
-        return VirtualMethod::call<int, 6>(this);
-    }
+    VIRTUAL_METHOD(getHighestEntityIndex, int, 6)
 };
