@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Utils.h"
+#include "VirtualMethod.h"
 
 class Entity;
 

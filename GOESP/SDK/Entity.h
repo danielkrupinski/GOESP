@@ -5,7 +5,7 @@
 #include "EntityList.h"
 #include "../Interfaces.h"
 #include "../Memory.h"
-#include "Utils.h"
+#include "VirtualMethod.h"
 #include "WeaponId.h"
 
 struct Vector;

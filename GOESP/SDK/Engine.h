@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Utils.h"
+#include "VirtualMethod.h"
 
 #include <d3d9types.h>
 #include <functional>

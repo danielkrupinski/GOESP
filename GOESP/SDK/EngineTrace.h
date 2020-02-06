@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Utils.h"
 #include "Vector.h"
+#include "VirtualMethod.h"
 
 #include <cstddef>
 #include <functional>

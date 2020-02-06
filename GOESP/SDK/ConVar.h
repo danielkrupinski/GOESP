@@ -1,5 +1,6 @@
 #pragma once
-#include "Utils.h"
+
+#include "VirtualMethod.h"
 
 struct ConVar {
     constexpr float getFloat() noexcept
