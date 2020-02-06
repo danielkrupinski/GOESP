@@ -98,10 +98,10 @@ public:
 
     NETVAR(weaponId, 0x2FAA, WeaponId)                                               // CBaseAttributableItem->m_iItemDefinitionIndex
 
-    NETVAR(clip, 0x3244, int)                                                        // CBaseCombatWeapon->m_iClip1
-    NETVAR(isInReload, 0x3244 + 0x41, bool)                                          // CBaseCombatWeapon->m_iClip1 + 0x41
-    NETVAR(reserveAmmoCount, 0x324C, int)                                            // CBaseCombatWeapon->m_iPrimaryReserveAmmoCount
-    NETVAR(nextPrimaryAttack, 0x3218, float)                                         // CBaseCombatWeapon->m_flNextPrimaryAttack
+    NETVAR(clip, 0x3254, int)                                                        // CBaseCombatWeapon->m_iClip1
+    NETVAR(isInReload, 0x3254 + 0x41, bool)                                          // CBaseCombatWeapon->m_iClip1 + 0x41
+    NETVAR(reserveAmmoCount, 0x325C, int)                                            // CBaseCombatWeapon->m_iPrimaryReserveAmmoCount
+    NETVAR(nextPrimaryAttack, 0x3228, float)                                         // CBaseCombatWeapon->m_flNextPrimaryAttack
 
     NETVAR(index, 0x64, int)                                                         // CBaseEntity->m_bIsAutoaimTarget + 0x4
     NETVAR(ownerEntity, 0x14C, int)                                                  // CBaseEntity->m_hOwnerEntity
