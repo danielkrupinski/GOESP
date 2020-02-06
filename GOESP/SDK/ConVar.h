@@ -5,6 +5,6 @@
 struct ConVar {
     constexpr float getFloat() noexcept
     {
-        return callVirtualMethod<float, 12>(this);
+        return VirtualMethod::call<float, 12>(this);
     }
 };

@@ -50,6 +50,6 @@ class EngineTrace {
 public:
     constexpr void traceRay(const Ray& ray, unsigned int mask, const TraceFilter& filter, Trace& trace) noexcept
     {
-        callVirtualMethod<void, 5>(this, std::cref(ray), mask, std::cref(filter), std::ref(trace));
+        VirtualMethod::call<void, 5>(this, std::cref(ray), mask, std::cref(filter), std::ref(trace));
     }
 };

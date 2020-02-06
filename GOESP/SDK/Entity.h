@@ -34,59 +34,59 @@ class Entity {
 public:
     constexpr ClientClass* getClientClass() noexcept
     {
-        return callVirtualMethod<ClientClass*, 2>(this + 8);
+        return VirtualMethod::call<ClientClass*, 2>(this + 8);
     }
 
     constexpr auto isDormant() noexcept
     {
-        return callVirtualMethod<bool, 9>(this + 8);
+        return VirtualMethod::call<bool, 9>(this + 8);
     }
 
     constexpr auto getModel() noexcept
     {
-        return callVirtualMethod<const Model*, 8>(this + 4);
+        return VirtualMethod::call<const Model*, 8>(this + 4);
     }
 
     constexpr auto getCollideable() noexcept
     {
-        return callVirtualMethod<Collideable*, 3>(this);
+        return VirtualMethod::call<Collideable*, 3>(this);
     }
 
     constexpr auto getAbsOrigin() noexcept
     {
-        return callVirtualMethod<Vector&, 10>(this);
+        return VirtualMethod::call<Vector&, 10>(this);
     }
 
     constexpr auto isAlive() noexcept
     {
-        return callVirtualMethod<bool, 155>(this);
+        return VirtualMethod::call<bool, 155>(this);
     }
 
     constexpr auto isWeapon() noexcept
     {
-        return callVirtualMethod<bool, 165>(this);
+        return VirtualMethod::call<bool, 165>(this);
     }
 
     constexpr auto getActiveWeapon() noexcept
     {
-        return callVirtualMethod<Entity*, 267>(this);
+        return VirtualMethod::call<Entity*, 267>(this);
     }
 
     auto getEyePosition() noexcept
     {
         Vector vec;
-        callVirtualMethod<void, 284>(this, std::ref(vec));
+        VirtualMethod::call<void, 284>(this, std::ref(vec));
         return vec;
     }
 
     constexpr auto getObserverTarget() noexcept
     {
-        return callVirtualMethod<Entity*, 294>(this);
+        return VirtualMethod::call<Entity*, 294>(this);
     }
 
     constexpr auto getWeaponInfo() noexcept
     {
-        return callVirtualMethod<WeaponInfo*, 459>(this);
+        return VirtualMethod::call<WeaponInfo*, 459>(this);
     }
 
     bool visibleTo(Entity* other) noexcept

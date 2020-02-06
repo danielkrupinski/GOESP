@@ -2,8 +2,11 @@
 
 #include <cstddef>
 
-template<typename T, std::size_t Index, typename ...Args>
-constexpr auto callVirtualMethod(void* classBase, Args... args) noexcept
+namespace VirtualMethod
 {
-    return ((*reinterpret_cast<T(__thiscall***)(void*, Args...)>(classBase))[Index])(classBase, args...);
+    template <typename T, std::size_t Idx, typename ...Args>
+    constexpr auto call(void* classBase, Args... args) noexcept
+    {
+        return ((*reinterpret_cast<T(__thiscall***)(void*, Args...)>(classBase))[Idx])(classBase, args...);
+    }
 }

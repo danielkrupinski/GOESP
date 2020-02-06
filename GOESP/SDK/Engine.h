@@ -30,32 +30,32 @@ public:
     constexpr auto getScreenSize() noexcept
     {
         int w = 0, h = 0;
-        callVirtualMethod<void, 5>(this, std::ref(w), std::ref(h));
+        VirtualMethod::call<void, 5>(this, std::ref(w), std::ref(h));
         return std::make_pair(w, h);
     }
 
     constexpr auto getPlayerInfo(int entityIndex, PlayerInfo& playerInfo) noexcept
     {
-        return callVirtualMethod<bool, 8>(this, entityIndex, std::ref(playerInfo));
+        return VirtualMethod::call<bool, 8>(this, entityIndex, std::ref(playerInfo));
     }
 
     constexpr auto getLocalPlayer() noexcept
     {
-        return callVirtualMethod<int, 12>(this);
+        return VirtualMethod::call<int, 12>(this);
     }
 
     constexpr auto getMaxClients() noexcept
     {
-        return callVirtualMethod<int, 20>(this);
+        return VirtualMethod::call<int, 20>(this);
     }
 
     constexpr auto isInGame() noexcept
     {
-        return callVirtualMethod<bool, 26>(this);
+        return VirtualMethod::call<bool, 26>(this);
     }
 
     constexpr auto worldToScreenMatrix() noexcept
     {
-        return callVirtualMethod<const D3DMATRIX&, 37>(this);
+        return VirtualMethod::call<const D3DMATRIX&, 37>(this);
     }
 };
