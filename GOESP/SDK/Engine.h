@@ -39,23 +39,8 @@ public:
         return VirtualMethod::call<bool, 8>(this, entityIndex, std::ref(playerInfo));
     }
 
-    constexpr auto getLocalPlayer() noexcept
-    {
-        return VirtualMethod::call<int, 12>(this);
-    }
-
-    constexpr auto getMaxClients() noexcept
-    {
-        return VirtualMethod::call<int, 20>(this);
-    }
-
-    constexpr auto isInGame() noexcept
-    {
-        return VirtualMethod::call<bool, 26>(this);
-    }
-
-    constexpr auto worldToScreenMatrix() noexcept
-    {
-        return VirtualMethod::call<const D3DMATRIX&, 37>(this);
-    }
+    VIRTUAL_METHOD(getLocalPlayer, int, 12);
+    VIRTUAL_METHOD(getMaxClients, int, 20)
+    VIRTUAL_METHOD(isInGame, bool, 26)
+    VIRTUAL_METHOD(worldToScreenMatrix, const D3DMATRIX&, 37)
 };
