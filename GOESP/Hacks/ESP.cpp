@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "ESP.h"
 
 #include "../imgui/imgui.h"
@@ -194,8 +195,8 @@ static auto boundingBox(const BaseData& entityData, BoundingBox& out) noexcept
 
     out.min.x = static_cast<float>(width * 2);
     out.min.y = static_cast<float>(height * 2);
-    out.max.x = -static_cast<float>(width * 2);
-    out.max.y = -static_cast<float>(height * 2);
+    out.max.x = -out.min.x;
+    out.max.y = -out.min.y;
 
     const auto mins = entityData.obbMins;
     const auto maxs = entityData.obbMaxs;
@@ -208,17 +209,10 @@ static auto boundingBox(const BaseData& entityData, BoundingBox& out) noexcept
         if (!worldToScreen(point.transform(entityData.coordinateFrame), out.vertices[i]))
             return false;
 
-        if (out.min.x > out.vertices[i].x)
-            out.min.x = out.vertices[i].x;
-
-        if (out.min.y > out.vertices[i].y)
-            out.min.y = out.vertices[i].y;
-
-        if (out.max.x < out.vertices[i].x)
-            out.max.x = out.vertices[i].x;
-
-        if (out.max.y < out.vertices[i].y)
-            out.max.y = out.vertices[i].y;
+        out.min.x = std::min(out.min.x, out.vertices[i].x);
+        out.min.y = std::min(out.min.y, out.vertices[i].y);
+        out.max.x = std::max(out.max.x, out.vertices[i].x);
+        out.max.y = std::max(out.max.y, out.vertices[i].y);
     }
     return true;
 }
