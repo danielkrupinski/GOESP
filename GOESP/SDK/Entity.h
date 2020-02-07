@@ -58,6 +58,13 @@ public:
         return trace.entity == this || trace.fraction > 0.97f;
     }
 
+    auto getAimPunch() noexcept
+    {
+        Vector vec;
+        VirtualMethod::call<void, 345>(this, std::ref(vec));
+        return vec;
+    }
+
     NETVAR(weaponId, 0x2FAA, WeaponId)                                               // CBaseAttributableItem->m_iItemDefinitionIndex
 
     NETVAR(clip, 0x3254, int)                                                        // CBaseCombatWeapon->m_iClip1
