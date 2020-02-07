@@ -75,7 +75,6 @@ public:
     NETVAR(index, 0x64, int)                                                         // CBaseEntity->m_bIsAutoaimTarget + 0x4
     NETVAR(ownerEntity, 0x14C, int)                                                  // CBaseEntity->m_hOwnerEntity
 
-    NETVAR(aimPunchAngle, 0x302C, Vector)                                            // CBasePlayer->m_aimPunchAngle
     NETVAR(health, 0x100, int)                                                       // CBasePlayer->m_iHealth
 
     NETVAR(coordinateFrame, 0x444, Matrix3x4)
