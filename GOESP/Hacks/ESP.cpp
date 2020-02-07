@@ -294,20 +294,23 @@ static void renderSnaplines(ImDrawList* drawList, const BoundingBox& bbox, const
 
 static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, const Config::Player& config) noexcept
 {
-    if (BoundingBox bbox; boundingBox(playerData, bbox)) {
-        renderBox(drawList, bbox, config);
-        renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
+    BoundingBox bbox;
 
-        ImGui::PushFont(::config->fonts[config.font]);
+    if (!boundingBox(playerData, bbox))
+        return;
 
-        if (config.name.enabled && !playerData.name.empty())
-            renderText(drawList, playerData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, playerData.name.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+    renderBox(drawList, bbox, config);
+    renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
 
-        if (config.weapon.enabled && !playerData.activeWeapon.empty())
-            renderText(drawList, playerData.distanceToLocal, config.textCullDistance, config.weapon, config.textBackground, playerData.activeWeapon.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
+    ImGui::PushFont(::config->fonts[config.font]);
 
-        ImGui::PopFont();
-    }
+    if (config.name.enabled && !playerData.name.empty())
+        renderText(drawList, playerData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, playerData.name.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+
+    if (config.weapon.enabled && !playerData.activeWeapon.empty())
+        renderText(drawList, playerData.distanceToLocal, config.textCullDistance, config.weapon, config.textBackground, playerData.activeWeapon.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
+
+    ImGui::PopFont();
 }
 
 static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, const Config::Weapon& config) noexcept
