@@ -385,7 +385,7 @@ static void renderEntityEsp(ImDrawList* drawList, const EntityData& entityData, 
     }
 }
 
-void ESP::render2(ImDrawList* drawList) noexcept
+void ESP::render(ImDrawList* drawList) noexcept
 {
     std::scoped_lock _{ dataMutex };
 
