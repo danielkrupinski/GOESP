@@ -315,24 +315,27 @@ static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, 
 
 static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, const Config::Weapon& config) noexcept
 {
-    if (BoundingBox bbox; boundingBox(weaponData, bbox)) {
-        renderBox(drawList, bbox, config);
-        renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
+    BoundingBox bbox;
 
-        ImGui::PushFont(::config->fonts[config.font]);
+    if (!boundingBox(weaponData, bbox))
+        return;
 
-        if (config.name.enabled && !weaponData.name.empty()) {
-            if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponData.name.c_str()), -1, weaponName, _countof(weaponName), nullptr, nullptr))
-                renderText(drawList, weaponData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, weaponName, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
-        }
+    renderBox(drawList, bbox, config);
+    renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
 
-        if (config.ammo.enabled && weaponData.clip != -1) {
-            const auto text{ std::to_string(weaponData.clip) + " / " + std::to_string(weaponData.reserveAmmo) };
-            renderText(drawList, weaponData.distanceToLocal, config.textCullDistance, config.ammo, config.textBackground, text.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
-        }
+    ImGui::PushFont(::config->fonts[config.font]);
 
-        ImGui::PopFont();
+    if (config.name.enabled && !weaponData.name.empty()) {
+        if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponData.name.c_str()), -1, weaponName, _countof(weaponName), nullptr, nullptr))
+            renderText(drawList, weaponData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, weaponName, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
     }
+
+    if (config.ammo.enabled && weaponData.clip != -1) {
+        const auto text{ std::to_string(weaponData.clip) + " / " + std::to_string(weaponData.reserveAmmo) };
+        renderText(drawList, weaponData.distanceToLocal, config.textCullDistance, config.ammo, config.textBackground, text.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
+    }
+
+    ImGui::PopFont();
 }
 
 static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, const char* name, const Config::Shared& config) noexcept
