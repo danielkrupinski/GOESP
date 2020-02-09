@@ -45,11 +45,11 @@ struct BoundingBox {
 };
 
 struct BaseData {
-    // Vector absOrigin;
-    Matrix3x4 coordinateFrame;
+    float distanceToLocal;
     Vector obbMins;
     Vector obbMaxs;
-    float distanceToLocal;
+    Matrix3x4 coordinateFrame;
+    // Vector absOrigin;
 };
 
 struct EntityData : BaseData {
