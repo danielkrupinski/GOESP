@@ -50,26 +50,27 @@ void Misc::collectData() noexcept
 
 void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
 {
-    if (config->reloadProgress.enabled && interfaces->engine->isInGame()) {
-        std::scoped_lock _{ dataMutex };
+    if (!config->reloadProgress.enabled)
+        return;
 
-        if (!(localPlayer.exists && localPlayer.alive))
-            return;
+    std::scoped_lock _{ dataMutex };
 
-        static float reloadLength = 0.0f;
+    if (!localPlayer.exists || !localPlayer.alive)
+        return;
 
-        if (localPlayer.inReload) {
-            if (!reloadLength)
-                reloadLength = localPlayer.nextWeaponAttack - memory->globalVars->currenttime;
+    static float reloadLength = 0.0f;
 
-            const auto [width, height] = interfaces->engine->getScreenSize();
-            constexpr int segments = 20;
-            drawList->PathArcTo({ width / 2.0f, height / 2.0f }, 20.0f, -IM_PI / 2, std::clamp(IM_PI * 2 * (0.75f - (localPlayer.nextWeaponAttack - memory->globalVars->currenttime) / reloadLength), -IM_PI / 2, -IM_PI / 2 + IM_PI * 2), segments);
-            const ImU32 color = Helpers::calculateColor(config->reloadProgress.color, config->reloadProgress.rainbow, config->reloadProgress.rainbowSpeed, memory->globalVars->realtime);
-            drawList->PathStroke(color, false, config->reloadProgress.thickness);
-        } else {
-            reloadLength = 0.0f;
-        }
+    if (localPlayer.inReload) {
+        if (!reloadLength)
+            reloadLength = localPlayer.nextWeaponAttack - memory->globalVars->currenttime;
+
+        const auto [width, height] = interfaces->engine->getScreenSize();
+        constexpr int segments = 20;
+        drawList->PathArcTo({ width / 2.0f, height / 2.0f }, 20.0f, -IM_PI / 2, std::clamp(IM_PI * 2 * (0.75f - (localPlayer.nextWeaponAttack - memory->globalVars->currenttime) / reloadLength), -IM_PI / 2, -IM_PI / 2 + IM_PI * 2), segments);
+        const ImU32 color = Helpers::calculateColor(config->reloadProgress.color, config->reloadProgress.rainbow, config->reloadProgress.rainbowSpeed, memory->globalVars->realtime);
+        drawList->PathStroke(color, false, config->reloadProgress.thickness);
+    } else {
+        reloadLength = 0.0f;
     }
 }
 
