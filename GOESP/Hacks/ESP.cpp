@@ -60,6 +60,7 @@ struct EntityData : BaseData {
 struct PlayerData : BaseData {
     bool enemy;
     bool visible;
+    float flashDuration;
     std::string name;
     std::string activeWeapon;
 };
@@ -109,6 +110,7 @@ void ESP::collectData() noexcept
 
         data.enemy = memory->isOtherEnemy(entity, localPlayer);
         data.visible = entity->visibleTo(localPlayer);
+        data.flashDuration = entity->flashDuration();
 
         if (PlayerInfo playerInfo; interfaces->engine->getPlayerInfo(entity->index(), playerInfo)) {
             if (config->normalizePlayerNames) {
