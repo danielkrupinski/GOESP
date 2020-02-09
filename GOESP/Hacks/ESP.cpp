@@ -45,7 +45,7 @@ struct BoundingBox {
 };
 
 struct BaseData {
-    Vector absOrigin;
+    // Vector absOrigin;
     Matrix3x4 coordinateFrame;
     Vector obbMins;
     Vector obbMaxs;
@@ -102,7 +102,7 @@ void ESP::collectData() noexcept
             continue;
 
         PlayerData data;
-        data.absOrigin = entity->getAbsOrigin();
+        // data.absOrigin = entity->getAbsOrigin();
         data.coordinateFrame = entity->coordinateFrame();
         data.obbMins = entity->getCollideable()->obbMins();
         data.obbMaxs = entity->getCollideable()->obbMaxs();
@@ -141,7 +141,7 @@ void ESP::collectData() noexcept
         if (entity->isWeapon()) {
             if (entity->ownerEntity() == -1) {
                 WeaponData data;
-                data.absOrigin = entity->getAbsOrigin();
+                // data.absOrigin = entity->getAbsOrigin();
                 data.coordinateFrame = entity->coordinateFrame();
                 data.obbMins = entity->getCollideable()->obbMins();
                 data.obbMaxs = entity->getCollideable()->obbMaxs();
@@ -173,7 +173,7 @@ void ESP::collectData() noexcept
             case ClassId::Chicken:
             case ClassId::PlantedC4:
                 EntityData data;
-                data.absOrigin = entity->getAbsOrigin();
+                // data.absOrigin = entity->getAbsOrigin();
                 data.coordinateFrame = entity->coordinateFrame();
                 data.obbMins = entity->getCollideable()->obbMins();
                 data.obbMaxs = entity->getCollideable()->obbMaxs();
