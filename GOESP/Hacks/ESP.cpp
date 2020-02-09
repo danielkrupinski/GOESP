@@ -265,10 +265,10 @@ static void renderBox(ImDrawList* drawList, const BoundingBox& bbox, const Confi
     }
 }
 
-static void renderText(ImDrawList* drawList, float distance, float cullDistance, const Config::Color& textCfg, const Config::ColorToggleRounding& backgroundCfg, const char* text, const ImVec2& pos, bool centered = true, bool adjustHeight = true) noexcept
+static ImVec2 renderText(ImDrawList* drawList, float distance, float cullDistance, const Config::Color& textCfg, const Config::ColorToggleRounding& backgroundCfg, const char* text, const ImVec2& pos, bool centered = true, bool adjustHeight = true) noexcept
 {
     if (cullDistance && Helpers::units2meters(distance) > cullDistance)
-        return;
+        return { };
 
     const auto fontSize = std::clamp(15.0f * 10.0f / std::sqrt(distance), 10.0f, 15.0f);
 
@@ -282,6 +282,7 @@ static void renderText(ImDrawList* drawList, float distance, float cullDistance,
     }
     const ImU32 color = Helpers::calculateColor(textCfg.color, textCfg.rainbow, textCfg.rainbowSpeed, memory->globalVars->realtime);
     drawList->AddText(nullptr, fontSize, { pos.x - horizontalOffset, pos.y - verticalOffset }, color, text);
+    return textSize;
 }
 
 static void renderSnaplines(ImDrawList* drawList, const BoundingBox& bbox, const Config::ColorToggleThickness& config, int type) noexcept
