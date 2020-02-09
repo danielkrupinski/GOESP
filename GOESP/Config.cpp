@@ -124,6 +124,7 @@ static void from_json(const json& j, Config::Player& p)
     from_json(j, static_cast<Config::Shared&>(p));
 
     read<value_t::object>(j, "Weapon", p.weapon);
+    read<value_t::object>(j, "Flash Duration", p.flashDuration);
 }
 
 void Config::load() noexcept
@@ -204,6 +205,7 @@ static void to_json(json& j, const Config::Player& p)
 {
     j = static_cast<Config::Shared>(p);
     j["Weapon"] = p.weapon;
+    j["Flash Duration"] = p.flashDuration;
 }
 
 static void to_json(json& j, const Config::Weapon& w)

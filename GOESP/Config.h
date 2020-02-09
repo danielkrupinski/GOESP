@@ -55,6 +55,7 @@ public:
 
     struct Player : Shared {
         ColorToggle weapon;
+        ColorToggle flashDuration;
     };
 
     struct Weapon : Shared {
