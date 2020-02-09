@@ -66,11 +66,11 @@ struct PlayerData : BaseData {
 };
 
 struct WeaponData : BaseData {
-    std::string name;
-    WeaponType type = WeaponType::Unknown;
-    WeaponId id;
     int clip;
     int reserveAmmo;
+    WeaponType type = WeaponType::Unknown;
+    WeaponId id;
+    std::string name;
 };
 
 static std::vector<PlayerData> players;
