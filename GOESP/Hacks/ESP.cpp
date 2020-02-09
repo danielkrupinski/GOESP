@@ -307,8 +307,18 @@ static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, 
 
     ImGui::PushFont(::config->fonts[config.font]);
 
-    if (config.name.enabled && !playerData.name.empty())
-        renderText(drawList, playerData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, playerData.name.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+    ImVec2 flashDurationPos{ (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 12.5f };
+
+    if (config.name.enabled && !playerData.name.empty()) {
+        const auto nameSize = renderText(drawList, playerData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, playerData.name.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+        flashDurationPos.y -= nameSize.y;
+    }
+
+    if (config.flashDuration.enabled && playerData.flashDuration > 0.0f) {
+        drawList->PathArcTo(flashDurationPos, 5.0f, IM_PI / 2 - (playerData.flashDuration / 255.0f * IM_PI), IM_PI / 2 + (playerData.flashDuration / 255.0f * IM_PI));
+        const ImU32 color = Helpers::calculateColor(config.flashDuration.color, config.flashDuration.rainbow, config.flashDuration.rainbowSpeed, memory->globalVars->realtime);
+        drawList->PathStroke(color, false, 1.5f);
+    }
 
     if (config.weapon.enabled && !playerData.activeWeapon.empty())
         renderText(drawList, playerData.distanceToLocal, config.textCullDistance, config.weapon, config.textBackground, playerData.activeWeapon.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
