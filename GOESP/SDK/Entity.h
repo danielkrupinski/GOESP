@@ -76,6 +76,7 @@ public:
     NETVAR(ownerEntity, 0x14C, int)                                                  // CBaseEntity->m_hOwnerEntity
 
     NETVAR(health, 0x100, int)                                                       // CBasePlayer->m_iHealth
+    NETVAR(flashDuration, 0xA40C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
 
     NETVAR(coordinateFrame, 0x444, Matrix3x4)
 };
