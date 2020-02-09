@@ -219,6 +219,8 @@ void GUI::render() noexcept
                     auto& playerConfig = config->players[currentCategory * 3 + currentItem];
 
                     ImGuiCustom::colorPicker("Weapon", playerConfig.weapon);
+                    ImGui::SameLine(spacing);
+                    ImGuiCustom::colorPicker("Flash Duration", playerConfig.flashDuration);
                 } else if (currentCategory == 2) {
                     constexpr auto getWeaponConfig = [](int item, int subItem) constexpr noexcept -> Config::Weapon& {
                         switch (item) {
