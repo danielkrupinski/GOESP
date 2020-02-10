@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
+    <ClInclude Include="ConfigStructs.h" />
     <ClInclude Include="Hacks\ESP.h" />
     <ClInclude Include="fnv.h" />
     <ClInclude Include="GUI.h" />
