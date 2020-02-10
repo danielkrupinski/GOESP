@@ -219,7 +219,7 @@ static auto boundingBox(const BaseData& entityData, BoundingBox& out) noexcept
     return true;
 }
 
-static void renderBox(ImDrawList* drawList, const BoundingBox& bbox, const Config::Shared& config) noexcept
+static void renderBox(ImDrawList* drawList, const BoundingBox& bbox, const Shared& config) noexcept
 {
     if (!config.box.enabled)
         return;
@@ -265,7 +265,7 @@ static void renderBox(ImDrawList* drawList, const BoundingBox& bbox, const Confi
     }
 }
 
-static ImVec2 renderText(ImDrawList* drawList, float distance, float cullDistance, const Config::Color& textCfg, const Config::ColorToggleRounding& backgroundCfg, const char* text, const ImVec2& pos, bool centered = true, bool adjustHeight = true) noexcept
+static ImVec2 renderText(ImDrawList* drawList, float distance, float cullDistance, const Color& textCfg, const ColorToggleRounding& backgroundCfg, const char* text, const ImVec2& pos, bool centered = true, bool adjustHeight = true) noexcept
 {
     if (cullDistance && Helpers::units2meters(distance) > cullDistance)
         return { };
@@ -285,7 +285,7 @@ static ImVec2 renderText(ImDrawList* drawList, float distance, float cullDistanc
     return textSize;
 }
 
-static void renderSnaplines(ImDrawList* drawList, const BoundingBox& bbox, const Config::ColorToggleThickness& config, int type) noexcept
+static void renderSnaplines(ImDrawList* drawList, const BoundingBox& bbox, const ColorToggleThickness& config, int type) noexcept
 {
     if (!config.enabled)
         return;
@@ -295,7 +295,7 @@ static void renderSnaplines(ImDrawList* drawList, const BoundingBox& bbox, const
     drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(type ? 0 : height) }, { (bbox.min.x + bbox.max.x) / 2, type ? bbox.min.y : bbox.max.y }, color, config.thickness);
 }
 
-static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, const Config::Player& config) noexcept
+static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, const Player& config) noexcept
 {
     BoundingBox bbox;
 
@@ -326,7 +326,7 @@ static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, 
     ImGui::PopFont();
 }
 
-static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, const Config::Weapon& config) noexcept
+static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, const Weapon& config) noexcept
 {
     BoundingBox bbox;
 
@@ -351,7 +351,7 @@ static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, 
     ImGui::PopFont();
 }
 
-static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, const char* name, const Config::Shared& config) noexcept
+static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, const char* name, const Shared& config) noexcept
 {
     if (BoundingBox bbox; boundingBox(entityData, bbox)) {
         renderBox(drawList, bbox, config);
@@ -384,7 +384,7 @@ static constexpr bool renderPlayerEsp(ImDrawList* drawList, const PlayerData& pl
     return config->players[id].enabled;
 }
 
-static constexpr void renderWeaponEsp(ImDrawList* drawList, const WeaponData& weaponData, const Config::Weapon& parentConfig, const Config::Weapon& itemConfig) noexcept
+static constexpr void renderWeaponEsp(ImDrawList* drawList, const WeaponData& weaponData, const Weapon& parentConfig, const Weapon& itemConfig) noexcept
 {
     const auto& config = parentConfig.enabled ? parentConfig : itemConfig;
     if (config.enabled) {
@@ -392,7 +392,7 @@ static constexpr void renderWeaponEsp(ImDrawList* drawList, const WeaponData& we
     }
 }
 
-static void renderEntityEsp(ImDrawList* drawList, const EntityData& entityData, const Config::Shared& parentConfig, const Config::Shared& itemConfig, const char* name) noexcept
+static void renderEntityEsp(ImDrawList* drawList, const EntityData& entityData, const Shared& parentConfig, const Shared& itemConfig, const char* name) noexcept
 {
     const auto& config = parentConfig.enabled ? parentConfig : itemConfig;
 
@@ -486,7 +486,7 @@ void ESP::render(ImDrawList* drawList) noexcept
         };
 
         if (!config->weapons.enabled) {
-            constexpr auto dispatchWeapon = [](WeaponType type, int idx) -> std::optional<std::pair<const Config::Weapon&, const Config::Weapon&>> {
+            constexpr auto dispatchWeapon = [](WeaponType type, int idx) -> std::optional<std::pair<const Weapon&, const Weapon&>> {
                 switch (type) {
                 case WeaponType::Pistol: return { { config->pistols[0], config->pistols[idx] } };
                 case WeaponType::SubMachinegun: return { { config->smgs[0], config->smgs[idx] } };
@@ -507,7 +507,7 @@ void ESP::render(ImDrawList* drawList) noexcept
     }
 
     for (const auto& entity : entities) {
-        constexpr auto dispatchEntity = [](ClassId classId, bool flashbang) -> std::optional<std::tuple<const Config::Shared&, const Config::Shared&, const char*>> {
+        constexpr auto dispatchEntity = [](ClassId classId, bool flashbang) -> std::optional<std::tuple<const Shared&, const Shared&, const char*>> {
             switch (classId) {
             case ClassId::BaseCSGrenadeProjectile:
                 if (flashbang) return  { { config->projectiles[0], config->projectiles[1], "Flashbang" } };

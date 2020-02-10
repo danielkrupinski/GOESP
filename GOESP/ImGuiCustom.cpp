@@ -26,7 +26,7 @@ void ImGuiCustom::colorPopup(const char* name, std::array<float, 4>& color, bool
     ImGui::PopID();
 }
 
-void ImGuiCustom::colorPicker(const char* name, Config::ColorToggle& colorConfig, std::function<void()> pickerFn) noexcept
+void ImGuiCustom::colorPicker(const char* name, ColorToggle& colorConfig, std::function<void()> pickerFn) noexcept
 {
     colorPopup(name, colorConfig.color, &colorConfig.enabled, [&] {
         ImGui::SameLine();
@@ -42,9 +42,9 @@ void ImGuiCustom::colorPicker(const char* name, Config::ColorToggle& colorConfig
     });
 }
 
-void ImGuiCustom::colorPicker(const char* name, Config::ColorToggleRounding& colorConfig, std::function<void()> pickerFn) noexcept
+void ImGuiCustom::colorPicker(const char* name, ColorToggleRounding& colorConfig, std::function<void()> pickerFn) noexcept
 {
-    colorPicker(name, static_cast<Config::ColorToggle&>(colorConfig), [&] {
+    colorPicker(name, static_cast<ColorToggle&>(colorConfig), [&] {
         ImGui::Separator();
         ImGui::InputFloat("Rounding", &colorConfig.rounding, 0.1f, 0.0f, "%.1f");
         colorConfig.rounding = std::max(colorConfig.rounding, 0.0f);
@@ -53,9 +53,9 @@ void ImGuiCustom::colorPicker(const char* name, Config::ColorToggleRounding& col
     });
 }
 
-void ImGuiCustom::colorPicker(const char* name, Config::ColorToggleThickness& colorConfig, std::function<void()> pickerFn) noexcept
+void ImGuiCustom::colorPicker(const char* name, ColorToggleThickness& colorConfig, std::function<void()> pickerFn) noexcept
 {
-    colorPicker(name, static_cast<Config::ColorToggle&>(colorConfig), [&] {
+    colorPicker(name, static_cast<ColorToggle&>(colorConfig), [&] {
         ImGui::Separator();
         ImGui::InputFloat("Thickness", &colorConfig.thickness, 0.1f, 0.0f, "%.1f");
         colorConfig.thickness = std::max(colorConfig.thickness, 0.0f);
@@ -64,9 +64,9 @@ void ImGuiCustom::colorPicker(const char* name, Config::ColorToggleThickness& co
     });
 }
 
-void ImGuiCustom::colorPicker(const char* name, Config::ColorToggleThicknessRounding& colorConfig, std::function<void()> pickerFn) noexcept
+void ImGuiCustom::colorPicker(const char* name, ColorToggleThicknessRounding& colorConfig, std::function<void()> pickerFn) noexcept
 {
-    colorPicker(name, static_cast<Config::ColorToggleRounding&>(colorConfig), [&] {
+    colorPicker(name, static_cast<ColorToggleRounding&>(colorConfig), [&] {
         ImGui::InputFloat("Thickness", &colorConfig.thickness, 0.1f, 0.0f, "%.1f");
         colorConfig.thickness = std::max(colorConfig.thickness, 0.0f);
         if (pickerFn)

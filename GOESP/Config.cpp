@@ -56,42 +56,42 @@ static constexpr void read(const json& j, const char* key, std::array<T, Size>& 
         o = j[key];
 }
 
-static void from_json(const json& j, Config::Color& c)
+static void from_json(const json& j, Color& c)
 {
     read<value_t::array>(j, "Color", c.color);
     read<value_t::boolean>(j, "Rainbow", c.rainbow);
     read<value_t::number_float>(j, "Rainbow Speed", c.rainbowSpeed);
 }
 
-static void from_json(const json& j, Config::ColorToggle& ct)
+static void from_json(const json& j, ColorToggle& ct)
 {
-    from_json(j, static_cast<Config::Color&>(ct));
+    from_json(j, static_cast<Color&>(ct));
 
     read<value_t::boolean>(j, "Enabled", ct.enabled);
 }
 
-static void from_json(const json& j, Config::ColorToggleRounding& ctr)
+static void from_json(const json& j, ColorToggleRounding& ctr)
 {
-    from_json(j, static_cast<Config::ColorToggle&>(ctr));
+    from_json(j, static_cast<ColorToggle&>(ctr));
 
     read<value_t::number_float>(j, "Rounding", ctr.rounding);
 }
 
-static void from_json(const json& j, Config::ColorToggleThickness& ctt)
+static void from_json(const json& j, ColorToggleThickness& ctt)
 {
-    from_json(j, static_cast<Config::ColorToggle&>(ctt));
+    from_json(j, static_cast<ColorToggle&>(ctt));
 
     read<value_t::number_float>(j, "Thickness", ctt.thickness);
 }
 
-static void from_json(const json& j, Config::ColorToggleThicknessRounding& cttr)
+static void from_json(const json& j, ColorToggleThicknessRounding& cttr)
 {
-    from_json(j, static_cast<Config::ColorToggleRounding&>(cttr));
+    from_json(j, static_cast<ColorToggleRounding&>(cttr));
 
     read<value_t::number_float>(j, "Thickness", cttr.thickness);
 }
 
-static void from_json(const json& j, Config::Shared& s)
+static void from_json(const json& j, Shared& s)
 {
     read<value_t::boolean>(j, "Enabled", s.enabled);
     read<value_t::string>(j, "Font", s.font);
@@ -112,16 +112,16 @@ static void from_json(const json& j, Config::Shared& s)
     read<value_t::number_float>(j, "Text Cull Distance", s.textCullDistance);
 }
 
-static void from_json(const json& j, Config::Weapon& w)
+static void from_json(const json& j, Weapon& w)
 {
-    from_json(j, static_cast<Config::Shared&>(w));
+    from_json(j, static_cast<Shared&>(w));
 
     read<value_t::object>(j, "Ammo", w.ammo);
 }
 
-static void from_json(const json& j, Config::Player& p)
+static void from_json(const json& j, Player& p)
 {
-    from_json(j, static_cast<Config::Shared&>(p));
+    from_json(j, static_cast<Shared&>(p));
 
     read<value_t::object>(j, "Weapon", p.weapon);
     read<value_t::object>(j, "Flash Duration", p.flashDuration);
@@ -155,7 +155,7 @@ void Config::load() noexcept
     read<value_t::boolean>(j, "Normalize Player Names", normalizePlayerNames);
 }
 
-static void to_json(json& j, const Config::Color& c)
+static void to_json(json& j, const Color& c)
 {
     j = json{ { "Color", c.color },
               { "Rainbow", c.rainbow },
@@ -163,31 +163,31 @@ static void to_json(json& j, const Config::Color& c)
     };
 }
 
-static void to_json(json& j, const Config::ColorToggle& ct)
+static void to_json(json& j, const ColorToggle& ct)
 {
-    j = static_cast<Config::Color>(ct);
+    j = static_cast<Color>(ct);
     j["Enabled"] = ct.enabled;
 }
 
-static void to_json(json& j, const Config::ColorToggleRounding& ctr)
+static void to_json(json& j, const ColorToggleRounding& ctr)
 {
-    j = static_cast<Config::ColorToggle>(ctr);
+    j = static_cast<ColorToggle>(ctr);
     j["Rounding"] = ctr.rounding;
 }
 
-static void to_json(json& j, const Config::ColorToggleThickness& ctt)
+static void to_json(json& j, const ColorToggleThickness& ctt)
 {
-    j = static_cast<Config::ColorToggle>(ctt);
+    j = static_cast<ColorToggle>(ctt);
     j["Thickness"] = ctt.thickness;
 }
 
-static void to_json(json& j, const Config::ColorToggleThicknessRounding& cttr)
+static void to_json(json& j, const ColorToggleThicknessRounding& cttr)
 {
-    j = static_cast<Config::ColorToggleRounding>(cttr);
+    j = static_cast<ColorToggleRounding>(cttr);
     j["Thickness"] = cttr.thickness;
 }
 
-static void to_json(json& j, const Config::Shared& s)
+static void to_json(json& j, const Shared& s)
 {
     j = json{ { "Enabled", s.enabled },
               { "Font", s.font },
@@ -201,16 +201,16 @@ static void to_json(json& j, const Config::Shared& s)
     };
 }
 
-static void to_json(json& j, const Config::Player& p)
+static void to_json(json& j, const Player& p)
 {
-    j = static_cast<Config::Shared>(p);
+    j = static_cast<Shared>(p);
     j["Weapon"] = p.weapon;
     j["Flash Duration"] = p.flashDuration;
 }
 
-static void to_json(json& j, const Config::Weapon& w)
+static void to_json(json& j, const Weapon& w)
 {
-    j = static_cast<Config::Shared>(w);
+    j = static_cast<Shared>(w);
     j["Ammo"] = w.ammo;
 }
 

@@ -53,7 +53,7 @@ void GUI::render() noexcept
             static int currentItem = 0;
             static int currentSubItem = 0;
 
-            constexpr auto getConfig = [](int category, int item, int subItem = 0) constexpr noexcept -> Config::Shared& {
+            constexpr auto getConfig = [](int category, int item, int subItem = 0) constexpr noexcept -> Shared& {
                 switch (category) {
                 case 0:
                     return config->players[item];
@@ -222,7 +222,7 @@ void GUI::render() noexcept
                     ImGui::SameLine(spacing);
                     ImGuiCustom::colorPicker("Flash Duration", playerConfig.flashDuration);
                 } else if (currentCategory == 2) {
-                    constexpr auto getWeaponConfig = [](int item, int subItem) constexpr noexcept -> Config::Weapon& {
+                    constexpr auto getWeaponConfig = [](int item, int subItem) constexpr noexcept -> Weapon& {
                         switch (item) {
                         default:
                         case 0:
