@@ -182,12 +182,12 @@ void GUI::render() noexcept
                 ImGui::Checkbox("Enabled", &sharedConfig.enabled);
                 ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 260.0f);
                 ImGui::SetNextItemWidth(220.0f);
-                if (ImGui::BeginCombo("Font", config->systemFonts[sharedConfig.fontIndex].first.c_str())) {
+                if (ImGui::BeginCombo("Font", config->systemFonts[sharedConfig.fontIndex].c_str())) {
                     for (size_t i = 0; i < config->systemFonts.size(); i++) {
-                        bool isSelected = config->systemFonts[i].second == sharedConfig.font;
-                        if (ImGui::Selectable(config->systemFonts[i].first.c_str(), isSelected, 0, { 300.0f, 0.0f })) {
+                        bool isSelected = config->systemFonts[i] == sharedConfig.font;
+                        if (ImGui::Selectable(config->systemFonts[i].c_str(), isSelected, 0, { 300.0f, 0.0f })) {
                             sharedConfig.fontIndex = i;
-                            sharedConfig.font = config->systemFonts[i].second;
+                            sharedConfig.font = config->systemFonts[i];
                             config->scheduleFontLoad(sharedConfig.font);
                         }
                         if (isSelected)

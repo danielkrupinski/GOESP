@@ -4,8 +4,43 @@
 #include "nlohmann/json.hpp"
 
 #include <fstream>
+#include <memory>
 #include <ShlObj.h>
 #include <Windows.h>
+#include "Memory.h"
+
+int CALLBACK fontCallback(const LOGFONTA* lpelfe, const TEXTMETRICA* lpntme, DWORD FontType, LPARAM lParam)
+{
+    std::string fontName = (const char*)reinterpret_cast<const ENUMLOGFONTEXA*>(lpelfe)->elfFullName;
+
+    if (fontName[0] == '@')
+        return TRUE;
+
+    HFONT fontHandle = CreateFontA(0, 0, 0, 0,
+        FW_NORMAL, FALSE, FALSE, FALSE,
+        ANSI_CHARSET, OUT_DEFAULT_PRECIS,
+        CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+        DEFAULT_PITCH, fontName.c_str());
+
+    if (fontHandle) {
+        HDC hdc = CreateCompatibleDC(nullptr);
+
+        DWORD fontData = GDI_ERROR;
+
+        if (hdc) {
+            SelectObject(hdc, fontHandle);
+            // Do not use TTC fonts as we only support TTF fonts
+            fontData = GetFontData(hdc, 'fctt', 0, NULL, 0);
+            DeleteDC(hdc);
+        }
+        DeleteObject(fontHandle);
+        
+        if (fontData != GDI_ERROR)
+            return TRUE;
+    }
+    reinterpret_cast<std::vector<std::string>*>(lParam)->push_back(fontName);
+    return TRUE;
+}
 
 Config::Config(const char* folderName) noexcept
 {
@@ -14,24 +49,18 @@ Config::Config(const char* folderName) noexcept
         path /= folderName;
         CoTaskMemFree(pathToDocuments);
     }
-
+    
     if (!std::filesystem::is_directory(path)) {
         std::filesystem::remove(path);
         std::filesystem::create_directory(path);
     }
 
-    if (HKEY key; RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts", 0, KEY_READ, &key) == ERROR_SUCCESS) {
-        if (DWORD values; RegQueryInfoKeyW(key, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &values, nullptr, nullptr, nullptr, nullptr) == ERROR_SUCCESS) {
-            for (DWORD i = 0; i < values; ++i) {
-                CHAR fontName[200], fontFilename[50];
-                DWORD fontNameLength = 200, fontFilenameLength = 50;
+    LOGFONTA logfont;
+    logfont.lfCharSet = ANSI_CHARSET;
+    logfont.lfFaceName[0] = '\0';
+    logfont.lfPitchAndFamily = 0;
 
-                if (RegEnumValueA(key, i, fontName, &fontNameLength, nullptr, nullptr, PBYTE(fontFilename), &fontFilenameLength) == ERROR_SUCCESS && (std::strstr(fontFilename, ".ttf") || std::strstr(fontFilename, ".TTF")))
-                    systemFonts.emplace_back(fontName, fontFilename);
-            }
-        }
-        RegCloseKey(key);
-    }
+    EnumFontFamiliesExA(GetDC(nullptr), &logfont, fontCallback, (LPARAM)&systemFonts, 0);
 
     if (PWSTR pathToFonts; SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Fonts, 0, nullptr, &pathToFonts))) {
         fontsPath = pathToFonts;
@@ -98,7 +127,7 @@ static void from_json(const json& j, Shared& s)
 
     if (!s.font.empty())
         config->scheduleFontLoad(s.font);
-    if (const auto it = std::find_if(std::cbegin(config->systemFonts), std::cend(config->systemFonts), [&s](const auto& e) { return e.second == s.font; }); it != std::cend(config->systemFonts))
+    if (const auto it = std::find_if(std::cbegin(config->systemFonts), std::cend(config->systemFonts), [&s](const auto& e) { return e == s.font; }); it != std::cend(config->systemFonts))
         s.fontIndex = std::distance(std::cbegin(config->systemFonts), it);
     else
         s.fontIndex = 0;
@@ -249,10 +278,35 @@ bool Config::loadScheduledFonts() noexcept
     bool result = false;
 
     for (const auto& font : scheduledFonts) {
-        if (!fonts[font] && !font.empty()) {
-            static constexpr ImWchar ranges[]{ 0x0020, 0xFFFF, 0 };
-            fonts[font] = ImGui::GetIO().Fonts->AddFontFromFileTTF((fontsPath / font).string().c_str(), 15.0f, nullptr, ranges);
-            result = true;
+        if (font != "Default" && !fonts[font]) {
+            HFONT fontHandle = CreateFontA(0, 0, 0, 0,
+                FW_NORMAL, FALSE, FALSE, FALSE,
+                ANSI_CHARSET, OUT_DEFAULT_PRECIS,
+                CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+                DEFAULT_PITCH, font.c_str());
+            
+            if (fontHandle) {
+                HDC hdc = CreateCompatibleDC(nullptr);
+
+                if (hdc) {
+                    SelectObject(hdc, fontHandle);
+                    auto fontDataSize = GetFontData(hdc, 0, 0, nullptr, 0);
+
+                    if (fontDataSize != GDI_ERROR) {
+                        std::unique_ptr<std::byte> fontData{ new std::byte[fontDataSize] };
+                        fontDataSize = GetFontData(hdc, 0, 0, fontData.get(), fontDataSize);
+
+                        if (fontDataSize != GDI_ERROR) {
+                            static constexpr ImWchar ranges[]{ 0x0020, 0xFFFF, 0 };
+                            // imgui handles fontData memory release
+                            fonts[font] = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.release(), fontDataSize, 15.0f, nullptr, ranges);
+                            result = true;
+                        }
+                    }
+                    DeleteDC(hdc);
+                }
+                DeleteObject(fontHandle);
+            }
         }
     }
     scheduledFonts.clear();
