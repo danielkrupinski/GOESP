@@ -61,6 +61,7 @@ Config::Config(const char* folderName) noexcept
     logfont.lfPitchAndFamily = 0;
 
     EnumFontFamiliesExA(GetDC(nullptr), &logfont, fontCallback, (LPARAM)&systemFonts, 0);
+    std::sort(std::next(systemFonts.begin()), systemFonts.end());
 }
 
 using json = nlohmann::json;
