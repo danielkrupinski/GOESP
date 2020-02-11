@@ -61,11 +61,6 @@ Config::Config(const char* folderName) noexcept
     logfont.lfPitchAndFamily = 0;
 
     EnumFontFamiliesExA(GetDC(nullptr), &logfont, fontCallback, (LPARAM)&systemFonts, 0);
-
-    if (PWSTR pathToFonts; SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Fonts, 0, nullptr, &pathToFonts))) {
-        fontsPath = pathToFonts;
-        CoTaskMemFree(pathToFonts);
-    }
 }
 
 using json = nlohmann::json;
