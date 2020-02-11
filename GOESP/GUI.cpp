@@ -185,7 +185,7 @@ void GUI::render() noexcept
                 if (ImGui::BeginCombo("Font", config->systemFonts[sharedConfig.fontIndex].c_str())) {
                     for (size_t i = 0; i < config->systemFonts.size(); i++) {
                         bool isSelected = config->systemFonts[i] == sharedConfig.font;
-                        if (ImGui::Selectable(config->systemFonts[i].c_str(), isSelected, 0, { 300.0f, 0.0f })) {
+                        if (ImGui::Selectable(config->systemFonts[i].c_str(), isSelected, 0, { 250.0f, 0.0f })) {
                             sharedConfig.fontIndex = i;
                             sharedConfig.font = config->systemFonts[i];
                             config->scheduleFontLoad(sharedConfig.font);
