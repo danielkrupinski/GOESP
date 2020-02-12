@@ -27,9 +27,9 @@ struct PlayerInfo {
 
 class Engine {
 public:
-    constexpr auto getScreenSize() noexcept
+    auto getScreenSize() noexcept
     {
-        int w = 0, h = 0;
+        int w, h;
         VirtualMethod::call<void, 5>(this, std::ref(w), std::ref(h));
         return std::make_pair(w, h);
     }
@@ -39,7 +39,7 @@ public:
         return VirtualMethod::call<bool, 8>(this, entityIndex, std::ref(playerInfo));
     }
 
-    VIRTUAL_METHOD(getLocalPlayer, int, 12);
+    VIRTUAL_METHOD(getLocalPlayer, int, 12)
     VIRTUAL_METHOD(getMaxClients, int, 20)
     VIRTUAL_METHOD(isInGame, bool, 26)
     VIRTUAL_METHOD(worldToScreenMatrix, const D3DMATRIX&, 37)
