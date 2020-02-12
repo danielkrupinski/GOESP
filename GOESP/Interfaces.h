@@ -6,7 +6,6 @@
 
 class Client;
 class Cvar;
-class DebugOverlay;
 class Engine;
 class EngineTrace;
 class EntityList;
