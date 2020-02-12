@@ -7,11 +7,13 @@
 #include <tuple>
 
 struct PlayerInfo {
-    __int64 pad;
+    std::int64_t pad;
     union {
-        __int64 steamID64;
-        __int32 xuidLow;
-        __int32 xuidHigh;
+        std::int64_t xuid;
+        struct {
+            std::int32_t xuidLow;
+            std::int32_t xuidHigh;
+        };
     };
     char name[128];
     int userId;
