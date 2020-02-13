@@ -353,17 +353,20 @@ static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, 
 
 static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, const char* name, const Shared& config) noexcept
 {
-    if (BoundingBox bbox; boundingBox(entityData, bbox)) {
-        renderBox(drawList, bbox, config);
-        renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
+    BoundingBox bbox;
 
-        ImGui::PushFont(::config->fonts[config.font]);
+    if (!boundingBox(entityData, bbox))
+        return;
 
-        if (config.name.enabled)
-            renderText(drawList, entityData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+    renderBox(drawList, bbox, config);
+    renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
 
-        ImGui::PopFont();
-    }
+    ImGui::PushFont(::config->fonts[config.font]);
+
+    if (config.name.enabled)
+        renderText(drawList, entityData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+
+    ImGui::PopFont();
 }
 
 enum EspId {
