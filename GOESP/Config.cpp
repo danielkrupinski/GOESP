@@ -129,9 +129,9 @@ static void from_json(const json& j, Shared& s)
         s.fontIndex = 0;
 
     read<value_t::object>(j, "Snaplines", s.snaplines);
-    read<value_t::number_integer>(j, "Snapline Type", s.snaplineType);
+    read<value_t::number_unsigned>(j, "Snapline Type", s.snaplineType);
     read<value_t::object>(j, "Box", s.box);
-    read<value_t::number_integer>(j, "Box Type", s.boxType);
+    read<value_t::number_unsigned>(j, "Box Type", s.boxType);
     read<value_t::object>(j, "Name", s.name);
     read<value_t::object>(j, "Text Background", s.textBackground);
     read<value_t::number_float>(j, "Text Cull Distance", s.textCullDistance);
