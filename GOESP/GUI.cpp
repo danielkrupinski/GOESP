@@ -39,7 +39,7 @@ void GUI::render() noexcept
 
     ImGui::Begin("GOESP", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
 
-    if (ImGui::BeginTabBar("##tabbar", ImGuiTabBarFlags_Reorderable)) {
+    if (ImGui::BeginTabBar("##tabbar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_NoTooltip)) {
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 350.0f);
 
         ImGui::TextUnformatted("Build date: " __DATE__ " " __TIME__);
