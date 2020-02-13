@@ -3,6 +3,7 @@
 #include <tuple>
 
 #include "imgui/imgui.h"
+#include "ConfigStructs.h"
 
 namespace Helpers
 {
@@ -14,12 +15,12 @@ namespace Helpers
                                alpha);
     }
 
-    constexpr auto calculateColor(const std::array<float, 4>& color, bool rainbow, float rainbowSpeed, float time) noexcept
+    constexpr auto calculateColor(const Color& color, float time) noexcept
     {
-        if (rainbow)
-            return ImGui::ColorConvertFloat4ToU32(rainbowColor(time, rainbowSpeed, color[3]));
+        if (color.rainbow)
+            return ImGui::ColorConvertFloat4ToU32(rainbowColor(time, color.rainbowSpeed, color.color[3]));
         else
-            return ImGui::ColorConvertFloat4ToU32(color);
+            return ImGui::ColorConvertFloat4ToU32(color.color);
     }
 
     constexpr auto units2meters(float units) noexcept

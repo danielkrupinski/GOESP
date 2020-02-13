@@ -224,7 +224,7 @@ static void renderBox(ImDrawList* drawList, const BoundingBox& bbox, const Share
     if (!config.box.enabled)
         return;
 
-    const ImU32 color = Helpers::calculateColor(config.box.color, config.box.rainbow, config.box.rainbowSpeed, memory->globalVars->realtime);
+    const ImU32 color = Helpers::calculateColor(config.box, memory->globalVars->realtime);
 
     switch (config.boxType) {
     case 0:
@@ -277,10 +277,10 @@ static ImVec2 renderText(ImDrawList* drawList, float distance, float cullDistanc
     const auto verticalOffset = adjustHeight ? textSize.y : 0.0f;
 
     if (backgroundCfg.enabled) {
-        const ImU32 color = Helpers::calculateColor(backgroundCfg.color, backgroundCfg.rainbow, backgroundCfg.rainbowSpeed, memory->globalVars->realtime);
+        const ImU32 color = Helpers::calculateColor(backgroundCfg, memory->globalVars->realtime);
         drawList->AddRectFilled({ pos.x - horizontalOffset - 2, pos.y - verticalOffset - 2 }, { pos.x - horizontalOffset + textSize.x + 2, pos.y - verticalOffset + textSize.y + 2 }, color, backgroundCfg.rounding);
     }
-    const ImU32 color = Helpers::calculateColor(textCfg.color, textCfg.rainbow, textCfg.rainbowSpeed, memory->globalVars->realtime);
+    const ImU32 color = Helpers::calculateColor(textCfg, memory->globalVars->realtime);
     drawList->AddText(nullptr, fontSize, { pos.x - horizontalOffset, pos.y - verticalOffset }, color, text);
     return textSize;
 }
@@ -291,7 +291,7 @@ static void renderSnaplines(ImDrawList* drawList, const BoundingBox& bbox, const
         return;
 
     const auto [width, height] = interfaces->engine->getScreenSize();
-    const ImU32 color = Helpers::calculateColor(config.color, config.rainbow, config.rainbowSpeed, memory->globalVars->realtime);
+    const ImU32 color = Helpers::calculateColor(config, memory->globalVars->realtime);
     drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(type ? 0 : height) }, { (bbox.min.x + bbox.max.x) / 2, type ? bbox.min.y : bbox.max.y }, color, config.thickness);
 }
 
@@ -316,7 +316,7 @@ static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, 
 
     if (config.flashDuration.enabled && playerData.flashDuration > 0.0f) {
         drawList->PathArcTo(flashDurationPos, 5.0f, IM_PI / 2 - (playerData.flashDuration / 255.0f * IM_PI), IM_PI / 2 + (playerData.flashDuration / 255.0f * IM_PI));
-        const ImU32 color = Helpers::calculateColor(config.flashDuration.color, config.flashDuration.rainbow, config.flashDuration.rainbowSpeed, memory->globalVars->realtime);
+        const ImU32 color = Helpers::calculateColor(config.flashDuration, memory->globalVars->realtime);
         drawList->PathStroke(color, false, 1.5f);
     }
 

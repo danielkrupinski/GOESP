@@ -67,7 +67,7 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
         const auto [width, height] = interfaces->engine->getScreenSize();
         constexpr int segments = 20;
         drawList->PathArcTo({ width / 2.0f, height / 2.0f }, 20.0f, -IM_PI / 2, std::clamp(IM_PI * 2 * (0.75f - (localPlayer.nextWeaponAttack - memory->globalVars->currenttime) / reloadLength), -IM_PI / 2, -IM_PI / 2 + IM_PI * 2), segments);
-        const ImU32 color = Helpers::calculateColor(config->reloadProgress.color, config->reloadProgress.rainbow, config->reloadProgress.rainbowSpeed, memory->globalVars->realtime);
+        const ImU32 color = Helpers::calculateColor(config->reloadProgress, memory->globalVars->realtime);
         drawList->PathStroke(color, false, config->reloadProgress.thickness);
     } else {
         reloadLength = 0.0f;
@@ -88,7 +88,7 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
 
     const float x = width * (0.5f - localPlayer.aimPunch.y / 180.0f);
     const float y = height * (0.5f + localPlayer.aimPunch.x / 180.0f);
-    const auto color = Helpers::calculateColor(config->recoilCrosshair.color, config->recoilCrosshair.rainbow, config->recoilCrosshair.rainbowSpeed, memory->globalVars->realtime);
+    const auto color = Helpers::calculateColor(config->recoilCrosshair, memory->globalVars->realtime);
 
     drawList->AddLine({ x, y - 10 }, { x, y + 10 }, color, config->recoilCrosshair.thickness);
     drawList->AddLine({ x - 10, y }, { x + 10, y }, color, config->recoilCrosshair.thickness);
