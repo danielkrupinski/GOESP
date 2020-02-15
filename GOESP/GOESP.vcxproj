@@ -160,6 +160,7 @@
     <ClInclude Include="SDK\EngineTrace.h" />
     <ClInclude Include="SDK\Entity.h" />
     <ClInclude Include="SDK\EntityList.h" />
+    <ClInclude Include="SDK\GameEvent.h" />
     <ClInclude Include="SDK\GlobalVars.h" />
     <ClInclude Include="SDK\InputSystem.h" />
     <ClInclude Include="SDK\Localize.h" />

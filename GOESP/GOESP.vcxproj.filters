@@ -178,5 +178,8 @@
     <ClInclude Include="ConfigStructs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SDK\GameEvent.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
