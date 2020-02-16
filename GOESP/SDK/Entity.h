@@ -13,10 +13,9 @@ struct WeaponInfo;
 class Matrix3x4;
 
 class Collideable {
-virtual void* pad() = 0;
 public:
-    virtual const Vector& obbMins() = 0;
-    virtual const Vector& obbMaxs() = 0;
+    VIRTUAL_METHOD(obbMins, const Vector&, 1)
+    VIRTUAL_METHOD(obbMaxs, const Vector&, 2)
 };
 
 struct Model {
@@ -36,7 +35,7 @@ public:
     VIRTUAL_METHOD_(isDormant, bool, 9, this + 8)
     VIRTUAL_METHOD_(getModel, const Model*, 8, this + 4)
 
-    VIRTUAL_METHOD(getCollideable, Collideable*, 3)
+    VIRTUAL_METHOD(getCollideable, Collideable&, 3)
     VIRTUAL_METHOD(getAbsOrigin, Vector&, 10)
     VIRTUAL_METHOD(isAlive, bool, 155)
     VIRTUAL_METHOD(isWeapon, bool, 165)
