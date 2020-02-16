@@ -33,4 +33,9 @@ public:
     {
         return VirtualMethod::call<bool, 3>(this, listener, name, false);
     }
+
+    constexpr auto removeListener(GameEventListener* listener) noexcept
+    {
+        VirtualMethod::call<void, 5>(this, listener);
+    }
 };
