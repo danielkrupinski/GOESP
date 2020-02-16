@@ -5,6 +5,7 @@
 #include "imgui/imgui_impl_win32.h"
 
 #include "Config.h"
+#include "EventListener.h"
 #include "GUI.h"
 #include "Hacks/ESP.h"
 #include "Hacks/Misc.h"
@@ -37,6 +38,7 @@ static DWORD WINAPI waitOnUnload(HMODULE hModule) noexcept
     ImGui::DestroyContext();
 
     hooks.reset();
+    eventListener.reset();
     memory.reset();
     interfaces.reset();
     gui.reset();
