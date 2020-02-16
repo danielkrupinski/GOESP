@@ -5,7 +5,7 @@
 #include <memory>
 #include <Windows.h>
 #include <Psapi.h>
-#include <sstream>
+#include <string>
 #include <type_traits>
 
 class Entity;
@@ -15,9 +15,9 @@ class Memory {
 public:
     Memory() noexcept;
 
-    uintptr_t present;
-    uintptr_t reset;
-    uintptr_t setCursorPos;
+    std::uintptr_t present;
+    std::uintptr_t reset;
+    std::uintptr_t setCursorPos;
 
     bool(__thiscall* isOtherEnemy)(Entity*, Entity*);
     const GlobalVars* globalVars;
@@ -48,7 +48,7 @@ private:
             if (!*second)
                 return reinterpret_cast<std::uintptr_t>(const_cast<char*>(start) + offset);
         }
-        MessageBoxA(NULL, ("Failed to find pattern #" + std::to_string(id).append("!")).c_str(), "GOESP", MB_OK | MB_ICONWARNING);
+        MessageBoxA(NULL, ("Failed to find pattern #" + std::to_string(id) + '!').c_str(), "GOESP", MB_OK | MB_ICONWARNING);
         return 0;
     }
 };
