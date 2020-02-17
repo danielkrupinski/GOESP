@@ -104,8 +104,8 @@ void ESP::collectData() noexcept
         PlayerData data;
         // data.absOrigin = entity->getAbsOrigin();
         data.coordinateFrame = entity->coordinateFrame();
-        data.obbMins = entity->getCollideable().obbMins();
-        data.obbMaxs = entity->getCollideable().obbMaxs();
+        data.obbMins = entity->getCollideable()->obbMins();
+        data.obbMaxs = entity->getCollideable()->obbMaxs();
         data.distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
 
         data.enemy = memory->isOtherEnemy(entity, localPlayer);
@@ -143,8 +143,8 @@ void ESP::collectData() noexcept
                 WeaponData data;
                 // data.absOrigin = entity->getAbsOrigin();
                 data.coordinateFrame = entity->coordinateFrame();
-                data.obbMins = entity->getCollideable().obbMins();
-                data.obbMaxs = entity->getCollideable().obbMaxs();
+                data.obbMins = entity->getCollideable()->obbMins();
+                data.obbMaxs = entity->getCollideable()->obbMaxs();
                 data.distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
 
                 if (const auto weaponData = entity->getWeaponInfo()) {
@@ -175,8 +175,8 @@ void ESP::collectData() noexcept
                 EntityData data;
                 // data.absOrigin = entity->getAbsOrigin();
                 data.coordinateFrame = entity->coordinateFrame();
-                data.obbMins = entity->getCollideable().obbMins();
-                data.obbMaxs = entity->getCollideable().obbMaxs();
+                data.obbMins = entity->getCollideable()->obbMins();
+                data.obbMaxs = entity->getCollideable()->obbMaxs();
                 data.distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
                 data.classId = classId;
 

@@ -35,7 +35,7 @@ public:
     VIRTUAL_METHOD_(isDormant, bool, 9, this + 8)
     VIRTUAL_METHOD_(getModel, const Model*, 8, this + 4)
 
-    VIRTUAL_METHOD(getCollideable, Collideable&, 3)
+    VIRTUAL_METHOD(getCollideable, Collideable*, 3)
     VIRTUAL_METHOD(getAbsOrigin, Vector&, 10)
     VIRTUAL_METHOD(isAlive, bool, 155)
     VIRTUAL_METHOD(isWeapon, bool, 165)
