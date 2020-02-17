@@ -206,7 +206,7 @@ void GUI::render() noexcept
             ImGuiCustom::colorPicker("Snaplines", sharedConfig.snaplines);
             ImGui::SameLine();
             ImGui::SetNextItemWidth(75.0f);
-            ImGui::Combo("##1", &sharedConfig.snaplineType, "Bottom\0Top\0");
+            ImGui::Combo("##1", &sharedConfig.snaplineType, "Bottom\0Top\0Crosshair\0");
             ImGui::SameLine(spacing);
             ImGuiCustom::colorPicker("Box", sharedConfig.box);
             ImGui::SameLine();
