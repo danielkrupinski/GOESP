@@ -120,6 +120,8 @@ static BOOL WINAPI setCursorPos(int X, int Y) noexcept
 
 Hooks::Hooks(HMODULE module) noexcept
 {
+    assert(memory);
+
     this->module = module;
 
     _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);

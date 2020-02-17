@@ -1,6 +1,7 @@
-#include "Memory.h"
+#include <cassert>
 
 #include "Interfaces.h"
+#include "Memory.h"
 
 template <typename T>
 static constexpr auto relativeToAbsolute(uintptr_t address) noexcept
@@ -10,6 +11,8 @@ static constexpr auto relativeToAbsolute(uintptr_t address) noexcept
 
 Memory::Memory() noexcept
 {
+    assert(interfaces);
+
     present = findPattern(L"gameoverlayrenderer", "\xFF\x15????\x8B\xF8\x85\xDB", 2);
     reset = findPattern(L"gameoverlayrenderer", "\xC7\x45?????\xFF\x15????\x8B\xF8", 9);
     setCursorPos = *reinterpret_cast<std::uintptr_t*>(findPattern(L"gameoverlayrenderer", "\xC2\x08?\x5D", 6));
