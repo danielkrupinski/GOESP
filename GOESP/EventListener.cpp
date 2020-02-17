@@ -6,14 +6,14 @@
 
 EventListener::EventListener() noexcept
 {
-    assert(intefaces);
+    assert(interfaces);
 
     interfaces->gameEventManager->addListener(this, "item_purchase");
 }
 
 EventListener::~EventListener()
 {
-    assert(intefaces);
+    assert(interfaces);
 
     interfaces->gameEventManager->removeListener(this);
 }
