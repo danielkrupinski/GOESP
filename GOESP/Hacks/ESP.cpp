@@ -108,12 +108,19 @@ struct PlayerData : BaseData {
 struct WeaponData : BaseData {
     WeaponData(Entity* entity) noexcept : BaseData{ entity }
     {
+        clip = entity->clip();
+        reserveAmmo = entity->reserveAmmoCount();
+        id = entity->weaponId();
 
+        if (const auto weaponData = entity->getWeaponInfo()) {
+            type = weaponData->type;
+            name = weaponData->name;
+        }
     }
     int clip;
     int reserveAmmo;
-    WeaponType type = WeaponType::Unknown;
     WeaponId id;
+    WeaponType type = WeaponType::Unknown;
     std::string name;
 };
 
@@ -154,18 +161,8 @@ void ESP::collectData() noexcept
             continue;
 
         if (entity->isWeapon()) {
-            if (entity->ownerEntity() == -1) {
-                WeaponData data{ entity };
-
-                if (const auto weaponData = entity->getWeaponInfo()) {
-                    data.name = weaponData->name;
-                    data.type = weaponData->type;
-                }
-                data.id = entity->weaponId();
-                data.clip = entity->clip();
-                data.reserveAmmo = entity->reserveAmmoCount();
-                weapons.push_back(data);
-            }
+            if (entity->ownerEntity() == -1)
+                weapons.emplace_back(entity);
         } else {
             const auto classId = entity->getClientClass()->classId;
 
