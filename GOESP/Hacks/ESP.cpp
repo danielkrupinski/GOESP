@@ -39,25 +39,39 @@ static bool worldToScreen(const Vector& in, ImVec2& out) noexcept
     return false;
 }
 
-struct BoundingBox {
-    ImVec2 min, max;
-    ImVec2 vertices[8];
-};
-
 struct BaseData {
+    BaseData(Entity* entity) noexcept
+    {
+        const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
+
+        if (!localPlayer)
+            return;
+
+        distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
+        obbMins = entity->getCollideable()->obbMins();
+        obbMaxs = entity->getCollideable()->obbMaxs();
+        coordinateFrame = entity->coordinateFrame();
+    }
     float distanceToLocal;
     Vector obbMins;
     Vector obbMaxs;
     Matrix3x4 coordinateFrame;
-    // Vector absOrigin;
 };
 
 struct EntityData : BaseData {
+    EntityData(Entity* entity) noexcept : BaseData{ entity }
+    {
+
+    }
     ClassId classId;
     bool flashbang;
 };
 
 struct PlayerData : BaseData {
+    PlayerData(Entity* entity) noexcept : BaseData{ entity }
+    {
+
+    }
     bool enemy;
     bool visible;
     float flashDuration;
@@ -66,6 +80,10 @@ struct PlayerData : BaseData {
 };
 
 struct WeaponData : BaseData {
+    WeaponData(Entity* entity) noexcept : BaseData{ entity }
+    {
+
+    }
     int clip;
     int reserveAmmo;
     WeaponType type = WeaponType::Unknown;
@@ -101,12 +119,7 @@ void ESP::collectData() noexcept
             || entity->isDormant() || !entity->isAlive())
             continue;
 
-        PlayerData data;
-        // data.absOrigin = entity->getAbsOrigin();
-        data.coordinateFrame = entity->coordinateFrame();
-        data.obbMins = entity->getCollideable()->obbMins();
-        data.obbMaxs = entity->getCollideable()->obbMaxs();
-        data.distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
+        PlayerData data{ entity };
 
         data.enemy = memory->isOtherEnemy(entity, localPlayer);
         data.visible = entity->visibleTo(localPlayer);
@@ -140,12 +153,7 @@ void ESP::collectData() noexcept
 
         if (entity->isWeapon()) {
             if (entity->ownerEntity() == -1) {
-                WeaponData data;
-                // data.absOrigin = entity->getAbsOrigin();
-                data.coordinateFrame = entity->coordinateFrame();
-                data.obbMins = entity->getCollideable()->obbMins();
-                data.obbMaxs = entity->getCollideable()->obbMaxs();
-                data.distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
+                WeaponData data{ entity };
 
                 if (const auto weaponData = entity->getWeaponInfo()) {
                     data.name = weaponData->name;
@@ -172,12 +180,7 @@ void ESP::collectData() noexcept
             case ClassId::EconEntity:
             case ClassId::Chicken:
             case ClassId::PlantedC4:
-                EntityData data;
-                // data.absOrigin = entity->getAbsOrigin();
-                data.coordinateFrame = entity->coordinateFrame();
-                data.obbMins = entity->getCollideable()->obbMins();
-                data.obbMaxs = entity->getCollideable()->obbMaxs();
-                data.distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
+                EntityData data{ entity };
                 data.classId = classId;
 
                 if (const auto model = entity->getModel(); model && std::strstr(model->name, "flashbang"))
@@ -190,6 +193,11 @@ void ESP::collectData() noexcept
         }
     }
 }
+
+struct BoundingBox {
+    ImVec2 min, max;
+    ImVec2 vertices[8];
+};
 
 static auto boundingBox(const BaseData& entityData, BoundingBox& out) noexcept
 {
