@@ -61,7 +61,12 @@ struct BaseData {
 struct EntityData : BaseData {
     EntityData(Entity* entity) noexcept : BaseData{ entity }
     {
+        classId = entity->getClientClass()->classId;
 
+        if (const auto model = entity->getModel(); model && std::strstr(model->name, "flashbang"))
+            flashbang = true;
+        else
+            flashbang = false;
     }
     ClassId classId;
     bool flashbang;
@@ -179,15 +184,7 @@ void ESP::collectData() noexcept
             case ClassId::EconEntity:
             case ClassId::Chicken:
             case ClassId::PlantedC4:
-                EntityData data{ entity };
-                data.classId = classId;
-
-                if (const auto model = entity->getModel(); model && std::strstr(model->name, "flashbang"))
-                    data.flashbang = true;
-                else
-                    data.flashbang = false;
-
-                entities.push_back(data);
+                entities.emplace_back(entity);
             }
         }
     }
