@@ -12,9 +12,13 @@
 #include "../SDK/Engine.h"
 #include "../SDK/Entity.h"
 #include "../SDK/EntityList.h"
+#include "../SDK/GameEvent.h"
 #include "../SDK/GlobalVars.h"
 
 #include <mutex>
+#include <numeric>
+#include <unordered_map>
+#include <vector>
 
 struct LocalPlayerData {
     bool exists;
@@ -92,4 +96,31 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
 
     drawList->AddLine({ x, y - 10 }, { x, y + 10 }, color, config->recoilCrosshair.thickness);
     drawList->AddLine({ x - 10, y }, { x + 10, y }, color, config->recoilCrosshair.thickness);
+}
+
+void Misc::purchaseList(GameEvent* event) noexcept
+{
+    // TODO: Reset on round start, get purchaser's name + normalize it
+    static std::mutex mtx;
+    std::scoped_lock _{ mtx };
+
+    static std::unordered_map<std::string, std::vector<std::string>> purchases;
+
+    if (event) {
+        std::string weapon = event->getString("weapon");
+        if (weapon.starts_with("weapon_"))
+            weapon.erase(0, 7);
+
+        purchases["test-1-2-3"].push_back(weapon);
+    } else {
+        ImGui::Begin("Purchases");
+
+        for (const auto& playerPurchases : purchases) {
+            std::string s = std::accumulate(playerPurchases.second.begin(), playerPurchases.second.end(), std::string{ }, [](std::string s, const std::string& piece) { return s += piece + ", "; });
+
+            ImGui::TextWrapped("%s: %s", playerPurchases.first.c_str(), s.c_str());
+        }
+
+        ImGui::End();
+    }
 }
