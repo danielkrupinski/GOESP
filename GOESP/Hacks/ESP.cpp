@@ -191,37 +191,46 @@ void ESP::collectData() noexcept
 }
 
 struct BoundingBox {
+private:
+    bool valid;
+public:
     ImVec2 min, max;
     ImVec2 vertices[8];
-};
 
-static auto boundingBox(const BaseData& entityData, BoundingBox& out) noexcept
-{
-    const auto [width, height] = interfaces->engine->getScreenSize();
+    BoundingBox(const BaseData& data) noexcept
+    {
+        const auto [width, height] = interfaces->engine->getScreenSize();
 
-    out.min.x = static_cast<float>(width * 2);
-    out.min.y = static_cast<float>(height * 2);
-    out.max.x = -out.min.x;
-    out.max.y = -out.min.y;
+        min.x = static_cast<float>(width * 2);
+        min.y = static_cast<float>(height * 2);
+        max.x = -min.x;
+        max.y = -min.y;
 
-    const auto mins = entityData.obbMins;
-    const auto maxs = entityData.obbMaxs;
+        const auto& mins = data.obbMins;
+        const auto& maxs = data.obbMaxs;
 
-    for (int i = 0; i < 8; ++i) {
-        const Vector point{ i & 1 ? maxs.x : mins.x,
-                            i & 2 ? maxs.y : mins.y,
-                            i & 4 ? maxs.z : mins.z };
+        for (int i = 0; i < 8; ++i) {
+            const Vector point{ i & 1 ? maxs.x : mins.x,
+                                i & 2 ? maxs.y : mins.y,
+                                i & 4 ? maxs.z : mins.z };
 
-        if (!worldToScreen(point.transform(entityData.coordinateFrame), out.vertices[i]))
-            return false;
-
-        out.min.x = std::min(out.min.x, out.vertices[i].x);
-        out.min.y = std::min(out.min.y, out.vertices[i].y);
-        out.max.x = std::max(out.max.x, out.vertices[i].x);
-        out.max.y = std::max(out.max.y, out.vertices[i].y);
+            if (!worldToScreen(point.transform(data.coordinateFrame), vertices[i])) {
+                valid = false;
+                return;
+            }
+            min.x = std::min(min.x, vertices[i].x);
+            min.y = std::min(min.y, vertices[i].y);
+            max.x = std::max(max.x, vertices[i].x);
+            max.y = std::max(max.y, vertices[i].y);
+        }
+        valid = true;
     }
-    return true;
-}
+
+    operator bool() noexcept
+    {
+        return valid;
+    }
+};
 
 static void renderBox(ImDrawList* drawList, const BoundingBox& bbox, const Shared& config) noexcept
 {
@@ -301,9 +310,9 @@ static void renderSnaplines(ImDrawList* drawList, const BoundingBox& bbox, const
 
 static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, const Player& config) noexcept
 {
-    BoundingBox bbox;
+    BoundingBox bbox{ playerData };
 
-    if (!boundingBox(playerData, bbox))
+    if (!bbox)
         return;
 
     renderBox(drawList, bbox, config);
@@ -332,9 +341,9 @@ static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, 
 
 static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, const Weapon& config) noexcept
 {
-    BoundingBox bbox;
+    BoundingBox bbox{ weaponData };
 
-    if (!boundingBox(weaponData, bbox))
+    if (!bbox)
         return;
 
     renderBox(drawList, bbox, config);
@@ -357,9 +366,9 @@ static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, 
 
 static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, const char* name, const Shared& config) noexcept
 {
-    BoundingBox bbox;
+    BoundingBox bbox{ entityData };
 
-    if (!boundingBox(entityData, bbox))
+    if (!bbox)
         return;
 
     renderBox(drawList, bbox, config);
