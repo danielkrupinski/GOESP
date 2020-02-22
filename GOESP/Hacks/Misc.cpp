@@ -100,7 +100,7 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
 
 void Misc::purchaseList(GameEvent* event) noexcept
 {
-    // TODO: Reset on round start, get purchaser's name + normalize it
+    // TODO: Reset on round start, hide after buytime end
     static std::mutex mtx;
     std::scoped_lock _{ mtx };
 
@@ -110,8 +110,13 @@ void Misc::purchaseList(GameEvent* event) noexcept
         std::string weapon = event->getString("weapon");
         if (weapon.starts_with("weapon_"))
             weapon.erase(0, 7);
+        
+        std::string playerName = "unknown";
+        const auto player = interfaces->entityList->getEntity(interfaces->engine->getPlayerForUserId(event->getInt("userid")));
+        if (player)
+            playerName = player->getPlayerName(config->normalizePlayerNames);
 
-        purchases["test-1-2-3"].push_back(weapon);
+        purchases[playerName].push_back(weapon);
     } else {
         ImGui::Begin("Purchases");
 
