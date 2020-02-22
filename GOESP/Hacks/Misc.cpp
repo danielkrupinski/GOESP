@@ -141,7 +141,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
         if (freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + mp_buytime->getFloat() && !gui->open)
             return;
 
-        ImGui::Begin("Purchases", nullptr, gui->open ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoInputs);
+        ImGui::Begin("Purchases", nullptr, ImGuiWindowFlags_NoCollapse | (gui->open ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoInputs));
 
         for (const auto& playerPurchases : purchases) {
             std::string s = std::accumulate(playerPurchases.second.begin(), playerPurchases.second.end(), std::string{ }, [](std::string s, const std::string& piece) { return s += piece + ", "; });
