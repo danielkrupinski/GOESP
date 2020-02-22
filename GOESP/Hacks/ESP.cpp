@@ -84,18 +84,8 @@ struct PlayerData : BaseData {
         visible = entity->visibleTo(localPlayer);
         flashDuration = entity->flashDuration();
 
-        if (PlayerInfo playerInfo; interfaces->engine->getPlayerInfo(entity->index(), playerInfo)) {
-            if (config->normalizePlayerNames) {
-                if (wchar_t nameWide[128]; MultiByteToWideChar(CP_UTF8, 0, playerInfo.name, 128, nameWide, 128)) {
-                    if (wchar_t nameNormalized[128]; NormalizeString(NormalizationKC, nameWide, -1, nameNormalized, 128)) {
-                        if (WideCharToMultiByte(CP_UTF8, 0, nameNormalized, -1, playerInfo.name, 128, nullptr, nullptr))
-                            name = playerInfo.name;
-                    }
-                }
-            } else {
-                name = playerInfo.name;
-            }
-        }
+        name = entity->getPlayerName(config->normalizePlayerNames);
+
         if (const auto weapon = entity->getActiveWeapon()) {
             if (const auto weaponData = weapon->getWeaponInfo()) {
                 if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponData->name), -1, weaponName, _countof(weaponName), nullptr, nullptr))
