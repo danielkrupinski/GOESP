@@ -103,7 +103,6 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
 
 void Misc::purchaseList(GameEvent* event) noexcept
 {
-    // TODO: collect only enemies' purchases
     static std::mutex mtx;
     std::scoped_lock _{ mtx };
 
@@ -117,12 +116,13 @@ void Misc::purchaseList(GameEvent* event) noexcept
             if (weapon.starts_with("weapon_"))
                 weapon.erase(0, 7);
 
-            std::string playerName = "unknown";
             const auto player = interfaces->entityList->getEntity(interfaces->engine->getPlayerForUserId(event->getInt("userid")));
-            if (player)
-                playerName = player->getPlayerName(config->normalizePlayerNames);
+            const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
 
-            purchases[playerName].push_back(weapon);
+            assert(memory);
+            if (player && localPlayer && memory->isOtherEnemy(player, localPlayer))
+                purchases[player->getPlayerName(config->normalizePlayerNames)].push_back(weapon);
+
             break;
         }
         case fnv::hash("round_start"):
