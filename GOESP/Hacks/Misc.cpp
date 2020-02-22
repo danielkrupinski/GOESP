@@ -136,10 +136,11 @@ void Misc::purchaseList(GameEvent* event) noexcept
     } else {
         static auto mp_buytime = interfaces->cvar->findVar("mp_buytime");
 
-        if (freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + mp_buytime->getFloat())
-            return;
-        
         assert(gui);
+
+        if (freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + mp_buytime->getFloat() && !gui->open)
+            return;
+
         ImGui::Begin("Purchases", nullptr, gui->open ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoInputs);
 
         for (const auto& playerPurchases : purchases) {
