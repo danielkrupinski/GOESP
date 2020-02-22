@@ -101,11 +101,12 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
 
 void Misc::purchaseList(GameEvent* event) noexcept
 {
-    // TODO: hide after buytime end
+    // TODO: collect only enemies' purchases, disable input when menu is closed
     static std::mutex mtx;
     std::scoped_lock _{ mtx };
 
     static std::unordered_map<std::string, std::vector<std::string>> purchases;
+    static auto freezeEnd = 0.0f;
 
     if (event) {
         switch (fnv::hashRuntime(event->getName())) {
@@ -123,13 +124,19 @@ void Misc::purchaseList(GameEvent* event) noexcept
             break;
         }
         case fnv::hash("round_start"):
+            freezeEnd = 0.0f;
             purchases.clear();
             break;
         case fnv::hash("round_freeze_end"):
-            ;
+            freezeEnd = memory->globalVars->realtime;
+            break;
         }
-
     } else {
+        static auto mp_buytime = interfaces->cvar->findVar("mp_buytime");
+
+        if (freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + mp_buytime->getFloat())
+            return;
+
         ImGui::Begin("Purchases");
 
         for (const auto& playerPurchases : purchases) {
