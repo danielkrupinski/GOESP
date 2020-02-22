@@ -68,7 +68,7 @@ public:
     {
         PlayerInfo playerInfo;
         if (!interfaces->engine->getPlayerInfo(index(), playerInfo))
-            return { };
+            return "unknown";
 
         if (normalize) {
             if (wchar_t wide[128]; MultiByteToWideChar(CP_UTF8, 0, playerInfo.name, 128, wide, 128)) {
