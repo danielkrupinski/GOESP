@@ -4,6 +4,7 @@
 #include "../imgui/imgui_internal.h"
 
 #include "../Config.h"
+#include "../fnv.h"
 #include "../Helpers.h"
 #include "../Interfaces.h"
 #include "../Memory.h"
@@ -100,23 +101,34 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
 
 void Misc::purchaseList(GameEvent* event) noexcept
 {
-    // TODO: Reset on round start, hide after buytime end
+    // TODO: hide after buytime end
     static std::mutex mtx;
     std::scoped_lock _{ mtx };
 
     static std::unordered_map<std::string, std::vector<std::string>> purchases;
 
     if (event) {
-        std::string weapon = event->getString("weapon");
-        if (weapon.starts_with("weapon_"))
-            weapon.erase(0, 7);
-        
-        std::string playerName = "unknown";
-        const auto player = interfaces->entityList->getEntity(interfaces->engine->getPlayerForUserId(event->getInt("userid")));
-        if (player)
-            playerName = player->getPlayerName(config->normalizePlayerNames);
+        switch (fnv::hashRuntime(event->getName())) {
+        case fnv::hash("item_purchase"): {
+            std::string weapon = event->getString("weapon");
+            if (weapon.starts_with("weapon_"))
+                weapon.erase(0, 7);
 
-        purchases[playerName].push_back(weapon);
+            std::string playerName = "unknown";
+            const auto player = interfaces->entityList->getEntity(interfaces->engine->getPlayerForUserId(event->getInt("userid")));
+            if (player)
+                playerName = player->getPlayerName(config->normalizePlayerNames);
+
+            purchases[playerName].push_back(weapon);
+            break;
+        }
+        case fnv::hash("round_start"):
+            purchases.clear();
+            break;
+        case fnv::hash("round_freeze_end"):
+            ;
+        }
+
     } else {
         ImGui::Begin("Purchases");
 
