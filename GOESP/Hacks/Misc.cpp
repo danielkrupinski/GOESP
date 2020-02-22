@@ -5,6 +5,7 @@
 
 #include "../Config.h"
 #include "../fnv.h"
+#include "../GUI.h"
 #include "../Helpers.h"
 #include "../Interfaces.h"
 #include "../Memory.h"
@@ -16,6 +17,7 @@
 #include "../SDK/GameEvent.h"
 #include "../SDK/GlobalVars.h"
 
+#include <cassert>
 #include <mutex>
 #include <numeric>
 #include <unordered_map>
@@ -101,7 +103,7 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
 
 void Misc::purchaseList(GameEvent* event) noexcept
 {
-    // TODO: collect only enemies' purchases, disable input when menu is closed
+    // TODO: collect only enemies' purchases
     static std::mutex mtx;
     std::scoped_lock _{ mtx };
 
@@ -136,8 +138,9 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
         if (freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + mp_buytime->getFloat())
             return;
-
-        ImGui::Begin("Purchases");
+        
+        assert(gui);
+        ImGui::Begin("Purchases", nullptr, gui->open ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoInputs);
 
         for (const auto& playerPurchases : purchases) {
             std::string s = std::accumulate(playerPurchases.second.begin(), playerPurchases.second.end(), std::string{ }, [](std::string s, const std::string& piece) { return s += piece + ", "; });
