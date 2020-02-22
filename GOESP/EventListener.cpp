@@ -9,6 +9,7 @@ EventListener::EventListener() noexcept
     assert(interfaces);
 
     interfaces->gameEventManager->addListener(this, "item_purchase");
+    interfaces->gameEventManager->addListener(this, "round_start");
 }
 
 EventListener::~EventListener()
