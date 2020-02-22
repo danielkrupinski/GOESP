@@ -41,6 +41,11 @@ public:
         return VirtualMethod::call<bool, 8>(this, entityIndex, std::ref(playerInfo));
     }
 
+    constexpr auto getPlayerForUserId(int userId) noexcept
+    {
+        return VirtualMethod::call<int, 9>(this, userId);
+    }
+
     VIRTUAL_METHOD(getLocalPlayer, int, 12)
     VIRTUAL_METHOD(getMaxClients, int, 20)
     VIRTUAL_METHOD(isInGame, bool, 26)
