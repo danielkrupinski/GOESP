@@ -179,6 +179,7 @@ void Config::load() noexcept
     read<value_t::object>(j, "Recoil Crosshair", recoilCrosshair);
     read<value_t::boolean>(j, "Normalize Player Names", normalizePlayerNames);
     read<value_t::boolean>(j, "Purchase List", purchaseList);
+    read<value_t::number_unsigned>(j, "Purchase List Mode", purchaseListMode);
 }
 
 static void to_json(json& j, const Color& c)
@@ -261,6 +262,7 @@ void Config::save() noexcept
     j["Recoil Crosshair"] = recoilCrosshair;
     j["Normalize Player Names"] = normalizePlayerNames;
     j["Purchase List"] = purchaseList;
+    j["Purchase List Mode"] = purchaseListMode;
 
     if (std::ofstream out{ path / "config.txt" }; out.good())
         out << std::setw(4) << j;
