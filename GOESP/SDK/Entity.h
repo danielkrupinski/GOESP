@@ -50,6 +50,7 @@ public:
     VIRTUAL_METHOD(isAlive, bool, 155)
     VIRTUAL_METHOD(isWeapon, bool, 165)
     VIRTUAL_METHOD(getActiveWeapon, Entity*, 267)
+    VIRTUAL_METHOD(getObserverMode, ObsMode, 293)
     VIRTUAL_METHOD(getObserverTarget, Entity*, 294)
     VIRTUAL_METHOD(getWeaponInfo, WeaponInfo*, 459)
    
