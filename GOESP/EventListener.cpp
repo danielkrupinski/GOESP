@@ -1,6 +1,8 @@
 #include <cassert>
 
 #include "EventListener.h"
+#include "fnv.h"
+#include "Hacks/Misc.h"
 #include "Interfaces.h"
 #include "Memory.h"
 
@@ -22,9 +24,11 @@ EventListener::~EventListener()
 
 void EventListener::fireGameEvent(GameEvent* event)
 {
-    assert(memory);
-
-  //  if (std::strcmp(event->getName(), "item_purchase") == 0) {
-  //      memory->debugMsg("ItemPurchased: %s\n", event->getString("weapon"));
-  //  }
+    switch (fnv::hashRuntime(event->getName())) {
+    case fnv::hash("item_purchase"):
+    case fnv::hash("round_start"):
+    case fnv::hash("round_freeze_end"):
+        Misc::purchaseList(event);
+        break;
+    }
 }
