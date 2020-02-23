@@ -139,7 +139,7 @@ void ESP::collectData() noexcept
 
     viewMatrix = interfaces->engine->worldToScreenMatrix();
 
-    const auto observerTarget = localPlayer->getObserverTarget();
+    const auto observerTarget = localPlayer->getObserverMode() == ObsMode::InEye ? localPlayer->getObserverTarget() : nullptr;
 
     for (int i = 1; i <= interfaces->engine->getMaxClients(); ++i) {
         const auto entity = interfaces->entityList->getEntity(i);
