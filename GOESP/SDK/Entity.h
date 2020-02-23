@@ -29,6 +29,16 @@ std::add_lvalue_reference_t<type> func_name() noexcept \
     return *reinterpret_cast<std::add_pointer_t<type>>(this + offset); \
 }
 
+enum class ObsMode {
+    None = 0,
+    Deathcam,
+    Freezecam,
+    Fixed,
+    InEye,
+    Chase,
+    Roaming
+};
+
 class Entity {
 public:
     VIRTUAL_METHOD_(getClientClass, ClientClass*, 2, this + 8)
