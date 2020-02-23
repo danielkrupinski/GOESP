@@ -141,6 +141,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
         if ((!interfaces->engine->isInGame() || freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + mp_buytime->getFloat()) && !gui->open)
             return;
         
+        ImGui::SetNextWindowSize({ 100.0f, 100.0f }, ImGuiCond_Once);
         ImGui::Begin("Purchases", nullptr, ImGuiWindowFlags_NoCollapse | (gui->open ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoInputs));
 
         for (const auto& playerPurchases : purchases) {
