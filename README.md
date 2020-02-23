@@ -5,6 +5,8 @@ Stream-proof ESP hack for CS:GO.
 
 ![Menu](https://i.imgur.com/eJ1oDaL.png)
 
+![Purchase List](https://i.imgur.com/qXvoe6Y.png)
+
 ## Getting started
 
 ### Prerequisites
