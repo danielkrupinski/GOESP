@@ -103,6 +103,9 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
 
 void Misc::purchaseList(GameEvent* event) noexcept
 {
+    if (!config->purchaseList)
+        return;
+
     static std::mutex mtx;
     std::scoped_lock _{ mtx };
 
@@ -119,7 +122,6 @@ void Misc::purchaseList(GameEvent* event) noexcept
             const auto player = interfaces->entityList->getEntity(interfaces->engine->getPlayerForUserId(event->getInt("userid")));
             const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
 
-            assert(memory);
             if (player && localPlayer && memory->isOtherEnemy(player, localPlayer))
                 purchases[player->getPlayerName(config->normalizePlayerNames)].push_back(weapon);
 
@@ -136,9 +138,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
     } else {
         static auto mp_buytime = interfaces->cvar->findVar("mp_buytime");
 
-        assert(gui);
-
-        if (freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + mp_buytime->getFloat() && !gui->open)
+        if ((!interfaces->engine->isInGame() || freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + mp_buytime->getFloat()) && !gui->open)
             return;
         
         ImGui::Begin("Purchases", nullptr, ImGuiWindowFlags_NoCollapse | (gui->open ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoInputs));
