@@ -68,9 +68,16 @@ using json = nlohmann::json;
 using value_t = json::value_t;
 
 template <value_t Type, typename T>
-static constexpr std::enable_if_t<Type != value_t::array> read(const json& j, const char* key, T& o) noexcept
+static constexpr void read(const json& j, const char* key, T& o) noexcept
 {
     if (j.contains(key) && j[key].type() == Type)
+        o = j[key];
+}
+
+template <typename T>
+static constexpr void read_number(const json& j, const char* key, T& o) noexcept
+{
+    if (j.contains(key) && j[key].is_number())
         o = j[key];
 }
 
@@ -85,7 +92,7 @@ static void from_json(const json& j, Color& c)
 {
     read<value_t::array>(j, "Color", c.color);
     read<value_t::boolean>(j, "Rainbow", c.rainbow);
-    read<value_t::number_float>(j, "Rainbow Speed", c.rainbowSpeed);
+    read_number(j, "Rainbow Speed", c.rainbowSpeed);
 }
 
 static void from_json(const json& j, ColorToggle& ct)
@@ -99,21 +106,21 @@ static void from_json(const json& j, ColorToggleRounding& ctr)
 {
     from_json(j, static_cast<ColorToggle&>(ctr));
 
-    read<value_t::number_float>(j, "Rounding", ctr.rounding);
+    read_number(j, "Rounding", ctr.rounding);
 }
 
 static void from_json(const json& j, ColorToggleThickness& ctt)
 {
     from_json(j, static_cast<ColorToggle&>(ctt));
 
-    read<value_t::number_float>(j, "Thickness", ctt.thickness);
+    read_number(j, "Thickness", ctt.thickness);
 }
 
 static void from_json(const json& j, ColorToggleThicknessRounding& cttr)
 {
     from_json(j, static_cast<ColorToggleRounding&>(cttr));
 
-    read<value_t::number_float>(j, "Thickness", cttr.thickness);
+    read_number(j, "Thickness", cttr.thickness);
 }
 
 static void from_json(const json& j, Shared& s)
@@ -129,12 +136,12 @@ static void from_json(const json& j, Shared& s)
         s.fontIndex = 0;
 
     read<value_t::object>(j, "Snaplines", s.snaplines);
-    read<value_t::number_unsigned>(j, "Snapline Type", s.snaplineType);
+    read_number(j, "Snapline Type", s.snaplineType);
     read<value_t::object>(j, "Box", s.box);
-    read<value_t::number_unsigned>(j, "Box Type", s.boxType);
+    read_number(j, "Box Type", s.boxType);
     read<value_t::object>(j, "Name", s.name);
     read<value_t::object>(j, "Text Background", s.textBackground);
-    read<value_t::number_float>(j, "Text Cull Distance", s.textCullDistance);
+    read_number(j, "Text Cull Distance", s.textCullDistance);
 }
 
 static void from_json(const json& j, Weapon& w)
@@ -179,7 +186,7 @@ void Config::load() noexcept
     read<value_t::object>(j, "Recoil Crosshair", recoilCrosshair);
     read<value_t::boolean>(j, "Normalize Player Names", normalizePlayerNames);
     read<value_t::boolean>(j, "Purchase List", purchaseList);
-    read<value_t::number_unsigned>(j, "Purchase List Mode", purchaseListMode);
+    read_number(j, "Purchase List Mode", purchaseListMode);
 }
 
 static void to_json(json& j, const Color& c)
