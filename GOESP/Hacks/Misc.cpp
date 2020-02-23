@@ -109,7 +109,9 @@ void Misc::purchaseList(GameEvent* event) noexcept
     static std::mutex mtx;
     std::scoped_lock _{ mtx };
 
-    static std::unordered_map<std::string, std::vector<std::string>> purchases;
+    static std::unordered_map<std::string, std::vector<std::string>> purchaseDetails;
+    static std::unordered_map<std::string, int> purchaseTotal;
+
     static auto freezeEnd = 0.0f;
 
     if (event) {
@@ -122,14 +124,16 @@ void Misc::purchaseList(GameEvent* event) noexcept
             const auto player = interfaces->entityList->getEntity(interfaces->engine->getPlayerForUserId(event->getInt("userid")));
             const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
 
-            if (player && localPlayer && memory->isOtherEnemy(player, localPlayer))
-                purchases[player->getPlayerName(config->normalizePlayerNames)].push_back(weapon);
-
+            if (player && localPlayer && memory->isOtherEnemy(player, localPlayer)) {
+                purchaseDetails[player->getPlayerName(config->normalizePlayerNames)].push_back(weapon);
+                ++purchaseTotal[weapon];
+            }
             break;
         }
         case fnv::hash("round_start"):
             freezeEnd = 0.0f;
-            purchases.clear();
+            purchaseDetails.clear();
+            purchaseTotal.clear();
             break;
         case fnv::hash("round_freeze_end"):
             freezeEnd = memory->globalVars->realtime;
@@ -144,13 +148,18 @@ void Misc::purchaseList(GameEvent* event) noexcept
         ImGui::SetNextWindowSize({ 100.0f, 100.0f }, ImGuiCond_Once);
         ImGui::Begin("Purchases", nullptr, ImGuiWindowFlags_NoCollapse | (gui->open ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoInputs));
 
-        for (const auto& playerPurchases : purchases) {
-            std::string s = std::accumulate(playerPurchases.second.begin(), playerPurchases.second.end(), std::string{ }, [](std::string s, const std::string& piece) { return s += piece + ", "; });
-            if (s.length() >= 2)
-                s.erase(s.length() - 2);
-            ImGui::TextWrapped("%s: %s", playerPurchases.first.c_str(), s.c_str());
+        if (config->purchaseListMode == 0) {
+            for (const auto& playerPurchases : purchaseDetails) {
+                std::string s = std::accumulate(playerPurchases.second.begin(), playerPurchases.second.end(), std::string{ }, [](std::string s, const std::string& piece) { return s += piece + ", "; });
+                if (s.length() >= 2)
+                    s.erase(s.length() - 2);
+                ImGui::TextWrapped("%s: %s", playerPurchases.first.c_str(), s.c_str());
+            }
+        } else if (config->purchaseListMode == 1) {
+            for (const auto& purchase : purchaseTotal) {
+                ImGui::TextWrapped("%d x %s", purchase.second, purchase.first.c_str());
+            }
         }
-
         ImGui::End();
     }
 }
