@@ -106,4 +106,6 @@ public:
     NETVAR(flashDuration, 0xA40C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
 
     NETVAR(coordinateFrame, 0x444, Matrix3x4)
+
+    NETVAR(grenadeExploded, 0x29E8, bool)
 };
