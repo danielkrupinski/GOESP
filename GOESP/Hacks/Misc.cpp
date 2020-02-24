@@ -103,9 +103,6 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
 
 void Misc::purchaseList(GameEvent* event) noexcept
 {
-    if (!config->purchaseList)
-        return;
-
     static std::mutex mtx;
     std::scoped_lock _{ mtx };
 
@@ -140,6 +137,9 @@ void Misc::purchaseList(GameEvent* event) noexcept
             break;
         }
     } else {
+        if (!config->purchaseList)
+            return;
+
         static auto mp_buytime = interfaces->cvar->findVar("mp_buytime");
 
         if ((!interfaces->engine->isInGame() || freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + mp_buytime->getFloat()) && !gui->open)
