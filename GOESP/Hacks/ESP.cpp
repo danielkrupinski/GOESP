@@ -163,6 +163,8 @@ void ESP::collectData() noexcept
 
             switch (classId) {
             case ClassId::BaseCSGrenadeProjectile:
+                if (entity->grenadeExploded())
+                    break;
             case ClassId::BreachChargeProjectile:
             case ClassId::BumpMineProjectile:
             case ClassId::DecoyProjectile:
