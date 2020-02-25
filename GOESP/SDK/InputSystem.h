@@ -20,4 +20,10 @@ public:
     {
         return VirtualMethod::call<int, 42>(this, keyName);
     }
+
+    // does not support mouse buttons
+    constexpr auto virtualKeyToButtonCode(int virtualKey) noexcept
+    {
+        return VirtualMethod::call<int, 45>(this, virtualKey);
+    }
 };
