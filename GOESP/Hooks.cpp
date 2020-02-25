@@ -86,8 +86,11 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
 
     gui->render();
 
-    if (ImGui::IsKeyPressed(VK_INSERT, false))
+    if (ImGui::IsKeyPressed(VK_INSERT, false)) {
         gui->open = !gui->open;
+        if (!gui->open)
+            interfaces->inputSystem->resetInputState();
+    }
     ImGui::GetIO().MouseDrawCursor = gui->open;
 
     ImGui::EndFrame();
