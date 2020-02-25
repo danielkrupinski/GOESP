@@ -297,7 +297,7 @@ static void renderSnaplines(ImDrawList* drawList, const BoundingBox& bbox, const
 
     const auto [width, height] = interfaces->engine->getScreenSize();
     const ImU32 color = Helpers::calculateColor(config, memory->globalVars->realtime);
-    drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(type == 0 ? height : type == 1 ? 0 : height / 2) }, { (bbox.min.x + bbox.max.x) / 2, type == 0 ? bbox.max.y : type == 1 ? bbox.min.y : std::clamp(height / 2.0f, bbox.min.y, bbox.max.y) }, color, config.thickness);
+    drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(type == 0 ? height : type == 1 ? 0 : height / 2) }, { (bbox.min.x + bbox.max.x) / 2, type == 0 ? bbox.max.y : type == 1 ? bbox.min.y : (bbox.min.y + bbox.max.y) / 2 }, color, config.thickness);
 }
 
 static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, const Player& config) noexcept
