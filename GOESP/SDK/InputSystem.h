@@ -54,4 +54,9 @@ public:
 
         return 0;
     }
+
+    constexpr auto keyToString(int key) noexcept
+    {
+        return buttonCodeToString(keyToButtonCode(key));
+    }
 };
