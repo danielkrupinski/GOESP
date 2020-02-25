@@ -8,4 +8,6 @@ public:
     {
         VirtualMethod::call<void, 11>(this, enable);
     }
+
+    VIRTUAL_METHOD(resetInputState, void, 39)
 };
