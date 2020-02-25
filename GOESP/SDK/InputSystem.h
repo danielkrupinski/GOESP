@@ -10,4 +10,9 @@ public:
     }
 
     VIRTUAL_METHOD(resetInputState, void, 39)
+
+    constexpr auto buttonCodeToString(int buttonCode) noexcept
+    {
+        return VirtualMethod::call<const char*, 40>(this, buttonCode);
+    }
 };
