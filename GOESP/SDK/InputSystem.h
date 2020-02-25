@@ -16,7 +16,7 @@ public:
         return VirtualMethod::call<const char*, 40>(this, buttonCode);
     }
 
-    constexpr auto stringTobuttonCode(const char* keyName) noexcept
+    constexpr auto stringToButtonCode(const char* keyName) noexcept
     {
         return VirtualMethod::call<int, 42>(this, keyName);
     }
@@ -32,4 +32,16 @@ public:
     {
         return VirtualMethod::call<int, 46>(this, buttonCode);
     }
+
+    constexpr auto keyToButtonCode(int key) noexcept
+    {
+        if (key < 512)
+            return virtualKeyToButtonCode(key);
+
+        if (key >= 512 && key <= 518)
+            return key - 405;
+
+        return 0;
+    }
+
 };
