@@ -44,4 +44,14 @@ public:
         return 0;
     }
 
+    constexpr auto buttonCodeToKey(int buttonCode) noexcept
+    {
+        if (buttonCode < 107)
+            return buttonCodeToVirtualKey(buttonCode);
+
+        if (buttonCode >= 107 && buttonCode <= 113)
+            return buttonCode + 405;
+
+        return 0;
+    }
 };
