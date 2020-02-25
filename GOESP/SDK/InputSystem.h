@@ -15,4 +15,9 @@ public:
     {
         return VirtualMethod::call<const char*, 40>(this, buttonCode);
     }
+
+    constexpr auto stringTobuttonCode(const char* keyName) noexcept
+    {
+        return VirtualMethod::call<int, 42>(this, keyName);
+    }
 };
