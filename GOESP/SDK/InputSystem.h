@@ -59,4 +59,9 @@ public:
     {
         return buttonCodeToString(keyToButtonCode(key));
     }
+
+    constexpr auto stringToKey(const char* keyName) noexcept
+    {
+        return buttonCodeToKey(stringToButtonCode(keyName));
+    }
 };
