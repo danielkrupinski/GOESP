@@ -141,7 +141,7 @@ void ESP::collectData() noexcept
 
     const auto observerTarget = localPlayer->getObserverMode() == ObsMode::InEye ? localPlayer->getObserverTarget() : nullptr;
 
-    for (int i = 1; i <= interfaces->engine->getMaxClients(); ++i) {
+    for (int i = 1; i <= memory->globalVars->maxClients; ++i) {
         const auto entity = interfaces->entityList->getEntity(i);
         if (!entity || entity == localPlayer || entity == observerTarget
             || entity->isDormant() || !entity->isAlive())
@@ -150,7 +150,7 @@ void ESP::collectData() noexcept
         players.emplace_back(entity);
     }
 
-    for (int i = interfaces->engine->getMaxClients() + 1; i <= interfaces->entityList->getHighestEntityIndex(); ++i) {
+    for (int i = memory->globalVars->maxClients + 1; i <= interfaces->entityList->getHighestEntityIndex(); ++i) {
         const auto entity = interfaces->entityList->getEntity(i);
         if (!entity || entity->isDormant())
             continue;

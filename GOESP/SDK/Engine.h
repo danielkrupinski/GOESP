@@ -47,7 +47,6 @@ public:
     }
 
     VIRTUAL_METHOD(getLocalPlayer, int, 12)
-    VIRTUAL_METHOD(getMaxClients, int, 20)
     VIRTUAL_METHOD(isInGame, bool, 26)
     VIRTUAL_METHOD(worldToScreenMatrix, const D3DMATRIX&, 37)
 };
