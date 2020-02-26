@@ -123,18 +123,22 @@ static void from_json(const json& j, ColorToggleThicknessRounding& cttr)
     read_number(j, "Thickness", cttr.thickness);
 }
 
+static void from_json(const json& j, Font& f)
+{
+    read<value_t::string>(j, "Name", f.name);
+
+    if (!f.name.empty())
+        config->scheduleFontLoad(f.name);
+    if (const auto it = std::find_if(std::cbegin(config->systemFonts), std::cend(config->systemFonts), [&f](const auto& e) { return e == f.name; }); it != std::cend(config->systemFonts))
+        f.index = std::distance(std::cbegin(config->systemFonts), it);
+    else
+        f.index = 0;
+}
+
 static void from_json(const json& j, Shared& s)
 {
     read<value_t::boolean>(j, "Enabled", s.enabled);
-    read<value_t::string>(j, "Font", s.font);
-
-    if (!s.font.empty())
-        config->scheduleFontLoad(s.font);
-    if (const auto it = std::find_if(std::cbegin(config->systemFonts), std::cend(config->systemFonts), [&s](const auto& e) { return e == s.font; }); it != std::cend(config->systemFonts))
-        s.fontIndex = std::distance(std::cbegin(config->systemFonts), it);
-    else
-        s.fontIndex = 0;
-
+    read<value_t::object>(j, "Font", s.font);
     read<value_t::object>(j, "Snaplines", s.snaplines);
     read_number(j, "Snapline Type", s.snaplineType);
     read<value_t::object>(j, "Box", s.box);
@@ -221,6 +225,11 @@ static void to_json(json& j, const ColorToggleThicknessRounding& cttr)
     j["Thickness"] = cttr.thickness;
 }
 
+static void to_json(json& j, const Font& f)
+{
+    j["Name"] = f.name;
+}
+
 static void to_json(json& j, const Shared& s)
 {
     j = json{ { "Enabled", s.enabled },
@@ -229,7 +238,7 @@ static void to_json(json& j, const Shared& s)
               { "Snapline Type", s.snaplineType },
               { "Box", s.box },
               { "Box Type", s.boxType },
-              { "Name", s.name }, 
+              { "Name", s.name },
               { "Text Background", s.textBackground },
               { "Text Cull Distance", s.textCullDistance }
     };

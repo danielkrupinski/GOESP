@@ -26,10 +26,14 @@ struct ColorToggleThicknessRounding : ColorToggleRounding {
     float thickness = 1.0f;
 };
 
+struct Font {
+    int index = 0; // do not save
+    std::string name;
+};
+
 struct Shared {
     bool enabled = false;
-    std::string font;
-    int fontIndex = 0; // runtime only, don't save
+    Font font;
     ColorToggleThickness snaplines;
     int snaplineType = 0;
     ColorToggleThicknessRounding box;
