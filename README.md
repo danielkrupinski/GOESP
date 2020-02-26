@@ -34,7 +34,7 @@ git clone https://github.com/danielkrupinski/GOESP.git
 ## FAQ
 
 ### How do I open menu?
-Press `INSERT` key while focused on CS:GO window.
+Press <kbd>INSERT</kbd> while focused on CS:GO window.
 
 ### Can I use custom font in the ESP?
 Of course. It is crucial to install your font **as an Administator** otherwise it won't be available. After font is successfully installed unload and load GOESP again.
