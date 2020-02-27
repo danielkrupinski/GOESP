@@ -7,12 +7,12 @@
 #include <tuple>
 
 struct PlayerInfo {
-    std::int64_t pad;
+    std::uint64_t version;
     union {
-        std::int64_t xuid;
+        std::uint64_t xuid;
         struct {
-            std::int32_t xuidLow;
-            std::int32_t xuidHigh;
+            std::uint32_t xuidLow;
+            std::uint32_t xuidHigh;
         };
     };
     char name[128];
