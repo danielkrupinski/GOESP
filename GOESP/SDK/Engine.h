@@ -17,14 +17,14 @@ struct PlayerInfo {
     };
     char name[128];
     int userId;
-    char steamIdString[20];
-    char pad1[16];
-    unsigned long steamId;
+    char guid[33];
+    std::uint32_t friendsId;
     char friendsName[128];
     bool fakeplayer;
-    bool ishltv;
-    unsigned int customfiles[4];
+    bool hltv;
+    int customfiles[4];
     unsigned char filesdownloaded;
+    int entityIndex;
 };
 
 class Engine {
