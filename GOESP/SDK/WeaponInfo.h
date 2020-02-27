@@ -16,29 +16,28 @@ enum class WeaponType {
     Unknown
 };
 
+#define PAD(size) \
+private: \
+    std::byte _pad_##size[size]; \
+public:
+
 struct WeaponInfo {
-private: std::byte pad_0[20];
-public:
+    PAD(20)
     int maxClip;
-private: std::byte pad_1[112];
-public:
+    PAD(112)
     const char* name;
-private: std::byte pad_2[60];
-public:
+    PAD(60)
     WeaponType type;
-private: std::byte pad_3[32];
+    PAD(32)
     bool fullAuto;
-private: std::byte pad_4[3];
-public:
+    PAD(3)
     int damage;
     float armorRatio;
     int bullets;
     float penetration;
-private: std::byte pad4[8];
-public:
+    PAD(8)
     float range;
     float rangeModifier;
-private: std::byte pad5[16];
-public:
+    PAD(16)
     bool hasSilencer;
 };
