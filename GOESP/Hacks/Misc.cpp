@@ -16,8 +16,8 @@
 #include "../SDK/EntityList.h"
 #include "../SDK/GameEvent.h"
 #include "../SDK/GlobalVars.h"
+#include "../SDK/WeaponInfo.h"
 
-#include <cassert>
 #include <mutex>
 #include <numeric>
 #include <unordered_map>
@@ -27,6 +27,7 @@ struct LocalPlayerData {
     bool exists;
     bool alive;
     bool inReload;
+    bool fullAutoWeapon;
     float nextWeaponAttack;
     Vector aimPunch;
 };
@@ -46,9 +47,14 @@ void Misc::collectData() noexcept
 
         if (const auto activeWeapon = local->getActiveWeapon()) {
             localPlayer.inReload = activeWeapon->isInReload();
+            if (const auto weaponInfo = activeWeapon->getWeaponInfo())
+                localPlayer.fullAutoWeapon = weaponInfo->fullAuto;
+            else
+                localPlayer.fullAutoWeapon = false;
             localPlayer.nextWeaponAttack = activeWeapon->nextPrimaryAttack();
         } else {
             localPlayer.inReload = false;
+            localPlayer.fullAutoWeapon = false;
             localPlayer.nextWeaponAttack = 0.0f;
         }
         localPlayer.aimPunch = local->getAimPunch();
@@ -89,6 +95,9 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
     std::scoped_lock _{ dataMutex };
 
     if (!localPlayer.exists || !localPlayer.alive)
+        return;
+
+    if (!localPlayer.fullAutoWeapon)
         return;
 
     const auto [width, height] = interfaces->engine->getScreenSize();
