@@ -310,7 +310,7 @@ static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, 
     renderBox(drawList, bbox, config);
     renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
 
-    ImGui::PushFont(::config->fonts[config.font.name]);
+    ImGui::PushFont(::config->fonts[config.font.fullName]);
 
     ImVec2 flashDurationPos{ (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 12.5f };
 
@@ -341,7 +341,7 @@ static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, 
     renderBox(drawList, bbox, config);
     renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
 
-    ImGui::PushFont(::config->fonts[config.font.name]);
+    ImGui::PushFont(::config->fonts[config.font.fullName]);
 
     if (config.name.enabled && !weaponData.name.empty()) {
         if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponData.name.c_str()), -1, weaponName, _countof(weaponName), nullptr, nullptr))
@@ -366,7 +366,7 @@ static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, 
     renderBox(drawList, bbox, config);
     renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
 
-    ImGui::PushFont(::config->fonts[config.font.name]);
+    ImGui::PushFont(::config->fonts[config.font.fullName]);
 
     if (config.name.enabled)
         renderText(drawList, entityData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });

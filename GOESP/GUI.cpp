@@ -192,6 +192,8 @@ void GUI::render() noexcept
                     if (ImGui::Selectable(config->systemFonts[i].c_str(), isSelected, 0, { 250.0f, 0.0f })) {
                         sharedConfig.font.index = i;
                         sharedConfig.font.name = config->systemFonts[i];
+                        sharedConfig.font.size = 15.0f;
+                        sharedConfig.font.fullName = sharedConfig.font.name + ' ' + std::to_string(sharedConfig.font.size);
                         config->scheduleFontLoad(sharedConfig.font.name);
                     }
                     if (isSelected)
