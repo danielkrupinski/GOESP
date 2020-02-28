@@ -28,7 +28,7 @@ struct ColorToggleThicknessRounding : ColorToggleRounding {
 
 struct Font {
     int index = 0; // do not save
-    float size = 15.0f;
+    int size = 15;
     std::string name;
     std::string fullName; // do not save
 };

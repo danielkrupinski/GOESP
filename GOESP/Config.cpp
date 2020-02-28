@@ -125,10 +125,13 @@ static void from_json(const json& j, ColorToggleThicknessRounding& cttr)
 
 static void from_json(const json& j, Font& f)
 {
+    read_number(j, "Size", f.size);
     read<value_t::string>(j, "Name", f.name);
 
-    if (!f.name.empty())
+    if (!f.name.empty()) {
+        f.fullName = f.name + ' ' + std::to_string(f.size);
         config->scheduleFontLoad(f.name);
+    }
     if (const auto it = std::find_if(std::cbegin(config->systemFonts), std::cend(config->systemFonts), [&f](const auto& e) { return e == f.name; }); it != std::cend(config->systemFonts))
         f.index = std::distance(std::cbegin(config->systemFonts), it);
     else
@@ -227,6 +230,7 @@ static void to_json(json& j, const ColorToggleThicknessRounding& cttr)
 
 static void to_json(json& j, const Font& f)
 {
+    j["Size"] = f.size;
     j["Name"] = f.name;
 }
 
@@ -286,7 +290,7 @@ void Config::save() noexcept
 
 void Config::scheduleFontLoad(const std::string& name) noexcept
 {
-    scheduledFonts.emplace_back(name, 15.0f);
+    scheduledFonts.emplace_back(name, 15);
 }
 
 bool Config::loadScheduledFonts() noexcept
@@ -322,7 +326,7 @@ bool Config::loadScheduledFonts() noexcept
                     if (fontDataSize != GDI_ERROR) {
                         static constexpr ImWchar ranges[]{ 0x0020, 0xFFFF, 0 };
                         // imgui handles fontData memory release
-                        fonts[fullName] = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.release(), fontDataSize, size, nullptr, ranges);
+                        fonts[fullName] = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.release(), fontDataSize, static_cast<float>(size), nullptr, ranges);
                         result = true;
                     }
                 }

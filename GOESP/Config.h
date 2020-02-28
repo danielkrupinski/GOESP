@@ -43,7 +43,7 @@ public:
     bool loadScheduledFonts() noexcept;
 
 private:
-    std::vector<std::pair<std::string, float>> scheduledFonts;
+    std::vector<std::pair<std::string, int>> scheduledFonts;
     std::filesystem::path path;
 };
 
