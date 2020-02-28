@@ -9,9 +9,9 @@ public:
         return VirtualMethod::call<const char*, 1>(this);
     }
 
-    constexpr auto getInt(const char* keyName) noexcept
+    constexpr auto getInt(const char* keyName, int defaultValue = 0) noexcept
     {
-        return VirtualMethod::call<int, 6>(this, keyName, 0);
+        return VirtualMethod::call<int, 6>(this, keyName, defaultValue);
     }
 
     constexpr auto getFloat(const char* keyName, float defaultValue = 0.0f) noexcept
