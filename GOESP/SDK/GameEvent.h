@@ -19,9 +19,9 @@ public:
         return VirtualMethod::call<float, 8>(this, keyName, defaultValue);
     }
 
-    constexpr auto getString(const char* keyName) noexcept
+    constexpr auto getString(const char* keyName, const char* defaultValue = "") noexcept
     {
-        return VirtualMethod::call<const char*, 9>(this, keyName, "");
+        return VirtualMethod::call<const char*, 9>(this, keyName, defaultValue);
     }
 };
 
