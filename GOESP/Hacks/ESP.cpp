@@ -218,7 +218,7 @@ public:
         valid = true;
     }
 
-    operator bool() noexcept
+    operator bool() const noexcept
     {
         return valid;
     }
@@ -302,7 +302,7 @@ static void renderSnaplines(ImDrawList* drawList, const BoundingBox& bbox, const
 
 static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, const Player& config) noexcept
 {
-    BoundingBox bbox{ playerData };
+    const BoundingBox bbox{ playerData };
 
     if (!bbox)
         return;
@@ -333,7 +333,7 @@ static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, 
 
 static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, const Weapon& config) noexcept
 {
-    BoundingBox bbox{ weaponData };
+    const BoundingBox bbox{ weaponData };
 
     if (!bbox)
         return;
@@ -358,7 +358,7 @@ static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, 
 
 static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, const char* name, const Shared& config) noexcept
 {
-    BoundingBox bbox{ entityData };
+    const BoundingBox bbox{ entityData };
 
     if (!bbox)
         return;
