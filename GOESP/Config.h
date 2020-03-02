@@ -39,7 +39,7 @@ public:
     std::vector<std::string> systemFonts{ "Default" };
     std::unordered_map<std::string, ImFont*> fonts;
 
-    void scheduleFontLoad(const std::string& name) noexcept;
+    void scheduleFontLoad(const std::string& name, int size = 15) noexcept;
     bool loadScheduledFonts() noexcept;
 
 private:

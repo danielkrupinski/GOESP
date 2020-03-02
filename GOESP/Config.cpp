@@ -288,9 +288,9 @@ void Config::save() noexcept
         out << std::setw(4) << j;
 }
 
-void Config::scheduleFontLoad(const std::string& name) noexcept
+void Config::scheduleFontLoad(const std::string& name, int size) noexcept
 {
-    scheduledFonts.emplace_back(name, 15);
+    scheduledFonts.emplace_back(name, size);
 }
 
 bool Config::loadScheduledFonts() noexcept
