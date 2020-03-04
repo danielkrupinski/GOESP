@@ -52,7 +52,7 @@ public:
     VIRTUAL_METHOD(getActiveWeapon, Entity*, 267)
     VIRTUAL_METHOD(getObserverMode, ObsMode, 293)
     VIRTUAL_METHOD(getObserverTarget, Entity*, 294)
-    VIRTUAL_METHOD(getWeaponInfo, WeaponInfo*, 459)
+    VIRTUAL_METHOD(getWeaponInfo, WeaponInfo*, 460)
    
     auto getEyePosition() noexcept
     {
