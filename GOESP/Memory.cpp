@@ -20,4 +20,5 @@ Memory::Memory() noexcept
     isOtherEnemy = relativeToAbsolute<decltype(isOtherEnemy)>(findPattern(L"client_panorama", "\xE8????\x02\xC0", 1));
     globalVars = **reinterpret_cast<GlobalVars***>((*reinterpret_cast<uintptr_t**>(interfaces->client))[11] + 10);
     debugMsg = reinterpret_cast<decltype(debugMsg)>(GetProcAddress(GetModuleHandleW(L"tier0"), "Msg"));
+    itemSchema = relativeToAbsolute<decltype(itemSchema)>(findPattern(L"client_panorama", "\xE8????\x0F\xB7\x0F", 1));
 }
