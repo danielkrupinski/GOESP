@@ -39,10 +39,14 @@ enum class ObsMode {
     Roaming
 };
 
+#define NETWORKABLE(name, returnType, idx) \
+VIRTUAL_METHOD_EX(name, returnType, idx, this + 8)
+
 class Entity {
 public:
-    VIRTUAL_METHOD_EX(getClientClass, ClientClass*, 2, this + 8)
-    VIRTUAL_METHOD_EX(isDormant, bool, 9, this + 8)
+    NETWORKABLE(getClientClass, ClientClass*, 2)
+    NETWORKABLE(isDormant, bool, 9)
+
     VIRTUAL_METHOD_EX(getModel, const Model*, 8, this + 4)
 
     VIRTUAL_METHOD(getCollideable, Collideable*, 3)
