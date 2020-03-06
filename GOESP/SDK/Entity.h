@@ -42,12 +42,15 @@ enum class ObsMode {
 #define NETWORKABLE(name, returnType, idx) \
 VIRTUAL_METHOD_EX(name, returnType, idx, this + 8)
 
+#define RENDERABLE(name, returnType, idx) \
+VIRTUAL_METHOD_EX(name, returnType, idx, this + 4)
+
 class Entity {
 public:
     NETWORKABLE(getClientClass, ClientClass*, 2)
     NETWORKABLE(isDormant, bool, 9)
 
-    VIRTUAL_METHOD_EX(getModel, const Model*, 8, this + 4)
+    RENDERABLE(getModel, const Model*, 8)
 
     VIRTUAL_METHOD(getCollideable, Collideable*, 3)
     VIRTUAL_METHOD(getAbsOrigin, Vector&, 10)
