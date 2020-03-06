@@ -53,9 +53,9 @@ void GUI::render() noexcept
         hooks->restore();
 
     if (ImGui::BeginTabItem("ESP")) {
-        static int currentCategory = 0;
-        static int currentItem = 0;
-        static int currentSubItem = 0;
+        static std::size_t currentCategory = 0;
+        static std::size_t currentItem = 0;
+        static std::size_t currentSubItem = 0;
 
         constexpr auto getConfig = [](int category, int item, int subItem = 0) constexpr noexcept -> Shared& {
             switch (category) {
@@ -95,7 +95,7 @@ void GUI::render() noexcept
         if (ImGui::ListBoxHeader("##list", { 170.0f, 300.0f })) {
             constexpr std::array categories{ "Allies", "Enemies", "Weapons", "Projectiles", "Other Entities" };
 
-            for (size_t i = 0; i < categories.size(); i++) {
+            for (std::size_t i = 0; i < categories.size(); ++i) {
                 if (ImGui::Selectable(categories[i], currentCategory == i && currentItem == 0)) {
                     currentCategory = i;
                     currentItem = 0;
@@ -124,7 +124,7 @@ void GUI::render() noexcept
                 ImGui::Indent();
 
                 auto items = getItems(i);
-                for (size_t j = 0; j < items.size(); j++) {
+                for (std::size_t j = 0; j < items.size(); ++j) {
                     if (ImGui::Selectable(items[j], currentCategory == i && currentItem == j + 1 && currentSubItem == 0)) {
                         currentCategory = i;
                         currentItem = j + 1;
@@ -161,7 +161,7 @@ void GUI::render() noexcept
                     ImGui::Indent();
 
                     auto subItems = getSubItems(i, j);
-                    for (size_t k = 0; k < subItems.size(); k++) {
+                    for (std::size_t k = 0; k < subItems.size(); ++k) {
                         if (ImGui::Selectable(subItems[k], currentCategory == i && currentItem == j + 1 && currentSubItem == k + 1)) {
                             currentCategory = i;
                             currentItem = j + 1;
