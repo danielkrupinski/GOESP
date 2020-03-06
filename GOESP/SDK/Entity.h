@@ -23,7 +23,7 @@ struct Model {
     char name[260];
 };
 
-#define NETVAR(func_name, offset, type) \
+#define PROP(func_name, offset, type) \
 std::add_lvalue_reference_t<type> func_name() noexcept \
 { \
     return *reinterpret_cast<std::add_pointer_t<type>>(this + offset); \
@@ -98,20 +98,20 @@ public:
         return playerName;
     }
 
-    NETVAR(weaponId, 0x2FAA, WeaponId)                                               // CBaseAttributableItem->m_iItemDefinitionIndex
+    PROP(weaponId, 0x2FAA, WeaponId)                                               // CBaseAttributableItem->m_iItemDefinitionIndex
 
-    NETVAR(clip, 0x3254, int)                                                        // CBaseCombatWeapon->m_iClip1
-    NETVAR(isInReload, 0x3254 + 0x41, bool)                                          // CBaseCombatWeapon->m_iClip1 + 0x41
-    NETVAR(reserveAmmoCount, 0x325C, int)                                            // CBaseCombatWeapon->m_iPrimaryReserveAmmoCount
-    NETVAR(nextPrimaryAttack, 0x3228, float)                                         // CBaseCombatWeapon->m_flNextPrimaryAttack
+    PROP(clip, 0x3254, int)                                                        // CBaseCombatWeapon->m_iClip1
+    PROP(isInReload, 0x3254 + 0x41, bool)                                          // CBaseCombatWeapon->m_iClip1 + 0x41
+    PROP(reserveAmmoCount, 0x325C, int)                                            // CBaseCombatWeapon->m_iPrimaryReserveAmmoCount
+    PROP(nextPrimaryAttack, 0x3228, float)                                         // CBaseCombatWeapon->m_flNextPrimaryAttack
 
-    NETVAR(index, 0x64, int)                                                         // CBaseEntity->m_bIsAutoaimTarget + 0x4
-    NETVAR(ownerEntity, 0x14C, int)                                                  // CBaseEntity->m_hOwnerEntity
+    PROP(index, 0x64, int)                                                         // CBaseEntity->m_bIsAutoaimTarget + 0x4
+    PROP(ownerEntity, 0x14C, int)                                                  // CBaseEntity->m_hOwnerEntity
 
-    NETVAR(health, 0x100, int)                                                       // CBasePlayer->m_iHealth
-    NETVAR(flashDuration, 0xA40C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
+    PROP(health, 0x100, int)                                                       // CBasePlayer->m_iHealth
+    PROP(flashDuration, 0xA40C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
 
-    NETVAR(coordinateFrame, 0x444, Matrix3x4)
+    PROP(coordinateFrame, 0x444, Matrix3x4)
 
-    NETVAR(grenadeExploded, 0x29E8, bool)
+    PROP(grenadeExploded, 0x29E8, bool)
 };
