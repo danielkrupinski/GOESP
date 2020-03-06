@@ -41,9 +41,9 @@ enum class ObsMode {
 
 class Entity {
 public:
-    VIRTUAL_METHOD_(getClientClass, ClientClass*, 2, this + 8)
-    VIRTUAL_METHOD_(isDormant, bool, 9, this + 8)
-    VIRTUAL_METHOD_(getModel, const Model*, 8, this + 4)
+    VIRTUAL_METHOD_EX(getClientClass, ClientClass*, 2, this + 8)
+    VIRTUAL_METHOD_EX(isDormant, bool, 9, this + 8)
+    VIRTUAL_METHOD_EX(getModel, const Model*, 8, this + 4)
 
     VIRTUAL_METHOD(getCollideable, Collideable*, 3)
     VIRTUAL_METHOD(getAbsOrigin, Vector&, 10)

@@ -11,11 +11,11 @@ namespace VirtualMethod
     }
 }
 
-#define VIRTUAL_METHOD_(name, returnType, idx, thisPtr) \
+#define VIRTUAL_METHOD_EX(name, returnType, idx, thisPtr) \
 constexpr auto name() noexcept \
 { \
     return VirtualMethod::call<returnType, idx>(thisPtr); \
 } \
 
 #define VIRTUAL_METHOD(name, returnType, idx) \
-VIRTUAL_METHOD_(name, returnType, idx, this)
+VIRTUAL_METHOD_EX(name, returnType, idx, this)
