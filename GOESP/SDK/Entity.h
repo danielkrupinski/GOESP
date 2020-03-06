@@ -75,7 +75,7 @@ public:
         return vec;
     }
 
-    std::string getPlayerName(bool normalize) noexcept
+    [[nodiscard]] std::string getPlayerName(bool normalize) noexcept
     {
         std::string playerName = "unknown";
 
