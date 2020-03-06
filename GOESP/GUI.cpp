@@ -123,7 +123,7 @@ void GUI::render() noexcept
                 ImGui::PushID(i);
                 ImGui::Indent();
 
-                auto items = getItems(i);
+                const auto items = getItems(i);
                 for (std::size_t j = 0; j < items.size(); ++j) {
                     if (ImGui::Selectable(items[j], currentCategory == i && currentItem == j + 1 && currentSubItem == 0)) {
                         currentCategory = i;
@@ -160,7 +160,8 @@ void GUI::render() noexcept
 
                     ImGui::Indent();
 
-                    auto subItems = getSubItems(i, j);
+                    const auto subItems = getSubItems(i, j);
+
                     for (std::size_t k = 0; k < subItems.size(); ++k) {
                         if (ImGui::Selectable(subItems[k], currentCategory == i && currentItem == j + 1 && currentSubItem == k + 1)) {
                             currentCategory = i;
