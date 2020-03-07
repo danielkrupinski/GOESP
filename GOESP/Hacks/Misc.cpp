@@ -24,41 +24,40 @@
 #include <vector>
 
 struct LocalPlayerData {
-    bool exists;
-    bool alive;
-    bool inReload;
-    bool fullAutoWeapon;
-    float nextWeaponAttack;
+    LocalPlayerData() = default;
+    LocalPlayerData(Entity* localPlayer) noexcept
+    {
+        if (!localPlayer)
+            return;
+
+        exists = true;
+        alive = localPlayer->isAlive();
+
+        if (const auto activeWeapon = localPlayer->getActiveWeapon()) {
+            inReload = activeWeapon->isInReload();
+            if (const auto weaponInfo = activeWeapon->getWeaponInfo())
+                fullAutoWeapon = weaponInfo->fullAuto;
+
+           nextWeaponAttack = activeWeapon->nextPrimaryAttack();
+        }
+        aimPunch = localPlayer->getAimPunch();
+    }
+    bool exists = false;
+    bool alive = false;
+    bool inReload = false;
+    bool fullAutoWeapon = false;
+    float nextWeaponAttack = 0.0f;
     Vector aimPunch;
 };
 
-static LocalPlayerData localPlayer;
+static LocalPlayerData localPlayerData;
 static std::mutex dataMutex;
 
 void Misc::collectData() noexcept
 {
     std::scoped_lock _{ dataMutex };
 
-    const auto local = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
-    localPlayer.exists = local;
-
-    if (local) {
-        localPlayer.alive = local->isAlive();
-
-        if (const auto activeWeapon = local->getActiveWeapon()) {
-            localPlayer.inReload = activeWeapon->isInReload();
-            if (const auto weaponInfo = activeWeapon->getWeaponInfo())
-                localPlayer.fullAutoWeapon = weaponInfo->fullAuto;
-            else
-                localPlayer.fullAutoWeapon = false;
-            localPlayer.nextWeaponAttack = activeWeapon->nextPrimaryAttack();
-        } else {
-            localPlayer.inReload = false;
-            localPlayer.fullAutoWeapon = false;
-            localPlayer.nextWeaponAttack = 0.0f;
-        }
-        localPlayer.aimPunch = local->getAimPunch();
-    }
+    localPlayerData = { interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer()) };
 }
 
 void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
@@ -68,18 +67,18 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
 
     std::scoped_lock _{ dataMutex };
 
-    if (!localPlayer.exists || !localPlayer.alive)
+    if (!localPlayerData.exists || !localPlayerData.alive)
         return;
 
     static float reloadLength = 0.0f;
 
-    if (localPlayer.inReload) {
+    if (localPlayerData.inReload) {
         if (!reloadLength)
-            reloadLength = localPlayer.nextWeaponAttack - memory->globalVars->currenttime;
+            reloadLength = localPlayerData.nextWeaponAttack - memory->globalVars->currenttime;
 
         const auto [width, height] = interfaces->engine->getScreenSize();
         constexpr int segments = 20;
-        drawList->PathArcTo({ width / 2.0f, height / 2.0f }, 20.0f, -IM_PI / 2, std::clamp(IM_PI * 2 * (0.75f - (localPlayer.nextWeaponAttack - memory->globalVars->currenttime) / reloadLength), -IM_PI / 2, -IM_PI / 2 + IM_PI * 2), segments);
+        drawList->PathArcTo({ width / 2.0f, height / 2.0f }, 20.0f, -IM_PI / 2, std::clamp(IM_PI * 2 * (0.75f - (localPlayerData.nextWeaponAttack - memory->globalVars->currenttime) / reloadLength), -IM_PI / 2, -IM_PI / 2 + IM_PI * 2), segments);
         const ImU32 color = Helpers::calculateColor(config->reloadProgress, memory->globalVars->realtime);
         drawList->PathStroke(color, false, config->reloadProgress.thickness);
     } else {
@@ -94,16 +93,16 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
 
     std::scoped_lock _{ dataMutex };
 
-    if (!localPlayer.exists || !localPlayer.alive)
+    if (!localPlayerData.exists || !localPlayerData.alive)
         return;
 
-    if (!localPlayer.fullAutoWeapon)
+    if (!localPlayerData.fullAutoWeapon)
         return;
 
     const auto [width, height] = interfaces->engine->getScreenSize();
 
-    const float x = width * (0.5f - localPlayer.aimPunch.y / 180.0f);
-    const float y = height * (0.5f + localPlayer.aimPunch.x / 180.0f);
+    const float x = width * (0.5f - localPlayerData.aimPunch.y / 180.0f);
+    const float y = height * (0.5f + localPlayerData.aimPunch.x / 180.0f);
     const auto color = Helpers::calculateColor(config->recoilCrosshair, memory->globalVars->realtime);
 
     drawList->AddLine({ x, y - 10 }, { x, y + 10 }, color, config->recoilCrosshair.thickness);
