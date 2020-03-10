@@ -125,6 +125,8 @@ void Misc::purchaseList(GameEvent* event) noexcept
             std::string weapon = event->getString("weapon");
             if (weapon.starts_with("weapon_"))
                 weapon.erase(0, 7);
+            else if (weapon.starts_with("item_"))
+                weapon.erase(0, 5);
 
             const auto player = interfaces->entityList->getEntity(interfaces->engine->getPlayerForUserId(event->getInt("userid")));
             const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
