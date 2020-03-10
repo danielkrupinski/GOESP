@@ -9,7 +9,7 @@
 #include <type_traits>
 
 class Entity;
-class ItemSchema;
+class ItemSystem;
 
 struct GlobalVars;
 
@@ -24,7 +24,7 @@ public:
     bool(__thiscall* isOtherEnemy)(Entity*, Entity*);
     const GlobalVars* globalVars;
     std::add_pointer_t<void __cdecl(const char* msg, ...)> debugMsg;
-    std::add_pointer_t<ItemSchema* __cdecl()> itemSchema;
+    std::add_pointer_t<ItemSystem* __cdecl()> itemSchema;
 private:
     static std::uintptr_t findPattern(const wchar_t* module, const char* pattern, size_t offset = 0) noexcept
     {

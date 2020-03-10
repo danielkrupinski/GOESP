@@ -2,6 +2,6 @@
 
 #include "VirtualMethod.h"
 
-class ItemSchema {
+class ItemSystem {
     VIRTUAL_METHOD(getSchema, void*, 0)
 };
