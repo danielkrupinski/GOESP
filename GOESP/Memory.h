@@ -10,6 +10,7 @@
 
 class Entity;
 class ItemSystem;
+class WeaponSystem;
 
 struct GlobalVars;
 
@@ -25,6 +26,7 @@ public:
     const GlobalVars* globalVars;
     std::add_pointer_t<void __cdecl(const char* msg, ...)> debugMsg;
     std::add_pointer_t<ItemSystem* __cdecl()> itemSchema;
+    WeaponSystem* weaponSystem;
 private:
     static std::uintptr_t findPattern(const wchar_t* module, const char* pattern, size_t offset = 0) noexcept
     {

@@ -21,4 +21,5 @@ Memory::Memory() noexcept
     globalVars = **reinterpret_cast<GlobalVars***>((*reinterpret_cast<uintptr_t**>(interfaces->client))[11] + 10);
     debugMsg = reinterpret_cast<decltype(debugMsg)>(GetProcAddress(GetModuleHandleW(L"tier0"), "Msg"));
     itemSchema = relativeToAbsolute<decltype(itemSchema)>(findPattern(L"client_panorama", "\xE8????\x0F\xB7\x0F", 1));
+    weaponSystem = *reinterpret_cast<WeaponSystem**>(findPattern(L"client_panorama", "\x8B\x35????\xFF\x10\x0F\xB7\xC0", 2));
 }
