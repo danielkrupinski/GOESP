@@ -4,6 +4,7 @@
 #include "WeaponId.h"
 
 class EconItemDefintion {
+public:
     VIRTUAL_METHOD(getWeaponId, WeaponId, 0)
 };
 
