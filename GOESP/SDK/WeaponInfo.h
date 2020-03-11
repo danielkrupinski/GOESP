@@ -28,7 +28,9 @@ struct WeaponInfo {
     const char* name;
     PAD(60)
     WeaponType type;
-    PAD(32)
+    PAD(4)
+    int price;
+    PAD(24)
     bool fullAuto;
     PAD(3)
     int damage;
