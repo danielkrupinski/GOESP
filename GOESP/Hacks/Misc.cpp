@@ -118,6 +118,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
     static std::unordered_map<std::string, std::pair<std::vector<std::string>, int>> purchaseDetails;
     static std::unordered_map<std::string, int> purchaseTotal;
+    static int totalCost;
 
     static auto freezeEnd = 0.0f;
 
@@ -128,10 +129,12 @@ void Misc::purchaseList(GameEvent* event) noexcept
             const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
 
             if (player && localPlayer && memory->isOtherEnemy(player, localPlayer)) {
-                if (const auto defintion = memory->itemSystem()->getItemSchema()->getItemDefinitionByName(event->getString("weapon")))
-                    if (const auto weaponInfo = memory->weaponSystem->getWeaponInfo(defintion->getWeaponId()))
+                if (const auto defintion = memory->itemSystem()->getItemSchema()->getItemDefinitionByName(event->getString("weapon"))) {
+                    if (const auto weaponInfo = memory->weaponSystem->getWeaponInfo(defintion->getWeaponId())) {
                         purchaseDetails[player->getPlayerName(config->normalizePlayerNames)].second += weaponInfo->price;
-
+                        totalCost += weaponInfo->price;
+                    }
+                }
                 std::string weapon = event->getString("weapon");
 
                 if (weapon.starts_with("weapon_"))
@@ -148,6 +151,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
             freezeEnd = 0.0f;
             purchaseDetails.clear();
             purchaseTotal.clear();
+            totalCost = 0;
             break;
         case fnv::hash("round_freeze_end"):
             freezeEnd = memory->globalVars->realtime;
@@ -170,6 +174,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
                 std::string s = std::accumulate(purchases.first.begin(), purchases.first.end(), std::string{ }, [](std::string s, const std::string& piece) { return s += piece + ", "; });
                 if (s.length() >= 2)
                     s.erase(s.length() - 2);
+
                 if (config->purchaseListPrices)
                     ImGui::TextWrapped("%s $%d: %s", playerName.c_str(), purchases.second, s.c_str());
                 else
@@ -178,6 +183,11 @@ void Misc::purchaseList(GameEvent* event) noexcept
         } else if (config->purchaseListMode == 1) {
             for (const auto& purchase : purchaseTotal)
                 ImGui::TextWrapped("%d x %s", purchase.second, purchase.first.c_str());
+
+            if (config->purchaseListPrices) {
+                ImGui::Separator();
+                ImGui::TextWrapped("Total: $%d", totalCost);
+            }
         }
         ImGui::End();
     }
