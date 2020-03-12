@@ -170,7 +170,10 @@ void Misc::purchaseList(GameEvent* event) noexcept
                 std::string s = std::accumulate(purchases.first.begin(), purchases.first.end(), std::string{ }, [](std::string s, const std::string& piece) { return s += piece + ", "; });
                 if (s.length() >= 2)
                     s.erase(s.length() - 2);
-                ImGui::TextWrapped("%s $%d: %s", playerName.c_str(), purchases.second, s.c_str());
+                if (config->purchaseListPrices)
+                    ImGui::TextWrapped("%s $%d: %s", playerName.c_str(), purchases.second, s.c_str());
+                else
+                    ImGui::TextWrapped("%s: %s", playerName.c_str(), s.c_str());
             }
         } else if (config->purchaseListMode == 1) {
             for (const auto& purchase : purchaseTotal)

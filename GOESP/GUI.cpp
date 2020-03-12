@@ -267,8 +267,16 @@ void GUI::render() noexcept
         ImGui::Checkbox("Normalize Player Names", &config->normalizePlayerNames);
         ImGui::Checkbox("Purchase List", &config->purchaseList);
         ImGui::SameLine();
-        ImGui::SetNextItemWidth(75.0f);
-        ImGui::Combo("##1", &config->purchaseListMode, "Details\0Total\0");
+
+        if (ImGui::Button("..."))
+            ImGui::OpenPopup("##purchaselist");
+
+        if (ImGui::BeginPopup("##purchaselist")) {
+            ImGui::SetNextItemWidth(75.0f);
+            ImGui::Combo("Mode", &config->purchaseListMode, "Details\0Total\0");
+            ImGui::Checkbox("Show Prices", &config->purchaseListPrices);
+            ImGui::EndPopup();
+        }
         ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Configs")) {

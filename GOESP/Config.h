@@ -35,6 +35,7 @@ public:
     bool normalizePlayerNames = true;
     bool purchaseList = false;
     int purchaseListMode = 0;
+    bool purchaseListPrices = false;
 
     std::vector<std::string> systemFonts{ "Default" };
     std::unordered_map<std::string, ImFont*> fonts;
