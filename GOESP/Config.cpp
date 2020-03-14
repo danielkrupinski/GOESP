@@ -194,6 +194,7 @@ void Config::load() noexcept
     read<value_t::boolean>(j, "Normalize Player Names", normalizePlayerNames);
     read<value_t::boolean>(j, "Purchase List", purchaseList);
     read_number(j, "Purchase List Mode", purchaseListMode);
+    read<value_t::boolean>(j, "Purchase List Prices", purchaseListPrices);
 }
 
 static void to_json(json& j, const Color& c)
@@ -283,6 +284,7 @@ void Config::save() noexcept
     j["Normalize Player Names"] = normalizePlayerNames;
     j["Purchase List"] = purchaseList;
     j["Purchase List Mode"] = purchaseListMode;
+    j["Purchase List Prices"] = purchaseListPrices;
 
     if (std::ofstream out{ path / "config.txt" }; out.good())
         out << std::setw(4) << j;
