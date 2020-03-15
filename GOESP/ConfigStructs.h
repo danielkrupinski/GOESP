@@ -53,3 +53,13 @@ struct Player : Shared {
 struct Weapon : Shared {
     ColorToggle ammo;
 };
+
+struct PurchaseList {
+    bool enabled = false;
+    bool showPrices = false;
+    enum Mode {
+        Details = 0,
+        Summary
+    };
+    int mode = Details;
+};
