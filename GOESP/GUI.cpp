@@ -265,7 +265,7 @@ void GUI::render() noexcept
         ImGuiCustom::colorPicker("Reload Progress", config->reloadProgress);
         ImGuiCustom::colorPicker("Recoil Crosshair", config->recoilCrosshair);
         ImGui::Checkbox("Normalize Player Names", &config->normalizePlayerNames);
-        ImGui::Checkbox("Purchase List", &config->purchaseList);
+        ImGui::Checkbox("Purchase List", &config->purchaseList.enabled);
         ImGui::SameLine();
 
         if (ImGui::Button("..."))
@@ -273,8 +273,8 @@ void GUI::render() noexcept
 
         if (ImGui::BeginPopup("##purchaselist")) {
             ImGui::SetNextItemWidth(75.0f);
-            ImGui::Combo("Mode", &config->purchaseListMode, "Details\0Total\0");
-            ImGui::Checkbox("Show Prices", &config->purchaseListPrices);
+            ImGui::Combo("Mode", &config->purchaseList.mode, "Details\0Total\0");
+            ImGui::Checkbox("Show Prices", &config->purchaseList.showPrices);
             ImGui::EndPopup();
         }
         ImGui::EndTabItem();

@@ -33,9 +33,8 @@ public:
     ColorToggleThickness reloadProgress{ 5.0f };
     ColorToggleThickness recoilCrosshair;
     bool normalizePlayerNames = true;
-    bool purchaseList = false;
-    int purchaseListMode = 0;
-    bool purchaseListPrices = false;
+
+    PurchaseList purchaseList;
 
     std::vector<std::string> systemFonts{ "Default" };
     std::unordered_map<std::string, ImFont*> fonts;

@@ -158,7 +158,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
             break;
         }
     } else {
-        if (!config->purchaseList)
+        if (!config->purchaseList.enabled)
             return;
 
         static auto mp_buytime = interfaces->cvar->findVar("mp_buytime");
@@ -169,22 +169,22 @@ void Misc::purchaseList(GameEvent* event) noexcept
         ImGui::SetNextWindowSize({ 100.0f, 100.0f }, ImGuiCond_Once);
         ImGui::Begin("Purchases", nullptr, ImGuiWindowFlags_NoCollapse | (gui->open ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoInputs));
 
-        if (config->purchaseListMode == 0) {
+        if (config->purchaseList.mode == PurchaseList::Details) {
             for (const auto& [playerName, purchases] : purchaseDetails) {
                 std::string s = std::accumulate(purchases.first.begin(), purchases.first.end(), std::string{ }, [](std::string s, const std::string& piece) { return s += piece + ", "; });
                 if (s.length() >= 2)
                     s.erase(s.length() - 2);
 
-                if (config->purchaseListPrices)
+                if (config->purchaseList.showPrices)
                     ImGui::TextWrapped("%s $%d: %s", playerName.c_str(), purchases.second, s.c_str());
                 else
                     ImGui::TextWrapped("%s: %s", playerName.c_str(), s.c_str());
             }
-        } else if (config->purchaseListMode == 1) {
+        } else if (config->purchaseList.mode == PurchaseList::Summary) {
             for (const auto& purchase : purchaseTotal)
                 ImGui::TextWrapped("%d x %s", purchase.second, purchase.first.c_str());
 
-            if (config->purchaseListPrices) {
+            if (config->purchaseList.showPrices) {
                 ImGui::Separator();
                 ImGui::TextWrapped("Total: $%d", totalCost);
             }
