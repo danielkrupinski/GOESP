@@ -184,7 +184,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
             for (const auto& purchase : purchaseTotal)
                 ImGui::TextWrapped("%d x %s", purchase.second, purchase.first.c_str());
 
-            if (config->purchaseList.showPrices) {
+            if (config->purchaseList.showPrices && totalCost > 0) {
                 ImGui::Separator();
                 ImGui::TextWrapped("Total: $%d", totalCost);
             }
