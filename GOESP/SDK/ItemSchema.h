@@ -5,18 +5,15 @@
 
 class EconItemDefintion {
 public:
-    VIRTUAL_METHOD(getWeaponId, WeaponId, 0)
+    VIRTUAL_METHOD_V2(WeaponId, getWeaponId, 0, (), (this))
 };
 
 class ItemSchema {
 public:
-    constexpr auto getItemDefinitionByName(const char* name) noexcept
-    {
-        return VirtualMethod::call<EconItemDefintion*, 42>(this, name);
-    }
+    VIRTUAL_METHOD_V2(EconItemDefintion*, getItemDefinitionByName, 42, (const char* name), (this, name))
 };
 
 class ItemSystem {
 public:
-    VIRTUAL_METHOD(getItemSchema, ItemSchema*, 0)
+    VIRTUAL_METHOD_V2(ItemSchema*, getItemSchema, 0, (), (this))
 };
