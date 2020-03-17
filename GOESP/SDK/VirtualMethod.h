@@ -12,7 +12,7 @@ namespace VirtualMethod
 }
 
 #define VIRTUAL_METHOD_EX(name, returnType, idx, thisPtr) \
-constexpr auto name() noexcept \
+[[deprecated]] constexpr auto name() noexcept \
 { \
     return VirtualMethod::call<returnType, idx>(thisPtr); \
 } \
