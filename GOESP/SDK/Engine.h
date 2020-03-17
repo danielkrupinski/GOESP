@@ -36,17 +36,9 @@ public:
         return std::make_pair(w, h);
     }
 
-    constexpr auto getPlayerInfo(int entityIndex, PlayerInfo& playerInfo) noexcept
-    {
-        return VirtualMethod::call<bool, 8>(this, entityIndex, std::ref(playerInfo));
-    }
-
-    constexpr auto getPlayerForUserId(int userId) noexcept
-    {
-        return VirtualMethod::call<int, 9>(this, userId);
-    }
-
-    VIRTUAL_METHOD(getLocalPlayer, int, 12)
-    VIRTUAL_METHOD(isInGame, bool, 26)
-    VIRTUAL_METHOD(worldToScreenMatrix, const D3DMATRIX&, 37)
+    VIRTUAL_METHOD_V2(bool, getPlayerInfo, 8, (int entityIndex, PlayerInfo& playerInfo), (this, entityIndex, std::ref(playerInfo)))
+    VIRTUAL_METHOD_V2(int, getPlayerForUserId, 9, (int userId), (this, userId))
+    VIRTUAL_METHOD_V2(int, getLocalPlayer, 12, (), (this))
+    VIRTUAL_METHOD_V2(bool, isInGame, 26, (), (this))
+    VIRTUAL_METHOD_V2(const D3DMATRIX&, worldToScreenMatrix, 37, (), (this))
 };
