@@ -14,8 +14,8 @@ class Matrix3x4;
 
 class Collideable {
 public:
-    VIRTUAL_METHOD(obbMins, const Vector&, 1)
-    VIRTUAL_METHOD(obbMaxs, const Vector&, 2)
+    VIRTUAL_METHOD_V2(const Vector&, obbMins, 1, (), (this))
+    VIRTUAL_METHOD_V2(const Vector&, obbMaxs, 2, (), (this))
 };
 
 struct Model {
