@@ -6,15 +6,7 @@ class Entity;
 
 class EntityList {
 public:
-    constexpr auto getEntity(int index) noexcept
-    {
-        return VirtualMethod::call<Entity*, 3>(this, index);
-    }
-
-    constexpr auto getEntityFromHandle(int handle) noexcept
-    {
-        return VirtualMethod::call<Entity*, 4>(this, handle);
-    }
-
-    VIRTUAL_METHOD(getHighestEntityIndex, int, 6)
+    VIRTUAL_METHOD_V2(Entity*, getEntity, 3, (int index), (this, index))
+    VIRTUAL_METHOD_V2(Entity*, getEntityFromHandle, 4, (int handle), (this, handle))
+    VIRTUAL_METHOD_V2(int, getHighestEntityIndex, 6, (), (this))
 };
