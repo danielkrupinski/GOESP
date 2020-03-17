@@ -6,8 +6,5 @@ struct ConVar;
 
 class Cvar {
 public:
-    constexpr auto findVar(const char* name) noexcept
-    {
-        return VirtualMethod::call<ConVar*, 15>(this, name);
-    }
+    VIRTUAL_METHOD(ConVar*, findVar, 15, (const char* name), (this, name))
 };

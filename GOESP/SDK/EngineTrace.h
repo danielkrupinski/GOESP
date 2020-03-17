@@ -48,8 +48,5 @@ struct Trace {
 
 class EngineTrace {
 public:
-    constexpr void traceRay(const Ray& ray, unsigned int mask, const TraceFilter& filter, Trace& trace) noexcept
-    {
-        VirtualMethod::call<void, 5>(this, std::cref(ray), mask, std::cref(filter), std::ref(trace));
-    }
+    VIRTUAL_METHOD(void, traceRay, 5, (const Ray& ray, unsigned int mask, const TraceFilter& filter, Trace& trace), (this, std::cref(ray), mask, std::cref(filter), std::ref(trace)))
 };

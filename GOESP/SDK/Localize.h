@@ -4,8 +4,5 @@
 
 class Localize {
 public:
-    constexpr auto find(const char* tokenName) noexcept
-    {
-        return VirtualMethod::call<const wchar_t*, 12>(this, tokenName);
-    }
+    VIRTUAL_METHOD(const wchar_t*, find, 12, (const char* tokenName), (this, tokenName))
 };

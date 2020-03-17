@@ -4,34 +4,14 @@
 
 class InputSystem {
 public:
-    constexpr void enableInput(bool enable) noexcept
-    {
-        VirtualMethod::call<void, 11>(this, enable);
-    }
-
+    VIRTUAL_METHOD(void, enableInput, 11, (bool enable), (this, enable))
     VIRTUAL_METHOD(void, resetInputState, 39, (), (this))
-
-    constexpr auto buttonCodeToString(int buttonCode) noexcept
-    {
-        return VirtualMethod::call<const char*, 40>(this, buttonCode);
-    }
-
-    constexpr auto stringToButtonCode(const char* keyName) noexcept
-    {
-        return VirtualMethod::call<int, 42>(this, keyName);
-    }
+    VIRTUAL_METHOD(const char*, buttonCodeToString, 40, (int buttonCode), (this, buttonCode))
+    VIRTUAL_METHOD(int, stringToButtonCode, 42, (const char* keyName), (this, keyName))
 
     // does not support mouse buttons
-    constexpr auto virtualKeyToButtonCode(int virtualKey) noexcept
-    {
-        return VirtualMethod::call<int, 45>(this, virtualKey);
-    }
-
-    // does not support mouse buttons
-    constexpr auto buttonCodeToVirtualKey(int buttonCode) noexcept
-    {
-        return VirtualMethod::call<int, 46>(this, buttonCode);
-    }
+    VIRTUAL_METHOD(int, virtualKeyToButtonCode, 45, (int virtualKey), (this, virtualKey))
+    VIRTUAL_METHOD(int, buttonCodeToVirtualKey, 46, (int buttonCode), (this, buttonCode))
 
     constexpr auto keyToButtonCode(int key) noexcept
     {

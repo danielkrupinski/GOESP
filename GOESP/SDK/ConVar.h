@@ -3,8 +3,5 @@
 #include "VirtualMethod.h"
 
 struct ConVar {
-    constexpr float getFloat() noexcept
-    {
-        return VirtualMethod::call<float, 12>(this);
-    }
+    VIRTUAL_METHOD(float, getFloat, 12, (), (this))
 };

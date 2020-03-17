@@ -4,25 +4,10 @@
 
 class GameEvent {
 public:
-    constexpr auto getName() noexcept
-    {
-        return VirtualMethod::call<const char*, 1>(this);
-    }
-
-    constexpr auto getInt(const char* keyName, int defaultValue = 0) noexcept
-    {
-        return VirtualMethod::call<int, 6>(this, keyName, defaultValue);
-    }
-
-    constexpr auto getFloat(const char* keyName, float defaultValue = 0.0f) noexcept
-    {
-        return VirtualMethod::call<float, 8>(this, keyName, defaultValue);
-    }
-
-    constexpr auto getString(const char* keyName, const char* defaultValue = "") noexcept
-    {
-        return VirtualMethod::call<const char*, 9>(this, keyName, defaultValue);
-    }
+    VIRTUAL_METHOD(const char*, getName, 1, (), (this))
+    VIRTUAL_METHOD(int, getInt, 6, (const char* keyName, int defaultValue = 0), (this, keyName, defaultValue))
+    VIRTUAL_METHOD(float, getFloat, 8, (const char* keyName, float defaultValue = 0.0f), (this, keyName, defaultValue))
+    VIRTUAL_METHOD(const char*, getString, 9, (const char* keyName, const char* defaultValue = ""), (this, keyName, defaultValue))
 };
 
 class GameEventListener {
@@ -34,13 +19,6 @@ public:
 
 class GameEventManager {
 public:
-    constexpr auto addListener(GameEventListener* listener, const char* name) noexcept
-    {
-        return VirtualMethod::call<bool, 3>(this, listener, name, false);
-    }
-
-    constexpr auto removeListener(GameEventListener* listener) noexcept
-    {
-        VirtualMethod::call<void, 5>(this, listener);
-    }
+    VIRTUAL_METHOD(bool, addListener, 3, (GameEventListener* listener, const char* name), (this, listener, name, false))
+    VIRTUAL_METHOD(void, removeListener, 5, (GameEventListener* listener), (this, listener))
 };
