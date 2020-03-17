@@ -52,15 +52,15 @@ public:
 
     RENDERABLE(getModel, const Model*, 8)
 
-    VIRTUAL_METHOD(getCollideable, Collideable*, 3)
-    VIRTUAL_METHOD(getAbsOrigin, Vector&, 10)
-    VIRTUAL_METHOD(isAlive, bool, 155)
-    VIRTUAL_METHOD(isWeapon, bool, 165)
-    VIRTUAL_METHOD(getActiveWeapon, Entity*, 267)
-    VIRTUAL_METHOD(getObserverMode, ObsMode, 293)
-    VIRTUAL_METHOD(getObserverTarget, Entity*, 294)
-    VIRTUAL_METHOD(getWeaponInfo, WeaponInfo*, 460)
-   
+    VIRTUAL_METHOD_V2(Collideable*, getCollideable, 3, (), (this))
+    VIRTUAL_METHOD_V2(Vector&, getAbsOrigin, 10, (), (this))
+    VIRTUAL_METHOD_V2(bool, isAlive, 155, (), (this))
+    VIRTUAL_METHOD_V2(bool, isWeapon, 165, (), (this))
+    VIRTUAL_METHOD_V2(Entity*, getActiveWeapon, 267, (), (this))
+    VIRTUAL_METHOD_V2(ObsMode, getObserverMode, 293, (), (this))
+    VIRTUAL_METHOD_V2(Entity*, getObserverTarget, 294, (), (this))
+    VIRTUAL_METHOD_V2(WeaponInfo*, getWeaponInfo, 460, (), (this))
+
     auto getEyePosition() noexcept
     {
         Vector vec;
