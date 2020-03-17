@@ -19,3 +19,13 @@ constexpr auto name() noexcept \
 
 #define VIRTUAL_METHOD(name, returnType, idx) \
 VIRTUAL_METHOD_EX(name, returnType, idx, this)
+
+
+
+#define UNPACK_ARGS(...) __VA_ARGS__
+
+#define VIRTUAL_METHOD_V2(returnType, name, idx, args, argsRaw) \
+constexpr auto name(UNPACK_ARGS args) noexcept \
+{ \
+    return VirtualMethod::call<returnType, idx>(UNPACK_ARGS argsRaw); \
+} \
