@@ -9,7 +9,7 @@ public:
         VirtualMethod::call<void, 11>(this, enable);
     }
 
-    VIRTUAL_METHOD(resetInputState, void, 39)
+    VIRTUAL_METHOD_V2(void, resetInputState, 39, (), (this))
 
     constexpr auto buttonCodeToString(int buttonCode) noexcept
     {
