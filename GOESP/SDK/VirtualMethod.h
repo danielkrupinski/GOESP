@@ -11,7 +11,7 @@ namespace VirtualMethod
     }
 }
 
-#define VIRTUAL_METHOD_V2(returnType, name, idx, args, argsRaw) \
+#define VIRTUAL_METHOD(returnType, name, idx, args, argsRaw) \
 constexpr auto name##args noexcept \
 { \
     return VirtualMethod::call<returnType, idx>##argsRaw; \

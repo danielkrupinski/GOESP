@@ -14,8 +14,8 @@ class Matrix3x4;
 
 class Collideable {
 public:
-    VIRTUAL_METHOD_V2(const Vector&, obbMins, 1, (), (this))
-    VIRTUAL_METHOD_V2(const Vector&, obbMaxs, 2, (), (this))
+    VIRTUAL_METHOD(const Vector&, obbMins, 1, (), (this))
+    VIRTUAL_METHOD(const Vector&, obbMaxs, 2, (), (this))
 };
 
 struct Model {
@@ -41,19 +41,19 @@ enum class ObsMode {
 
 class Entity {
 public:
-    VIRTUAL_METHOD_V2(ClientClass*, getClientClass, 2, (), (this + 8))
-    VIRTUAL_METHOD_V2(bool, isDormant, 9, (), (this + 8))
+    VIRTUAL_METHOD(ClientClass*, getClientClass, 2, (), (this + 8))
+    VIRTUAL_METHOD(bool, isDormant, 9, (), (this + 8))
 
-    VIRTUAL_METHOD_V2(const Model*, getModel, 8, (), (this + 4))
+    VIRTUAL_METHOD(const Model*, getModel, 8, (), (this + 4))
 
-    VIRTUAL_METHOD_V2(Collideable*, getCollideable, 3, (), (this))
-    VIRTUAL_METHOD_V2(Vector&, getAbsOrigin, 10, (), (this))
-    VIRTUAL_METHOD_V2(bool, isAlive, 155, (), (this))
-    VIRTUAL_METHOD_V2(bool, isWeapon, 165, (), (this))
-    VIRTUAL_METHOD_V2(Entity*, getActiveWeapon, 267, (), (this))
-    VIRTUAL_METHOD_V2(ObsMode, getObserverMode, 293, (), (this))
-    VIRTUAL_METHOD_V2(Entity*, getObserverTarget, 294, (), (this))
-    VIRTUAL_METHOD_V2(WeaponInfo*, getWeaponInfo, 460, (), (this))
+    VIRTUAL_METHOD(Collideable*, getCollideable, 3, (), (this))
+    VIRTUAL_METHOD(Vector&, getAbsOrigin, 10, (), (this))
+    VIRTUAL_METHOD(bool, isAlive, 155, (), (this))
+    VIRTUAL_METHOD(bool, isWeapon, 165, (), (this))
+    VIRTUAL_METHOD(Entity*, getActiveWeapon, 267, (), (this))
+    VIRTUAL_METHOD(ObsMode, getObserverMode, 293, (), (this))
+    VIRTUAL_METHOD(Entity*, getObserverTarget, 294, (), (this))
+    VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, 460, (), (this))
 
     auto getEyePosition() noexcept
     {

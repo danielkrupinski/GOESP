@@ -36,9 +36,9 @@ public:
         return std::make_pair(w, h);
     }
 
-    VIRTUAL_METHOD_V2(bool, getPlayerInfo, 8, (int entityIndex, PlayerInfo& playerInfo), (this, entityIndex, std::ref(playerInfo)))
-    VIRTUAL_METHOD_V2(int, getPlayerForUserId, 9, (int userId), (this, userId))
-    VIRTUAL_METHOD_V2(int, getLocalPlayer, 12, (), (this))
-    VIRTUAL_METHOD_V2(bool, isInGame, 26, (), (this))
-    VIRTUAL_METHOD_V2(const D3DMATRIX&, worldToScreenMatrix, 37, (), (this))
+    VIRTUAL_METHOD(bool, getPlayerInfo, 8, (int entityIndex, PlayerInfo& playerInfo), (this, entityIndex, std::ref(playerInfo)))
+    VIRTUAL_METHOD(int, getPlayerForUserId, 9, (int userId), (this, userId))
+    VIRTUAL_METHOD(int, getLocalPlayer, 12, (), (this))
+    VIRTUAL_METHOD(bool, isInGame, 26, (), (this))
+    VIRTUAL_METHOD(const D3DMATRIX&, worldToScreenMatrix, 37, (), (this))
 };
