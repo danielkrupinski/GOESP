@@ -61,6 +61,17 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
     return CallWindowProc(hooks->wndProc, window, msg, wParam, lParam);
 }
 
+static HRESULT D3DAPI reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* params) noexcept
+{
+    HookGuard guard;
+
+    ImGui_ImplDX9_InvalidateDeviceObjects();
+    auto result = hooks->reset(device, params);
+    ImGui_ImplDX9_CreateDeviceObjects();
+
+    return result;
+}
+
 static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const RECT* dest, HWND windowOverride, const RGNDATA* dirtyRegion) noexcept
 {
     HookGuard guard;
@@ -104,17 +115,6 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     return hooks->present(device, src, dest, windowOverride, dirtyRegion);
 }
 
-static HRESULT D3DAPI reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* params) noexcept
-{
-    HookGuard guard;
-
-    ImGui_ImplDX9_InvalidateDeviceObjects();
-    auto result = hooks->reset(device, params);
-    ImGui_ImplDX9_CreateDeviceObjects();
-
-    return result;
-}
-
 static BOOL WINAPI setCursorPos(int X, int Y) noexcept
 {
     HookGuard guard;
@@ -133,11 +133,11 @@ Hooks::Hooks(HMODULE module) noexcept
 
     wndProc = WNDPROC(SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(::wndProc)));
 
-    present = **reinterpret_cast<decltype(present)**>(memory->present);
-    **reinterpret_cast<decltype(::present)***>(memory->present) = ::present;
+    reset = *reinterpret_cast<decltype(reset)*>(memory->reset);
+    *reinterpret_cast<decltype(::reset)**>(memory->reset) = ::reset;
 
-    reset = **reinterpret_cast<decltype(reset)**>(memory->reset);
-    **reinterpret_cast<decltype(::reset)***>(memory->reset) = ::reset;
+    present = *reinterpret_cast<decltype(present)*>(memory->present);
+    *reinterpret_cast<decltype(::present)**>(memory->present) = ::present;
 
     setCursorPos = *reinterpret_cast<decltype(setCursorPos)*>(memory->setCursorPos);
     *reinterpret_cast<decltype(::setCursorPos)**>(memory->setCursorPos) = ::setCursorPos;
@@ -145,8 +145,8 @@ Hooks::Hooks(HMODULE module) noexcept
 
 void Hooks::restore() noexcept
 {
-    **reinterpret_cast<void***>(memory->present) = present;
-    **reinterpret_cast<void***>(memory->reset) = reset;
+    *reinterpret_cast<void**>(memory->reset) = reset;
+    *reinterpret_cast<void**>(memory->present) = present;
     *reinterpret_cast<void**>(memory->setCursorPos) = setCursorPos;
 
     SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(wndProc));

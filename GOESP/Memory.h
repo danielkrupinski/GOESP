@@ -18,8 +18,8 @@ class Memory {
 public:
     Memory() noexcept;
 
-    std::uintptr_t present;
     std::uintptr_t reset;
+    std::uintptr_t present;
     std::uintptr_t setCursorPos;
 
     bool(__thiscall* isOtherEnemy)(Entity*, Entity*);
