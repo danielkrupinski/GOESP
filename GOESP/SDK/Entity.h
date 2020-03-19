@@ -43,6 +43,7 @@ class Entity {
 public:
     VIRTUAL_METHOD(ClientClass*, getClientClass, 2, (), (this + 8))
     VIRTUAL_METHOD(bool, isDormant, 9, (), (this + 8))
+    VIRTUAL_METHOD(int, index, 10, (), (this + 8))
 
     VIRTUAL_METHOD(const Model*, getModel, 8, (), (this + 4))
 
@@ -106,7 +107,6 @@ public:
     PROP(reserveAmmoCount, 0x325C, int)                                            // CBaseCombatWeapon->m_iPrimaryReserveAmmoCount
     PROP(nextPrimaryAttack, 0x3228, float)                                         // CBaseCombatWeapon->m_flNextPrimaryAttack
 
-    PROP(index, 0x64, int)                                                         // CBaseEntity->m_bIsAutoaimTarget + 0x4
     PROP(ownerEntity, 0x14C, int)                                                  // CBaseEntity->m_hOwnerEntity
 
     PROP(health, 0x100, int)                                                       // CBasePlayer->m_iHealth
