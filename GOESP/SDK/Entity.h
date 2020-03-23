@@ -46,6 +46,7 @@ public:
     VIRTUAL_METHOD(int, index, 10, (), (this + 8))
 
     VIRTUAL_METHOD(const Model*, getModel, 8, (), (this + 4))
+    VIRTUAL_METHOD(const Matrix3x4&, toWorldTransform, 32, (), (this + 4))
 
     VIRTUAL_METHOD(Collideable*, getCollideable, 3, (), (this))
     VIRTUAL_METHOD(Vector&, getAbsOrigin, 10, (), (this))
@@ -111,8 +112,6 @@ public:
 
     PROP(health, 0x100, int)                                                       // CBasePlayer->m_iHealth
     PROP(flashDuration, 0xA40C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
-
-    PROP(coordinateFrame, 0x444, Matrix3x4)
 
     PROP(grenadeExploded, 0x29E8, bool)
 };

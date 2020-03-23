@@ -50,7 +50,7 @@ struct BaseData {
         distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
         obbMins = entity->getCollideable()->obbMins();
         obbMaxs = entity->getCollideable()->obbMaxs();
-        coordinateFrame = entity->coordinateFrame();
+        coordinateFrame = entity->toWorldTransform();
     }
     float distanceToLocal;
     Vector obbMins;
