@@ -190,5 +190,8 @@
     <ClInclude Include="SDK\WeaponSystem.h">
       <Filter>SDK</Filter>
     </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
