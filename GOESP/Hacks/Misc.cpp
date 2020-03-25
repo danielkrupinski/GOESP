@@ -17,6 +17,7 @@
 #include "../SDK/GameEvent.h"
 #include "../SDK/GlobalVars.h"
 #include "../SDK/ItemSchema.h"
+#include "../SDK/LocalPlayer.h"
 #include "../SDK/WeaponInfo.h"
 #include "../SDK/WeaponSystem.h"
 
@@ -59,7 +60,7 @@ void Misc::collectData() noexcept
 {
     std::scoped_lock _{ dataMutex };
 
-    localPlayerData = { interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer()) };
+    localPlayerData = { localPlayer.get() };
 }
 
 void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
@@ -126,9 +127,8 @@ void Misc::purchaseList(GameEvent* event) noexcept
         switch (fnv::hashRuntime(event->getName())) {
         case fnv::hash("item_purchase"): {
             const auto player = interfaces->entityList->getEntity(interfaces->engine->getPlayerForUserId(event->getInt("userid")));
-            const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
 
-            if (player && localPlayer && memory->isOtherEnemy(player, localPlayer)) {
+            if (player && localPlayer && memory->isOtherEnemy(player, localPlayer.get())) {
                 if (const auto defintion = memory->itemSystem()->getItemSchema()->getItemDefinitionByName(event->getString("weapon"))) {
                     if (const auto weaponInfo = memory->weaponSystem->getWeaponInfo(defintion->getWeaponId())) {
                         purchaseDetails[player->getPlayerName(config->normalizePlayerNames)].second += weaponInfo->price;

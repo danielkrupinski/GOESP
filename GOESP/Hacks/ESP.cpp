@@ -14,6 +14,7 @@
 #include "../SDK/EntityList.h"
 #include "../SDK/GlobalVars.h"
 #include "../SDK/Localize.h"
+#include "../SDK/LocalPlayer.h"
 #include "../SDK/Vector.h"
 #include "../SDK/WeaponInfo.h"
 #include "../SDK/WeaponId.h"
@@ -42,8 +43,6 @@ static bool worldToScreen(const Vector& in, ImVec2& out) noexcept
 struct BaseData {
     BaseData(Entity* entity) noexcept
     {
-        const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
-
         if (!localPlayer)
             return;
 
@@ -75,13 +74,11 @@ struct EntityData : BaseData {
 struct PlayerData : BaseData {
     PlayerData(Entity* entity) noexcept : BaseData{ entity }
     {
-        const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
-
         if (!localPlayer)
             return;
 
-        enemy = memory->isOtherEnemy(entity, localPlayer);
-        visible = entity->visibleTo(localPlayer);
+        enemy = memory->isOtherEnemy(entity, localPlayer.get());
+        visible = entity->visibleTo(localPlayer.get());
         flashDuration = entity->flashDuration();
 
         name = entity->getPlayerName(config->normalizePlayerNames);
@@ -132,8 +129,6 @@ void ESP::collectData() noexcept
     weapons.clear();
     entities.clear();
 
-    const auto localPlayer = interfaces->entityList->getEntity(interfaces->engine->getLocalPlayer());
-
     if (!localPlayer)
         return;
 
@@ -143,7 +138,7 @@ void ESP::collectData() noexcept
 
     for (int i = 1; i <= memory->globalVars->maxClients; ++i) {
         const auto entity = interfaces->entityList->getEntity(i);
-        if (!entity || entity == localPlayer || entity == observerTarget
+        if (!entity || entity == localPlayer.get() || entity == observerTarget
             || entity->isDormant() || !entity->isAlive())
             continue;
 
