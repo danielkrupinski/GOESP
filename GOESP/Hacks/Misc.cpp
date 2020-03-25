@@ -27,8 +27,7 @@
 #include <vector>
 
 struct LocalPlayerData {
-    LocalPlayerData() = default;
-    LocalPlayerData(Entity* localPlayer) noexcept
+    void update() noexcept
     {
         if (!localPlayer)
             return;
@@ -60,7 +59,7 @@ void Misc::collectData() noexcept
 {
     std::scoped_lock _{ dataMutex };
 
-    localPlayerData = { localPlayer.get() };
+    localPlayerData.update();
 }
 
 void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
