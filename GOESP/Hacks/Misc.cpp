@@ -40,7 +40,8 @@ struct LocalPlayerData {
             if (const auto weaponInfo = activeWeapon->getWeaponInfo())
                 fullAutoWeapon = weaponInfo->fullAuto;
 
-           nextWeaponAttack = activeWeapon->nextPrimaryAttack();
+            shooting = localPlayer->shotsFired() > 0;
+            nextWeaponAttack = activeWeapon->nextPrimaryAttack();
         }
         aimPunch = localPlayer->getAimPunch();
     }
@@ -48,6 +49,7 @@ struct LocalPlayerData {
     bool alive = false;
     bool inReload = false;
     bool fullAutoWeapon = false;
+    bool shooting = false;
     float nextWeaponAttack = 0.0f;
     Vector aimPunch;
 };
@@ -98,7 +100,7 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
     if (!localPlayerData.exists || !localPlayerData.alive)
         return;
 
-    if (!localPlayerData.fullAutoWeapon)
+    if (!localPlayerData.fullAutoWeapon || !localPlayerData.shooting)
         return;
 
     const auto [width, height] = interfaces->engine->getScreenSize();
