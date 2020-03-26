@@ -51,6 +51,9 @@
 //---- Pack colors to BGRA8 instead of RGBA8 (to avoid converting from one to another)
 //#define IMGUI_USE_BGRA_PACKED_COLOR
 
+//---- Use 32-bit for ImWchar (default is 16-bit) to support full unicode code points.
+//#define IMGUI_USE_WCHAR32
+
 //---- Avoid multiple STB libraries implementations, or redefine path/filenames to prioritize another version
 // By default the embedded implementations are declared static and not available outside of imgui cpp files.
 //#define IMGUI_STB_TRUETYPE_FILENAME   "my_folder/stb_truetype.h"
@@ -68,7 +71,12 @@
 #define IM_VEC2_CLASS_EXTRA                                                 \
         ImVec2(const MyVec2& f) { x = f.x; y = f.y; }                       \
         operator MyVec2() const { return MyVec2(x,y); }
+
+#define IM_VEC4_CLASS_EXTRA                                                 \
+        ImVec4(const MyVec4& f) { x = f.x; y = f.y; z = f.z; w = f.w; }     \
+        operator MyVec4() const { return MyVec4(x,y,z,w); }
 */
+
 #define IM_VEC4_CLASS_EXTRA \
         ImVec4(const std::array<float, 4>& color) noexcept { x = color[0]; y = color[1]; z = color[2]; w = color[3]; } \
         ImVec4(const std::tuple<float, float, float, float>& color) noexcept { x = std::get<0>(color); y = std::get<1>(color); z = std::get<2>(color); w = std::get<3>(color); }
@@ -78,9 +86,6 @@
 // Another way to allow large meshes while keeping 16-bit indices is to handle ImDrawCmd::VtxOffset in your renderer.
 // Read about ImGuiBackendFlags_RendererHasVtxOffset for details.
 //#define ImDrawIdx unsigned int
-
-//---- Use 32-bit for ImWchar (default is 16-bit) to support full unicode code points.
-//#define ImWchar ImWchar32
 
 //---- Override ImDrawCallback signature (will need to modify renderer back-ends accordingly)
 //struct ImDrawList;
