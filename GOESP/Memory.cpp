@@ -25,6 +25,7 @@ Memory::Memory() noexcept
     weaponSystem = *reinterpret_cast<WeaponSystem**>(findPattern(L"client_panorama", "\x8B\x35????\xFF\x10\x0F\xB7\xC0", 2));
     activeChannels = *reinterpret_cast<ActiveChannels**>(findPattern(L"engine", "\x8B\x1D????\x89\x5C\x24\x48", 2));
     channels = *reinterpret_cast<Channel**>(findPattern(L"engine", "\x81\xC2????\x8B\x72\x54", 2));
+    lineGoesThroughSmoke = relativeToAbsolute<decltype(lineGoesThroughSmoke)>(findPattern(L"client_panorama", "\xE8????\x8B\x4C\x24\x30\x33\xD2", 1));
 
     localPlayer.init(*reinterpret_cast<Entity***>(findPattern(L"client_panorama", "\xA1????\x89\x45\xBC\x85\xC0", 1)));
 }
