@@ -15,6 +15,7 @@
 #include "../SDK/GlobalVars.h"
 #include "../SDK/Localize.h"
 #include "../SDK/LocalPlayer.h"
+#include "../SDK/Sound.h"
 #include "../SDK/Vector.h"
 #include "../SDK/WeaponInfo.h"
 #include "../SDK/WeaponId.h"
@@ -77,8 +78,18 @@ struct PlayerData : BaseData {
         if (!localPlayer)
             return;
 
+        constexpr auto isPlayerAudible = [](int entityIndex) noexcept {
+            for (int i = 0; i < memory->activeChannels->count; ++i)
+                if (memory->channels[memory->activeChannels->list[i]].soundSource == entityIndex)
+                    return true;
+
+            return false;
+        };
+
         enemy = memory->isOtherEnemy(entity, localPlayer.get());
         visible = entity->visibleTo(localPlayer.get());
+        audible = isPlayerAudible(entity->index());
+
         flashDuration = entity->flashDuration();
 
         name = entity->getPlayerName(config->normalizePlayerNames);
@@ -92,6 +103,7 @@ struct PlayerData : BaseData {
     }
     bool enemy;
     bool visible;
+    bool audible;
     float flashDuration;
     std::string name;
     std::string activeWeapon;
