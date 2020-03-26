@@ -15,10 +15,10 @@
 #include <vector>
 #include <Windows.h>
 
-GUI::GUI() noexcept
+GUI::GUI(HWND window) noexcept
 {
     ImGui::CreateContext();
-    ImGui_ImplWin32_Init(FindWindowW(L"Valve001", nullptr));
+    ImGui_ImplWin32_Init(window);
 
     ImGui::StyleColorsClassic();
     ImGuiStyle& style = ImGui::GetStyle();

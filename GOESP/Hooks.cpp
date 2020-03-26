@@ -31,12 +31,12 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 {
     HookGuard guard;
 
-    static const auto once = [] {
+    static const auto once = [&window] {
         interfaces = std::make_unique<const Interfaces>();
         memory = std::make_unique<Memory>();
         eventListener = std::make_unique<EventListener>();
         config = std::make_unique<Config>("GOESP");
-        gui = std::make_unique<GUI>();
+        gui = std::make_unique<GUI>(window);
         hooks->install();
 
         return true;

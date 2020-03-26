@@ -1,10 +1,11 @@
 #pragma once
 
 #include <memory>
+#include <Windows.h>
 
 class GUI {
 public:
-    GUI() noexcept;
+    GUI(HWND window) noexcept;
     void render() noexcept;
 
     bool open = true;
