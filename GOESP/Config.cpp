@@ -164,6 +164,7 @@ static void from_json(const json& j, Player& p)
 
     read<value_t::object>(j, "Weapon", p.weapon);
     read<value_t::object>(j, "Flash Duration", p.flashDuration);
+    read<value_t::boolean>(j, "Audible Only", p.audibleOnly);
 }
 
 static void from_json(const json& j, PurchaseList& pl)
@@ -259,6 +260,7 @@ static void to_json(json& j, const Player& p)
     j = static_cast<Shared>(p);
     j["Weapon"] = p.weapon;
     j["Flash Duration"] = p.flashDuration;
+    j["Audible Only"] = p.audibleOnly;
 }
 
 static void to_json(json& j, const Weapon& w)
