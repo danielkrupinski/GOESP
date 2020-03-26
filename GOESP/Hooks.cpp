@@ -31,6 +31,17 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 {
     HookGuard guard;
 
+    static const auto once = [] {
+        interfaces = std::make_unique<const Interfaces>();
+        memory = std::make_unique<Memory>();
+        eventListener = std::make_unique<EventListener>();
+        config = std::make_unique<Config>("GOESP");
+        gui = std::make_unique<GUI>();
+        hooks->install();
+
+        return true;
+    }();
+
     ESP::collectData();
     Misc::collectData();
 
@@ -111,7 +122,6 @@ Hooks::Hooks(HMODULE module) noexcept
 
     window = FindWindowW(L"Valve001", nullptr);
     wndProc = WNDPROC(SetWindowLongPtrA(window, GWLP_WNDPROC, LONG_PTR(::wndProc)));
-    install();
 }
 
 void Hooks::install() noexcept
