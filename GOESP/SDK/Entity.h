@@ -110,8 +110,8 @@ public:
 
     PROP(ownerEntity, 0x14C, int)                                                  // CBaseEntity->m_hOwnerEntity
 
-    PROP(health, 0x100, int)                                                       // CBasePlayer->m_iHealth
     PROP(flashDuration, 0xA40C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
-
+    PROP(shotsFired, 0xA380, int)                                                  // CCSPlayer->m_iShotsFired
+        
     PROP(grenadeExploded, 0x29E8, bool)
 };
