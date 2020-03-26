@@ -27,26 +27,6 @@ private:
     inline static std::atomic_int atomic;
 };
 
-static DWORD WINAPI waitOnUnload(HMODULE hModule) noexcept
-{
-    while (!HookGuard::freed())
-        Sleep(50);
-
-    interfaces->inputSystem->enableInput(true);
-    ImGui_ImplDX9_Shutdown();
-    ImGui_ImplWin32_Shutdown();
-    ImGui::DestroyContext();
-
-    hooks.reset();
-    eventListener.reset();
-    memory.reset();
-    interfaces.reset();
-    gui.reset();
-    config.reset();
-
-    FreeLibraryAndExitThread(hModule, 0);
-}
-
 static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
     HookGuard guard;
@@ -129,7 +109,8 @@ Hooks::Hooks(HMODULE module) noexcept
     _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
     _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
 
-    wndProc = WNDPROC(SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(::wndProc)));
+    window = FindWindowW(L"Valve001", nullptr);
+    wndProc = WNDPROC(SetWindowLongPtrA(window, GWLP_WNDPROC, LONG_PTR(::wndProc)));
     install();
 }
 
@@ -147,13 +128,33 @@ void Hooks::install() noexcept
     *reinterpret_cast<decltype(::setCursorPos)**>(memory->setCursorPos) = ::setCursorPos;
 }
 
+static DWORD WINAPI waitOnUnload(HMODULE hModule) noexcept
+{
+    while (!HookGuard::freed())
+        Sleep(50);
+
+    interfaces->inputSystem->enableInput(true);
+    ImGui_ImplDX9_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
+
+    hooks.reset();
+    eventListener.reset();
+    memory.reset();
+    interfaces.reset();
+    gui.reset();
+    config.reset();
+
+    FreeLibraryAndExitThread(hModule, 0);
+}
+
 void Hooks::restore() noexcept
 {
     *reinterpret_cast<void**>(memory->reset) = reset;
     *reinterpret_cast<void**>(memory->present) = present;
     *reinterpret_cast<void**>(memory->setCursorPos) = setCursorPos;
 
-    SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(wndProc));
+    SetWindowLongPtrA(window, GWLP_WNDPROC, LONG_PTR(wndProc));
 
     if (HANDLE thread = CreateThread(nullptr, 0, LPTHREAD_START_ROUTINE(waitOnUnload), module, 0, nullptr))
         CloseHandle(thread);
