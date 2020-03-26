@@ -48,6 +48,7 @@ struct Shared {
 struct Player : Shared {
     ColorToggle weapon;
     ColorToggle flashDuration;
+    bool audibleOnly = false;
 };
 
 struct Weapon : Shared {
