@@ -68,7 +68,7 @@ public:
     {
         Trace trace;
         interfaces->engineTrace->traceRay({ other->getEyePosition(), getEyePosition() }, 0x46004009, other, trace);
-        return trace.entity == this || trace.fraction > 0.97f;
+        return (trace.entity == this || trace.fraction > 0.97f) && !memory->lineGoesThroughSmoke(other->getEyePosition(), getEyePosition(), 1);
     }
 
     auto getAimPunch() noexcept
