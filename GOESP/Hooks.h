@@ -15,6 +15,7 @@ public:
 
     WNDPROC wndProc;
 
+    void install() noexcept;
     void restore() noexcept;
 
 private:

@@ -124,14 +124,18 @@ static BOOL WINAPI setCursorPos(int X, int Y) noexcept
 
 Hooks::Hooks(HMODULE module) noexcept
 {
-    assert(memory);
-
     this->module = module;
 
     _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
     _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
 
     wndProc = WNDPROC(SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(::wndProc)));
+    install();
+}
+
+void Hooks::install() noexcept
+{
+    assert(memory);
 
     reset = *reinterpret_cast<decltype(reset)*>(memory->reset);
     *reinterpret_cast<decltype(::reset)**>(memory->reset) = ::reset;
