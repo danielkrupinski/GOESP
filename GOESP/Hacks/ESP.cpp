@@ -391,7 +391,7 @@ enum EspId {
 
 static constexpr bool renderPlayerEsp(ImDrawList* drawList, const PlayerData& playerData, EspId id) noexcept
 {
-    if (config->players[id].enabled) {
+    if (config->players[id].enabled && (!config->players[id].audibleOnly || playerData.audible)) {
         renderPlayerBox(drawList, playerData, config->players[id]);
     }
     return config->players[id].enabled;
