@@ -190,10 +190,10 @@
     <ClInclude Include="SDK\WeaponSystem.h">
       <Filter>SDK</Filter>
     </ClInclude>
-    <ClInclude Include="Sound.h">
+    <ClInclude Include="SDK\LocalPlayer.h">
       <Filter>SDK</Filter>
     </ClInclude>
-    <ClInclude Include="SDK\LocalPlayer.h">
+    <ClInclude Include="SDK\Sound.h">
       <Filter>SDK</Filter>
     </ClInclude>
   </ItemGroup>
