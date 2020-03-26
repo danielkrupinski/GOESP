@@ -164,7 +164,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
         static auto mp_buytime = interfaces->cvar->findVar("mp_buytime");
 
-        if ((!interfaces->engine->isInGame() || freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + mp_buytime->getFloat()) && !gui->open)
+        if ((!interfaces->engine->isInGame() || freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + mp_buytime->getFloat() || purchaseDetails.empty() || purchaseTotal.empty()) && !gui->open)
             return;
         
         ImGui::SetNextWindowSize({ 100.0f, 100.0f }, ImGuiCond_Once);

@@ -154,9 +154,7 @@ void ESP::collectData() noexcept
             if (entity->ownerEntity() == -1)
                 weapons.emplace_back(entity);
         } else {
-            const auto classId = entity->getClientClass()->classId;
-
-            switch (classId) {
+            switch (entity->getClientClass()->classId) {
             case ClassId::BaseCSGrenadeProjectile:
                 if (entity->grenadeExploded())
                     break;
