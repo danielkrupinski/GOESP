@@ -57,7 +57,9 @@ struct Weapon : Shared {
 
 struct PurchaseList {
     bool enabled = false;
+    bool onlyDuringFreezeTime = false;
     bool showPrices = false;
+
     enum Mode {
         Details = 0,
         Summary
