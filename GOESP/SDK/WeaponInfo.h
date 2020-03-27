@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstddef>
+#include "Pad.h"
 
 enum class WeaponType {
     Knife = 0,
@@ -15,11 +15,6 @@ enum class WeaponType {
     Grenade,
     Unknown
 };
-
-#define PAD(size) \
-private: \
-    std::byte _pad_##size[size]; \
-public:
 
 struct WeaponInfo {
     PAD(20)

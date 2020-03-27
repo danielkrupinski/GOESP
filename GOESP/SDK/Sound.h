@@ -1,12 +1,14 @@
 #pragma once
 
+#include "Pad.h"
+
 struct ActiveChannels {
     int count;
     short list[128];
 };
 
 struct Channel {
-    int pad0[61];
+    PAD(244)
     int soundSource;
-    int pad1[40];
+    PAD(160)
 };
