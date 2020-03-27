@@ -170,6 +170,7 @@ static void from_json(const json& j, Player& p)
 static void from_json(const json& j, PurchaseList& pl)
 {
     read<value_t::boolean>(j, "Enabled", pl.enabled);
+    read<value_t::boolean>(j, "Only During Freeze Time", pl.onlyDuringFreezeTime);
     read<value_t::boolean>(j, "Show Prices", pl.showPrices);
     read_number(j, "Mode", pl.mode);
 }
@@ -272,6 +273,7 @@ static void to_json(json& j, const Weapon& w)
 static void to_json(json& j, const PurchaseList& pl)
 {
     j["Enabled"] = pl.enabled;
+    j["Only During Freeze Time"] = pl.onlyDuringFreezeTime;
     j["Show Prices"] = pl.showPrices;
     j["Mode"] = pl.mode;
 }
