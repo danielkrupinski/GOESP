@@ -275,6 +275,7 @@ void GUI::render() noexcept
         if (ImGui::BeginPopup("##purchaselist")) {
             ImGui::SetNextItemWidth(75.0f);
             ImGui::Combo("Mode", &config->purchaseList.mode, "Details\0Summary\0");
+            ImGui::Checkbox("Only During Freeze Time", &config->purchaseList.onlyDuringFreezeTime);
             ImGui::Checkbox("Show Prices", &config->purchaseList.showPrices);
             ImGui::EndPopup();
         }
