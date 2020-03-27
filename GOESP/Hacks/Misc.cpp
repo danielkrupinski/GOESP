@@ -162,9 +162,9 @@ void Misc::purchaseList(GameEvent* event) noexcept
         if (!config->purchaseList.enabled)
             return;
 
-        static auto mp_buytime = interfaces->cvar->findVar("mp_buytime");
+        static const auto mp_buytime = interfaces->cvar->findVar("mp_buytime");
 
-        if ((!interfaces->engine->isInGame() || freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + mp_buytime->getFloat() || purchaseDetails.empty() || purchaseTotal.empty()) && !gui->open)
+        if ((!interfaces->engine->isInGame() || freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + (!config->purchaseList.onlyDuringFreezeTime ? mp_buytime->getFloat() : 0.0f) || purchaseDetails.empty() || purchaseTotal.empty()) && !gui->open)
             return;
         
         ImGui::SetNextWindowSize({ 100.0f, 100.0f }, ImGuiCond_Once);
