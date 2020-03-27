@@ -196,5 +196,8 @@
     <ClInclude Include="SDK\Sound.h">
       <Filter>SDK</Filter>
     </ClInclude>
+    <ClInclude Include="SDK\Pad.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
