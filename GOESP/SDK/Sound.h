@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Pad.h"
+#include "Vector.h"
 
 struct ActiveChannels {
     int count;
@@ -10,5 +11,8 @@ struct ActiveChannels {
 struct Channel {
     PAD(244)
     int soundSource;
-    PAD(160)
+    PAD(56)
+    Vector origin;
+    Vector direction;
+    PAD(80)
 };
