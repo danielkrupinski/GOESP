@@ -220,7 +220,11 @@ static void to_json(json& j, const Color& c)
 static void to_json(json& j, const ColorToggle& ct)
 {
     j = static_cast<Color>(ct);
-    j["Enabled"] = ct.enabled;
+
+    const ColorToggle dummy;
+
+    if (ct.enabled != dummy.enabled)
+        j["Enabled"] = ct.enabled;
 }
 
 static void to_json(json& j, const ColorToggleRounding& ctr)
