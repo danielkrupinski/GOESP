@@ -259,8 +259,12 @@ static void to_json(json& j, const ColorToggleThicknessRounding& cttr)
 
 static void to_json(json& j, const Font& f)
 {
-    j["Size"] = f.size;
-    j["Name"] = f.name;
+    const Font dummy;
+
+    if (f.size != dummy.size)
+        j["Size"] = f.size;
+    if (f.name != dummy.name)
+        j["Name"] = f.name;
 }
 
 static void to_json(json& j, const Shared& s)
