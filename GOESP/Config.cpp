@@ -308,7 +308,11 @@ static void to_json(json& j, const Player& p)
 static void to_json(json& j, const Weapon& w)
 {
     j = static_cast<Shared>(w);
-    j["Ammo"] = w.ammo;
+
+    const Weapon dummy;
+
+    if (w.ammo != dummy.ammo)
+        j["Ammo"] = w.ammo;
 }
 
 static void to_json(json& j, const PurchaseList& pl)
