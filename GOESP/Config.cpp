@@ -294,9 +294,15 @@ static void to_json(json& j, const Shared& s)
 static void to_json(json& j, const Player& p)
 {
     j = static_cast<Shared>(p);
-    j["Weapon"] = p.weapon;
-    j["Flash Duration"] = p.flashDuration;
-    j["Audible Only"] = p.audibleOnly;
+
+    const Player dummy;
+    
+    if (p.weapon != dummy.weapon)
+        j["Weapon"] = p.weapon;
+    if (p.flashDuration != dummy.flashDuration)
+        j["Flash Duration"] = p.flashDuration;
+    if (p.audibleOnly != dummy.audibleOnly)
+        j["Audible Only"] = p.audibleOnly;
 }
 
 static void to_json(json& j, const Weapon& w)
