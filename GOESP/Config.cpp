@@ -97,7 +97,6 @@ static constexpr void read_map(const json& j, const char* key, T& o) noexcept
     }
 }
 
-
 static void from_json(const json& j, Color& c)
 {
     read<value_t::array>(j, "Color", c.color);
@@ -208,10 +207,14 @@ void Config::load() noexcept
 
 static void to_json(json& j, const Color& c)
 {
-    j = json{ { "Color", c.color },
-              { "Rainbow", c.rainbow },
-              { "Rainbow Speed", c.rainbowSpeed }
-    };
+    const Color dummy;
+
+    if (c.color != dummy.color)
+        j["Color"] = c.color;
+    if (c.rainbow != dummy.rainbow)
+        j["Rainbow"] = c.rainbow;
+    if (c.rainbowSpeed != dummy.rainbowSpeed)
+        j["Rainbow Speed"] = c.rainbowSpeed;
 }
 
 static void to_json(json& j, const ColorToggle& ct)
