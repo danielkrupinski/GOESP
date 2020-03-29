@@ -30,6 +30,11 @@ public:
     std::array<Shared, 10> projectiles;
     std::array<Shared, 4> otherEntities;
 
+    //
+    std::unordered_map<std::string, Player> allies;
+    std::unordered_map<std::string, Player> enemies;
+    //
+
     ColorToggleThickness reloadProgress{ 5.0f };
     ColorToggleThickness recoilCrosshair;
     bool normalizePlayerNames = true;
