@@ -18,6 +18,8 @@ public:
     void load() noexcept;
     void save() noexcept;
 
+    // Legacy
+    /*
     std::array<Player, 6> players;
     Weapon weapons;
     std::array<Weapon, 11> pistols;
@@ -29,6 +31,7 @@ public:
     std::array<Weapon, 12> grenades;
     std::array<Shared, 10> projectiles;
     std::array<Shared, 4> otherEntities;
+    */
 
     //
     std::unordered_map<std::string, Player> allies;
