@@ -269,16 +269,26 @@ static void to_json(json& j, const Font& f)
 
 static void to_json(json& j, const Shared& s)
 {
-    j = json{ { "Enabled", s.enabled },
-              { "Font", s.font },
-              { "Snaplines", s.snaplines },
-              { "Snapline Type", s.snaplineType },
-              { "Box", s.box },
-              { "Box Type", s.boxType },
-              { "Name", s.name },
-              { "Text Background", s.textBackground },
-              { "Text Cull Distance", s.textCullDistance }
-    };
+    const Shared dummy;
+
+    if (s.enabled != dummy.enabled)
+        j["Enabled"] = s.enabled;
+    if (s.font != dummy.font)
+        j["Font"] = s.font;
+    if (s.snaplines != dummy.snaplines)
+        j["Snaplines"] = s.snaplines;
+    if (s.snaplineType != dummy.snaplineType)
+        j["Snapline Type"] = s.snaplineType;
+    if (s.box != dummy.box)
+        j["Box"] = s.box;
+    if (s.boxType != dummy.boxType)
+        j["Box Type"] = s.boxType;
+    if (s.name != dummy.name)
+        j["Name"] = s.name;
+    if (s.textBackground != dummy.textBackground)
+        j["Text Background"] = s.textBackground;
+    if (s.textCullDistance != dummy.textCullDistance)
+        j["Text Cull Distance"] = s.textCullDistance;
 }
 
 static void to_json(json& j, const Player& p)
