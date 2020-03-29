@@ -6,24 +6,55 @@ struct Color {
     std::array<float, 4> color{ 1.0f, 1.0f, 1.0f, 1.0f };
     bool rainbow = false;
     float rainbowSpeed = 0.6f;
+
+    auto operator==(const Color& c) const
+    {
+        return color == c.color
+            && rainbow == c.rainbow
+            && rainbowSpeed == c.rainbowSpeed;
+    }
 };
 
 struct ColorToggle : Color {
     bool enabled = false;
+
+    auto operator==(const ColorToggle& ct) const
+    {
+        return static_cast<Color>(*this) == static_cast<Color>(ct)
+            && enabled == ct.enabled;
+    }
 };
 
 struct ColorToggleThickness : ColorToggle {
     ColorToggleThickness() = default;
     ColorToggleThickness(float thickness) : thickness{ thickness } { }
     float thickness = 1.0f;
+
+    auto operator==(const ColorToggleThickness& ctt) const
+    {
+        return static_cast<ColorToggle>(*this) == static_cast<ColorToggle>(ctt)
+            && thickness == ctt.thickness;
+    }
 };
 
 struct ColorToggleRounding : ColorToggle {
     float rounding = 5.0f;
+
+    auto operator==(const ColorToggleRounding& ctr) const
+    {
+        return static_cast<ColorToggle>(*this) == static_cast<ColorToggle>(ctr)
+            && rounding == ctr.rounding;
+    }
 };
 
 struct ColorToggleThicknessRounding : ColorToggleRounding {
     float thickness = 1.0f;
+
+    auto operator==(const ColorToggleThicknessRounding& cttr) const
+    {
+        return static_cast<ColorToggleRounding>(*this) == static_cast<ColorToggleRounding>(cttr)
+            && thickness == cttr.thickness;
+    }
 };
 
 struct Font {
@@ -31,6 +62,14 @@ struct Font {
     int size = 15;
     std::string name;
     std::string fullName; // do not save
+
+    auto operator==(const Font& f) const
+    {
+        return index == f.index
+            && size == f.size
+            && name == f.name
+            && fullName == f.fullName;
+    }
 };
 
 struct Shared {
@@ -43,16 +82,43 @@ struct Shared {
     ColorToggle name;
     ColorToggleRounding textBackground{ 0.0f, 0.0f, 0.0f, 1.0f };
     float textCullDistance = 0.0f;
+
+    auto operator==(const Shared& s) const
+    {
+        return enabled == s.enabled
+            && font == s.font
+            && snaplines == s.snaplines
+            && snaplineType == s.snaplineType
+            && box == s.box
+            && boxType == s.boxType
+            && name == s.name
+            && textBackground == s.textBackground
+            && textCullDistance == s.textCullDistance;
+    }
 };
 
 struct Player : Shared {
     ColorToggle weapon;
     ColorToggle flashDuration;
     bool audibleOnly = false;
+
+    auto operator==(const Player& p) const
+    {
+        return static_cast<Shared>(*this) == static_cast<Shared>(p)
+            && weapon == p.weapon
+            && flashDuration == p.flashDuration
+            && audibleOnly == p.audibleOnly;
+    }
 };
 
 struct Weapon : Shared {
     ColorToggle ammo;
+
+    auto operator==(const Weapon& w) const
+    {
+        return static_cast<Shared>(*this) == static_cast<Shared>(w)
+            && ammo == w.ammo;
+    }
 };
 
 struct PurchaseList {
