@@ -131,4 +131,12 @@ struct PurchaseList {
         Summary
     };
     int mode = Details;
+
+    auto operator==(const PurchaseList& pl) const
+    {
+        return enabled == pl.enabled
+            && onlyDuringFreezeTime == pl.onlyDuringFreezeTime
+            && showPrices == pl.showPrices
+            && mode == pl.mode;
+    }
 };
