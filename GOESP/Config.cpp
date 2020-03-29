@@ -250,7 +250,11 @@ static void to_json(json& j, const ColorToggleThickness& ctt)
 static void to_json(json& j, const ColorToggleThicknessRounding& cttr)
 {
     j = static_cast<ColorToggleRounding>(cttr);
-    j["Thickness"] = cttr.thickness;
+
+    const ColorToggleThicknessRounding dummy;
+
+    if (cttr.thickness != dummy.thickness)
+        j["Thickness"] = cttr.thickness;
 }
 
 static void to_json(json& j, const Font& f)
