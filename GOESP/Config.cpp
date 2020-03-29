@@ -317,10 +317,16 @@ static void to_json(json& j, const Weapon& w)
 
 static void to_json(json& j, const PurchaseList& pl)
 {
-    j["Enabled"] = pl.enabled;
-    j["Only During Freeze Time"] = pl.onlyDuringFreezeTime;
-    j["Show Prices"] = pl.showPrices;
-    j["Mode"] = pl.mode;
+    const PurchaseList dummy;
+
+    if (pl.enabled != dummy.enabled)
+        j["Enabled"] = pl.enabled;
+    if (pl.onlyDuringFreezeTime != dummy.onlyDuringFreezeTime)
+        j["Only During Freeze Time"] = pl.onlyDuringFreezeTime;
+    if (pl.showPrices != dummy.showPrices)
+        j["Show Prices"] = pl.showPrices;
+    if (pl.mode != dummy.mode)
+        j["Mode"] = pl.mode;
 }
 
 void Config::save() noexcept
@@ -347,10 +353,14 @@ void Config::save() noexcept
         if (value != Shared{})
             j["Other Entities"][key] = value;
 
-    j["Reload Progress"] = reloadProgress;
-    j["Recoil Crosshair"] = recoilCrosshair;
-    j["Normalize Player Names"] = normalizePlayerNames;
-    j["Purchase List"] = purchaseList;
+    if (reloadProgress != ColorToggleThickness{ 5.0f })
+        j["Reload Progress"] = reloadProgress;
+    if (recoilCrosshair != ColorToggleThickness{})
+        j["Recoil Crosshair"] = recoilCrosshair;
+    if (normalizePlayerNames != true)
+        j["Normalize Player Names"] = normalizePlayerNames;
+    if (purchaseList != PurchaseList{})
+        j["Purchase List"] = purchaseList;
 
     if (std::ofstream out{ path / "config.txt" }; out.good())
         out << std::setw(4) << j;
