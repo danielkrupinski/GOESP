@@ -74,6 +74,13 @@ static constexpr void read(const json& j, const char* key, T& o) noexcept
         o = j[key];
 }
 
+template <value_t Type, typename T, size_t Size>
+static constexpr void read(const json& j, const char* key, std::array<T, Size>& o) noexcept
+{
+    if (j.contains(key) && j[key].type() == Type && j[key].size() == o.size())
+        o = j[key];
+}
+
 template <typename T>
 static constexpr void read_number(const json& j, const char* key, T& o) noexcept
 {
@@ -81,12 +88,15 @@ static constexpr void read_number(const json& j, const char* key, T& o) noexcept
         o = j[key];
 }
 
-template <value_t Type, typename T, size_t Size>
-static constexpr void read(const json& j, const char* key, std::array<T, Size>& o) noexcept
+template <typename T>
+static constexpr void read_map(const json& j, const char* key, T& o) noexcept
 {
-    if (j.contains(key) && j[key].type() == Type && j[key].size() == o.size())
-        o = j[key];
+    if (j.contains(key) && j[key].is_object()) {
+        for (auto& element : j[key].items())
+            o[element.key()] = element.value();
+    }
 }
+
 
 static void from_json(const json& j, Color& c)
 {
@@ -184,19 +194,11 @@ void Config::load() noexcept
     else
         return;
 
-    read<value_t::array>(j, "Players", players);
-
-    read<value_t::object>(j, "Weapons", weapons);
-    read<value_t::array>(j, "Pistols", pistols);
-    read<value_t::array>(j, "SMGs", smgs);
-    read<value_t::array>(j, "Rifles", rifles);
-    read<value_t::array>(j, "Sniper Rifles", sniperRifles);
-    read<value_t::array>(j, "Shotguns", shotguns);
-    read<value_t::array>(j, "Machineguns", machineguns);
-    read<value_t::array>(j, "Grenades", grenades);
-
-    read<value_t::array>(j, "Projectiles", projectiles);
-    read<value_t::array>(j, "Other Entities", otherEntities);
+    read_map(j, "Allies", allies);
+    read_map(j, "Enemies", enemies);
+    read_map(j, "Weapons", _weapons);
+    read_map(j, "Projectiles", _projectiles);
+    read_map(j, "Other Entities", _otherEntities);
 
     read<value_t::object>(j, "Reload Progress", reloadProgress);
     read<value_t::object>(j, "Recoil Crosshair", recoilCrosshair);
@@ -281,19 +283,26 @@ static void to_json(json& j, const PurchaseList& pl)
 void Config::save() noexcept
 {
     json j;
-    j["Players"] = players;
 
-    j["Weapons"] = weapons;
-    j["Pistols"] = pistols;
-    j["SMGs"] = smgs;
-    j["Rifles"] = rifles;
-    j["Sniper Rifles"] = sniperRifles;
-    j["Shotguns"] = shotguns;
-    j["Machineguns"] = machineguns;
-    j["Grenades"] = grenades;
+    for (const auto& [key, value] : allies)
+        if (value != Player{})
+            j["Allies"][key] = value;
 
-    j["Projectiles"] = projectiles;
-    j["Other Entities"] = otherEntities;
+    for (const auto& [key, value] : enemies)
+        if (value != Player{})
+            j["Enemies"][key] = value;
+
+    for (const auto& [key, value] : _weapons)
+        if (value != Weapon{})
+            j["Weapons"][key] = value;
+
+    for (const auto& [key, value] : _projectiles)
+        if (value != Shared{})
+            j["Projectiles"][key] = value;
+
+    for (const auto& [key, value] : _otherEntities)
+        if (value != Shared{})
+            j["Other Entities"][key] = value;
 
     j["Reload Progress"] = reloadProgress;
     j["Recoil Crosshair"] = recoilCrosshair;

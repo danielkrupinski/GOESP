@@ -9,6 +9,8 @@ public:
     void render() noexcept;
 
     bool open = true;
+private:
+    void drawESPTab() noexcept;
 };
 
 inline std::unique_ptr<GUI> gui;

@@ -380,22 +380,12 @@ static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, 
     ImGui::PopFont();
 }
 
-enum EspId {
-    ALLIES_ALL = 0,
-    ALLIES_VISIBLE,
-    ALLIES_OCCLUDED,
-
-    ENEMIES_ALL,
-    ENEMIES_VISIBLE,
-    ENEMIES_OCCLUDED
-};
-
-static constexpr bool renderPlayerEsp(ImDrawList* drawList, const PlayerData& playerData, EspId id) noexcept
+static constexpr bool renderPlayerEsp(ImDrawList* drawList, const PlayerData& playerData, const Player& playerConfig) noexcept
 {
-    if (config->players[id].enabled && (!config->players[id].audibleOnly || playerData.audible)) {
-        renderPlayerBox(drawList, playerData, config->players[id]);
+    if (playerConfig.enabled && (!playerConfig.audibleOnly || playerData.audible)) {
+        renderPlayerBox(drawList, playerData, playerConfig);
     }
-    return config->players[id].enabled;
+    return playerConfig.enabled;
 }
 
 static constexpr void renderWeaponEsp(ImDrawList* drawList, const WeaponData& weaponData, const Weapon& parentConfig, const Weapon& itemConfig) noexcept
@@ -421,102 +411,96 @@ void ESP::render(ImDrawList* drawList) noexcept
 
     for (const auto& player : players) {
         if (!player.enemy) {
-            if (!renderPlayerEsp(drawList, player, ALLIES_ALL)) {
+            if (!renderPlayerEsp(drawList, player, config->allies["All"])) {
                 if (player.visible)
-                    renderPlayerEsp(drawList, player, ALLIES_VISIBLE);
+                    renderPlayerEsp(drawList, player, config->allies["Visible"]);
                 else
-                    renderPlayerEsp(drawList, player, ALLIES_OCCLUDED);
+                    renderPlayerEsp(drawList, player, config->allies["Occluded"]);
             }
-        } else if (!renderPlayerEsp(drawList, player, ENEMIES_ALL)) {
+        } else if (!renderPlayerEsp(drawList, player, config->enemies["All"])) {
             if (player.visible)
-                renderPlayerEsp(drawList, player, ENEMIES_VISIBLE);
+                renderPlayerEsp(drawList, player, config->enemies["Visible"]);
             else
-                renderPlayerEsp(drawList, player, ENEMIES_OCCLUDED);
+                renderPlayerEsp(drawList, player, config->enemies["Occluded"]);
         }
     }
 
     for (const auto& weapon : weapons) {
         constexpr auto getWeaponIndex = [](WeaponId weaponId) constexpr noexcept {
             switch (weaponId) {
-            default: return 0;
+            default: return "All";
 
-            case WeaponId::Glock:
-            case WeaponId::Mac10:
-            case WeaponId::GalilAr:
-            case WeaponId::Ssg08:
-            case WeaponId::Nova:
-            case WeaponId::M249:
-            case WeaponId::Flashbang:
-                return 1;
-            case WeaponId::Hkp2000:
-            case WeaponId::Mp9:
-            case WeaponId::Famas:
-            case WeaponId::Awp:
-            case WeaponId::Xm1014:
-            case WeaponId::Negev:
-            case WeaponId::HeGrenade:
-                return 2;
-            case WeaponId::Usp_s:
-            case WeaponId::Mp7:
-            case WeaponId::Ak47:
-            case WeaponId::G3SG1:
-            case WeaponId::Sawedoff:
-            case WeaponId::SmokeGrenade:
-                return 3;
-            case WeaponId::Elite:
-            case WeaponId::Mp5sd:
-            case WeaponId::M4A1:
-            case WeaponId::Scar20:
-            case WeaponId::Mag7:
-            case WeaponId::Molotov:
-                return 4;
-            case WeaponId::P250:
-            case WeaponId::Ump45:
-            case WeaponId::M4a1_s:
-            case WeaponId::Decoy:
-                return 5;
-            case WeaponId::Tec9:
-            case WeaponId::P90:
-            case WeaponId::Sg553:
-            case WeaponId::IncGrenade:
-                return 6;
-            case WeaponId::Fiveseven:
-            case WeaponId::Bizon:
-            case WeaponId::Aug:
-            case WeaponId::TaGrenade:
-                return 7;
-            case WeaponId::Cz75a:
-            case WeaponId::Firebomb:
-                return 8;
-            case WeaponId::Deagle:
-            case WeaponId::Diversion:
-                return 9;
-            case WeaponId::Revolver:
-            case WeaponId::FragGrenade:
-                return 10;
-            case WeaponId::Snowball:
-                return 11;
+            case WeaponId::Glock: return "Glock-18";
+            case WeaponId::Hkp2000: return "P2000";
+            case WeaponId::Usp_s: return "USP-S";
+            case WeaponId::Elite: return "Dual Berettas";
+            case WeaponId::P250: return "P250";
+            case WeaponId::Tec9: return "Tec-9";
+            case WeaponId::Fiveseven: return "Five-SeveN";
+            case WeaponId::Cz75a: return "CZ75-Auto";
+            case WeaponId::Deagle: return "Desert Eagle";
+            case WeaponId::Revolver: return "R8 Revolver";
+            
+            case WeaponId::Mac10: return "MAC-10";
+            case WeaponId::Mp9: return "MP9";
+            case WeaponId::Mp7: return "MP7";
+            case WeaponId::Mp5sd: return "MP5-SD";
+            case WeaponId::Ump45: return "UMP-45";
+            case WeaponId::P90: return "P90";
+            case WeaponId::Bizon: return "PP-Bizon";
+
+            case WeaponId::GalilAr: return "Galil AR";
+            case WeaponId::Famas: return "FAMAS";
+            case WeaponId::Ak47: return "AK-47";
+            case WeaponId::M4A1: return "M4A4";
+            case WeaponId::M4a1_s: return "M4A1-S";
+            case WeaponId::Sg553: return "SG 553";
+            case WeaponId::Aug: return "AUG";
+
+            case WeaponId::Ssg08: return "SSG 08";
+            case WeaponId::Awp: return "AWP";
+            case WeaponId::G3SG1: return "G3SG1";
+            case WeaponId::Scar20: return "SCAR-20";
+
+            case WeaponId::Nova: return "Nova";
+            case WeaponId::Xm1014: return "XM1014";
+            case WeaponId::Sawedoff: return "Sawed-Off";
+            case WeaponId::Mag7: return "MAG-7";
+            
+            case WeaponId::M249: return "M249";
+            case WeaponId::Negev: return "Negev";
+
+            case WeaponId::Flashbang: return "Flashbang";
+            case WeaponId::HeGrenade: return "HE Grenade";
+            case WeaponId::SmokeGrenade: return "Smoke Grenade";
+            case WeaponId::Molotov: return "Molotov";
+            case WeaponId::Decoy: return "Decoy Grenade";
+            case WeaponId::IncGrenade: return "Incendiary";
+            case WeaponId::TaGrenade: return "TA Grenade";
+            case WeaponId::Firebomb: return "Fire Bomb";
+            case WeaponId::Diversion: return "Diversion";
+            case WeaponId::FragGrenade: return "Frag Grenade";
+            case WeaponId::Snowball: return "Snowball";
             }
         };
 
-        if (!config->weapons.enabled) {
-            constexpr auto dispatchWeapon = [](WeaponType type, int idx) -> std::optional<std::pair<const Weapon&, const Weapon&>> {
+        if (!config->_weapons["All"].enabled) {
+            constexpr auto getWeaponType = [](WeaponType type) constexpr noexcept {
                 switch (type) {
-                case WeaponType::Pistol: return { { config->pistols[0], config->pistols[idx] } };
-                case WeaponType::SubMachinegun: return { { config->smgs[0], config->smgs[idx] } };
-                case WeaponType::Rifle: return { { config->rifles[0], config->rifles[idx] } };
-                case WeaponType::SniperRifle: return { { config->sniperRifles[0], config->sniperRifles[idx] } };
-                case WeaponType::Shotgun: return { { config->shotguns[0], config->shotguns[idx] } };
-                case WeaponType::Machinegun: return { { config->machineguns[0], config->machineguns[idx] } };
-                case WeaponType::Grenade: return { { config->grenades[0], config->grenades[idx] } };
-                default: return std::nullopt;
+                case WeaponType::Pistol: return "Pistols";
+                case WeaponType::SubMachinegun: return "SMGs";
+                case WeaponType::Rifle: return "Rifles";
+                case WeaponType::SniperRifle: return "Sniper Rifles";
+                case WeaponType::Shotgun: return "Shotguns";
+                case WeaponType::Machinegun: return "Machineguns";
+                case WeaponType::Grenade: return "Grenades";
+                default: return "All";
                 }
             };
 
-            if (const auto w = dispatchWeapon(weapon.type, getWeaponIndex(weapon.id)))
-                renderWeaponEsp(drawList, weapon, w->first, w->second);
+            renderWeaponEsp(drawList, weapon, config->_weapons[getWeaponType(weapon.type)], config->_weapons[getWeaponIndex(weapon.id)]);
         } else {
-            renderWeaponEsp(drawList, weapon, config->weapons, config->weapons);
+            renderWeaponEsp(drawList, weapon, config->_weapons["All"], config->_weapons["All"]);
         }
     }
 
@@ -524,19 +508,19 @@ void ESP::render(ImDrawList* drawList) noexcept
         constexpr auto dispatchEntity = [](ClassId classId, bool flashbang) -> std::optional<std::tuple<const Shared&, const Shared&, const char*>> {
             switch (classId) {
             case ClassId::BaseCSGrenadeProjectile:
-                if (flashbang) return  { { config->projectiles[0], config->projectiles[1], "Flashbang" } };
-                else return  { { config->projectiles[0], config->projectiles[2], "HE Grenade" } };
-            case ClassId::BreachChargeProjectile: return { { config->projectiles[0], config->projectiles[3], "Breach Charge" } };
-            case ClassId::BumpMineProjectile: return { { config->projectiles[0], config->projectiles[4], "Bump Mine" } };
-            case ClassId::DecoyProjectile: return  { { config->projectiles[0], config->projectiles[5], "Decoy Grenade" } };
-            case ClassId::MolotovProjectile: return { { config->projectiles[0], config->projectiles[6], "Molotov" } };
-            case ClassId::SensorGrenadeProjectile: return { { config->projectiles[0], config->projectiles[7], "TA Grenade" } };
-            case ClassId::SmokeGrenadeProjectile: return { { config->projectiles[0], config->projectiles[8], "Smoke Grenade" } };
-            case ClassId::SnowballProjectile: return { { config->projectiles[0], config->projectiles[9], "Snowball" } };
+                if (flashbang) return  { { config->_projectiles["All"],  config->_projectiles["Flashbang"], "Flashbang" } };
+                else return  { { config->_projectiles["All"], config->_projectiles["HE Grenade"], "HE Grenade" } };
+            case ClassId::BreachChargeProjectile: return { { config->_projectiles["All"], config->_projectiles["Breach Charge"], "Breach Charge" } };
+            case ClassId::BumpMineProjectile: return { { config->_projectiles["All"], config->_projectiles["Bump Mine"], "Bump Mine" } };
+            case ClassId::DecoyProjectile: return  { { config->_projectiles["All"], config->_projectiles["Decoy Grenade"], "Decoy Grenade" } };
+            case ClassId::MolotovProjectile: return { { config->_projectiles["All"], config->_projectiles["Molotov"], "Molotov" } };
+            case ClassId::SensorGrenadeProjectile: return { { config->_projectiles["All"], config->_projectiles["TA Grenade"], "TA Grenade" } };
+            case ClassId::SmokeGrenadeProjectile: return { { config->_projectiles["All"], config->_projectiles["Smoke Grenade"], "Smoke Grenade" } };
+            case ClassId::SnowballProjectile: return { { config->_projectiles["All"], config->_projectiles["Snowball"], "Snowball" } };
 
-            case ClassId::EconEntity: return { { config->otherEntities[0], config->otherEntities[1], "Defuse Kit" } };
-            case ClassId::Chicken: return { { config->otherEntities[0], config->otherEntities[2], "Chicken" } };
-            case ClassId::PlantedC4: return { { config->otherEntities[0], config->otherEntities[3], "Planted C4" } };
+            case ClassId::EconEntity: return { { config->_otherEntities["All"], config->_otherEntities["Defuse Kit"], "Defuse Kit" } };
+            case ClassId::Chicken: return { { config->_otherEntities["All"], config->_otherEntities["Chicken"], "Chicken" } };
+            case ClassId::PlantedC4: return { { config->_otherEntities["All"], config->_otherEntities["Planted C4"], "Planted C4" } };
             default: return std::nullopt;
             }
         };

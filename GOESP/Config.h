@@ -34,8 +34,8 @@ public:
     std::unordered_map<std::string, Player> allies;
     std::unordered_map<std::string, Player> enemies;
     std::unordered_map<std::string, Weapon> _weapons;
-    std::unordered_map<std::string, Weapon> _projectiles;
-    std::unordered_map<std::string, Weapon> _otherEntities;
+    std::unordered_map<std::string, Shared> _projectiles;
+    std::unordered_map<std::string, Shared> _otherEntities;
     //
 
     ColorToggleThickness reloadProgress{ 5.0f };
