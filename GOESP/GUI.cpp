@@ -103,6 +103,13 @@ void GUI::drawESPTab() noexcept
         }
     };
 
+    constexpr auto getConfigPlayer = [](std::size_t category, std::string item) noexcept -> Player& {
+        switch (category) {
+        case 0: default: return config->allies[item];
+        case 1: return config->enemies[item];
+        }
+    };
+
     if (ImGui::ListBoxHeader("##list", { 170.0f, 300.0f })) {
         constexpr std::array categories{ "Allies", "Enemies", "Weapons", "Projectiles", "Other Entities" };
 
@@ -110,6 +117,52 @@ void GUI::drawESPTab() noexcept
             if (ImGui::Selectable(categories[i], currentCategory == i && currentItem == "All")) {
                 currentCategory = i;
                 currentItem = "All";
+            }
+
+            if (ImGui::BeginDragDropSource()) {
+                if (i < 2)
+                    ImGui::SetDragDropPayload("Player", &getConfigPlayer(i, "All"), sizeof(Player));
+                else if (i == 2)
+                    ImGui::SetDragDropPayload("Weapon", &config->_weapons["All"], sizeof(Weapon));
+                else
+                    ImGui::SetDragDropPayload("Entity", &getConfigShared(i, "All"), sizeof(Shared));
+                ImGui::EndDragDropSource();
+            }
+
+            if (ImGui::BeginDragDropTarget()) {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Player")) {
+                    const auto& data = *(Player*)payload->Data;
+
+                    if (i < 2)
+                        getConfigPlayer(i, "All") = data;
+                    else if (i == 2)
+                        config->_weapons["All"] = data; 
+                    else
+                        getConfigShared(i, "All") = data;
+                }
+
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Weapon")) {
+                    const auto& data = *(Weapon*)payload->Data;
+
+                    if (i < 2)
+                        getConfigPlayer(i, "All") = data;
+                    else if (i == 2)
+                        config->_weapons["All"] = data;
+                    else
+                        getConfigShared(i, "All") = data;
+                }
+
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity")) {
+                    const auto& data = *(Shared*)payload->Data;
+
+                    if (i < 2)
+                        getConfigPlayer(i, "All") = data;
+                    else if (i == 2)
+                        config->_weapons["All"] = data;
+                    else
+                        getConfigShared(i, "All") = data;
+                }
+               ImGui::EndDragDropTarget();
             }
 
             if (getConfigShared(i, "All").enabled)
@@ -136,6 +189,52 @@ void GUI::drawESPTab() noexcept
                     selectedSubItem = false;
                 }
 
+                if (ImGui::BeginDragDropSource()) {
+                    if (i < 2)
+                        ImGui::SetDragDropPayload("Player", &getConfigPlayer(i, items[j]), sizeof(Player));
+                    else if (i == 2)
+                        ImGui::SetDragDropPayload("Weapon", &config->_weapons[items[j]], sizeof(Weapon));
+                    else
+                        ImGui::SetDragDropPayload("Entity", &getConfigShared(i, items[j]), sizeof(Shared));
+                    ImGui::EndDragDropSource();
+                }
+
+                if (ImGui::BeginDragDropTarget()) {
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Player")) {
+                        const auto& data = *(Player*)payload->Data;
+
+                        if (i < 2)
+                            getConfigPlayer(i, items[j]) = data;
+                        else if (i == 2)
+                            config->_weapons[items[j]] = data;
+                        else
+                            getConfigShared(i, items[j]) = data;
+                    }
+
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Weapon")) {
+                        const auto& data = *(Weapon*)payload->Data;
+
+                        if (i < 2)
+                            getConfigPlayer(i, items[j]) = data;
+                        else if (i == 2)
+                            config->_weapons[items[j]] = data;
+                        else
+                            getConfigShared(i, items[j]) = data;
+                    }
+
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity")) {
+                        const auto& data = *(Shared*)payload->Data;
+
+                        if (i < 2)
+                            getConfigPlayer(i, items[j]) = data;
+                        else if (i == 2)
+                            config->_weapons[items[j]] = data;
+                        else
+                            getConfigShared(i, items[j]) = data;
+                    }
+                    ImGui::EndDragDropTarget();
+                }
+
                 if (i != 2 || getConfigShared(i, items[j]).enabled)
                     continue;
 
@@ -159,6 +258,29 @@ void GUI::drawESPTab() noexcept
                         currentCategory = i;
                         currentItem = subItem;
                         selectedSubItem = true;
+                    }
+
+                    if (ImGui::BeginDragDropSource()) {
+                        ImGui::SetDragDropPayload("Weapon", &config->_weapons[subItem], sizeof(Weapon));
+                        ImGui::EndDragDropSource();
+                    }
+
+                    if (ImGui::BeginDragDropTarget()) {
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Player")) {
+                            const auto& data = *(Player*)payload->Data;
+                            config->_weapons[subItem] = data;
+                        }
+
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Weapon")) {
+                            const auto& data = *(Weapon*)payload->Data;
+                            config->_weapons[subItem] = data;
+                        }
+
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity")) {
+                            const auto& data = *(Shared*)payload->Data;
+                            config->_weapons[subItem] = data;
+                        }
+                        ImGui::EndDragDropTarget();
                     }
                 }
 
@@ -214,13 +336,6 @@ void GUI::drawESPTab() noexcept
         sharedConfig.textCullDistance = std::clamp(sharedConfig.textCullDistance, 0.0f, 999.9f);
 
         if (currentCategory < 2) {
-            constexpr auto getConfigPlayer = [](std::size_t category, std::string item) noexcept -> Player& {
-                switch (category) {
-                case 0: default: return config->allies[item];
-                case 1: return config->enemies[item];
-                }
-            };
-
             auto& playerConfig = getConfigPlayer(currentCategory, currentItem);
 
             ImGuiCustom::colorPicker("Weapon", playerConfig.weapon);
