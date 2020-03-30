@@ -64,7 +64,7 @@ Config::Config(const char* folderName) noexcept
     std::sort(std::next(systemFonts.begin()), systemFonts.end());
 }
 
-using json = nlohmann::json;
+using json = nlohmann::basic_json<std::map, std::vector, std::string, bool, std::int64_t, std::uint64_t, float>;
 using value_t = json::value_t;
 
 template <value_t Type, typename T>
