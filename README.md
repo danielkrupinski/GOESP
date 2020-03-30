@@ -1,4 +1,4 @@
-# GOESP
+# GOESP ![Windows](https://github.com/danielkrupinski/GOESP/workflows/Windows/badge.svg?branch=master&event=push)
 Stream-proof ESP hack for CS:GO.
 
 ## Screenshots
