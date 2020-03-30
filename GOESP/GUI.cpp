@@ -90,7 +90,7 @@ void GUI::render() noexcept
 void GUI::drawESPTab() noexcept
 {
     static std::size_t currentCategory;
-    static std::string currentItem;
+    static std::string currentItem = "All";
     static bool selectedSubItem;
 
     constexpr auto getConfigShared = [](std::size_t category, std::string item) noexcept -> Shared& {
