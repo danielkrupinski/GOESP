@@ -505,27 +505,33 @@ void ESP::render(ImDrawList* drawList) noexcept
     }
 
     for (const auto& entity : entities) {
-        constexpr auto dispatchEntity = [](ClassId classId, bool flashbang) -> std::optional<std::tuple<const Shared&, const Shared&, const char*>> {
+        if (const auto projectile = [](ClassId classId, bool flashbang) -> const char* {
             switch (classId) {
             case ClassId::BaseCSGrenadeProjectile:
-                if (flashbang) return  { { config->_projectiles["All"],  config->_projectiles["Flashbang"], "Flashbang" } };
-                else return  { { config->_projectiles["All"], config->_projectiles["HE Grenade"], "HE Grenade" } };
-            case ClassId::BreachChargeProjectile: return { { config->_projectiles["All"], config->_projectiles["Breach Charge"], "Breach Charge" } };
-            case ClassId::BumpMineProjectile: return { { config->_projectiles["All"], config->_projectiles["Bump Mine"], "Bump Mine" } };
-            case ClassId::DecoyProjectile: return  { { config->_projectiles["All"], config->_projectiles["Decoy Grenade"], "Decoy Grenade" } };
-            case ClassId::MolotovProjectile: return { { config->_projectiles["All"], config->_projectiles["Molotov"], "Molotov" } };
-            case ClassId::SensorGrenadeProjectile: return { { config->_projectiles["All"], config->_projectiles["TA Grenade"], "TA Grenade" } };
-            case ClassId::SmokeGrenadeProjectile: return { { config->_projectiles["All"], config->_projectiles["Smoke Grenade"], "Smoke Grenade" } };
-            case ClassId::SnowballProjectile: return { { config->_projectiles["All"], config->_projectiles["Snowball"], "Snowball" } };
-
-            case ClassId::EconEntity: return { { config->_otherEntities["All"], config->_otherEntities["Defuse Kit"], "Defuse Kit" } };
-            case ClassId::Chicken: return { { config->_otherEntities["All"], config->_otherEntities["Chicken"], "Chicken" } };
-            case ClassId::PlantedC4: return { { config->_otherEntities["All"], config->_otherEntities["Planted C4"], "Planted C4" } };
-            default: return std::nullopt;
+                if (flashbang) return "Flashbang";
+                else return "HE Grenade";
+            case ClassId::BreachChargeProjectile: return "Breach Charge";
+            case ClassId::BumpMineProjectile: return "Bump Mine";
+            case ClassId::DecoyProjectile: return "Decoy Grenade";
+            case ClassId::MolotovProjectile: return "Molotov";
+            case ClassId::SensorGrenadeProjectile: return "TA Grenade";
+            case ClassId::SmokeGrenadeProjectile: return "Smoke Grenade";
+            case ClassId::SnowballProjectile: return "Snowball";
+            default: return nullptr;
             }
-        };
+          }(entity.classId, entity.flashbang)) {
+            renderEntityEsp(drawList, entity, config->_projectiles["All"], config->_projectiles[projectile], projectile);
+        }
 
-        if (const auto e = dispatchEntity(entity.classId, entity.flashbang))
-            renderEntityEsp(drawList, entity, std::get<0>(*e), std::get<1>(*e), std::get<2>(*e));
+        if (const auto otherEntity = [](ClassId classId) -> const char* {
+            switch (classId) {
+            case ClassId::EconEntity: return "Defuse Kit";
+            case ClassId::Chicken: return "Chicken";
+            case ClassId::PlantedC4: return "Planted C4";
+            default: return nullptr;
+            }
+          }(entity.classId)) {
+            renderEntityEsp(drawList, entity, config->_otherEntities["All"], config->_otherEntities[otherEntity], otherEntity);
+        }
     }
 }
