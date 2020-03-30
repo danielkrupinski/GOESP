@@ -109,6 +109,12 @@ struct Player : Shared {
             && flashDuration == p.flashDuration
             && audibleOnly == p.audibleOnly;
     }
+
+    auto& operator=(const Shared& s)
+    {
+        static_cast<Shared&>(*this) = s;
+        return *this;
+    }
 };
 
 struct Weapon : Shared {
@@ -118,6 +124,12 @@ struct Weapon : Shared {
     {
         return static_cast<Shared>(*this) == static_cast<Shared>(w)
             && ammo == w.ammo;
+    }
+
+    auto& operator=(const Shared& s)
+    {
+        static_cast<Shared&>(*this) = s;
+        return *this;
     }
 };
 
