@@ -72,6 +72,20 @@ struct EntityData : BaseData {
     bool flashbang;
 };
 
+struct ProjectileData : EntityData {
+    ProjectileData(Entity* entity) noexcept : EntityData{ entity }
+    {
+        handle = entity->handle();
+    }
+
+    constexpr auto operator==(int otherHandle) const noexcept
+    {
+        return handle == otherHandle;
+    }
+    int handle;
+    std::vector<std::pair<float, Vector>> trajectory;
+};
+
 struct PlayerData : BaseData {
     PlayerData(Entity* entity) noexcept : BaseData{ entity }
     {
