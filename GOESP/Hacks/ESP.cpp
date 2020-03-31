@@ -20,6 +20,7 @@
 #include "../SDK/WeaponInfo.h"
 #include "../SDK/WeaponId.h"
 
+#include <list>
 #include <mutex>
 #include <optional>
 #include <tuple>
@@ -146,6 +147,7 @@ struct WeaponData : BaseData {
 static std::vector<PlayerData> players;
 static std::vector<WeaponData> weapons;
 static std::vector<EntityData> entities;
+static std::list<ProjectileData> projectiles;
 static std::mutex dataMutex;
 
 void ESP::collectData() noexcept
@@ -192,13 +194,23 @@ void ESP::collectData() noexcept
             case ClassId::SensorGrenadeProjectile:
             case ClassId::SmokeGrenadeProjectile:
             case ClassId::SnowballProjectile:
-
+                if (const auto it = std::find(projectiles.begin(), projectiles.end(), entity->handle()); it != projectiles.end()) {
+                    if (const auto pos = entity->getAbsOrigin(); it->trajectory.size() < 1 || it->trajectory[it->trajectory.size() - 1].second != pos)
+                        it->trajectory.emplace_back(memory->globalVars->realtime, pos);
+                } else {
+                    projectiles.emplace_back(entity);
+                }
             case ClassId::EconEntity:
             case ClassId::Chicken:
             case ClassId::PlantedC4:
                 entities.emplace_back(entity);
             }
         }
+    }
+
+    for (auto it = projectiles.begin(); it != projectiles.end(); ++it) {
+        if (!interfaces->entityList->getEntityFromHandle(it->handle) && (it->trajectory.size() < 1 || it->trajectory[it->trajectory.size() - 1].first + 60.0f < memory->globalVars->realtime))
+            projectiles.erase(it);
     }
 }
 
