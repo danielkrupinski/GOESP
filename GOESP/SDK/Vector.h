@@ -5,11 +5,6 @@
 #include <cmath>
 
 struct Vector {
-    constexpr operator bool() const noexcept
-    {
-        return x || y || z;
-    }
-
     constexpr Vector& operator=(float array[3]) noexcept
     {
         x = array[0];
