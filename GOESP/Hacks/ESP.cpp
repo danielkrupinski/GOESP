@@ -45,10 +45,11 @@ static bool worldToScreen(const Vector& in, ImVec2& out) noexcept
 struct BaseData {
     BaseData(Entity* entity) noexcept
     {
-        if (!localPlayer)
-            return;
-
-        distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
+        if (localPlayer)
+            distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
+        else
+            distanceToLocal = 0.0f;
+        
         obbMins = entity->getCollideable()->obbMins();
         obbMaxs = entity->getCollideable()->obbMaxs();
         coordinateFrame = entity->toWorldTransform();
