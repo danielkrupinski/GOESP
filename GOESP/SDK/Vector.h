@@ -5,6 +5,11 @@
 #include <cmath>
 
 struct Vector {
+    constexpr auto operator==(const Vector& v) const noexcept
+    {
+        return x == v.x && y == v.y && z == v.z;
+    }
+
     constexpr Vector& operator=(float array[3]) noexcept
     {
         x = array[0];
