@@ -133,6 +133,23 @@ struct Weapon : Shared {
     }
 };
 
+struct Projectile : Shared {
+    ColorToggleThickness trajectory;
+    float trajectoryTime = 10.0f;
+
+    auto operator==(const Projectile& p) const
+    {
+        return static_cast<Shared>(*this) == static_cast<Shared>(p)
+            && trajectoryTime == p.trajectoryTime;
+    }
+
+    auto& operator=(const Shared& s)
+    {
+        static_cast<Shared&>(*this) = s;
+        return *this;
+    }
+};
+
 struct PurchaseList {
     bool enabled = false;
     bool onlyDuringFreezeTime = false;
