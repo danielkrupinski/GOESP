@@ -613,3 +613,10 @@ void ESP::render(ImDrawList* drawList) noexcept
         }
     }
 }
+
+void ESP::clearProjectileList() noexcept
+{
+    std::scoped_lock _{ dataMutex };
+    
+    projectiles.clear();
+}
