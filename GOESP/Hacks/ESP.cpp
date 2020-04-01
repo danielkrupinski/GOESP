@@ -90,6 +90,9 @@ struct ProjectileData : EntityData {
         obbMins = projectile->getCollideable()->obbMins();
         obbMaxs = projectile->getCollideable()->obbMaxs();
         coordinateFrame = projectile->toWorldTransform();
+
+        if (const auto pos = projectile->getAbsOrigin(); trajectory.size() < 1 || trajectory[trajectory.size() - 1].second != pos)
+            trajectory.emplace_back(memory->globalVars->realtime, pos);
     }
 
     constexpr auto operator==(int otherHandle) const noexcept
@@ -211,13 +214,10 @@ void ESP::collectData() noexcept
             case ClassId::SensorGrenadeProjectile:
             case ClassId::SmokeGrenadeProjectile:
             case ClassId::SnowballProjectile:
-                if (const auto it = std::find(projectiles.begin(), projectiles.end(), entity->handle()); it != projectiles.end()) {
+                if (const auto it = std::find(projectiles.begin(), projectiles.end(), entity->handle()); it != projectiles.end())
                     it->update(entity);
-                    if (const auto pos = entity->getAbsOrigin(); it->trajectory.size() < 1 || it->trajectory[it->trajectory.size() - 1].second != pos)
-                        it->trajectory.emplace_back(memory->globalVars->realtime, pos);
-                } else {
+                else
                     projectiles.emplace_back(entity);
-                }
                 break;
             case ClassId::EconEntity:
             case ClassId::Chicken:
