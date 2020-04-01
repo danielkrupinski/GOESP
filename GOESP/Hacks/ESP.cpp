@@ -477,7 +477,7 @@ static void renderProjectileEsp(ImDrawList* drawList, const ProjectileData& proj
     if (config.enabled) {
         if (!projectileData.exploded)
             renderEntityBox(drawList, projectileData, name, config);
-        drawProjectileTrajectory(drawList, config.trajectory, config.trajectoryTime, projectileData.trajectory);
+        drawProjectileTrajectory(drawList, config.trail, config.trailTime, projectileData.trajectory);
     }
 }
 

@@ -134,13 +134,14 @@ struct Weapon : Shared {
 };
 
 struct Projectile : Shared {
-    ColorToggleThickness trajectory;
-    float trajectoryTime = 10.0f;
+    ColorToggleThickness trail;
+    float trailTime = 10.0f;
 
     auto operator==(const Projectile& p) const
     {
         return static_cast<Shared>(*this) == static_cast<Shared>(p)
-            && trajectoryTime == p.trajectoryTime;
+            && trail == p.trail
+            && trailTime == p.trailTime;
     }
 
     auto& operator=(const Shared& s)
