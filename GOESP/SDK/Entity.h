@@ -111,6 +111,7 @@ public:
 
     PROP(ownerEntity, 0x14C, int)                                                  // CBaseEntity->m_hOwnerEntity
 
+    PROP(inBombZone, 0x3954, bool)                                                 // CCSPlayer->m_bInBombZone
     PROP(flashDuration, 0xA40C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
     PROP(shotsFired, 0xA380, int)                                                  // CCSPlayer->m_iShotsFired
         
