@@ -135,7 +135,7 @@ struct Weapon : Shared {
 
 struct Projectile : Shared {
     ColorToggleThickness trail;
-    float trailTime = 10.0f;
+    float trailTime = 2.0f;
 
     auto operator==(const Projectile& p) const
     {
