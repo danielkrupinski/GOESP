@@ -201,6 +201,7 @@ void ESP::collectData() noexcept
                 } else {
                     projectiles.emplace_back(entity);
                 }
+                break;
             case ClassId::EconEntity:
             case ClassId::Chicken:
             case ClassId::PlantedC4:
@@ -407,6 +408,22 @@ static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, 
     ImGui::PopFont();
 }
 
+static void drawProjectileTrajectory(ImDrawList* drawList, const ColorToggleThickness& config, float trajectoryTime, const std::vector<std::pair<float, Vector>>& trajectory) noexcept
+{
+    if (!config.enabled)
+        return;
+
+    std::vector<ImVec2> points;
+
+    for (const auto& [time, point] : trajectory) {
+        if (ImVec2 pos; time + trajectoryTime >= memory->globalVars->realtime && worldToScreen(point, pos))
+            points.push_back(pos);
+    }
+
+    const auto color = Helpers::calculateColor(config, memory->globalVars->realtime);
+    drawList->AddPolyline(points.data(), points.size(), color, false, config.thickness);
+}
+
 static constexpr bool renderPlayerEsp(ImDrawList* drawList, const PlayerData& playerData, const Player& playerConfig) noexcept
 {
     if (playerConfig.enabled && (!playerConfig.audibleOnly || playerData.audible)) {
@@ -429,6 +446,16 @@ static void renderEntityEsp(ImDrawList* drawList, const EntityData& entityData, 
 
     if (config.enabled) {
         renderEntityBox(drawList, entityData, name, config);
+    }
+}
+
+static void renderProjectileEsp(ImDrawList* drawList, const ProjectileData& projectileData, const Projectile& parentConfig, const Projectile& itemConfig, const char* name) noexcept
+{
+    const auto& config = parentConfig.enabled ? parentConfig : itemConfig;
+
+    if (config.enabled) {
+        renderEntityBox(drawList, projectileData, name, config);
+        drawProjectileTrajectory(drawList, config.trajectory, config.trajectoryTime, projectileData.trajectory);
     }
 }
 
@@ -532,7 +559,20 @@ void ESP::render(ImDrawList* drawList) noexcept
     }
 
     for (const auto& entity : entities) {
-        if (const auto projectile = [](ClassId classId, bool flashbang) -> const char* {
+        if (const auto otherEntity = [](ClassId classId) -> const char* {
+            switch (classId) {
+            case ClassId::EconEntity: return "Defuse Kit";
+            case ClassId::Chicken: return "Chicken";
+            case ClassId::PlantedC4: return "Planted C4";
+            default: return nullptr;
+            }
+          }(entity.classId)) {
+            renderEntityEsp(drawList, entity, config->_otherEntities["All"], config->_otherEntities[otherEntity], otherEntity);
+        }
+    }
+
+    for (const auto& projectile : projectiles) {
+        if (const auto name = [](ClassId classId, bool flashbang) -> const char* {
             switch (classId) {
             case ClassId::BaseCSGrenadeProjectile:
                 if (flashbang) return "Flashbang";
@@ -546,19 +586,8 @@ void ESP::render(ImDrawList* drawList) noexcept
             case ClassId::SnowballProjectile: return "Snowball";
             default: return nullptr;
             }
-          }(entity.classId, entity.flashbang)) {
-            renderEntityEsp(drawList, entity, config->_projectiles["All"], config->_projectiles[projectile], projectile);
-        }
-
-        if (const auto otherEntity = [](ClassId classId) -> const char* {
-            switch (classId) {
-            case ClassId::EconEntity: return "Defuse Kit";
-            case ClassId::Chicken: return "Chicken";
-            case ClassId::PlantedC4: return "Planted C4";
-            default: return nullptr;
-            }
-          }(entity.classId)) {
-            renderEntityEsp(drawList, entity, config->_otherEntities["All"], config->_otherEntities[otherEntity], otherEntity);
+          }(projectile.classId, projectile.flashbang)) {
+            renderProjectileEsp(drawList, projectile, config->_projectiles["All"], config->_projectiles[name], name);
         }
     }
 }
