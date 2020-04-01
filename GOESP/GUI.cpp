@@ -376,6 +376,9 @@ void GUI::drawESPTab() noexcept
                 ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
         } else if (currentCategory == 3) {
             ImGuiCustom::colorPicker("Trajectory", config->_projectiles[currentItem].trajectory);
+            ImGui::SetNextItemWidth(95.0f);
+            ImGui::InputFloat("Trajectory Time", &config->_projectiles[currentItem].trajectoryTime, 0.1f, 0.5f, "%.1fs");
+            config->_projectiles[currentItem].trajectoryTime = std::clamp(config->_projectiles[currentItem].trajectoryTime, 1.0f, 60.0f);
         }
     }
 
