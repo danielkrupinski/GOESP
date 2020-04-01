@@ -75,15 +75,28 @@ struct EntityData : BaseData {
 };
 
 struct ProjectileData : EntityData {
-    ProjectileData(Entity* entity) noexcept : EntityData{ entity }
+    ProjectileData(Entity* projectile) noexcept : EntityData{ projectile }
     {
-        handle = entity->handle();
+        handle = projectile->handle();
+    }
+
+    void update(Entity* projectile) noexcept
+    {
+        if (localPlayer)
+            distanceToLocal = (localPlayer->getAbsOrigin() - projectile->getAbsOrigin()).length();
+        else
+            distanceToLocal = 0.0f;
+
+        obbMins = projectile->getCollideable()->obbMins();
+        obbMaxs = projectile->getCollideable()->obbMaxs();
+        coordinateFrame = projectile->toWorldTransform();
     }
 
     constexpr auto operator==(int otherHandle) const noexcept
     {
         return handle == otherHandle;
     }
+    bool exploded = false;
     int handle;
     std::vector<std::pair<float, Vector>> trajectory;
 };
@@ -186,8 +199,11 @@ void ESP::collectData() noexcept
         } else {
             switch (entity->getClientClass()->classId) {
             case ClassId::BaseCSGrenadeProjectile:
-                if (entity->grenadeExploded())
+                if (entity->grenadeExploded()) {
+                    if (const auto it = std::find(projectiles.begin(), projectiles.end(), entity->handle()); it != projectiles.end())
+                        it->exploded = true;
                     break;
+                }
             case ClassId::BreachChargeProjectile:
             case ClassId::BumpMineProjectile:
             case ClassId::DecoyProjectile:
@@ -196,6 +212,7 @@ void ESP::collectData() noexcept
             case ClassId::SmokeGrenadeProjectile:
             case ClassId::SnowballProjectile:
                 if (const auto it = std::find(projectiles.begin(), projectiles.end(), entity->handle()); it != projectiles.end()) {
+                    it->update(entity);
                     if (const auto pos = entity->getAbsOrigin(); it->trajectory.size() < 1 || it->trajectory[it->trajectory.size() - 1].second != pos)
                         it->trajectory.emplace_back(memory->globalVars->realtime, pos);
                 } else {
@@ -211,8 +228,12 @@ void ESP::collectData() noexcept
     }
 
     for (auto it = projectiles.begin(); it != projectiles.end(); ++it) {
-        if (!interfaces->entityList->getEntityFromHandle(it->handle) && (it->trajectory.size() < 1 || it->trajectory[it->trajectory.size() - 1].first + 60.0f < memory->globalVars->realtime))
-            projectiles.erase(it);
+        if (!interfaces->entityList->getEntityFromHandle(it->handle)) {
+            it->exploded = true;
+
+            if (it->trajectory.size() < 1 || it->trajectory[it->trajectory.size() - 1].first + 60.0f < memory->globalVars->realtime)
+                projectiles.erase(it);
+        }
     }
 }
 
@@ -454,7 +475,8 @@ static void renderProjectileEsp(ImDrawList* drawList, const ProjectileData& proj
     const auto& config = parentConfig.enabled ? parentConfig : itemConfig;
 
     if (config.enabled) {
-        renderEntityBox(drawList, projectileData, name, config);
+        if (!projectileData.exploded)
+            renderEntityBox(drawList, projectileData, name, config);
         drawProjectileTrajectory(drawList, config.trajectory, config.trajectoryTime, projectileData.trajectory);
     }
 }
