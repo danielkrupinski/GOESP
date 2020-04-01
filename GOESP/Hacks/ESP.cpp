@@ -64,19 +64,18 @@ struct EntityData : BaseData {
     EntityData(Entity* entity) noexcept : BaseData{ entity }
     {
         classId = entity->getClientClass()->classId;
-
-        if (const auto model = entity->getModel(); model && std::strstr(model->name, "flashbang"))
-            flashbang = true;
-        else
-            flashbang = false;
     }
     ClassId classId;
-    bool flashbang;
 };
 
 struct ProjectileData : EntityData {
     ProjectileData(Entity* projectile) noexcept : EntityData{ projectile }
     {
+        if (const auto model = projectile->getModel(); model && std::strstr(model->name, "flashbang"))
+            flashbang = true;
+        else
+            flashbang = false;
+
         handle = projectile->handle();
     }
 
@@ -99,6 +98,7 @@ struct ProjectileData : EntityData {
     {
         return handle == otherHandle;
     }
+    bool flashbang;
     bool exploded = false;
     int handle;
     std::vector<std::pair<float, Vector>> trajectory;
