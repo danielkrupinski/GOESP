@@ -73,6 +73,7 @@ void GUI::render() noexcept
             ImGui::Checkbox("Show Prices", &config->purchaseList.showPrices);
             ImGui::EndPopup();
         }
+        ImGui::Checkbox("Bomb Zone Hint", &config->bombZoneHint);
         ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Configs")) {
