@@ -34,22 +34,25 @@ struct LocalPlayerData {
 
         exists = true;
         alive = localPlayer->isAlive();
+        inBombZone = localPlayer->inBombZone();
 
         if (const auto activeWeapon = localPlayer->getActiveWeapon()) {
             inReload = activeWeapon->isInReload();
+            shooting = localPlayer->shotsFired() > 0;
+
             if (const auto weaponInfo = activeWeapon->getWeaponInfo())
                 fullAutoWeapon = weaponInfo->fullAuto;
 
-            shooting = localPlayer->shotsFired() > 0;
             nextWeaponAttack = activeWeapon->nextPrimaryAttack();
         }
         aimPunch = localPlayer->getAimPunch();
     }
     bool exists = false;
     bool alive = false;
+    bool inBombZone = false;
     bool inReload = false;
-    bool fullAutoWeapon = false;
     bool shooting = false;
+    bool fullAutoWeapon = false;
     float nextWeaponAttack = 0.0f;
     Vector aimPunch;
 };
@@ -169,7 +172,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
         
         ImGui::SetNextWindowSize({ 100.0f, 100.0f }, ImGuiCond_Once);
         ImGui::Begin("Purchases", nullptr, ImGuiWindowFlags_NoCollapse | (gui->open ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoInputs));
-
+        
         if (config->purchaseList.mode == PurchaseList::Details) {
             for (const auto& [playerName, purchases] : purchaseDetails) {
                 std::string s = std::accumulate(purchases.first.begin(), purchases.first.end(), std::string{ }, [](std::string s, const std::string& piece) { return s += piece + ", "; });
@@ -192,4 +195,23 @@ void Misc::purchaseList(GameEvent* event) noexcept
         }
         ImGui::End();
     }
+}
+
+void Misc::drawBombZoneHint() noexcept
+{
+    if (!config->bombZoneHint)
+        return;
+
+    std::scoped_lock _{ dataMutex };
+
+    if (!localPlayerData.exists || !localPlayerData.alive)
+        return;
+
+    if (!gui->open && !localPlayerData.inBombZone)
+        return;
+
+    ImGui::SetNextWindowSize({});
+    ImGui::Begin("Bomb Zone Hint", nullptr, ImGuiWindowFlags_NoDecoration | (gui->open ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoInputs));
+    ImGui::TextUnformatted("You're in bomb zone!");
+    ImGui::End();
 }
