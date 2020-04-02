@@ -3,15 +3,15 @@ Stream-proof ESP hack for CS:GO.
 
 ## Showcase
 
-Menu
+### Menu
 
 ![Menu](https://i.imgur.com/eJ1oDaL.png)
 
-Purchase List
+### Purchase List
 
 ![Purchase List](https://i.imgur.com/qXvoe6Y.png)
 
-Drag & Drop
+### Drag & Drop
 
 ![Drag & Drop](https://i.imgur.com/yDhV2eQ.gif)
 
