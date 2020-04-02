@@ -85,6 +85,7 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     Misc::drawReloadProgress(ImGui::GetBackgroundDrawList());
     Misc::drawRecoilCrosshair(ImGui::GetBackgroundDrawList());
     Misc::purchaseList();
+    Misc::drawBombZoneHint();
 
     gui->render();
 
