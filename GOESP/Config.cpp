@@ -210,6 +210,7 @@ void Config::load() noexcept
     read<value_t::object>(j, "Reload Progress", reloadProgress);
     read<value_t::object>(j, "Recoil Crosshair", recoilCrosshair);
     read<value_t::boolean>(j, "Normalize Player Names", normalizePlayerNames);
+    read<value_t::boolean>(j, "Bomb Zone Hint", bombZoneHint);
     read<value_t::object>(j, "Purchase List", purchaseList);
 }
 
@@ -379,6 +380,8 @@ void Config::save() noexcept
         j["Recoil Crosshair"] = recoilCrosshair;
     if (normalizePlayerNames != true)
         j["Normalize Player Names"] = normalizePlayerNames;
+    if (bombZoneHint != false)
+        j["Bomb Zone Hint"] = bombZoneHint;
     if (purchaseList != PurchaseList{})
         j["Purchase List"] = purchaseList;
 
