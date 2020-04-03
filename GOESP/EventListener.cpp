@@ -5,7 +5,6 @@
 #include "Hacks/ESP.h"
 #include "Hacks/Misc.h"
 #include "Interfaces.h"
-#include "Memory.h"
 
 EventListener::EventListener() noexcept
 {
