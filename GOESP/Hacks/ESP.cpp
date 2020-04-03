@@ -486,19 +486,10 @@ void ESP::render(ImDrawList* drawList) noexcept
     std::scoped_lock _{ dataMutex };
 
     for (const auto& player : players) {
-        if (!player.enemy) {
-            if (!renderPlayerEsp(drawList, player, config->allies["All"])) {
-                if (player.visible)
-                    renderPlayerEsp(drawList, player, config->allies["Visible"]);
-                else
-                    renderPlayerEsp(drawList, player, config->allies["Occluded"]);
-            }
-        } else if (!renderPlayerEsp(drawList, player, config->enemies["All"])) {
-            if (player.visible)
-                renderPlayerEsp(drawList, player, config->enemies["Visible"]);
-            else
-                renderPlayerEsp(drawList, player, config->enemies["Occluded"]);
-        }
+        auto& playerConfig = player.enemy ? config->enemies : config->allies;
+
+        if (!renderPlayerEsp(drawList, player, playerConfig["All"]))
+            renderPlayerEsp(drawList, player, playerConfig[player.visible ? "Visible" : "Occluded"]);
     }
 
     for (const auto& weapon : weapons) {
