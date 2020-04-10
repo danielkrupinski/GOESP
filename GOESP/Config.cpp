@@ -171,8 +171,8 @@ static void from_json(const json& j, Projectile& p)
 {
     from_json(j, static_cast<Shared&>(p));
 
-    read<value_t::object>(j, "Trail", p.trail);
-    read_number(j, "Trail Time", p.trailTime);
+  //  read<value_t::object>(j, "Trail", p.trail);
+   // read_number(j, "Trail Time", p.trailTime);
 }
 
 static void from_json(const json& j, Player& p)
@@ -330,10 +330,10 @@ static void to_json(json& j, const Projectile& p)
 
     const Projectile dummy;
 
-    if (p.trail != dummy.trail)
-        j["Trail"] = p.trail;
-    if (p.trailTime != dummy.trailTime)
-        j["Trail Time"] = p.trailTime;
+  //  if (p.trail != dummy.trail)
+     //   j["Trail"] = p.trail;
+    //if (p.trailTime != dummy.trailTime)
+    //    j["Trail Time"] = p.trailTime;
 }
 
 static void to_json(json& j, const PurchaseList& pl)

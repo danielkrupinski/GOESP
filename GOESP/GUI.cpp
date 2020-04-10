@@ -376,11 +376,30 @@ void GUI::drawESPTab() noexcept
            // if (currentItem != 7)
                 ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
         } else if (currentCategory == 3) {
-            ImGuiCustom::colorPicker("Trail", config->_projectiles[currentItem].trail);
-            ImGui::SameLine(spacing);
-            ImGui::SetNextItemWidth(95.0f);
-            ImGui::InputFloat("Trail Time", &config->_projectiles[currentItem].trailTime, 0.1f, 0.5f, "%.1fs");
-            config->_projectiles[currentItem].trailTime = std::clamp(config->_projectiles[currentItem].trailTime, 1.0f, 60.0f);
+            ImGui::Checkbox("Trail", &config->_projectiles[currentItem].trail.enabled);
+            ImGui::SameLine();
+           
+            if (ImGui::Button("..."))
+                ImGui::OpenPopup("##trail");
+
+            if (ImGui::BeginPopup("##trail")) {
+                constexpr auto trailPicker = [](const char* name, ColorToggleThickness& color, float& time) noexcept {
+                    ImGui::PushID(name);
+                    ImGuiCustom::colorPicker(name, color);
+                    ImGui::SameLine(150.0f);
+                    ImGui::SetNextItemWidth(95.0f);
+                    ImGui::InputFloat("Time", &time, 0.1f, 0.5f, "%.1fs");
+                    time = std::clamp(time, 1.0f, 60.0f);
+                    ImGui::PopID();
+                };
+
+                trailPicker("Local Player", config->_projectiles[currentItem].trail.localPlayer, config->_projectiles[currentItem].trail.localPlayerTime);
+                trailPicker("Allies", config->_projectiles[currentItem].trail.allies, config->_projectiles[currentItem].trail.alliesTime);
+                trailPicker("Enemies", config->_projectiles[currentItem].trail.enemies, config->_projectiles[currentItem].trail.enemiesTime);
+                ImGui::EndPopup();
+            }
+
+            
         }
     }
 

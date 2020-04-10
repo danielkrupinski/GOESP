@@ -76,6 +76,13 @@ struct ProjectileData : EntityData {
         else
             flashbang = false;
 
+        if (const auto thrower = interfaces->entityList->getEntityFromHandle(projectile->thrower()); thrower && localPlayer) {
+            if (thrower == localPlayer.get())
+                thrownByLocalPlayer = true;
+            else
+                thrownByEnemy = memory->isOtherEnemy(localPlayer.get(), thrower);
+        }
+
         handle = projectile->handle();
     }
 
@@ -100,6 +107,8 @@ struct ProjectileData : EntityData {
     }
     bool flashbang;
     bool exploded = false;
+    bool thrownByLocalPlayer = false;
+    bool thrownByEnemy = false;
     int handle;
     std::vector<std::pair<float, Vector>> trajectory;
 };
@@ -477,7 +486,13 @@ static void renderProjectileEsp(ImDrawList* drawList, const ProjectileData& proj
     if (config.enabled) {
         if (!projectileData.exploded)
             renderEntityBox(drawList, projectileData, name, config);
-        drawProjectileTrajectory(drawList, config.trail, config.trailTime, projectileData.trajectory);
+
+        if (projectileData.thrownByLocalPlayer)
+            drawProjectileTrajectory(drawList, config.trail.localPlayer, config.trail.localPlayerTime, projectileData.trajectory);
+        else if (!projectileData.thrownByEnemy)
+            drawProjectileTrajectory(drawList, config.trail.allies, config.trail.alliesTime, projectileData.trajectory);
+        else
+            drawProjectileTrajectory(drawList, config.trail.enemies, config.trail.enemiesTime, projectileData.trajectory);
     }
 }
 
@@ -493,7 +508,6 @@ void ESP::render(ImDrawList* drawList) noexcept
     }
 
     for (const auto& weapon : weapons) {
-
         if (!config->_weapons["All"].enabled) {
             renderWeaponEsp(drawList, weapon,
                 config->_weapons[([](WeaponType type) constexpr noexcept {
