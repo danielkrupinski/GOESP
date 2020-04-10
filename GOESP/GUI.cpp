@@ -122,10 +122,10 @@ void GUI::drawESPTab() noexcept
 
             if (ImGui::BeginDragDropSource()) {
                 switch (i) {
-                case 0: case 1: ImGui::SetDragDropPayload("Player", &getConfigPlayer(i, "All"), sizeof(Player)); break;
-                case 2: ImGui::SetDragDropPayload("Weapon", &config->_weapons["All"], sizeof(Weapon)); break;
-                case 3: ImGui::SetDragDropPayload("Projectile", &config->_projectiles["All"], sizeof(Projectile)); break;
-                default: ImGui::SetDragDropPayload("Entity", &getConfigShared(i, "All"), sizeof(Shared)); break;
+                case 0: case 1: ImGui::SetDragDropPayload("Player", &getConfigPlayer(i, "All"), sizeof(Player), ImGuiCond_Once); break;
+                case 2: ImGui::SetDragDropPayload("Weapon", &config->_weapons["All"], sizeof(Weapon), ImGuiCond_Once); break;
+                case 3: ImGui::SetDragDropPayload("Projectile", &config->_projectiles["All"], sizeof(Projectile), ImGuiCond_Once); break;
+                default: ImGui::SetDragDropPayload("Entity", &getConfigShared(i, "All"), sizeof(Shared), ImGuiCond_Once); break;
                 }
                 ImGui::EndDragDropSource();
             }
@@ -203,10 +203,10 @@ void GUI::drawESPTab() noexcept
 
                 if (ImGui::BeginDragDropSource()) {
                     switch (i) {
-                    case 0: case 1: ImGui::SetDragDropPayload("Player", &getConfigPlayer(i, items[j]), sizeof(Player)); break;
-                    case 2: ImGui::SetDragDropPayload("Weapon", &config->_weapons[items[j]], sizeof(Weapon)); break;
-                    case 3: ImGui::SetDragDropPayload("Projectile", &config->_projectiles[items[j]], sizeof(Projectile)); break;
-                    default: ImGui::SetDragDropPayload("Entity", &getConfigShared(i, items[j]), sizeof(Shared)); break;
+                    case 0: case 1: ImGui::SetDragDropPayload("Player", &getConfigPlayer(i, items[j]), sizeof(Player), ImGuiCond_Once); break;
+                    case 2: ImGui::SetDragDropPayload("Weapon", &config->_weapons[items[j]], sizeof(Weapon), ImGuiCond_Once); break;
+                    case 3: ImGui::SetDragDropPayload("Projectile", &config->_projectiles[items[j]], sizeof(Projectile), ImGuiCond_Once); break;
+                    default: ImGui::SetDragDropPayload("Entity", &getConfigShared(i, items[j]), sizeof(Shared), ImGuiCond_Once); break;
                     }
                     ImGui::EndDragDropSource();
                 }
@@ -284,7 +284,7 @@ void GUI::drawESPTab() noexcept
                     }
 
                     if (ImGui::BeginDragDropSource()) {
-                        ImGui::SetDragDropPayload("Weapon", &config->_weapons[subItem], sizeof(Weapon));
+                        ImGui::SetDragDropPayload("Weapon", &config->_weapons[subItem], sizeof(Weapon), ImGuiCond_Once);
                         ImGui::EndDragDropSource();
                     }
 
