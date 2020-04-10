@@ -133,6 +133,27 @@ struct Weapon : Shared {
     }
 };
 
+struct Trail {
+    bool enabled = false;
+    float localPlayerTime = 2.0f;
+    float alliesTime = 2.0f;
+    float enemiesTime = 2.0f;
+    ColorToggleThickness localPlayer;
+    ColorToggleThickness allies;
+    ColorToggleThickness enemies;
+
+    auto operator==(const Trail& t) const
+    {
+        return enabled == t.enabled
+            && localPlayerTime == t.localPlayerTime
+            && alliesTime == t.alliesTime
+            && enemiesTime == t.enemiesTime
+            && localPlayer == t.localPlayer
+            && allies == t.allies
+            && enemies == t.enemies;
+    }
+};
+
 struct Projectile : Shared {
     ColorToggleThickness trail;
     float trailTime = 2.0f;
