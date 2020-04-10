@@ -115,5 +115,6 @@ public:
     PROP(flashDuration, 0xA40C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
     PROP(shotsFired, 0xA380, int)                                                  // CCSPlayer->m_iShotsFired
         
+    PROP(thrower, 0x29A0, int)                                                     // CBaseGrenade->m_hThrower
     PROP(grenadeExploded, 0x29E8, bool)
 };
