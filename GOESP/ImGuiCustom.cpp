@@ -11,6 +11,11 @@ void ImGuiCustom::colorPopup(const char* name, std::array<float, 4>& color, bool
         ImGui::SameLine(0.0f, 5.0f);
     }
     bool openPopup = ImGui::ColorButton("##btn", color, ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_AlphaPreview);
+    if (ImGui::BeginDragDropTarget()) {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_4F))
+            color = *(std::array<float, 4>*)payload->Data;
+        ImGui::EndDragDropTarget();
+    }
     ImGui::SameLine(0.0f, 5.0f);
     ImGui::TextUnformatted(name);
 
