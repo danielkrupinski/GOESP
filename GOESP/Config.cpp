@@ -167,12 +167,22 @@ static void from_json(const json& j, Weapon& w)
     read<value_t::object>(j, "Ammo", w.ammo);
 }
 
+static void from_json(const json& j, Trail& t)
+{
+    read<value_t::boolean>(j, "Enabled", t.enabled);
+    read_number(j, "Local Player Time", t.localPlayerTime);
+    read_number(j, "Allies Time", t.alliesTime);
+    read_number(j, "Enemies Time", t.enemiesTime);
+    read<value_t::object>(j, "Local Player", t.localPlayer);
+    read<value_t::object>(j, "Allies", t.allies);
+    read<value_t::object>(j, "Enemies", t.enemies);
+}
+
 static void from_json(const json& j, Projectile& p)
 {
     from_json(j, static_cast<Shared&>(p));
 
-  //  read<value_t::object>(j, "Trail", p.trail);
-   // read_number(j, "Trail Time", p.trailTime);
+    read<value_t::object>(j, "Trail", p.trail);
 }
 
 static void from_json(const json& j, Player& p)
@@ -324,16 +334,34 @@ static void to_json(json& j, const Weapon& w)
         j["Ammo"] = w.ammo;
 }
 
+static void to_json(json& j, const Trail& t)
+{
+    const Trail dummy;
+
+    if (t.enabled != dummy.enabled)
+        j["Enabled"] = t.enabled;
+    if (t.localPlayerTime != dummy.localPlayerTime)
+        j["Local Player Time"] = t.localPlayerTime;
+    if (t.alliesTime != dummy.alliesTime)
+        j["Allies Time"] = t.alliesTime;
+    if (t.enemiesTime != dummy.enemiesTime)
+        j["Enemies Time"] = t.enemiesTime;
+    if (t.localPlayer != dummy.localPlayer)
+        j["Local Player"] = t.localPlayer;
+    if (t.allies != dummy.allies)
+        j["Allies"] = t.allies;
+    if (t.enemies != dummy.enemies)
+        j["Enemies"] = t.enemies;
+}
+
 static void to_json(json& j, const Projectile& p)
 {
     j = static_cast<Shared>(p);
 
     const Projectile dummy;
 
-  //  if (p.trail != dummy.trail)
-     //   j["Trail"] = p.trail;
-    //if (p.trailTime != dummy.trailTime)
-    //    j["Trail Time"] = p.trailTime;
+    if (p.trail != dummy.trail)
+        j["Trail"] = p.trail;
 }
 
 static void to_json(json& j, const PurchaseList& pl)
