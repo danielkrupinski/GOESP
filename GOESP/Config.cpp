@@ -216,7 +216,7 @@ void Config::load() noexcept
     read_map(j, "Enemies", enemies);
     read_map(j, "Weapons", weapons);
     read_map(j, "Projectiles", projectiles);
-    read_map(j, "Other Entities", _otherEntities);
+    read_map(j, "Other Entities", otherEntities);
 
     read<value_t::object>(j, "Reload Progress", reloadProgress);
     read<value_t::object>(j, "Recoil Crosshair", recoilCrosshair);
@@ -401,7 +401,7 @@ void Config::save() noexcept
         if (value != Projectile{})
             j["Projectiles"][key] = value;
 
-    for (const auto& [key, value] : _otherEntities)
+    for (const auto& [key, value] : otherEntities)
         if (value != Shared{})
             j["Other Entities"][key] = value;
 

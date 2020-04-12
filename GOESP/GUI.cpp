@@ -101,7 +101,7 @@ void GUI::drawESPTab() noexcept
         case 1: return config->enemies[item];
         case 2: return config->weapons[item];
         case 3: return config->projectiles[item];
-        case 4: return config->_otherEntities[item];
+        case 4: return config->otherEntities[item];
         }
     };
 

@@ -593,7 +593,7 @@ void ESP::render(ImDrawList* drawList) noexcept
             default: return nullptr;
             }
           }(entity.classId)) {
-            renderEntityEsp(drawList, entity, config->_otherEntities["All"], config->_otherEntities[otherEntity], otherEntity);
+            renderEntityEsp(drawList, entity, config->otherEntities["All"], config->otherEntities[otherEntity], otherEntity);
         }
     }
 
