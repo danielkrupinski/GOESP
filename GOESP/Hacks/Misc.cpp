@@ -146,6 +146,9 @@ void Misc::purchaseList(GameEvent* event) noexcept
                 else if (weapon.starts_with("item_"))
                     weapon.erase(0, 5);
 
+                if (weapon.starts_with("smoke"))
+                    weapon = "smoke";
+
                 purchaseDetails[player->getPlayerName(config->normalizePlayerNames)].first.push_back(weapon);
                 ++purchaseTotal[weapon];
             }
@@ -190,6 +193,9 @@ void Misc::purchaseList(GameEvent* event) noexcept
                     ImGui::TextWrapped("%s $%d: %s", playerName.c_str(), purchases.second, s.c_str());
                 else
                     ImGui::TextWrapped("%s: %s", playerName.c_str(), s.c_str());
+
+                ImGui::Separator();
+
             }
         } else if (config->purchaseList.mode == PurchaseList::Summary) {
             for (const auto& purchase : purchaseTotal)
