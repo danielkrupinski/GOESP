@@ -193,9 +193,6 @@ void Misc::purchaseList(GameEvent* event) noexcept
                     ImGui::TextWrapped("%s $%d: %s", playerName.c_str(), purchases.second, s.c_str());
                 else
                     ImGui::TextWrapped("%s: %s", playerName.c_str(), s.c_str());
-
-                ImGui::Separator();
-
             }
         } else if (config->purchaseList.mode == PurchaseList::Summary) {
             for (const auto& purchase : purchaseTotal)
