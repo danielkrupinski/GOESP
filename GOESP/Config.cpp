@@ -214,7 +214,7 @@ void Config::load() noexcept
 
     read_map(j, "Allies", allies);
     read_map(j, "Enemies", enemies);
-    read_map(j, "Weapons", _weapons);
+    read_map(j, "Weapons", weapons);
     read_map(j, "Projectiles", _projectiles);
     read_map(j, "Other Entities", _otherEntities);
 
@@ -393,7 +393,7 @@ void Config::save() noexcept
         if (value != Player{})
             j["Enemies"][key] = value;
 
-    for (const auto& [key, value] : _weapons)
+    for (const auto& [key, value] : weapons)
         if (value != Weapon{})
             j["Weapons"][key] = value;
 
