@@ -613,7 +613,7 @@ void ESP::render(ImDrawList* drawList) noexcept
             default: return nullptr;
             }
           }(projectile.classId, projectile.flashbang)) {
-            renderProjectileEsp(drawList, projectile, config->_projectiles["All"], config->_projectiles[name], name);
+            renderProjectileEsp(drawList, projectile, config->projectiles["All"], config->projectiles[name], name);
         }
     }
 }
