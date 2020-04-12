@@ -71,6 +71,7 @@ void GUI::render() noexcept
             ImGui::Combo("Mode", &config->purchaseList.mode, "Details\0Summary\0");
             ImGui::Checkbox("Only During Freeze Time", &config->purchaseList.onlyDuringFreezeTime);
             ImGui::Checkbox("Show Prices", &config->purchaseList.showPrices);
+            ImGui::Checkbox("No Title Bar", &config->purchaseList.noTitleBar);
             ImGui::EndPopup();
         }
         ImGui::Checkbox("Bomb Zone Hint", &config->bombZoneHint);
@@ -398,8 +399,6 @@ void GUI::drawESPTab() noexcept
                 trailPicker("Enemies", config->_projectiles[currentItem].trail.enemies, config->_projectiles[currentItem].trail.enemiesTime);
                 ImGui::EndPopup();
             }
-
-            
         }
     }
 
