@@ -199,6 +199,7 @@ static void from_json(const json& j, PurchaseList& pl)
     read<value_t::boolean>(j, "Enabled", pl.enabled);
     read<value_t::boolean>(j, "Only During Freeze Time", pl.onlyDuringFreezeTime);
     read<value_t::boolean>(j, "Show Prices", pl.showPrices);
+    read<value_t::boolean>(j, "No Title Bar", pl.noTitleBar);
     read_number(j, "Mode", pl.mode);
 }
 
@@ -374,6 +375,8 @@ static void to_json(json& j, const PurchaseList& pl)
         j["Only During Freeze Time"] = pl.onlyDuringFreezeTime;
     if (pl.showPrices != dummy.showPrices)
         j["Show Prices"] = pl.showPrices;
+    if (pl.noTitleBar != dummy.noTitleBar)
+        j["No Title Bar"] = pl.noTitleBar;
     if (pl.mode != dummy.mode)
         j["Mode"] = pl.mode;
 }
