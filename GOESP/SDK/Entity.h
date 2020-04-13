@@ -98,7 +98,7 @@ public:
             }
         }
 
-        playerName.erase(std::remove(playerName.begin(), playerName.end(), '\n'), playerName.end());
+        playerName.erase(std::remove(playerName.begin(), playerName.end(), '\n'), playerName.cend());
         return playerName;
     }
 
