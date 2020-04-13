@@ -134,8 +134,8 @@ struct PlayerData : BaseData {
 
         if (const auto weapon = entity->getActiveWeapon()) {
             audible = audible || isEntityAudible(weapon->index());
-            if (const auto weaponData = weapon->getWeaponInfo()) {
-                if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponData->name), -1, weaponName, _countof(weaponName), nullptr, nullptr))
+            if (const auto weaponInfo = weapon->getWeaponInfo()) {
+                if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponInfo->name), -1, weaponName, _countof(weaponName), nullptr, nullptr))
                     activeWeapon = weaponName;
             }
         }
@@ -155,9 +155,9 @@ struct WeaponData : BaseData {
         reserveAmmo = entity->reserveAmmoCount();
         id = entity->weaponId();
 
-        if (const auto weaponData = entity->getWeaponInfo()) {
-            type = weaponData->type;
-            name = weaponData->name;
+        if (const auto weaponInfo = entity->getWeaponInfo()) {
+            type = weaponInfo->type;
+            name = weaponInfo->name;
         }
     }
     int clip;
