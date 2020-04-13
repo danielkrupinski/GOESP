@@ -231,6 +231,7 @@ void ESP::collectData() noexcept
             case ClassId::EconEntity:
             case ClassId::Chicken:
             case ClassId::PlantedC4:
+            case ClassId::Hostage:
                 entities.emplace_back(entity);
             }
         }
@@ -590,6 +591,7 @@ void ESP::render(ImDrawList* drawList) noexcept
             case ClassId::EconEntity: return "Defuse Kit";
             case ClassId::Chicken: return "Chicken";
             case ClassId::PlantedC4: return "Planted C4";
+            case ClassId::Hostage: return "Hostage";
             default: return nullptr;
             }
           }(entity.classId)) {
