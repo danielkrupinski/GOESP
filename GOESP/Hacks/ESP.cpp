@@ -116,23 +116,20 @@ struct ProjectileData : EntityData {
 struct PlayerData : BaseData {
     PlayerData(Entity* entity) noexcept : BaseData{ entity }
     {
-        if (!localPlayer)
-            return;
-        
+        if (localPlayer) {
+            enemy = memory->isOtherEnemy(entity, localPlayer.get());
+            visible = entity->visibleTo(localPlayer.get());
+        }
+
         constexpr auto isEntityAudible = [](int entityIndex) noexcept {
             for (int i = 0; i < memory->activeChannels->count; ++i)
                 if (memory->channels[memory->activeChannels->list[i]].soundSource == entityIndex)
                     return true;
-
             return false;
         };
 
-        enemy = memory->isOtherEnemy(entity, localPlayer.get());
-        visible = entity->visibleTo(localPlayer.get());
         audible = isEntityAudible(entity->index());
-
         flashDuration = entity->flashDuration();
-
         name = entity->getPlayerName(config->normalizePlayerNames);
 
         if (const auto weapon = entity->getActiveWeapon()) {
@@ -143,8 +140,8 @@ struct PlayerData : BaseData {
             }
         }
     }
-    bool enemy;
-    bool visible;
+    bool enemy = false;
+    bool visible = false;
     bool audible;
     float flashDuration;
     std::string name;
