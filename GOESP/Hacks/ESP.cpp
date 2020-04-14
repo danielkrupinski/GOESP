@@ -517,6 +517,7 @@ void ESP::render(ImDrawList* drawList) noexcept
                     case WeaponType::Shotgun: return "Shotguns";
                     case WeaponType::Machinegun: return "Machineguns";
                     case WeaponType::Grenade: return "Grenades";
+                    case WeaponType::Melee: return "Melee";
                     default: return "All";
                     }
                 })(weapon.type)],
@@ -575,6 +576,8 @@ void ESP::render(ImDrawList* drawList) noexcept
                     case WeaponId::Diversion: return "Diversion";
                     case WeaponId::FragGrenade: return "Frag Grenade";
                     case WeaponId::Snowball: return "Snowball";
+
+                    case WeaponId::Axe: return "Axe";
                     }
                 })(weapon.id)]);
         } else {
