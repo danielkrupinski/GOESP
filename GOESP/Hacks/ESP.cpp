@@ -520,6 +520,7 @@ void ESP::render(ImDrawList* drawList) noexcept
                 default: 
                     switch (weaponId) {
                     case WeaponId::C4:
+                    case WeaponId::Healthshot:
                         return "Other";
                     default: return "All";
                     }
@@ -586,6 +587,7 @@ void ESP::render(ImDrawList* drawList) noexcept
                 case WeaponId::Spanner: return "Wrench";
 
                 case WeaponId::C4: return "C4";
+                case WeaponId::Healthshot: return "Healthshot";
                 }
             })(weapon.id)]);
     }
