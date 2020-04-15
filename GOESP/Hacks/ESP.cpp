@@ -578,6 +578,7 @@ void ESP::render(ImDrawList* drawList) noexcept
 
                 case WeaponId::Axe: return "Axe";
                 case WeaponId::Hammer: return "Hammer";
+                case WeaponId::Spanner: return "Wrench";
                 }
             })(weapon.id)]);
     }

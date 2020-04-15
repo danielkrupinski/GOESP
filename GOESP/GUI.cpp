@@ -274,7 +274,7 @@ void GUI::drawESPTab() noexcept
                     case 4: return { "Nova", "XM1014", "Sawed-Off", "MAG-7" };
                     case 5: return { "M249", "Negev" };
                     case 6: return { "Flashbang", "HE Grenade", "Smoke Grenade", "Molotov", "Decoy Grenade", "Incendiary", "TA Grenade", "Fire Bomb", "Diversion", "Frag Grenade", "Snowball" };
-                    case 7: return { "Axe", "Hammer" };
+                    case 7: return { "Axe", "Hammer", "Wrench" };
                     default: return { };
                     }
                 }(j);
