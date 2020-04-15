@@ -507,7 +507,7 @@ void ESP::render(ImDrawList* drawList) noexcept
 
     for (const auto& weapon : weapons) {
         renderWeaponEsp(drawList, weapon,
-            config->weapons[([](WeaponType type) constexpr noexcept {
+            config->weapons[([](WeaponType type, WeaponId weaponId) constexpr noexcept {
                 switch (type) {
                 case WeaponType::Pistol: return "Pistols";
                 case WeaponType::SubMachinegun: return "SMGs";
@@ -517,9 +517,14 @@ void ESP::render(ImDrawList* drawList) noexcept
                 case WeaponType::Machinegun: return "Machineguns";
                 case WeaponType::Grenade: return "Grenades";
                 case WeaponType::Melee: return "Melee";
-                default: return "All";
+                default: 
+                    switch (weaponId) {
+                    case WeaponId::C4:
+                        return "Other";
+                    default: return "All";
+                    }
                 }
-            })(weapon.type)],
+            })(weapon.type, weapon.id)],
             config->weapons[([](WeaponId weaponId) constexpr noexcept {
                 switch (weaponId) {
                 default: return "All";
@@ -579,6 +584,8 @@ void ESP::render(ImDrawList* drawList) noexcept
                 case WeaponId::Axe: return "Axe";
                 case WeaponId::Hammer: return "Hammer";
                 case WeaponId::Spanner: return "Wrench";
+
+                case WeaponId::C4: return "C4";
                 }
             })(weapon.id)]);
     }
