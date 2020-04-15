@@ -39,6 +39,7 @@ enum class WeaponId : short {
     Molotov,
     Decoy,
     IncGrenade,
+    C4,
     M4a1_s = 60,
     Usp_s,
     Cz75a = 63,
