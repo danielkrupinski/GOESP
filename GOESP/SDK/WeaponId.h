@@ -40,6 +40,7 @@ enum class WeaponId : short {
     Decoy,
     IncGrenade,
     C4,
+    Healthshot = 57,
     M4a1_s = 60,
     Usp_s,
     Cz75a = 63,
