@@ -155,7 +155,7 @@ static void from_json(const json& j, Shared& s)
     read_number(j, "Snapline Type", s.snaplineType);
     read<value_t::object>(j, "Box", s.box);
     read_number(j, "Box Type", s.boxType);
-    read<value_t::object>(j, "Box Scale", s.boxScale);
+    read<value_t::array>(j, "Box Scale", s.boxScale);
     read<value_t::object>(j, "Name", s.name);
     read<value_t::object>(j, "Text Background", s.textBackground);
     read_number(j, "Text Cull Distance", s.textCullDistance);
