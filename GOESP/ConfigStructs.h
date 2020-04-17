@@ -79,6 +79,7 @@ struct Shared {
     int snaplineType = 0;
     ColorToggleThicknessRounding box;
     int boxType = 0;
+    std::array<float, 3> boxScale{ 0.25f, 0.25f, 0.25f };
     ColorToggle name;
     ColorToggleRounding textBackground{ 0.0f, 0.0f, 0.0f, 1.0f };
     float textCullDistance = 0.0f;
@@ -91,6 +92,7 @@ struct Shared {
             && snaplineType == s.snaplineType
             && box == s.box
             && boxType == s.boxType
+            && boxScale == s.boxScale
             && name == s.name
             && textBackground == s.textBackground
             && textCullDistance == s.textCullDistance;
