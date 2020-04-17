@@ -363,8 +363,23 @@ void GUI::drawESPTab() noexcept
         ImGui::SameLine(spacing);
         ImGuiCustom::colorPicker("Box", sharedConfig.box);
         ImGui::SameLine();
-        ImGui::SetNextItemWidth(95.0f);
-        ImGui::Combo("##2", &sharedConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
+
+        ImGui::PushID("Box");
+
+        if (ImGui::Button("..."))
+            ImGui::OpenPopup("");
+
+        if (ImGui::BeginPopup("")) {
+            ImGui::SetNextItemWidth(95.0f);
+            ImGui::Combo("Type", &sharedConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
+            ImGui::SetNextItemWidth(275.0f);
+
+            ImGui::SliderFloat3("Scale", sharedConfig.boxScale.data(), 0.0f, 0.50f, "%.2f");
+            ImGui::EndPopup();
+        }
+
+        ImGui::PopID();
+
         ImGuiCustom::colorPicker("Name", sharedConfig.name);
         ImGui::SameLine(spacing);
         ImGuiCustom::colorPicker("Text Background", sharedConfig.textBackground);
