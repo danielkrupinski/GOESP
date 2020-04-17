@@ -251,7 +251,7 @@ public:
     ImVec2 min, max;
     ImVec2 vertices[8];
 
-    BoundingBox(const BaseData& data) noexcept
+    BoundingBox(const BaseData& data, const std::array<float, 3>& scale = { 0.25f, 0.25f, 0.25f }) noexcept
     {
         const auto [width, height] = interfaces->engine->getScreenSize();
 
@@ -260,8 +260,13 @@ public:
         max.x = -min.x;
         max.y = -min.y;
 
-        const auto& mins = data.obbMins;
-        const auto& maxs = data.obbMaxs;
+        const Vector mins{ data.obbMins.x + std::abs(data.obbMaxs.x - data.obbMins.x) * 2 * (0.25f - scale[0]),
+                           data.obbMins.y + std::abs(data.obbMaxs.y - data.obbMins.y) * 2 * (0.25f - scale[1]),
+                           data.obbMins.z + std::abs(data.obbMaxs.z - data.obbMins.z) * 2 * (0.25f - scale[2]) };
+
+        const Vector maxs{ data.obbMaxs.x - std::abs(data.obbMaxs.x - data.obbMins.x) * 2 * (0.25f - scale[0]),
+                           data.obbMaxs.y - std::abs(data.obbMaxs.y - data.obbMins.y) * 2 * (0.25f - scale[1]),
+                           data.obbMaxs.z - std::abs(data.obbMaxs.z - data.obbMins.z) * 2 * (0.25f - scale[2]) };
 
         for (int i = 0; i < 8; ++i) {
             const Vector point{ i & 1 ? maxs.x : mins.x,
