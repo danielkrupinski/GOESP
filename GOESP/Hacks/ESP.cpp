@@ -369,7 +369,7 @@ static void renderSnaplines(ImDrawList* drawList, const BoundingBox& bbox, const
 
 static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, const Player& config) noexcept
 {
-    const BoundingBox bbox{ playerData };
+    const BoundingBox bbox{ playerData, config.boxScale };
 
     if (!bbox)
         return;
@@ -400,7 +400,7 @@ static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, 
 
 static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, const Weapon& config) noexcept
 {
-    const BoundingBox bbox{ weaponData };
+    const BoundingBox bbox{ weaponData, config.boxScale };
 
     if (!bbox)
         return;
@@ -425,7 +425,7 @@ static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, 
 
 static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, const char* name, const Shared& config) noexcept
 {
-    const BoundingBox bbox{ entityData };
+    const BoundingBox bbox{ entityData, config.boxScale };
 
     if (!bbox)
         return;
