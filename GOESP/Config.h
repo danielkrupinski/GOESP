@@ -33,11 +33,11 @@ public:
     std::vector<std::string> systemFonts{ "Default" };
     std::unordered_map<std::string, ImFont*> fonts;
 
-    void scheduleFontLoad(const std::string& name, int size = 15) noexcept;
+    void scheduleFontLoad(const std::string& name) noexcept;
     bool loadScheduledFonts() noexcept;
 
 private:
-    std::vector<std::pair<std::string, int>> scheduledFonts;
+    std::vector<std::string> scheduledFonts;
     std::filesystem::path path;
 };
 

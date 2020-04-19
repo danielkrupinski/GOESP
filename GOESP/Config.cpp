@@ -134,13 +134,11 @@ static void from_json(const json& j, ColorToggleThicknessRounding& cttr)
 
 static void from_json(const json& j, Font& f)
 {
-    read_number(j, "Size", f.size);
     read<value_t::string>(j, "Name", f.name);
 
-    if (!f.name.empty()) {
-        f.fullName = f.name + ' ' + std::to_string(f.size);
+    if (!f.name.empty())
         config->scheduleFontLoad(f.name);
-    }
+
     if (const auto it = std::find_if(std::cbegin(config->systemFonts), std::cend(config->systemFonts), [&f](const auto& e) { return e == f.name; }); it != std::cend(config->systemFonts))
         f.index = std::distance(std::cbegin(config->systemFonts), it);
     else
@@ -282,8 +280,6 @@ static void to_json(json& j, const Font& f)
 {
     const Font dummy;
 
-    if (f.size != dummy.size)
-        j["Size"] = f.size;
     if (f.name != dummy.name)
         j["Name"] = f.name;
 }
@@ -423,22 +419,20 @@ void Config::save() noexcept
         out << std::setw(4) << j;
 }
 
-void Config::scheduleFontLoad(const std::string& name, int size) noexcept
+void Config::scheduleFontLoad(const std::string& name) noexcept
 {
-    scheduledFonts.emplace_back(name, size);
+    scheduledFonts.push_back(name);
 }
 
 bool Config::loadScheduledFonts() noexcept
 {
     bool result = false;
 
-    for (const auto& [font, size] : scheduledFonts) {
+    for (const auto& font : scheduledFonts) {
         if (font == "Default")
             continue;
 
-        const std::string fullName = font + ' ' + std::to_string(size);
-
-        if (fonts.find(fullName) != fonts.end())
+        if (fonts.find(font) != fonts.cend())
             continue;
 
         HFONT fontHandle = CreateFontA(0, 0, 0, 0,
@@ -460,8 +454,12 @@ bool Config::loadScheduledFonts() noexcept
 
                     if (fontDataSize != GDI_ERROR) {
                         static constexpr ImWchar ranges[]{ 0x0020, 0xFFFF, 0 };
-                        // imgui handles fontData memory release
-                        fonts[fullName] = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.release(), fontDataSize, static_cast<float>(size), nullptr, ranges);
+                        ImFontConfig cfg;
+                        cfg.FontDataOwnedByAtlas = false;
+
+                        for (int i = 8; i <= 14; i += 2)
+                            fonts[font + ' ' + std::to_string(i)] = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, static_cast<float>(i), &cfg, ranges);
+
                         result = true;
                     }
                 }

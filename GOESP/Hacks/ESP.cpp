@@ -337,14 +337,26 @@ static void renderBox(ImDrawList* drawList, const BoundingBox& bbox, const Share
     }
 }
 
-static ImVec2 renderText(ImDrawList* drawList, float distance, float cullDistance, const Color& textCfg, const ColorToggleRounding& backgroundCfg, const char* text, const ImVec2& pos, bool centered = true, bool adjustHeight = true) noexcept
+static ImVec2 renderText(ImDrawList* drawList, const std::string& fontName, float distance, float cullDistance, const Color& textCfg, const ColorToggleRounding& backgroundCfg, const char* text, const ImVec2& pos, bool centered = true, bool adjustHeight = true) noexcept
 {
     if (cullDistance && Helpers::units2meters(distance) > cullDistance)
         return { };
 
-    const auto fontSize = std::clamp(15.0f * 10.0f / std::sqrt(distance), 10.0f, 15.0f);
+    constexpr auto fontSizeFromDist = [](float dist) constexpr noexcept {
+        if (dist <= 200.0f)
+            return 14;
+        if (dist <= 500.0f)
+            return 12;
+        if (dist <= 1000.0f)
+            return 10;
+        return 8;
+    };
 
-    const auto textSize = ImGui::GetFont()->CalcTextSizeA(fontSize, FLT_MAX, -1.0f, text);
+    const int fontSize = fontSizeFromDist(distance);
+    const auto font = config->fonts[fontName + ' ' + std::to_string(fontSize)];
+    auto textSize = (font ? font : ImGui::GetFont())->CalcTextSizeA(static_cast<float>(fontSize), FLT_MAX, -1.0f, text);
+    textSize.x = IM_FLOOR(textSize.x + 0.95f);
+
     const auto horizontalOffset = centered ? textSize.x / 2 : 0.0f;
     const auto verticalOffset = adjustHeight ? textSize.y : 0.0f;
 
@@ -353,7 +365,7 @@ static ImVec2 renderText(ImDrawList* drawList, float distance, float cullDistanc
         drawList->AddRectFilled({ pos.x - horizontalOffset - 2, pos.y - verticalOffset - 2 }, { pos.x - horizontalOffset + textSize.x + 2, pos.y - verticalOffset + textSize.y + 2 }, color, backgroundCfg.rounding);
     }
     const ImU32 color = Helpers::calculateColor(textCfg, memory->globalVars->realtime);
-    drawList->AddText(nullptr, fontSize, { pos.x - horizontalOffset, pos.y - verticalOffset }, color, text);
+    drawList->AddText(font, static_cast<float>(fontSize), { pos.x - horizontalOffset, pos.y - verticalOffset }, color, text);
     return textSize;
 }
 
@@ -377,12 +389,10 @@ static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, 
     renderBox(drawList, bbox, config);
     renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
 
-    ImGui::PushFont(::config->fonts[config.font.fullName]);
-
     ImVec2 flashDurationPos{ (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 12.5f };
 
     if (config.name.enabled && !playerData.name.empty()) {
-        const auto nameSize = renderText(drawList, playerData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, playerData.name.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+        const auto nameSize = renderText(drawList, config.font.name, playerData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, playerData.name.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
         flashDurationPos.y -= nameSize.y;
     }
 
@@ -393,9 +403,7 @@ static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, 
     }
 
     if (config.weapon.enabled && !playerData.activeWeapon.empty())
-        renderText(drawList, playerData.distanceToLocal, config.textCullDistance, config.weapon, config.textBackground, playerData.activeWeapon.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
-
-    ImGui::PopFont();
+        renderText(drawList, config.font.name, playerData.distanceToLocal, config.textCullDistance, config.weapon, config.textBackground, playerData.activeWeapon.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
 }
 
 static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, const Weapon& config) noexcept
@@ -408,19 +416,15 @@ static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, 
     renderBox(drawList, bbox, config);
     renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
 
-    ImGui::PushFont(::config->fonts[config.font.fullName]);
-
     if (config.name.enabled && !weaponData.name.empty()) {
         if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponData.name.c_str()), -1, weaponName, _countof(weaponName), nullptr, nullptr))
-            renderText(drawList, weaponData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, weaponName, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+            renderText(drawList, config.font.name, weaponData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, weaponName, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
     }
 
     if (config.ammo.enabled && weaponData.clip != -1) {
         const auto text{ std::to_string(weaponData.clip) + " / " + std::to_string(weaponData.reserveAmmo) };
-        renderText(drawList, weaponData.distanceToLocal, config.textCullDistance, config.ammo, config.textBackground, text.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
+        renderText(drawList, config.font.name, weaponData.distanceToLocal, config.textCullDistance, config.ammo, config.textBackground, text.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
     }
-
-    ImGui::PopFont();
 }
 
 static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, const char* name, const Shared& config) noexcept
@@ -433,12 +437,8 @@ static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, 
     renderBox(drawList, bbox, config);
     renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
 
-    ImGui::PushFont(::config->fonts[config.font.fullName]);
-
     if (config.name.enabled)
-        renderText(drawList, entityData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
-
-    ImGui::PopFont();
+        renderText(drawList, config.font.name, entityData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
 }
 
 static void drawProjectileTrajectory(ImDrawList* drawList, const ColorToggleThickness& config, float trajectoryTime, const std::vector<std::pair<float, Vector>>& trajectory) noexcept

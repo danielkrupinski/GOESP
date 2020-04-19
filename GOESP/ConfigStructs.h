@@ -59,16 +59,12 @@ struct ColorToggleThicknessRounding : ColorToggleRounding {
 
 struct Font {
     int index = 0; // do not save
-    int size = 15;
     std::string name;
-    std::string fullName; // do not save
 
     auto operator==(const Font& f) const
     {
         return index == f.index
-            && size == f.size
-            && name == f.name
-            && fullName == f.fullName;
+            && name == f.name;
     }
 };
 
