@@ -10,6 +10,15 @@ static constexpr auto relativeToAbsolute(std::uintptr_t address) noexcept
     return reinterpret_cast<T>(address + 4 + *reinterpret_cast<std::uintptr_t*>(address));
 }
 
+enum class Overlay {
+    Steam,
+    Discord
+};
+
+constexpr auto overlay = Overlay::Discord;
+
+static_assert(overlay == Overlay::Steam || overlay == Overlay::Discord, "Invalid overlay selected!");
+
 Memory::Memory() noexcept
 {
     assert(interfaces);
