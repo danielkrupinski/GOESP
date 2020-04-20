@@ -47,8 +47,14 @@ Press <kbd>INSERT</kbd> while focused on CS:GO window.
 ### Can I use custom font in the ESP?
 Of course. It is crucial to install your font **as an Administator** otherwise it won't be available. After font is successfully installed unload and load GOESP again.
 
-### Does this hack hook any of game functions?
-Nope. Only functions GOESP hooks are Present, Reset and SetCursorPos from SteamOverlay and game window WNDPROC method.
+### Does this hack hook any of game engine functions?
+Nope. Functions GOESP hooks are
+- DirectX Present & Reset from overlay
+- SetCursorPos from overlay
+- game window WNDPROC
+
+### How GOESP renders its stuff?
+GOESP hooks game overlays and draw things using them. Currently supported overlays are Steam and Discord.
 
 ### Is the ESP visible on recording?
 Nope, but you have to uncheck 'Capture external overlays' option in your recording software.
