@@ -15,7 +15,7 @@ enum class Overlay {
     Discord
 };
 
-constexpr auto overlay = Overlay::Discord;
+constexpr auto overlay = Overlay::Steam;
 
 static_assert(overlay == Overlay::Steam || overlay == Overlay::Discord, "Invalid overlay selected!");
 
@@ -23,9 +23,15 @@ Memory::Memory() noexcept
 {
     assert(interfaces);
 
-    reset = *reinterpret_cast<std::uintptr_t*>(findPattern(L"gameoverlayrenderer", "\x53\x57\xC7\x45", 11));
-    present = reset + 4;
-    setCursorPos = *reinterpret_cast<std::uintptr_t*>(findPattern(L"gameoverlayrenderer", "\xC2\x08?\x5D", 6));
+    if constexpr (overlay == Overlay::Steam) {
+        reset = *reinterpret_cast<std::uintptr_t*>(findPattern(L"gameoverlayrenderer", "\x53\x57\xC7\x45", 11));
+        present = reset + 4;
+        setCursorPos = *reinterpret_cast<std::uintptr_t*>(findPattern(L"gameoverlayrenderer", "\xC2\x08?\x5D", 6));
+    } else if (overlay == Overlay::Discord) {
+        reset = *reinterpret_cast<std::uintptr_t*>(findPattern(L"discordhook", "\x8B\x1F\x68", 3));
+        present = *reinterpret_cast<std::uintptr_t*>(findPattern(L"discordhook", "\x8B\x46\x10\x68", 4));
+        setCursorPos = *reinterpret_cast<std::uintptr_t*>(findPattern(L"discordhook", "\x74\x1B\x8B\x4D\x08", 32));
+    }
 
     isOtherEnemy = relativeToAbsolute<decltype(isOtherEnemy)>(findPattern(L"client_panorama", "\xE8????\x02\xC0", 1));
     globalVars = **reinterpret_cast<GlobalVars***>((*reinterpret_cast<std::uintptr_t**>(interfaces->client))[11] + 10);
