@@ -148,6 +148,8 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
                 if (weapon.starts_with("smoke"))
                     weapon = "smoke";
+                else if (weapon.starts_with("m4a1_s"))
+                    weapon = "m4a1_s";
 
                 purchaseDetails[player->getPlayerName(config->normalizePlayerNames)].first.push_back(weapon);
                 ++purchaseTotal[weapon];
