@@ -163,7 +163,7 @@ static DWORD WINAPI waitOnUnload(HMODULE hModule) noexcept
     FreeLibraryAndExitThread(hModule, 0);
 }
 
-void Hooks::restore() noexcept
+void Hooks::uninstall() noexcept
 {
     *reinterpret_cast<void**>(memory->reset) = reset;
     *reinterpret_cast<void**>(memory->present) = present;

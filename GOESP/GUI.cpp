@@ -47,7 +47,7 @@ void GUI::render() noexcept
     ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 55.0f);
 
     if (ImGui::Button("Unload"))
-        hooks->restore();
+        hooks->uninstall();
 
     if (ImGui::BeginTabItem("ESP")) {
         drawESPTab();
