@@ -15,11 +15,8 @@
 #include <vector>
 #include <Windows.h>
 
-GUI::GUI(HWND window) noexcept
+GUI::GUI() noexcept
 {
-    ImGui::CreateContext();
-    ImGui_ImplWin32_Init(window);
-
     ImGui::StyleColorsClassic();
     ImGuiStyle& style = ImGui::GetStyle();
 

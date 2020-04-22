@@ -5,7 +5,7 @@
 
 class GUI {
 public:
-    GUI(HWND window) noexcept;
+    GUI() noexcept;
     void render() noexcept;
 
     bool open = true;

@@ -36,7 +36,11 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
         memory = std::make_unique<Memory>();
         eventListener = std::make_unique<EventListener>();
         config = std::make_unique<Config>("GOESP");
-        gui = std::make_unique<GUI>(window);
+
+        ImGui::CreateContext();
+        ImGui_ImplWin32_Init(window);
+        gui = std::make_unique<GUI>();
+
         hooks->install();
 
         return true;
@@ -67,7 +71,7 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
 {
     HookGuard guard;
 
-    static auto _ = ImGui_ImplDX9_Init(device);
+    static const auto _ = ImGui_ImplDX9_Init(device);
 
     IDirect3DVertexDeclaration9* vertexDeclaration;
     device->GetVertexDeclaration(&vertexDeclaration);
