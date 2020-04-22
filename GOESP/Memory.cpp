@@ -23,6 +23,8 @@ Memory::Memory() noexcept
 {
     assert(interfaces);
 
+    debugMsg = decltype(debugMsg)(GetProcAddress(GetModuleHandleW(L"tier0"), "Msg"));
+
     if constexpr (overlay == Overlay::Steam) {
         reset = *reinterpret_cast<std::uintptr_t*>(findPattern(L"gameoverlayrenderer", "\x53\x57\xC7\x45", 11));
         present = reset + 4;
@@ -35,7 +37,6 @@ Memory::Memory() noexcept
 
     isOtherEnemy = relativeToAbsolute<decltype(isOtherEnemy)>(findPattern(L"client_panorama", "\xE8????\x02\xC0", 1));
     globalVars = **reinterpret_cast<GlobalVars***>((*reinterpret_cast<std::uintptr_t**>(interfaces->client))[11] + 10);
-    debugMsg = reinterpret_cast<decltype(debugMsg)>(GetProcAddress(GetModuleHandleW(L"tier0"), "Msg"));
     itemSystem = relativeToAbsolute<decltype(itemSystem)>(findPattern(L"client_panorama", "\xE8????\x0F\xB7\x0F", 1));
     weaponSystem = *reinterpret_cast<WeaponSystem**>(findPattern(L"client_panorama", "\x8B\x35????\xFF\x10\x0F\xB7\xC0", 2));
     activeChannels = *reinterpret_cast<ActiveChannels**>(findPattern(L"engine", "\x8B\x1D????\x89\x5C\x24\x48", 2));
