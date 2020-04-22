@@ -31,7 +31,7 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 {
     HookGuard guard;
 
-    static const auto once = [&window] {
+    static const auto once = [](HWND window) noexcept {
         interfaces = std::make_unique<const Interfaces>();
         memory = std::make_unique<Memory>();
         eventListener = std::make_unique<EventListener>();
@@ -44,7 +44,7 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
         hooks->install();
 
         return true;
-    }();
+    }(window);
 
     ESP::collectData();
     Misc::collectData();
