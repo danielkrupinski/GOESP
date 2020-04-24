@@ -68,6 +68,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <EntryPointSymbol>DllEntryPoint</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -112,6 +113,7 @@
       <SectionAlignment>
       </SectionAlignment>
       <AdditionalOptions>/EMITPOGOPHASEINFO %(AdditionalOptions)</AdditionalOptions>
+      <EntryPointSymbol>DllEntryPoint</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
