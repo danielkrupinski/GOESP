@@ -143,6 +143,8 @@ void Hooks::install() noexcept
     *reinterpret_cast<decltype(::setCursorPos)**>(memory->setCursorPos) = ::setCursorPos;
 }
 
+extern "C" BOOL WINAPI _CRT_INIT(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved);
+
 static DWORD WINAPI waitOnUnload(HMODULE hModule) noexcept
 {
     while (!HookGuard::freed())
@@ -159,6 +161,8 @@ static DWORD WINAPI waitOnUnload(HMODULE hModule) noexcept
     interfaces.reset();
     gui.reset();
     config.reset();
+
+    _CRT_INIT(hModule, DLL_PROCESS_DETACH, nullptr);
 
     FreeLibraryAndExitThread(hModule, 0);
 }
