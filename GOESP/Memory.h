@@ -64,4 +64,4 @@ private:
     }
 };
 
-inline std::unique_ptr<Memory> memory;
+inline std::unique_ptr<const Memory> memory;

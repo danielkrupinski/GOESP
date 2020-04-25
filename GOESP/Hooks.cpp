@@ -33,7 +33,7 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 
     static const auto once = [](HWND window) noexcept {
         interfaces = std::make_unique<const Interfaces>();
-        memory = std::make_unique<Memory>();
+        memory = std::make_unique<const Memory>();
         eventListener = std::make_unique<EventListener>();
         config = std::make_unique<Config>("GOESP");
 
