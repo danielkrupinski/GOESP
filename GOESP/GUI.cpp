@@ -8,18 +8,13 @@
 #include "ImGuiCustom.h"
 
 #include <array>
-#include <ctime>
-#include <iomanip>
-#include <Pdh.h>
-#include <sstream>
 #include <vector>
-#include <Windows.h>
 
 GUI::GUI() noexcept
 {
     ImGui::StyleColorsClassic();
-    ImGuiStyle& style = ImGui::GetStyle();
 
+    ImGuiStyle& style = ImGui::GetStyle();
     style.ScrollbarSize = 13.0f;
     style.WindowTitleAlign = { 0.5f, 0.5f };
 
