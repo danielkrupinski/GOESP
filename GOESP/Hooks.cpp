@@ -32,8 +32,6 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
     HookGuard guard;
 
     static const auto once = [](HWND window) noexcept {
-        interfaces = std::make_unique<const Interfaces>();
-        memory = std::make_unique<const Memory>();
         eventListener = std::make_unique<EventListener>();
         config = std::make_unique<Config>("GOESP");
 
@@ -124,6 +122,10 @@ Hooks::Hooks(HMODULE module) noexcept
 
     _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
     _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
+
+    // interfaces and memory shouldn't be initialized in wndProc because they show MessageBox on error which would cause deadlock
+    interfaces = std::make_unique<const Interfaces>();
+    memory = std::make_unique<const Memory>();
 
     window = FindWindowW(L"Valve001", nullptr);
     wndProc = WNDPROC(SetWindowLongPtrA(window, GWLP_WNDPROC, LONG_PTR(::wndProc)));
