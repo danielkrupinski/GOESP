@@ -179,7 +179,7 @@ void GUI::drawESPTab() noexcept
                 case 1: return { "Visible", "Occluded" };
                 case 2: return { "Pistols", "SMGs", "Rifles", "Sniper Rifles", "Shotguns", "Machineguns", "Grenades", "Melee", "Other" };
                 case 3: return { "Flashbang", "HE Grenade", "Breach Charge", "Bump Mine", "Decoy Grenade", "Molotov", "TA Grenade", "Smoke Grenade", "Snowball" };
-                case 4: return { "Defuse Kit", "Chicken", "Planted C4", "Hostage" };
+                case 4: return { "Defuse Kit", "Chicken", "Planted C4", "Hostage", "Sentry" };
                 default: return { };
                 }
             }(i);
