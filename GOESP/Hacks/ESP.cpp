@@ -251,7 +251,7 @@ public:
     ImVec2 min, max;
     ImVec2 vertices[8];
 
-    BoundingBox(const BaseData& data, const std::array<float, 3>& scale = { 0.25f, 0.25f, 0.25f }) noexcept
+    BoundingBox(const BaseData& data, const std::array<float, 3>& scale) noexcept
     {
         const auto [width, height] = interfaces->engine->getScreenSize();
 
