@@ -171,6 +171,7 @@ static std::vector<PlayerData> players;
 static std::vector<WeaponData> weapons;
 static std::vector<EntityData> entities;
 static std::list<ProjectileData> projectiles;
+static Vector localPlayerOrigin;
 static std::mutex dataMutex;
 
 void ESP::collectData() noexcept
@@ -190,11 +191,14 @@ void ESP::collectData() noexcept
 
     for (int i = 1; i <= memory->globalVars->maxClients; ++i) {
         const auto entity = interfaces->entityList->getEntity(i);
-        if (!entity || entity == localPlayer.get() || entity == observerTarget
+        if (!entity || entity == observerTarget
             || entity->isDormant() || !entity->isAlive())
             continue;
 
-        players.emplace_back(entity);
+        if (entity == localPlayer.get())
+            localPlayerOrigin = entity->getAbsOrigin();
+        else
+            players.emplace_back(entity);
     }
 
     for (int i = memory->globalVars->maxClients + 1; i <= interfaces->entityList->getHighestEntityIndex(); ++i) {
@@ -491,6 +495,7 @@ static void renderProjectileEsp(ImDrawList* drawList, const ProjectileData& proj
         if (!projectileData.exploded)
             renderEntityBox(drawList, projectileData, name, config);
 
+        // FIXME: we ignore master "Trail" switch
         if (projectileData.thrownByLocalPlayer)
             drawProjectileTrajectory(drawList, config.trail.localPlayer, config.trail.localPlayerTime, projectileData.trajectory);
         else if (!projectileData.thrownByEnemy)
