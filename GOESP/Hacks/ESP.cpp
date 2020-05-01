@@ -415,8 +415,7 @@ static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, 
     renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
 
     if (config.name.enabled && !weaponData.name.empty()) {
-        if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponData.name.c_str()), -1, weaponName, _countof(weaponName), nullptr, nullptr))
-            renderText(drawList, config.font.name, weaponData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, weaponName, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+        renderText(drawList, config.font.name, weaponData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, interfaces->localize->findAsUTF8(weaponData.name.c_str()), { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
     }
 
     if (config.ammo.enabled && weaponData.clip != -1) {
