@@ -20,7 +20,7 @@ struct ColorToggle : Color {
 
     auto operator==(const ColorToggle& ct) const
     {
-        return static_cast<Color>(*this) == static_cast<Color>(ct)
+        return static_cast<const Color&>(*this) == static_cast<const Color&>(ct)
             && enabled == ct.enabled;
     }
 };
@@ -32,7 +32,7 @@ struct ColorToggleThickness : ColorToggle {
 
     auto operator==(const ColorToggleThickness& ctt) const
     {
-        return static_cast<ColorToggle>(*this) == static_cast<ColorToggle>(ctt)
+        return static_cast<const ColorToggle&>(*this) == static_cast<const ColorToggle&>(ctt)
             && thickness == ctt.thickness;
     }
 };
@@ -42,7 +42,7 @@ struct ColorToggleRounding : ColorToggle {
 
     auto operator==(const ColorToggleRounding& ctr) const
     {
-        return static_cast<ColorToggle>(*this) == static_cast<ColorToggle>(ctr)
+        return static_cast<const ColorToggle&>(*this) == static_cast<const ColorToggle&>(ctr)
             && rounding == ctr.rounding;
     }
 };
@@ -52,7 +52,7 @@ struct ColorToggleThicknessRounding : ColorToggleRounding {
 
     auto operator==(const ColorToggleThicknessRounding& cttr) const
     {
-        return static_cast<ColorToggleRounding>(*this) == static_cast<ColorToggleRounding>(cttr)
+        return static_cast<const ColorToggleRounding&>(*this) == static_cast<const ColorToggleRounding&>(cttr)
             && thickness == cttr.thickness;
     }
 };
@@ -102,7 +102,7 @@ struct Player : Shared {
 
     auto operator==(const Player& p) const
     {
-        return static_cast<Shared>(*this) == static_cast<Shared>(p)
+        return static_cast<const Shared&>(*this) == static_cast<const Shared&>(p)
             && weapon == p.weapon
             && flashDuration == p.flashDuration
             && audibleOnly == p.audibleOnly;
@@ -120,7 +120,7 @@ struct Weapon : Shared {
 
     auto operator==(const Weapon& w) const
     {
-        return static_cast<Shared>(*this) == static_cast<Shared>(w)
+        return static_cast<const Shared&>(*this) == static_cast<const Shared&>(w)
             && ammo == w.ammo;
     }
 
@@ -157,7 +157,7 @@ struct Projectile : Shared {
   
     auto operator==(const Projectile& p) const
     {
-        return static_cast<Shared>(*this) == static_cast<Shared>(p)
+        return static_cast<const Shared&>(*this) == static_cast<const Shared&>(p)
             && trail == p.trail;
     }
 
