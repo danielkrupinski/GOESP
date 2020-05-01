@@ -249,6 +249,11 @@ void ESP::collectData() noexcept
     }
 }
 
+static constexpr auto operator-(float sub, const std::array<float, 3>& a) noexcept
+{
+    return Vector{ sub - a[0], sub - a[1], sub - a[2] };
+}
+
 struct BoundingBox {
 private:
     bool valid;
@@ -265,13 +270,8 @@ public:
         max.x = -min.x;
         max.y = -min.y;
 
-        const Vector mins{ data.obbMins.x + (data.obbMaxs.x - data.obbMins.x) * 2 * (0.25f - scale[0]),
-                           data.obbMins.y + (data.obbMaxs.y - data.obbMins.y) * 2 * (0.25f - scale[1]),
-                           data.obbMins.z + (data.obbMaxs.z - data.obbMins.z) * 2 * (0.25f - scale[2]) };
-
-        const Vector maxs{ data.obbMaxs.x - (data.obbMaxs.x - data.obbMins.x) * 2 * (0.25f - scale[0]),
-                           data.obbMaxs.y - (data.obbMaxs.y - data.obbMins.y) * 2 * (0.25f - scale[1]),
-                           data.obbMaxs.z - (data.obbMaxs.z - data.obbMins.z) * 2 * (0.25f - scale[2]) };
+        const auto mins = data.obbMins + (data.obbMaxs - data.obbMins) * 2 * (0.25f - scale);
+        const auto maxs = data.obbMaxs - (data.obbMaxs - data.obbMins) * 2 * (0.25f - scale);
 
         for (int i = 0; i < 8; ++i) {
             const Vector point{ i & 1 ? maxs.x : mins.x,
