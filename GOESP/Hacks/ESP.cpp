@@ -46,7 +46,7 @@ struct BaseData {
     BaseData(Entity* entity) noexcept
     {
         if (localPlayer)
-            distanceToLocal = (localPlayer->getAbsOrigin() - entity->getAbsOrigin()).length();
+            distanceToLocal = entity->getAbsOrigin().distTo(localPlayer->getAbsOrigin());
         else
             distanceToLocal = 0.0f;
         
