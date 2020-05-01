@@ -56,9 +56,9 @@ void ImGuiCustom::colorPopup(const char* name, std::array<float, 4>& color, bool
     ImGui::PopID();
 }
 
-void ImGuiCustom::colorPicker(const char* name, Color& colorConfig) noexcept
+void ImGuiCustom::colorPicker(const char* name, Color& colorConfig, bool* enable) noexcept
 {
-    colorPopup(name, colorConfig.color, &colorConfig.rainbow, &colorConfig.rainbowSpeed);
+    colorPopup(name, colorConfig.color, &colorConfig.rainbow, &colorConfig.rainbowSpeed, enable);
 }
 
 void ImGuiCustom::colorPicker(const char* name, ColorToggle& colorConfig) noexcept
