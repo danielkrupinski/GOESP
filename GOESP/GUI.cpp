@@ -402,7 +402,7 @@ void GUI::drawESPTab() noexcept
                     ImGuiCustom::colorPicker(name, color);
                     ImGui::SameLine(150.0f);
                     ImGui::SetNextItemWidth(95.0f);
-                    ImGui::Combo("", &type, "Line\0Circles\0");
+                    ImGui::Combo("", &type, "Line\0Circles\0Filled Circles\0");
                     time = std::clamp(time, 1.0f, 60.0f);
                     ImGui::SameLine();
                     ImGui::SetNextItemWidth(95.0f);

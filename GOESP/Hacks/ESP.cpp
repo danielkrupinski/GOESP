@@ -450,6 +450,8 @@ static void drawProjectileTrajectory(ImDrawList* drawList, const ColorToggleThic
             if (type == Trail::Line)
                 points.push_back(pos);
             else if (type == Trail::Circles)
+                drawList->AddCircle(pos, 3.5f - point.distTo(localPlayerOrigin) / 700.0f, color);
+            else if (type == Trail::FilledCircles)
                 drawList->AddCircleFilled(pos, 3.5f - point.distTo(localPlayerOrigin) / 700.0f, color);
         }
     }

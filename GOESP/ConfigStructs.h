@@ -136,7 +136,8 @@ struct Trail {
 
     enum Type {
         Line = 0,
-        Circles
+        Circles,
+        FilledCircles,
     };
 
     float localPlayerTime = 2.0f;
