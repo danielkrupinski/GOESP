@@ -88,14 +88,7 @@ struct ProjectileData : EntityData {
 
     void update(Entity* projectile) noexcept
     {
-        if (localPlayer)
-            distanceToLocal = (localPlayer->getAbsOrigin() - projectile->getAbsOrigin()).length();
-        else
-            distanceToLocal = 0.0f;
-
-        obbMins = projectile->getCollideable()->obbMins();
-        obbMaxs = projectile->getCollideable()->obbMaxs();
-        coordinateFrame = projectile->toWorldTransform();
+        static_cast<BaseData>(*this) = { projectile };
 
         if (const auto pos = projectile->getAbsOrigin(); trajectory.size() < 1 || trajectory[trajectory.size() - 1].second != pos)
             trajectory.emplace_back(memory->globalVars->realtime, pos);
