@@ -436,19 +436,24 @@ static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, 
         renderText(drawList, config.font.name, entityData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
 }
 
-static void drawProjectileTrajectory(ImDrawList* drawList, const ColorToggleThickness& config, float trajectoryTime, const std::vector<std::pair<float, Vector>>& trajectory) noexcept
+static void drawProjectileTrajectory(ImDrawList* drawList, const ColorToggleThickness& config, float trajectoryTime, int type, const std::vector<std::pair<float, Vector>>& trajectory) noexcept
 {
     if (!config.enabled)
         return;
 
     std::vector<ImVec2> points;
 
+    const auto color = Helpers::calculateColor(config, memory->globalVars->realtime);
+
     for (const auto& [time, point] : trajectory) {
-        if (ImVec2 pos; time + trajectoryTime >= memory->globalVars->realtime && worldToScreen(point, pos))
-            points.push_back(pos);
+        if (ImVec2 pos; time + trajectoryTime >= memory->globalVars->realtime && worldToScreen(point, pos)) {
+            if (type == Trail::Line)
+                points.push_back(pos);
+            else if (type == Trail::Circles)
+                drawList->AddCircleFilled(pos, 3.5f - point.distTo(localPlayerOrigin) / 700.0f, color);
+        }
     }
 
-    const auto color = Helpers::calculateColor(config, memory->globalVars->realtime);
     drawList->AddPolyline(points.data(), points.size(), color, false, config.thickness);
 }
 
@@ -485,13 +490,14 @@ static void renderProjectileEsp(ImDrawList* drawList, const ProjectileData& proj
         if (!projectileData.exploded)
             renderEntityBox(drawList, projectileData, name, config);
 
-        // FIXME: we ignore master "Trail" switch
-        if (projectileData.thrownByLocalPlayer)
-            drawProjectileTrajectory(drawList, config.trail.localPlayer, config.trail.localPlayerTime, projectileData.trajectory);
-        else if (!projectileData.thrownByEnemy)
-            drawProjectileTrajectory(drawList, config.trail.allies, config.trail.alliesTime, projectileData.trajectory);
-        else
-            drawProjectileTrajectory(drawList, config.trail.enemies, config.trail.enemiesTime, projectileData.trajectory);
+        if (config.trail.enabled) {
+            if (projectileData.thrownByLocalPlayer)
+                drawProjectileTrajectory(drawList, config.trail.localPlayer, config.trail.localPlayerTime, config.trail.localPlayerType, projectileData.trajectory);
+            else if (!projectileData.thrownByEnemy)
+                drawProjectileTrajectory(drawList, config.trail.allies, config.trail.alliesTime, config.trail.alliesType, projectileData.trajectory);
+            else
+                drawProjectileTrajectory(drawList, config.trail.enemies, config.trail.enemiesTime, config.trail.enemiesType, projectileData.trajectory);
+        }
     }
 }
 

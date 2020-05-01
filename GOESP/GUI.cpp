@@ -397,19 +397,22 @@ void GUI::drawESPTab() noexcept
                 ImGui::OpenPopup("##trail");
 
             if (ImGui::BeginPopup("##trail")) {
-                constexpr auto trailPicker = [](const char* name, ColorToggleThickness& color, float& time) noexcept {
+                constexpr auto trailPicker = [](const char* name, ColorToggleThickness& color, float& time, int& type) noexcept {
                     ImGui::PushID(name);
                     ImGuiCustom::colorPicker(name, color);
                     ImGui::SameLine(150.0f);
                     ImGui::SetNextItemWidth(95.0f);
-                    ImGui::InputFloat("Time", &time, 0.1f, 0.5f, "%.1fs");
+                    ImGui::Combo("", &type, "Line\0Circles\0");
                     time = std::clamp(time, 1.0f, 60.0f);
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(95.0f);
+                    ImGui::InputFloat("Time", &time, 0.1f, 0.5f, "%.1fs");
                     ImGui::PopID();
                 };
 
-                trailPicker("Local Player", config->projectiles[currentItem].trail.localPlayer, config->projectiles[currentItem].trail.localPlayerTime);
-                trailPicker("Allies", config->projectiles[currentItem].trail.allies, config->projectiles[currentItem].trail.alliesTime);
-                trailPicker("Enemies", config->projectiles[currentItem].trail.enemies, config->projectiles[currentItem].trail.enemiesTime);
+                trailPicker("Local Player", config->projectiles[currentItem].trail.localPlayer, config->projectiles[currentItem].trail.localPlayerTime, config->projectiles[currentItem].trail.localPlayerType);
+                trailPicker("Allies", config->projectiles[currentItem].trail.allies, config->projectiles[currentItem].trail.alliesTime, config->projectiles[currentItem].trail.alliesType);
+                trailPicker("Enemies", config->projectiles[currentItem].trail.enemies, config->projectiles[currentItem].trail.enemiesTime, config->projectiles[currentItem].trail.enemiesType);
                 ImGui::EndPopup();
             }
         }
