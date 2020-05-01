@@ -140,26 +140,31 @@ struct Trail {
         FilledCircles,
     };
 
-    float localPlayerTime = 2.0f;
-    int localPlayerType = Line;
-    float alliesTime = 2.0f;
-    int alliesType = Line;
-    float enemiesTime = 2.0f;
-    int enemiesType = Line;
-
-    ColorToggleThickness localPlayer;
-    ColorToggleThickness allies;
-    ColorToggleThickness enemies;
+    int type = Line;
+    float time = 2.0f;
+    Color color;
+    float thickness = 1.0f;
 
     auto operator==(const Trail& t) const
     {
         return enabled == t.enabled
-            && localPlayerTime == t.localPlayerTime
-            && localPlayerType == t.localPlayerType
-            && alliesTime == t.alliesTime
-            && alliesType == t.alliesType
-            && enemiesTime == t.enemiesTime
-            && enemiesType == t.enemiesType
+            && type == t.type
+            && time == t.time
+            && color == t.color
+            && thickness == t.thickness;
+    }
+};
+
+struct Trails {
+    bool enabled = false;
+
+    Trail localPlayer;
+    Trail allies;
+    Trail enemies;
+
+    auto operator==(const Trails& t) const
+    {
+        return enabled == t.enabled
             && localPlayer == t.localPlayer
             && allies == t.allies
             && enemies == t.enemies;
@@ -167,12 +172,12 @@ struct Trail {
 };
 
 struct Projectile : Shared {
-    Trail trail;
+    Trails trails;
   
     auto operator==(const Projectile& p) const
     {
         return static_cast<const Shared&>(*this) == static_cast<const Shared&>(p)
-            && trail == p.trail;
+            && trails == p.trails;
     }
 
     auto& operator=(const Shared& s)

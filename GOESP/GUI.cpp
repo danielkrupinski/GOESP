@@ -390,29 +390,29 @@ void GUI::drawESPTab() noexcept
            // if (currentItem != 7)
                 ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
         } else if (currentCategory == 3) {
-            ImGui::Checkbox("Trail", &config->projectiles[currentItem].trail.enabled);
+            ImGui::Checkbox("Trails", &config->projectiles[currentItem].trails.enabled);
             ImGui::SameLine();
            
             if (ImGui::Button("..."))
-                ImGui::OpenPopup("##trail");
+                ImGui::OpenPopup("##trails");
 
-            if (ImGui::BeginPopup("##trail")) {
-                constexpr auto trailPicker = [](const char* name, ColorToggleThickness& color, float& time, int& type) noexcept {
+            if (ImGui::BeginPopup("##trails")) {
+                constexpr auto trailPicker = [](const char* name, Trail& trail) noexcept {
                     ImGui::PushID(name);
-                    ImGuiCustom::colorPicker(name, color);
+                    ImGuiCustom::colorPicker(name, trail.color, &trail.enabled);
                     ImGui::SameLine(150.0f);
                     ImGui::SetNextItemWidth(95.0f);
-                    ImGui::Combo("", &type, "Line\0Circles\0Filled Circles\0");
-                    time = std::clamp(time, 1.0f, 60.0f);
+                    ImGui::Combo("", &trail.type, "Line\0Circles\0Filled Circles\0");
                     ImGui::SameLine();
                     ImGui::SetNextItemWidth(95.0f);
-                    ImGui::InputFloat("Time", &time, 0.1f, 0.5f, "%.1fs");
+                    ImGui::InputFloat("Time", &trail.time, 0.1f, 0.5f, "%.1fs");
+                    trail.time = std::clamp(trail.time, 1.0f, 60.0f);
                     ImGui::PopID();
                 };
 
-                trailPicker("Local Player", config->projectiles[currentItem].trail.localPlayer, config->projectiles[currentItem].trail.localPlayerTime, config->projectiles[currentItem].trail.localPlayerType);
-                trailPicker("Allies", config->projectiles[currentItem].trail.allies, config->projectiles[currentItem].trail.alliesTime, config->projectiles[currentItem].trail.alliesType);
-                trailPicker("Enemies", config->projectiles[currentItem].trail.enemies, config->projectiles[currentItem].trail.enemiesTime, config->projectiles[currentItem].trail.enemiesType);
+                trailPicker("Local Player", config->projectiles[currentItem].trails.localPlayer);
+                trailPicker("Allies", config->projectiles[currentItem].trails.allies);
+                trailPicker("Enemies", config->projectiles[currentItem].trails.enemies);
                 ImGui::EndPopup();
             }
         }

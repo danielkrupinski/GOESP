@@ -169,12 +169,15 @@ static void from_json(const json& j, Weapon& w)
 static void from_json(const json& j, Trail& t)
 {
     read<value_t::boolean>(j, "Enabled", t.enabled);
-    read_number(j, "Local Player Time", t.localPlayerTime);
-    read_number(j, "Local Player Type", t.localPlayerType);
-    read_number(j, "Allies Time", t.alliesTime);
-    read_number(j, "Allies Type", t.alliesType);
-    read_number(j, "Enemies Time", t.enemiesTime);
-    read_number(j, "Enemies Type", t.enemiesType);
+    read_number(j, "Type", t.type);
+    read_number(j, "Time", t.time);
+    read<value_t::object>(j, "Color", t.color);
+    read_number(j, "Thickness", t.thickness);
+}
+
+static void from_json(const json& j, Trails& t)
+{
+    read<value_t::boolean>(j, "Enabled", t.enabled);
     read<value_t::object>(j, "Local Player", t.localPlayer);
     read<value_t::object>(j, "Allies", t.allies);
     read<value_t::object>(j, "Enemies", t.enemies);
@@ -184,7 +187,7 @@ static void from_json(const json& j, Projectile& p)
 {
     from_json(j, static_cast<Shared&>(p));
 
-    read<value_t::object>(j, "Trail", p.trail);
+    read<value_t::object>(j, "Trails", p.trails);
 }
 
 static void from_json(const json& j, Player& p)
@@ -343,18 +346,22 @@ static void to_json(json& j, const Trail& t)
 
     if (t.enabled != dummy.enabled)
         j["Enabled"] = t.enabled;
-    if (t.localPlayerTime != dummy.localPlayerTime)
-        j["Local Player Time"] = t.localPlayerTime;
-    if (t.localPlayerType != dummy.localPlayerType)
-        j["Local Player Type"] = t.localPlayerType;
-    if (t.alliesTime != dummy.alliesTime)
-        j["Allies Time"] = t.alliesTime;
-    if (t.alliesType != dummy.alliesType)
-        j["Allies Type"] = t.alliesType;
-    if (t.enemiesTime != dummy.enemiesTime)
-        j["Enemies Time"] = t.enemiesTime;
-    if (t.enemiesType != dummy.enemiesType)
-        j["Enemies Type"] = t.enemiesType;
+    if (t.type != dummy.type)
+        j["Type"] = t.type;
+    if (t.time != dummy.time)
+        j["Time"] = t.time;
+    if (t.color != dummy.color)
+        j["Color"] = t.color;
+    if (t.thickness != dummy.thickness)
+        j["Thickness"] = t.thickness;
+}
+
+static void to_json(json& j, const Trails& t)
+{
+    const Trails dummy;
+
+    if (t.enabled != dummy.enabled)
+        j["Enabled"] = t.enabled;
     if (t.localPlayer != dummy.localPlayer)
         j["Local Player"] = t.localPlayer;
     if (t.allies != dummy.allies)
@@ -369,8 +376,8 @@ static void to_json(json& j, const Projectile& p)
 
     const Projectile dummy;
 
-    if (p.trail != dummy.trail)
-        j["Trail"] = p.trail;
+    if (p.trails != dummy.trails)
+        j["Trails"] = p.trails;
 }
 
 static void to_json(json& j, const PurchaseList& pl)
