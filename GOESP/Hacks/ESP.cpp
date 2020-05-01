@@ -148,7 +148,7 @@ struct WeaponData : BaseData {
 
         if (const auto weaponInfo = entity->getWeaponInfo()) {
             type = weaponInfo->type;
-            name = weaponInfo->name;
+            name = interfaces->localize->findAsUTF8(weaponInfo->name);
         }
     }
     int clip;
@@ -413,7 +413,7 @@ static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, 
     renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
 
     if (config.name.enabled && !weaponData.name.empty()) {
-        renderText(drawList, config.font.name, weaponData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, interfaces->localize->findAsUTF8(weaponData.name.c_str()), { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+        renderText(drawList, config.font.name, weaponData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, weaponData.name.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
     }
 
     if (config.ammo.enabled && weaponData.clip != -1) {
