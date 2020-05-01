@@ -133,9 +133,19 @@ struct Weapon : Shared {
 
 struct Trail {
     bool enabled = false;
+
+    enum Type {
+        Line = 0,
+        Circles
+    };
+
     float localPlayerTime = 2.0f;
+    int localPlayerType = Line;
     float alliesTime = 2.0f;
+    int alliesType = Line;
     float enemiesTime = 2.0f;
+    int enemiesType = Line;
+
     ColorToggleThickness localPlayer;
     ColorToggleThickness allies;
     ColorToggleThickness enemies;
@@ -144,8 +154,11 @@ struct Trail {
     {
         return enabled == t.enabled
             && localPlayerTime == t.localPlayerTime
+            && localPlayerType == t.localPlayerType
             && alliesTime == t.alliesTime
+            && alliesType == t.alliesType
             && enemiesTime == t.enemiesTime
+            && enemiesType == t.enemiesType
             && localPlayer == t.localPlayer
             && allies == t.allies
             && enemies == t.enemies;

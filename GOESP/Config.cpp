@@ -170,8 +170,11 @@ static void from_json(const json& j, Trail& t)
 {
     read<value_t::boolean>(j, "Enabled", t.enabled);
     read_number(j, "Local Player Time", t.localPlayerTime);
+    read_number(j, "Local Player Type", t.localPlayerType);
     read_number(j, "Allies Time", t.alliesTime);
+    read_number(j, "Allies Type", t.alliesType);
     read_number(j, "Enemies Time", t.enemiesTime);
+    read_number(j, "Enemies Type", t.enemiesType);
     read<value_t::object>(j, "Local Player", t.localPlayer);
     read<value_t::object>(j, "Allies", t.allies);
     read<value_t::object>(j, "Enemies", t.enemies);
@@ -342,10 +345,16 @@ static void to_json(json& j, const Trail& t)
         j["Enabled"] = t.enabled;
     if (t.localPlayerTime != dummy.localPlayerTime)
         j["Local Player Time"] = t.localPlayerTime;
+    if (t.localPlayerType != dummy.localPlayerType)
+        j["Local Player Type"] = t.localPlayerType;
     if (t.alliesTime != dummy.alliesTime)
         j["Allies Time"] = t.alliesTime;
+    if (t.alliesType != dummy.alliesType)
+        j["Allies Type"] = t.alliesType;
     if (t.enemiesTime != dummy.enemiesTime)
         j["Enemies Time"] = t.enemiesTime;
+    if (t.enemiesType != dummy.enemiesType)
+        j["Enemies Type"] = t.enemiesType;
     if (t.localPlayer != dummy.localPlayer)
         j["Local Player"] = t.localPlayer;
     if (t.allies != dummy.allies)
