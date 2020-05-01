@@ -127,10 +127,8 @@ struct PlayerData : BaseData {
 
         if (const auto weapon = entity->getActiveWeapon()) {
             audible = audible || isEntityAudible(weapon->index());
-            if (const auto weaponInfo = weapon->getWeaponInfo()) {
-                if (char weaponName[100]; WideCharToMultiByte(CP_UTF8, 0, interfaces->localize->find(weaponInfo->name), -1, weaponName, _countof(weaponName), nullptr, nullptr))
-                    activeWeapon = weaponName;
-            }
+            if (const auto weaponInfo = weapon->getWeaponInfo())
+                activeWeapon = interfaces->localize->findAsUTF8(weaponInfo->name);
         }
     }
     bool enemy = false;
