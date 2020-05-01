@@ -450,13 +450,14 @@ static void drawProjectileTrajectory(ImDrawList* drawList, const ColorToggleThic
             if (type == Trail::Line)
                 points.push_back(pos);
             else if (type == Trail::Circles)
-                drawList->AddCircle(pos, 3.5f - point.distTo(localPlayerOrigin) / 700.0f, color);
+                drawList->AddCircle(pos, 3.5f - point.distTo(localPlayerOrigin) / 700.0f, color, 12, config.thickness);
             else if (type == Trail::FilledCircles)
                 drawList->AddCircleFilled(pos, 3.5f - point.distTo(localPlayerOrigin) / 700.0f, color);
         }
     }
 
-    drawList->AddPolyline(points.data(), points.size(), color, false, config.thickness);
+    if (type == Trail::Line)
+        drawList->AddPolyline(points.data(), points.size(), color, false, config.thickness);
 }
 
 static constexpr bool renderPlayerEsp(ImDrawList* drawList, const PlayerData& playerData, const Player& playerConfig) noexcept
