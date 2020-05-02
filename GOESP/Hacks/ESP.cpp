@@ -225,6 +225,7 @@ void ESP::collectData() noexcept
             case ClassId::PlantedC4:
             case ClassId::Hostage:
             case ClassId::Dronegun:
+            case ClassId::Cash:
                 entities.emplace_back(entity);
             }
         }
@@ -610,6 +611,7 @@ void ESP::render(ImDrawList* drawList) noexcept
             case ClassId::PlantedC4: return "Planted C4";
             case ClassId::Hostage: return "Hostage";
             case ClassId::Dronegun: return "Sentry";
+            case ClassId::Cash: return "Cash";
             default: return nullptr;
             }
           }(entity.classId)) {
