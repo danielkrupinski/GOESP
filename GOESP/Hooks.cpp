@@ -13,6 +13,7 @@
 #include "Memory.h"
 
 #include "SDK/Engine.h"
+#include "SDK/GlobalVars.h"
 #include "SDK/InputSystem.h"
 
 #include <atomic>
@@ -44,8 +45,14 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
         return true;
     }(window);
 
-    ESP::collectData();
-    Misc::collectData();
+    static auto lastDataGather = 0.0f;
+
+    if (lastDataGather != memory->globalVars->realtime) {
+        lastDataGather = memory->globalVars->realtime;
+
+        ESP::collectData();
+        Misc::collectData();
+    }
 
     LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
