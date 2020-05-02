@@ -67,6 +67,11 @@ struct Vector {
         return Vector{ x - sub, y - sub, z - sub };
     }
 
+    constexpr auto operator+(float add) const noexcept
+    {
+        return Vector{ x + add, y + add, z + add };
+    }
+
     auto length() const noexcept
     {
         return std::sqrtf(x * x + y * y + z * z);
