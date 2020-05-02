@@ -231,13 +231,16 @@ void ESP::collectData() noexcept
         }
     }
 
-    for (auto it = projectiles.begin(); it != projectiles.end(); ++it) {
+    for (auto it = projectiles.begin(); it != projectiles.end();) {
         if (!interfaces->entityList->getEntityFromHandle(it->handle)) {
             it->exploded = true;
 
-            if (it->trajectory.size() < 1 || it->trajectory[it->trajectory.size() - 1].first + 60.0f < memory->globalVars->realtime)
-                projectiles.erase(it);
+            if (it->trajectory.size() < 1 || it->trajectory[it->trajectory.size() - 1].first + 60.0f < memory->globalVars->realtime) {
+                it = projectiles.erase(it);
+                continue;
+            }
         }
+        ++it;
     }
 }
 
