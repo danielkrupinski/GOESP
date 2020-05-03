@@ -63,7 +63,7 @@ struct BaseData {
     Matrix3x4 coordinateFrame;
 };
 
-struct EntityData : BaseData {
+struct EntityData final : BaseData {
     EntityData(Entity* entity) noexcept : BaseData{ entity }
     {
         classId = entity->getClientClass()->classId;
