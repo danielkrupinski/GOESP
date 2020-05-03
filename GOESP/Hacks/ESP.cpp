@@ -252,6 +252,7 @@ void ESP::collectData() noexcept
             case ClassId::Hostage:
             case ClassId::Dronegun:
             case ClassId::Cash:
+            case ClassId::AmmoBox:
                 entities.emplace_back(entity);
                 break;
             case ClassId::LootCrate:
@@ -675,6 +676,7 @@ void ESP::render(ImDrawList* drawList) noexcept
             case ClassId::Hostage: return "Hostage";
             case ClassId::Dronegun: return "Sentry";
             case ClassId::Cash: return "Cash";
+            case ClassId::AmmoBox: return "Ammo Box";
             default: return nullptr;
             }
           }(entity.classId)) {
