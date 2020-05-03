@@ -5,6 +5,7 @@
 #include "../imgui/imgui_internal.h"
 
 #include "../Config.h"
+#include "../fnv.h"
 #include "../Helpers.h"
 #include "../Interfaces.h"
 #include "../Memory.h"
@@ -177,20 +178,18 @@ struct LootCrateData : BaseData {
         if (!model)
             return;
 
-        // TODO: use fnv hash here
+        type = [](const char* modelName) {
+            switch (fnv::hashRuntime(modelName)) {
+            case fnv::hash("models/props_survival/cases/case_pistol.mdl"): return PistolCase;
+            case fnv::hash("models/props_survival/cases/case_light_weapon.mdl"): return LightCase;
+            case fnv::hash("models/props_survival/cases/case_heavy_weapon.mdl"): return HeavyCase;
+            case fnv::hash("models/props_survival/cases/case_explosive.mdl"): return ExplosiveCase;
+            case fnv::hash("models/props_survival/cases/case_tools.mdl"): return ToolsCase;
+            case fnv::hash("models/props_survival/cash/dufflebag.mdl"): return CashDufflebag;
 
-        if (std::strstr(model->name, "case_pistol"))
-            type = PistolCase;
-        else if (std::strstr(model->name, "case_light"))
-            type = LightCase;
-        else if (std::strstr(model->name, "case_heavy"))
-            type = HeavyCase;
-        else if (std::strstr(model->name, "case_explosive"))
-            type = ExplosiveCase;
-        else if (std::strstr(model->name, "case_tools"))
-            type = ToolsCase;
-        else if (std::strstr(model->name, "dufflebag"))
-            type = CashDufflebag;
+            default: return Unknown;
+            }
+        }(model->name);
     }
     Type type = Unknown;
 };
