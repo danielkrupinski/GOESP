@@ -76,6 +76,7 @@ struct EntityData final : BaseData {
             case ClassId::Dronegun: return "Sentry";
             case ClassId::Cash: return "Cash";
             case ClassId::AmmoBox: return "Ammo Box";
+            case ClassId::RadarJammer: return "Radar Jammer";
             default: return nullptr;
             }
         }(entity->getClientClass()->classId);
@@ -360,6 +361,7 @@ void ESP::collectData() noexcept
             case ClassId::Dronegun:
             case ClassId::Cash:
             case ClassId::AmmoBox:
+            case ClassId::RadarJammer:
                 entities.emplace_back(entity);
                 break;
             case ClassId::LootCrate:
