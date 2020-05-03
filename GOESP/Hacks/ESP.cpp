@@ -162,36 +162,25 @@ struct WeaponData : BaseData {
 };
 
 struct LootCrateData : BaseData {
-    enum Type {
-        Unknown,
-        PistolCase,
-        LightCase,
-        HeavyCase,
-        ExplosiveCase,
-        ToolsCase,
-        CashDufflebag
-    };
-
     LootCrateData(Entity* entity) noexcept : BaseData{ entity }
     {
         const auto model = entity->getModel();
         if (!model)
             return;
 
-        type = [](const char* modelName) {
+        name = [](const char* modelName) -> const char* {
             switch (fnv::hashRuntime(modelName)) {
-            case fnv::hash("models/props_survival/cases/case_pistol.mdl"): return PistolCase;
-            case fnv::hash("models/props_survival/cases/case_light_weapon.mdl"): return LightCase;
-            case fnv::hash("models/props_survival/cases/case_heavy_weapon.mdl"): return HeavyCase;
-            case fnv::hash("models/props_survival/cases/case_explosive.mdl"): return ExplosiveCase;
-            case fnv::hash("models/props_survival/cases/case_tools.mdl"): return ToolsCase;
-            case fnv::hash("models/props_survival/cash/dufflebag.mdl"): return CashDufflebag;
-
-            default: return Unknown;
+            case fnv::hash("models/props_survival/cases/case_pistol.mdl"): return "Pistol Case";
+            case fnv::hash("models/props_survival/cases/case_light_weapon.mdl"): return "Light Case";
+            case fnv::hash("models/props_survival/cases/case_heavy_weapon.mdl"): return "Heavy Case";
+            case fnv::hash("models/props_survival/cases/case_explosive.mdl"): return "Explosive Case";
+            case fnv::hash("models/props_survival/cases/case_tools.mdl"): return "Tools Case";
+            case fnv::hash("models/props_survival/cash/dufflebag.mdl"): return "Cash Dufflebag";
+            default: return nullptr;
             }
         }(model->name);
     }
-    Type type = Unknown;
+    const char* name = nullptr;
 };
 
 static std::vector<PlayerData> players;
@@ -694,19 +683,8 @@ void ESP::render(ImDrawList* drawList) noexcept
     }
 
     for (const auto& lootCrate : lootCrates) {
-        if (const auto lootCrateName = [](LootCrateData::Type type) -> const char* {
-            switch (type) {
-            case LootCrateData::PistolCase: return "Pistol Case";
-            case LootCrateData::LightCase: return "Light Case";
-            case LootCrateData::HeavyCase: return "Heavy Case";
-            case LootCrateData::ExplosiveCase: return "Explosive Case";
-            case LootCrateData::ToolsCase: return "Tools Case";
-            case LootCrateData::CashDufflebag: return "Cash Dufflebag";
-            default: return nullptr;
-            }
-          }(lootCrate.type)) {
-            renderEntityEsp(drawList, lootCrate, config->lootCrates["All"], config->lootCrates[lootCrateName], lootCrateName);
-        }
+        if (lootCrate.name)
+            renderEntityEsp(drawList, lootCrate, config->lootCrates["All"], config->lootCrates[lootCrate.name], lootCrate.name);
     }
 
     for (const auto& projectile : projectiles) {
