@@ -187,6 +187,8 @@ struct LootCrateData : BaseData {
             type = HeavyCase;
         else if (std::strstr(model->name, "case_explosive"))
             type = ExplosiveCase;
+        else if (std::strstr(model->name, "case_tools"))
+            type = ToolsCase;
     }
     Type type = Unknown;
 };
@@ -697,6 +699,7 @@ void ESP::render(ImDrawList* drawList) noexcept
             case LootCrateData::LightCase: return "Light Case";
             case LootCrateData::HeavyCase: return "Heavy Case";
             case LootCrateData::ExplosiveCase: return "Explosive Case";
+            case LootCrateData::ToolsCase: return "Tools Case";
             default: return nullptr;
             }
           }(lootCrate.type)) {
