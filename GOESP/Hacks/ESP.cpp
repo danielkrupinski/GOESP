@@ -688,6 +688,7 @@ void ESP::render(ImDrawList* drawList) noexcept
         if (const auto lootCrateName = [](LootCrateData::Type type) -> const char* {
             switch (type) {
             case LootCrateData::PistolCase: return "Pistol Case";
+            case LootCrateData::LightCase: return "Light Case";
             default: return nullptr;
             }
           }(lootCrate.type)) {
