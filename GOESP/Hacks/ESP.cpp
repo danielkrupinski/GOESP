@@ -172,18 +172,101 @@ struct WeaponData : BaseData {
     {
         clip = entity->clip();
         reserveAmmo = entity->reserveAmmoCount();
-        id = entity->weaponId();
 
         if (const auto weaponInfo = entity->getWeaponInfo()) {
-            type = weaponInfo->type;
-            name = interfaces->localize->findAsUTF8(weaponInfo->name);
+            group = [](WeaponType type, WeaponId weaponId) {
+                switch (type) {
+                case WeaponType::Pistol: return "Pistols";
+                case WeaponType::SubMachinegun: return "SMGs";
+                case WeaponType::Rifle: return "Rifles";
+                case WeaponType::SniperRifle: return "Sniper Rifles";
+                case WeaponType::Shotgun: return "Shotguns";
+                case WeaponType::Machinegun: return "Machineguns";
+                case WeaponType::Grenade: return "Grenades";
+                case WeaponType::Melee: return "Melee";
+                default:
+                    switch (weaponId) {
+                    case WeaponId::C4:
+                    case WeaponId::Healthshot:
+                        return "Other";
+                    default: return "All";
+                    }
+                }
+            }(weaponInfo->type, entity->weaponId());
+
+            name = [](WeaponId weaponId) {
+                switch (weaponId) {
+                default: return "All";
+
+                case WeaponId::Glock: return "Glock-18";
+                case WeaponId::Hkp2000: return "P2000";
+                case WeaponId::Usp_s: return "USP-S";
+                case WeaponId::Elite: return "Dual Berettas";
+                case WeaponId::P250: return "P250";
+                case WeaponId::Tec9: return "Tec-9";
+                case WeaponId::Fiveseven: return "Five-SeveN";
+                case WeaponId::Cz75a: return "CZ75-Auto";
+                case WeaponId::Deagle: return "Desert Eagle";
+                case WeaponId::Revolver: return "R8 Revolver";
+
+                case WeaponId::Mac10: return "MAC-10";
+                case WeaponId::Mp9: return "MP9";
+                case WeaponId::Mp7: return "MP7";
+                case WeaponId::Mp5sd: return "MP5-SD";
+                case WeaponId::Ump45: return "UMP-45";
+                case WeaponId::P90: return "P90";
+                case WeaponId::Bizon: return "PP-Bizon";
+
+                case WeaponId::GalilAr: return "Galil AR";
+                case WeaponId::Famas: return "FAMAS";
+                case WeaponId::Ak47: return "AK-47";
+                case WeaponId::M4A1: return "M4A4";
+                case WeaponId::M4a1_s: return "M4A1-S";
+                case WeaponId::Sg553: return "SG 553";
+                case WeaponId::Aug: return "AUG";
+
+                case WeaponId::Ssg08: return "SSG 08";
+                case WeaponId::Awp: return "AWP";
+                case WeaponId::G3SG1: return "G3SG1";
+                case WeaponId::Scar20: return "SCAR-20";
+
+                case WeaponId::Nova: return "Nova";
+                case WeaponId::Xm1014: return "XM1014";
+                case WeaponId::Sawedoff: return "Sawed-Off";
+                case WeaponId::Mag7: return "MAG-7";
+
+                case WeaponId::M249: return "M249";
+                case WeaponId::Negev: return "Negev";
+
+                case WeaponId::Flashbang: return "Flashbang";
+                case WeaponId::HeGrenade: return "HE Grenade";
+                case WeaponId::SmokeGrenade: return "Smoke Grenade";
+                case WeaponId::Molotov: return "Molotov";
+                case WeaponId::Decoy: return "Decoy Grenade";
+                case WeaponId::IncGrenade: return "Incendiary";
+                case WeaponId::TaGrenade: return "TA Grenade";
+                case WeaponId::Firebomb: return "Fire Bomb";
+                case WeaponId::Diversion: return "Diversion";
+                case WeaponId::FragGrenade: return "Frag Grenade";
+                case WeaponId::Snowball: return "Snowball";
+
+                case WeaponId::Axe: return "Axe";
+                case WeaponId::Hammer: return "Hammer";
+                case WeaponId::Spanner: return "Wrench";
+
+                case WeaponId::C4: return "C4";
+                case WeaponId::Healthshot: return "Healthshot";
+                }
+            }(entity->weaponId());
+
+            displayName = interfaces->localize->findAsUTF8(weaponInfo->name);
         }
     }
     int clip;
     int reserveAmmo;
-    WeaponId id;
-    WeaponType type = WeaponType::Unknown;
-    std::string name;
+    const char* group = "All";
+    const char* name = "All";
+    std::string displayName;
 };
 
 struct LootCrateData : BaseData {
@@ -500,8 +583,8 @@ static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, 
     renderBox(drawList, bbox, config);
     renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
 
-    if (config.name.enabled && !weaponData.name.empty()) {
-        renderText(drawList, config.font.name, weaponData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, weaponData.name.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+    if (config.name.enabled && !weaponData.displayName.empty()) {
+        renderText(drawList, config.font.name, weaponData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, weaponData.displayName.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
     }
 
     if (config.ammo.enabled && weaponData.clip != -1) {
@@ -603,92 +686,8 @@ void ESP::render(ImDrawList* drawList) noexcept
             renderPlayerEsp(drawList, player, playerConfig[player.visible ? "Visible" : "Occluded"]);
     }
 
-    for (const auto& weapon : weapons) {
-        renderWeaponEsp(drawList, weapon,
-            config->weapons[([](WeaponType type, WeaponId weaponId) constexpr noexcept {
-                switch (type) {
-                case WeaponType::Pistol: return "Pistols";
-                case WeaponType::SubMachinegun: return "SMGs";
-                case WeaponType::Rifle: return "Rifles";
-                case WeaponType::SniperRifle: return "Sniper Rifles";
-                case WeaponType::Shotgun: return "Shotguns";
-                case WeaponType::Machinegun: return "Machineguns";
-                case WeaponType::Grenade: return "Grenades";
-                case WeaponType::Melee: return "Melee";
-                default: 
-                    switch (weaponId) {
-                    case WeaponId::C4:
-                    case WeaponId::Healthshot:
-                        return "Other";
-                    default: return "All";
-                    }
-                }
-            })(weapon.type, weapon.id)],
-            config->weapons[([](WeaponId weaponId) constexpr noexcept {
-                switch (weaponId) {
-                default: return "All";
-
-                case WeaponId::Glock: return "Glock-18";
-                case WeaponId::Hkp2000: return "P2000";
-                case WeaponId::Usp_s: return "USP-S";
-                case WeaponId::Elite: return "Dual Berettas";
-                case WeaponId::P250: return "P250";
-                case WeaponId::Tec9: return "Tec-9";
-                case WeaponId::Fiveseven: return "Five-SeveN";
-                case WeaponId::Cz75a: return "CZ75-Auto";
-                case WeaponId::Deagle: return "Desert Eagle";
-                case WeaponId::Revolver: return "R8 Revolver";
-
-                case WeaponId::Mac10: return "MAC-10";
-                case WeaponId::Mp9: return "MP9";
-                case WeaponId::Mp7: return "MP7";
-                case WeaponId::Mp5sd: return "MP5-SD";
-                case WeaponId::Ump45: return "UMP-45";
-                case WeaponId::P90: return "P90";
-                case WeaponId::Bizon: return "PP-Bizon";
-
-                case WeaponId::GalilAr: return "Galil AR";
-                case WeaponId::Famas: return "FAMAS";
-                case WeaponId::Ak47: return "AK-47";
-                case WeaponId::M4A1: return "M4A4";
-                case WeaponId::M4a1_s: return "M4A1-S";
-                case WeaponId::Sg553: return "SG 553";
-                case WeaponId::Aug: return "AUG";
-
-                case WeaponId::Ssg08: return "SSG 08";
-                case WeaponId::Awp: return "AWP";
-                case WeaponId::G3SG1: return "G3SG1";
-                case WeaponId::Scar20: return "SCAR-20";
-
-                case WeaponId::Nova: return "Nova";
-                case WeaponId::Xm1014: return "XM1014";
-                case WeaponId::Sawedoff: return "Sawed-Off";
-                case WeaponId::Mag7: return "MAG-7";
-
-                case WeaponId::M249: return "M249";
-                case WeaponId::Negev: return "Negev";
-
-                case WeaponId::Flashbang: return "Flashbang";
-                case WeaponId::HeGrenade: return "HE Grenade";
-                case WeaponId::SmokeGrenade: return "Smoke Grenade";
-                case WeaponId::Molotov: return "Molotov";
-                case WeaponId::Decoy: return "Decoy Grenade";
-                case WeaponId::IncGrenade: return "Incendiary";
-                case WeaponId::TaGrenade: return "TA Grenade";
-                case WeaponId::Firebomb: return "Fire Bomb";
-                case WeaponId::Diversion: return "Diversion";
-                case WeaponId::FragGrenade: return "Frag Grenade";
-                case WeaponId::Snowball: return "Snowball";
-
-                case WeaponId::Axe: return "Axe";
-                case WeaponId::Hammer: return "Hammer";
-                case WeaponId::Spanner: return "Wrench";
-
-                case WeaponId::C4: return "C4";
-                case WeaponId::Healthshot: return "Healthshot";
-                }
-            })(weapon.id)]);
-    }
+    for (const auto& weapon : weapons)
+        renderWeaponEsp(drawList, weapon, config->weapons[weapon.group], config->weapons[weapon.name]);
 
     // TODO: reduce code duplication
     for (const auto& entity : entities) {
