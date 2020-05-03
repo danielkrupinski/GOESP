@@ -71,13 +71,26 @@ struct EntityData : BaseData {
     ClassId classId;
 };
 
-struct ProjectileData : EntityData {
-    ProjectileData(Entity* projectile) noexcept : EntityData{ projectile }
+struct ProjectileData : BaseData {
+    ProjectileData(Entity* projectile) noexcept : BaseData{ projectile }
     {
-        if (const auto model = projectile->getModel(); model && std::strstr(model->name, "flashbang"))
-            flashbang = true;
-        else
-            flashbang = false;
+        name = [](Entity* projectile) -> const char* {
+            switch (projectile->getClientClass()->classId) {
+            case ClassId::BaseCSGrenadeProjectile:
+                if (const auto model = projectile->getModel(); model && std::strstr(model->name, "flashbang"))
+                    return "Flashbang";
+                else
+                    return "HE Grenade";
+            case ClassId::BreachChargeProjectile: return "Breach Charge";
+            case ClassId::BumpMineProjectile: return "Bump Mine";
+            case ClassId::DecoyProjectile: return "Decoy Grenade";
+            case ClassId::MolotovProjectile: return "Molotov";
+            case ClassId::SensorGrenadeProjectile: return "TA Grenade";
+            case ClassId::SmokeGrenadeProjectile: return "Smoke Grenade";
+            case ClassId::SnowballProjectile: return "Snowball";
+            default: return nullptr;
+            }
+        }(projectile);
 
         if (const auto thrower = interfaces->entityList->getEntityFromHandle(projectile->thrower()); thrower && localPlayer) {
             if (thrower == localPlayer.get())
@@ -101,11 +114,12 @@ struct ProjectileData : EntityData {
     {
         return handle == otherHandle;
     }
-    bool flashbang;
+
     bool exploded = false;
     bool thrownByLocalPlayer = false;
     bool thrownByEnemy = false;
     int handle;
+    const char* name = nullptr;
     std::vector<std::pair<float, Vector>> trajectory;
 };
 
@@ -688,23 +702,8 @@ void ESP::render(ImDrawList* drawList) noexcept
     }
 
     for (const auto& projectile : projectiles) {
-        if (const auto name = [](ClassId classId, bool flashbang) -> const char* {
-            switch (classId) {
-            case ClassId::BaseCSGrenadeProjectile:
-                if (flashbang) return "Flashbang";
-                else return "HE Grenade";
-            case ClassId::BreachChargeProjectile: return "Breach Charge";
-            case ClassId::BumpMineProjectile: return "Bump Mine";
-            case ClassId::DecoyProjectile: return "Decoy Grenade";
-            case ClassId::MolotovProjectile: return "Molotov";
-            case ClassId::SensorGrenadeProjectile: return "TA Grenade";
-            case ClassId::SmokeGrenadeProjectile: return "Smoke Grenade";
-            case ClassId::SnowballProjectile: return "Snowball";
-            default: return nullptr;
-            }
-          }(projectile.classId, projectile.flashbang)) {
-            renderProjectileEsp(drawList, projectile, config->projectiles["All"], config->projectiles[name], name);
-        }
+        if (projectile.name)
+            renderProjectileEsp(drawList, projectile, config->projectiles["All"], config->projectiles[projectile.name], projectile.name);
     }
 }
 
