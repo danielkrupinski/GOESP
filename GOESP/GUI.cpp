@@ -93,7 +93,8 @@ void GUI::drawESPTab() noexcept
         case 1: return config->enemies[item];
         case 2: return config->weapons[item];
         case 3: return config->projectiles[item];
-        case 4: return config->otherEntities[item];
+        case 4: return config->lootCrates[item];
+        case 5: return config->otherEntities[item];
         }
     };
 
@@ -105,7 +106,7 @@ void GUI::drawESPTab() noexcept
     };
 
     if (ImGui::ListBoxHeader("##list", { 170.0f, 300.0f })) {
-        constexpr std::array categories{ "Allies", "Enemies", "Weapons", "Projectiles", "Other Entities" };
+        constexpr std::array categories{ "Allies", "Enemies", "Weapons", "Projectiles", "Loot Crates", "Other Entities" };
 
         for (std::size_t i = 0; i < categories.size(); ++i) {
             if (ImGui::Selectable(categories[i], currentCategory == i && currentItem == "All")) {
@@ -179,7 +180,8 @@ void GUI::drawESPTab() noexcept
                 case 1: return { "Visible", "Occluded" };
                 case 2: return { "Pistols", "SMGs", "Rifles", "Sniper Rifles", "Shotguns", "Machineguns", "Grenades", "Melee", "Other" };
                 case 3: return { "Flashbang", "HE Grenade", "Breach Charge", "Bump Mine", "Decoy Grenade", "Molotov", "TA Grenade", "Smoke Grenade", "Snowball" };
-                case 4: return { "Defuse Kit", "Chicken", "Planted C4", "Hostage", "Sentry", "Cash" };
+                case 4: return { "Pistol Case" };
+                case 5: return { "Defuse Kit", "Chicken", "Planted C4", "Hostage", "Sentry", "Cash" };
                 default: return { };
                 }
             }(i);

@@ -160,9 +160,35 @@ struct WeaponData : BaseData {
     std::string name;
 };
 
+struct LootCrateData : BaseData {
+    enum Type {
+        Unknown,
+        PistolCase,
+        LightCase,
+        HeavyCase,
+        ExplosiveCase,
+        ToolsCase,
+        CashDufflebag
+    };
+
+    LootCrateData(Entity* entity) noexcept : BaseData{ entity }
+    {
+        const auto model = entity->getModel();
+        if (!model)
+            return;
+
+        if (std::strstr(model->name, "case_pistol"))
+            type = PistolCase;
+        else if (std::strstr(model->name, "case_light"))
+            type = LightCase;
+    }
+    Type type = Unknown;
+};
+
 static std::vector<PlayerData> players;
 static std::vector<WeaponData> weapons;
 static std::vector<EntityData> entities;
+static std::vector<LootCrateData> lootCrates;
 static std::list<ProjectileData> projectiles;
 static std::mutex dataMutex;
 
@@ -173,6 +199,7 @@ void ESP::collectData() noexcept
     players.clear();
     weapons.clear();
     entities.clear();
+    lootCrates.clear();
 
     if (!localPlayer)
         return;
@@ -226,6 +253,9 @@ void ESP::collectData() noexcept
             case ClassId::Dronegun:
             case ClassId::Cash:
                 entities.emplace_back(entity);
+                break;
+            case ClassId::LootCrate:
+                lootCrates.emplace_back(entity);
             }
         }
     }
@@ -456,7 +486,7 @@ static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, 
     }
 }
 
-static void renderEntityBox(ImDrawList* drawList, const EntityData& entityData, const char* name, const Shared& config) noexcept
+static void renderEntityBox(ImDrawList* drawList, const BaseData& entityData, const char* name, const Shared& config) noexcept
 {
     const BoundingBox bbox{ entityData, config.boxScale };
 
@@ -510,7 +540,7 @@ static void renderWeaponEsp(ImDrawList* drawList, const WeaponData& weaponData, 
     }
 }
 
-static void renderEntityEsp(ImDrawList* drawList, const EntityData& entityData, const Shared& parentConfig, const Shared& itemConfig, const char* name) noexcept
+static void renderEntityEsp(ImDrawList* drawList, const BaseData& entityData, const Shared& parentConfig, const Shared& itemConfig, const char* name) noexcept
 {
     const auto& config = itemConfig.enabled ? itemConfig : parentConfig;
 
@@ -649,6 +679,17 @@ void ESP::render(ImDrawList* drawList) noexcept
             }
           }(entity.classId)) {
             renderEntityEsp(drawList, entity, config->otherEntities["All"], config->otherEntities[otherEntity], otherEntity);
+        }
+    }
+
+    for (const auto& lootCrate : lootCrates) {
+        if (const auto lootCrateName = [](LootCrateData::Type type) -> const char* {
+            switch (type) {
+            case LootCrateData::PistolCase: return "Pistol Case";
+            default: return nullptr;
+            }
+          }(lootCrate.type)) {
+            renderEntityEsp(drawList, lootCrate, config->lootCrates["All"], config->lootCrates[lootCrateName], lootCrateName);
         }
     }
 
