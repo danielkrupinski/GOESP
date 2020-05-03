@@ -42,11 +42,13 @@ static bool worldToScreen(const Vector& in, ImVec2& out) noexcept
     return false;
 }
 
+static Vector localPlayerOrigin;
+
 struct BaseData {
     BaseData(Entity* entity) noexcept
     {
         if (localPlayer)
-            distanceToLocal = entity->getAbsOrigin().distTo(localPlayer->getAbsOrigin());
+            distanceToLocal = entity->getAbsOrigin().distTo(localPlayerOrigin);
         else
             distanceToLocal = 0.0f;
         
@@ -162,7 +164,6 @@ static std::vector<PlayerData> players;
 static std::vector<WeaponData> weapons;
 static std::vector<EntityData> entities;
 static std::list<ProjectileData> projectiles;
-static Vector localPlayerOrigin;
 static std::mutex dataMutex;
 
 void ESP::collectData() noexcept
@@ -177,19 +178,17 @@ void ESP::collectData() noexcept
         return;
 
     viewMatrix = interfaces->engine->worldToScreenMatrix();
+    localPlayerOrigin = localPlayer->getAbsOrigin();
 
     const auto observerTarget = localPlayer->getObserverMode() == ObsMode::InEye ? localPlayer->getObserverTarget() : nullptr;
 
     for (int i = 1; i <= memory->globalVars->maxClients; ++i) {
         const auto entity = interfaces->entityList->getEntity(i);
-        if (!entity || entity == observerTarget
+        if (!entity || entity == localPlayer.get() || entity == observerTarget
             || entity->isDormant() || !entity->isAlive())
             continue;
 
-        if (entity == localPlayer.get())
-            localPlayerOrigin = entity->getAbsOrigin();
-        else
-            players.emplace_back(entity);
+        players.emplace_back(entity);
     }
 
     for (int i = memory->globalVars->maxClients + 1; i <= interfaces->entityList->getHighestEntityIndex(); ++i) {
