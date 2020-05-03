@@ -177,10 +177,14 @@ struct LootCrateData : BaseData {
         if (!model)
             return;
 
+        // TODO: use fnv hash here
+
         if (std::strstr(model->name, "case_pistol"))
             type = PistolCase;
         else if (std::strstr(model->name, "case_light"))
             type = LightCase;
+        else if (std::strstr(model->name, "case_heavy"))
+            type = HeavyCase;
     }
     Type type = Unknown;
 };
@@ -689,6 +693,7 @@ void ESP::render(ImDrawList* drawList) noexcept
             switch (type) {
             case LootCrateData::PistolCase: return "Pistol Case";
             case LootCrateData::LightCase: return "Light Case";
+            case LootCrateData::HeavyCase: return "Heavy Case";
             default: return nullptr;
             }
           }(lootCrate.type)) {
