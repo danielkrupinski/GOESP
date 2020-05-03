@@ -285,6 +285,37 @@ public:
         valid = true;
     }
 
+
+    BoundingBox(const Vector& center) noexcept
+    {
+        const auto [width, height] = interfaces->engine->getScreenSize();
+
+        min.x = static_cast<float>(width * 2);
+        min.y = static_cast<float>(height * 2);
+        max.x = -min.x;
+        max.y = -min.y;
+
+        const auto mins = center - 2.0f;
+        const auto maxs = center + 2.0f;
+
+        for (int i = 0; i < 8; ++i) {
+            const Vector point{ i & 1 ? maxs.x : mins.x,
+                                i & 2 ? maxs.y : mins.y,
+                                i & 4 ? maxs.z : mins.z };
+
+            if (!worldToScreen(point, vertices[i])) {
+                valid = false;
+                return;
+            }
+            min.x = std::min(min.x, vertices[i].x);
+            min.y = std::min(min.y, vertices[i].y);
+            max.x = std::max(max.x, vertices[i].x);
+            max.y = std::max(max.y, vertices[i].y);
+        }
+        valid = true;
+    }
+
+
     operator bool() const noexcept
     {
         return valid;
