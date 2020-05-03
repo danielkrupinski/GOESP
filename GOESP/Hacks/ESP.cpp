@@ -66,9 +66,20 @@ struct BaseData {
 struct EntityData final : BaseData {
     EntityData(Entity* entity) noexcept : BaseData{ entity }
     {
-        classId = entity->getClientClass()->classId;
+        name = [](ClassId classId) -> const char* {
+            switch (classId) {
+            case ClassId::EconEntity: return "Defuse Kit";
+            case ClassId::Chicken: return "Chicken";
+            case ClassId::PlantedC4: return "Planted C4";
+            case ClassId::Hostage: return "Hostage";
+            case ClassId::Dronegun: return "Sentry";
+            case ClassId::Cash: return "Cash";
+            case ClassId::AmmoBox: return "Ammo Box";
+            default: return nullptr;
+            }
+        }(entity->getClientClass()->classId);
     }
-    ClassId classId;
+    const char* name;
 };
 
 struct ProjectileData : BaseData {
@@ -679,21 +690,10 @@ void ESP::render(ImDrawList* drawList) noexcept
             })(weapon.id)]);
     }
 
+    // TODO: reduce code duplication
     for (const auto& entity : entities) {
-        if (const auto otherEntity = [](ClassId classId) -> const char* {
-            switch (classId) {
-            case ClassId::EconEntity: return "Defuse Kit";
-            case ClassId::Chicken: return "Chicken";
-            case ClassId::PlantedC4: return "Planted C4";
-            case ClassId::Hostage: return "Hostage";
-            case ClassId::Dronegun: return "Sentry";
-            case ClassId::Cash: return "Cash";
-            case ClassId::AmmoBox: return "Ammo Box";
-            default: return nullptr;
-            }
-          }(entity.classId)) {
-            renderEntityEsp(drawList, entity, config->otherEntities["All"], config->otherEntities[otherEntity], otherEntity);
-        }
+        if (entity.name)
+            renderEntityEsp(drawList, entity, config->otherEntities["All"], config->otherEntities[entity.name], entity.name);
     }
 
     for (const auto& lootCrate : lootCrates) {
