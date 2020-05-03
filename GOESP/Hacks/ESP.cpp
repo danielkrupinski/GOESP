@@ -21,6 +21,7 @@
 #include "../SDK/WeaponInfo.h"
 #include "../SDK/WeaponId.h"
 
+#include <limits>
 #include <list>
 #include <mutex>
 #include <optional>
@@ -394,12 +395,8 @@ public:
 
     BoundingBox(const BaseData& data, const std::array<float, 3>& scale) noexcept
     {
-        const auto [width, height] = interfaces->engine->getScreenSize();
-
-        min.x = static_cast<float>(width * 2);
-        min.y = static_cast<float>(height * 2);
-        max.x = -min.x;
-        max.y = -min.y;
+        min.y = min.x = std::numeric_limits<float>::max();
+        max.y = max.x = -std::numeric_limits<float>::max();
 
         const auto mins = data.obbMins + (data.obbMaxs - data.obbMins) * 2 * (0.25f - scale);
         const auto maxs = data.obbMaxs - (data.obbMaxs - data.obbMins) * 2 * (0.25f - scale);
@@ -424,12 +421,8 @@ public:
 
     BoundingBox(const Vector& center) noexcept
     {
-        const auto [width, height] = interfaces->engine->getScreenSize();
-
-        min.x = static_cast<float>(width * 2);
-        min.y = static_cast<float>(height * 2);
-        max.x = -min.x;
-        max.y = -min.y;
+        min.y = min.x = std::numeric_limits<float>::max();
+        max.y = max.x = -std::numeric_limits<float>::max();
 
         const auto mins = center - 2.0f;
         const auto maxs = center + 2.0f;
