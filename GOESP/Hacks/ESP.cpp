@@ -407,7 +407,7 @@ public:
     ImVec2 min, max;
     ImVec2 vertices[8];
 
-    BoundingBox(const BaseData& data, const std::array<float, 3>& scale, bool useModelBounds = false) noexcept
+    BoundingBox(const BaseData& data, const std::array<float, 3>& scale, bool useModelBounds) noexcept
     {
         min.y = min.x = std::numeric_limits<float>::max();
         max.y = max.x = -std::numeric_limits<float>::max();
@@ -555,7 +555,7 @@ static void renderSnaplines(ImDrawList* drawList, const BoundingBox& bbox, const
 
 static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, const Player& config) noexcept
 {
-    const BoundingBox bbox{ playerData, config.boxScale };
+    const BoundingBox bbox{ playerData, config.boxScale, config.useModelBounds };
 
     if (!bbox)
         return;
@@ -582,7 +582,7 @@ static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, 
 
 static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, const Weapon& config) noexcept
 {
-    const BoundingBox bbox{ weaponData, config.boxScale };
+    const BoundingBox bbox{ weaponData, config.boxScale, config.useModelBounds };
 
     if (!bbox)
         return;
@@ -602,7 +602,7 @@ static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, 
 
 static void renderEntityBox(ImDrawList* drawList, const BaseData& entityData, const char* name, const Shared& config) noexcept
 {
-    const BoundingBox bbox{ entityData, config.boxScale };
+    const BoundingBox bbox{ entityData, config.boxScale, config.useModelBounds };
 
     if (!bbox)
         return;
