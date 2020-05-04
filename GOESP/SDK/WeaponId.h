@@ -15,6 +15,7 @@ enum class WeaponId : short {
     M4A1 = 16,
     Mac10,
     P90 = 19,
+    ZoneRepulsor,
     Mp5sd = 23,
     Ump45,
     Xm1014,
