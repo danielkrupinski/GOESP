@@ -58,15 +58,7 @@ struct StudioHdr {
     }
 };
 
-struct Model {
-    void* handle;
-    char name[260];
-    int	loadFlags;
-    int	serverCount;
-    int	type;
-    int	flags;	
-    Vector mins, maxs;
-};
+struct Model;
 
 class ModelInfo {
 public:
