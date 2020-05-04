@@ -13,6 +13,7 @@ class EntityList;
 class GameEventManager;
 class InputSystem;
 class Localize;
+class ModelInfo;
 
 #define GAME_INTERFACE(type, name, module, version) \
 type* name = reinterpret_cast<type*>(find(L##module, version));
@@ -27,6 +28,7 @@ public:
     GAME_INTERFACE(GameEventManager, gameEventManager, "engine", "GAMEEVENTSMANAGER002")
     GAME_INTERFACE(InputSystem, inputSystem, "inputsystem", "InputSystemVersion001")
     GAME_INTERFACE(Localize, localize, "localize", "Localize_001")
+    GAME_INTERFACE(ModelInfo, modelInfo, "engine", "VModelInfoClient004")
 private:
     static void* find(const wchar_t* module, const char* name) noexcept
     {
