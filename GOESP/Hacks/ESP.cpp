@@ -193,6 +193,7 @@ struct WeaponData : BaseData {
                     case WeaponId::Healthshot:
                     case WeaponId::BumpMine:
                     case WeaponId::ZoneRepulsor:
+                    case WeaponId::Shield:
                         return "Other";
                     default: return "All";
                     }
@@ -262,6 +263,7 @@ struct WeaponData : BaseData {
                 case WeaponId::Healthshot: return "Healthshot";
                 case WeaponId::BumpMine: return "Bump Mine";
                 case WeaponId::ZoneRepulsor: return "Zone Repulsor";
+                case WeaponId::Shield: return "Shield";
                 }
             }(entity->weaponId());
 
