@@ -407,13 +407,13 @@ public:
     ImVec2 min, max;
     ImVec2 vertices[8];
 
-    BoundingBox(const BaseData& data, const std::array<float, 3>& scale) noexcept
+    BoundingBox(const BaseData& data, const std::array<float, 3>& scale, bool useModelBounds = false) noexcept
     {
         min.y = min.x = std::numeric_limits<float>::max();
         max.y = max.x = -std::numeric_limits<float>::max();
 
-        const auto mins = data.obbMins + (data.obbMaxs - data.obbMins) * 2 * (0.25f - scale);
-        const auto maxs = data.obbMaxs - (data.obbMaxs - data.obbMins) * 2 * (0.25f - scale);
+        const auto mins = useModelBounds ? data.modelMins + (data.modelMaxs - data.modelMins) * 2 * (0.25f - scale) : data.obbMins + (data.obbMaxs - data.obbMins) * 2 * (0.25f - scale);
+        const auto maxs = useModelBounds ? data.modelMaxs - (data.modelMaxs - data.modelMins) * 2 * (0.25f - scale) : data.obbMaxs - (data.obbMaxs - data.obbMins) * 2 * (0.25f - scale);
 
         for (int i = 0; i < 8; ++i) {
             const Vector point{ i & 1 ? maxs.x : mins.x,
