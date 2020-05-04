@@ -53,14 +53,19 @@ struct BaseData {
             distanceToLocal = entity->getAbsOrigin().distTo(localPlayerOrigin);
         else
             distanceToLocal = 0.0f;
-        
+
+        if (const auto model = entity->getModel()) {
+            modelMins = model->mins;
+            modelMaxs = model->maxs;
+        }
+            
         obbMins = entity->getCollideable()->obbMins();
         obbMaxs = entity->getCollideable()->obbMaxs();
         coordinateFrame = entity->toWorldTransform();
     }
     float distanceToLocal;
-    Vector obbMins;
-    Vector obbMaxs;
+    Vector modelMins, modelMaxs;
+    Vector obbMins, obbMaxs;
     Matrix3x4 coordinateFrame;
 };
 
