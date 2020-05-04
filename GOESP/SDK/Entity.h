@@ -21,6 +21,11 @@ public:
 struct Model {
     void* handle;
     char name[260];
+    int	loadFlags;
+    int	serverCount;
+    int	type;
+    int	flags;
+    Vector mins, maxs;
 };
 
 #define PROP(func_name, offset, type) \
