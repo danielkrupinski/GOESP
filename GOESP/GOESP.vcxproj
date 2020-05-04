@@ -170,6 +170,7 @@
     <ClInclude Include="SDK\Localize.h" />
     <ClInclude Include="SDK\LocalPlayer.h" />
     <ClInclude Include="SDK\Matrix3x4.h" />
+    <ClInclude Include="SDK\ModelInfo.h" />
     <ClInclude Include="SDK\Pad.h" />
     <ClInclude Include="SDK\VirtualMethod.h" />
     <ClInclude Include="SDK\Vector.h" />
