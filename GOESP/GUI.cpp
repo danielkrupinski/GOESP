@@ -375,6 +375,8 @@ void GUI::drawESPTab() noexcept
         ImGuiCustom::colorPicker("Name", sharedConfig.name);
         ImGui::SameLine(spacing);
         ImGuiCustom::colorPicker("Text Background", sharedConfig.textBackground);
+        ImGui::Checkbox("Use Model Bounds", &sharedConfig.useModelBounds);
+        ImGui::SameLine();
         ImGui::SetNextItemWidth(95.0f);
         ImGui::InputFloat("Text Cull Distance", &sharedConfig.textCullDistance, 0.4f, 0.8f, "%.1fm");
         sharedConfig.textCullDistance = std::clamp(sharedConfig.textCullDistance, 0.0f, 999.9f);
