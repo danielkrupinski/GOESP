@@ -148,6 +148,7 @@ static void from_json(const json& j, Font& f)
 static void from_json(const json& j, Shared& s)
 {
     read<value_t::boolean>(j, "Enabled", s.enabled);
+    read<value_t::boolean>(j, "Use Model Bounds", s.useModelBounds);
     read<value_t::object>(j, "Font", s.font);
     read<value_t::object>(j, "Snaplines", s.snaplines);
     read_number(j, "Snapline Type", s.snaplineType);
@@ -297,6 +298,8 @@ static void to_json(json& j, const Shared& s)
 
     if (s.enabled != dummy.enabled)
         j["Enabled"] = s.enabled;
+    if (s.useModelBounds != dummy.useModelBounds)
+        j["Use Model Bounds"] = s.useModelBounds;
     if (s.font != dummy.font)
         j["Font"] = s.font;
     if (s.snaplines != dummy.snaplines)
