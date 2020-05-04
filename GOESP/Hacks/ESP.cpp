@@ -190,12 +190,12 @@ struct WeaponData : BaseData {
                     switch (weaponId) {
                     case WeaponId::C4:
                     case WeaponId::Healthshot:
+                    case WeaponId::BumpMine:
                         return "Other";
                     default: return "All";
                     }
                 }
             }(weaponInfo->type, entity->weaponId());
-
             name = [](WeaponId weaponId) {
                 switch (weaponId) {
                 default: return "All";
@@ -258,6 +258,7 @@ struct WeaponData : BaseData {
 
                 case WeaponId::C4: return "C4";
                 case WeaponId::Healthshot: return "Healthshot";
+                case WeaponId::BumpMine: return "Bump Mine";
                 }
             }(entity->weaponId());
 
