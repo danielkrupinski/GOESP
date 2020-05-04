@@ -34,9 +34,9 @@ To download source code this way [click here](https://github.com/danielkrupinski
 Choose this option if you're going to contribute to the repo or you want to use version control system. Git is required to step further, if not installed download it [here](https://git-scm.com).
 
 Open git command prompt and enter following command:
-```
-git clone https://github.com/danielkrupinski/GOESP.git
-```
+
+    git clone https://github.com/danielkrupinski/GOESP.git
+
 `GOESP` folder should have been succesfully created, containing all the source files.
 
 ## FAQ
@@ -49,9 +49,9 @@ Of course. It is crucial to install your font **as an Administator** otherwise i
 
 ### Does this hack hook any of game engine functions?
 Nope. Functions GOESP hooks are
-- DirectX Present & Reset from overlay
-- SetCursorPos from overlay
-- game window WNDPROC
+-   DirectX Present & Reset from overlay
+-   SetCursorPos from overlay
+-   game window WNDPROC
 
 ### How GOESP renders its stuff?
 GOESP hooks game overlays and draw things using them. Currently supported overlays are Steam and Discord.
