@@ -85,7 +85,6 @@ void GUI::drawESPTab() noexcept
 {
     static std::size_t currentCategory;
     static std::string currentItem = "All";
-    static bool selectedSubItem;
 
     constexpr auto getConfigShared = [](std::size_t category, std::string item) noexcept -> Shared& {
         switch (category) {
@@ -189,6 +188,7 @@ void GUI::drawESPTab() noexcept
             const auto categoryEnabled = getConfigShared(i, "All").enabled;
 
             for (std::size_t j = 0; j < items.size(); ++j) {
+                static bool selectedSubItem;
                 if (!categoryEnabled || getConfigShared(i, items[j]).enabled) {
                     if (ImGui::Selectable(items[j], currentCategory == i && !selectedSubItem && currentItem == items[j])) {
                         currentCategory = i;
