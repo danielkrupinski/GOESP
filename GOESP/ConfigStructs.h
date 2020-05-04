@@ -70,6 +70,7 @@ struct Font {
 
 struct Shared {
     bool enabled = false;
+    bool useModelBounds = false;
     Font font;
     ColorToggleThickness snaplines;
     int snaplineType = 0;
@@ -83,6 +84,7 @@ struct Shared {
     auto operator==(const Shared& s) const
     {
         return enabled == s.enabled
+            && useModelBounds == s.useModelBounds
             && font == s.font
             && snaplines == s.snaplines
             && snaplineType == s.snaplineType
