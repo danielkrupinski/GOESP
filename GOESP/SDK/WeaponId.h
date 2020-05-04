@@ -54,6 +54,7 @@ enum class WeaponId : short {
     Diversion,
     FragGrenade,
     Snowball,
+    BumpMine,
     Bayonet = 500,
     Flip = 505,
     Gut,
