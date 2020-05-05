@@ -473,7 +473,7 @@ bool Config::loadScheduledFonts() noexcept
                 auto fontDataSize = GetFontData(hdc, 0, 0, nullptr, 0);
 
                 if (fontDataSize != GDI_ERROR) {
-                    std::unique_ptr<std::byte> fontData{ new std::byte[fontDataSize] };
+                    const auto fontData = std::make_unique<std::byte[]>(fontDataSize);
                     fontDataSize = GetFontData(hdc, 0, 0, fontData.get(), fontDataSize);
 
                     if (fontDataSize != GDI_ERROR) {
