@@ -186,8 +186,7 @@ struct PlayerData : BaseData {
             if (!bone || bone->parent == -1 || !(bone->flags & BONE_USED_BY_HITBOX))
                 continue;
 
-            bones.emplace_back(Vector{ boneMatrices[i][0][3], boneMatrices[i][1][3], boneMatrices[i][2][3] },
-                               Vector{ boneMatrices[bone->parent][0][3], boneMatrices[bone->parent][1][3], boneMatrices[bone->parent][2][3] });
+            bones.emplace_back(boneMatrices[i].origin(), boneMatrices[bone->parent].origin());
         }
     }
     bool enemy = false;
