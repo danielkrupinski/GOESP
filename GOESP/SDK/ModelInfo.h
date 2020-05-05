@@ -2,6 +2,7 @@
 
 #include <cstdint>
 
+#include "Pad.h"
 #include "Vector.h"
 #include "VirtualMethod.h"
 
@@ -35,6 +36,9 @@ struct StudioHitboxSet {
 struct StudioBone {
     int nameIndex;
     int	parent;
+    PAD(152)
+    int flags;
+    PAD(52)
 
     const char* getName() const noexcept
     {
