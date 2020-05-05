@@ -440,7 +440,7 @@ void Config::save() noexcept
         j["Purchase List"] = purchaseList;
 
     if (std::ofstream out{ path / "config.txt" }; out.good())
-        out << std::setw(4) << j;
+        out << std::setw(2) << j;
 }
 
 void Config::scheduleFontLoad(const std::string& name) noexcept
