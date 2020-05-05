@@ -16,6 +16,7 @@
 #include "../SDK/GlobalVars.h"
 #include "../SDK/Localize.h"
 #include "../SDK/LocalPlayer.h"
+#include "../SDK/ModelInfo.h"
 #include "../SDK/Sound.h"
 #include "../SDK/Vector.h"
 #include "../SDK/WeaponInfo.h"
@@ -166,6 +167,28 @@ struct PlayerData : BaseData {
             if (const auto weaponInfo = weapon->getWeaponInfo())
                 activeWeapon = interfaces->localize->findAsUTF8(weaponInfo->name);
         }
+
+        const auto model = entity->getModel();
+        if (!model)
+            return;
+
+        const auto studioModel = interfaces->modelInfo->getStudioModel(model);
+        if (!studioModel)
+            return;
+
+        Matrix3x4 boneMatrices[MAXSTUDIOBONES];
+        if (!entity->setupBones(boneMatrices, MAXSTUDIOBONES, BONE_USED_BY_HITBOX, memory->globalVars->currenttime))
+            return;
+
+        for (int i = 0; i < studioModel->numBones; ++i) {
+            const auto bone = studioModel->getBone(i);
+
+            if (!bone || bone->parent == -1 || !(bone->flags & BONE_USED_BY_HITBOX))
+                continue;
+
+            bones.emplace_back(Vector{ boneMatrices[i][0][3], boneMatrices[i][1][3], boneMatrices[i][2][3] },
+                               Vector{ boneMatrices[bone->parent][0][3], boneMatrices[bone->parent][1][3], boneMatrices[bone->parent][2][3] });
+        }
     }
     bool enemy = false;
     bool visible = false;
@@ -173,6 +196,7 @@ struct PlayerData : BaseData {
     float flashDuration;
     std::string name;
     std::string activeWeapon;
+    std::vector<std::pair<Vector, Vector>> bones;
 };
 
 struct WeaponData : BaseData {
@@ -638,7 +662,7 @@ static void drawProjectileTrajectory(ImDrawList* drawList, const Trail& config, 
         drawList->AddPolyline(points.data(), points.size(), color, false, config.thickness);
 }
 
-static constexpr bool renderPlayerEsp(ImDrawList* drawList, const PlayerData& playerData, const Player& playerConfig) noexcept
+static bool renderPlayerEsp(ImDrawList* drawList, const PlayerData& playerData, const Player& playerConfig) noexcept
 {
     if (playerConfig.enabled && (!playerConfig.audibleOnly || playerData.audible)) {
         renderPlayerBox(drawList, playerData, playerConfig);
