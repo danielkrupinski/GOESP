@@ -38,7 +38,7 @@ struct LocalPlayerData {
 
         if (const auto activeWeapon = localPlayer->getActiveWeapon()) {
             inReload = activeWeapon->isInReload();
-            shooting = localPlayer->shotsFired() > 0;
+            shooting = localPlayer->shotsFired() > 1;
 
             if (const auto weaponInfo = activeWeapon->getWeaponInfo())
                 fullAutoWeapon = weaponInfo->fullAuto;
