@@ -68,12 +68,26 @@ struct Font {
     }
 };
 
+struct Snapline {
+    bool enabled = false;
+    Color color;
+    float thickness = 1.0f;
+    int type = 0;
+
+    auto operator==(const Snapline& s) const
+    {
+        return enabled == s.enabled
+            && color == s.color
+            && thickness == s.thickness
+            && type == s.type;
+    }
+};
+
 struct Shared {
     bool enabled = false;
     bool useModelBounds = false;
     Font font;
-    ColorToggleThickness snaplines;
-    int snaplineType = 0;
+    Snapline snapline;
     ColorToggleThicknessRounding box;
     int boxType = 0;
     std::array<float, 3> boxScale{ 0.25f, 0.25f, 0.25f };
@@ -86,8 +100,7 @@ struct Shared {
         return enabled == s.enabled
             && useModelBounds == s.useModelBounds
             && font == s.font
-            && snaplines == s.snaplines
-            && snaplineType == s.snaplineType
+            && snapline == s.snapline
             && box == s.box
             && boxType == s.boxType
             && boxScale == s.boxScale

@@ -566,14 +566,14 @@ static ImVec2 renderText(ImDrawList* drawList, const std::string& fontName, floa
     return textSize;
 }
 
-static void renderSnaplines(ImDrawList* drawList, const BoundingBox& bbox, const ColorToggleThickness& config, int type) noexcept
+static void renderSnaplines(ImDrawList* drawList, const BoundingBox& bbox, const Snapline& config) noexcept
 {
     if (!config.enabled)
         return;
 
     const auto [width, height] = interfaces->engine->getScreenSize();
-    const ImU32 color = Helpers::calculateColor(config, memory->globalVars->realtime);
-    drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(type == 0 ? height : type == 1 ? 0 : height / 2) }, { (bbox.min.x + bbox.max.x) / 2, type == 0 ? bbox.max.y : type == 1 ? bbox.min.y : (bbox.min.y + bbox.max.y) / 2 }, color, config.thickness);
+    const ImU32 color = Helpers::calculateColor(config.color, memory->globalVars->realtime);
+    drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(config.type == 0 ? height : config.type == 1 ? 0 : height / 2) }, { (bbox.min.x + bbox.max.x) / 2, config.type == 0 ? bbox.max.y : config.type == 1 ? bbox.min.y : (bbox.min.y + bbox.max.y) / 2 }, color, config.thickness);
 }
 
 static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, const Player& config) noexcept
@@ -584,7 +584,7 @@ static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, 
         return;
 
     renderBox(drawList, bbox, config);
-    renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
+    renderSnaplines(drawList, bbox, config.snapline);
 
     ImVec2 flashDurationPos{ (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 12.5f };
 
@@ -611,7 +611,7 @@ static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, 
         return;
 
     renderBox(drawList, bbox, config);
-    renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
+    renderSnaplines(drawList, bbox, config.snapline);
 
     if (config.name.enabled && !weaponData.displayName.empty()) {
         renderText(drawList, config.font.name, weaponData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, weaponData.displayName.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
@@ -631,7 +631,7 @@ static void renderEntityBox(ImDrawList* drawList, const BaseData& entityData, co
         return;
 
     renderBox(drawList, bbox, config);
-    renderSnaplines(drawList, bbox, config.snaplines, config.snaplineType);
+    renderSnaplines(drawList, bbox, config.snapline);
 
     if (config.name.enabled)
         renderText(drawList, config.font.name, entityData.distanceToLocal, config.textCullDistance, config.name, config.textBackground, name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });

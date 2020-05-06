@@ -145,13 +145,20 @@ static void from_json(const json& j, Font& f)
         f.index = 0;
 }
 
+static void from_json(const json& j, Snapline& s)
+{
+    read<value_t::boolean>(j, "Enabled", s.enabled);
+    read<value_t::object>(j, "Color", s.color);
+    read_number(j, "Thickness", s.thickness);
+    read_number(j, "Type", s.type);
+}
+
 static void from_json(const json& j, Shared& s)
 {
     read<value_t::boolean>(j, "Enabled", s.enabled);
     read<value_t::boolean>(j, "Use Model Bounds", s.useModelBounds);
     read<value_t::object>(j, "Font", s.font);
-    read<value_t::object>(j, "Snaplines", s.snaplines);
-    read_number(j, "Snapline Type", s.snaplineType);
+    read<value_t::object>(j, "Snapline", s.snapline);
     read<value_t::object>(j, "Box", s.box);
     read_number(j, "Box Type", s.boxType);
     read<value_t::array>(j, "Box Scale", s.boxScale);
@@ -293,6 +300,20 @@ static void to_json(json& j, const Font& f)
         j["Name"] = f.name;
 }
 
+static void to_json(json& j, const Snapline& s)
+{
+    const Snapline dummy;
+
+    if (s.enabled != dummy.enabled)
+        j["Enabled"] = s.enabled;
+    if (s.color != dummy.color)
+        j["Color"] = s.color;
+    if (s.thickness != dummy.thickness)
+        j["Thickness"] = s.thickness;
+    if (s.type != dummy.type)
+        j["Type"] = s.type;
+}
+
 static void to_json(json& j, const Shared& s)
 {
     const Shared dummy;
@@ -303,10 +324,8 @@ static void to_json(json& j, const Shared& s)
         j["Use Model Bounds"] = s.useModelBounds;
     if (s.font != dummy.font)
         j["Font"] = s.font;
-    if (s.snaplines != dummy.snaplines)
-        j["Snaplines"] = s.snaplines;
-    if (s.snaplineType != dummy.snaplineType)
-        j["Snapline Type"] = s.snaplineType;
+    if (s.snapline != dummy.snapline)
+        j["Snapline"] = s.snapline;
     if (s.box != dummy.box)
         j["Box"] = s.box;
     if (s.boxType != dummy.boxType)
