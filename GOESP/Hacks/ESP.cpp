@@ -684,6 +684,7 @@ static bool renderPlayerEsp(ImDrawList* drawList, const PlayerData& playerData, 
 {
     if (playerConfig.enabled && (!playerConfig.audibleOnly || playerData.audible)) {
         renderPlayerBox(drawList, playerData, playerConfig);
+        drawPlayerSkeleton(drawList, playerConfig.skeleton, playerData.bones);
     }
     return playerConfig.enabled;
 }
