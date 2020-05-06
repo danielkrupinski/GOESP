@@ -198,6 +198,7 @@ static void from_json(const json& j, Player& p)
     read<value_t::object>(j, "Weapon", p.weapon);
     read<value_t::object>(j, "Flash Duration", p.flashDuration);
     read<value_t::boolean>(j, "Audible Only", p.audibleOnly);
+    read<value_t::object>(j, "Skeleton", p.skeleton);
 }
 
 static void from_json(const json& j, PurchaseList& pl)
@@ -332,6 +333,8 @@ static void to_json(json& j, const Player& p)
         j["Flash Duration"] = p.flashDuration;
     if (p.audibleOnly != dummy.audibleOnly)
         j["Audible Only"] = p.audibleOnly;
+    if (p.skeleton != dummy.skeleton)
+        j["Skeleton"] = p.skeleton;
 }
 
 static void to_json(json& j, const Weapon& w)
