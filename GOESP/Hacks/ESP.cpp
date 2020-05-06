@@ -661,6 +661,25 @@ static void drawProjectileTrajectory(ImDrawList* drawList, const Trail& config, 
         drawList->AddPolyline(points.data(), points.size(), color, false, config.thickness);
 }
 
+static void drawPlayerSkeleton(ImDrawList* drawList, const ColorToggleThickness& config, const std::vector<std::pair<Vector, Vector>>& bones) noexcept
+{
+    if (!config.enabled)
+        return;
+
+    for (const auto& [bone, parent] : bones) {
+        ImVec2 bonePoint;
+        if (!worldToScreen(bone, bonePoint))
+            continue;
+
+        ImVec2 parentPoint;
+        if (!worldToScreen(parent, parentPoint))
+            continue;
+
+        const auto color = Helpers::calculateColor(config, memory->globalVars->realtime);
+        drawList->AddLine(bonePoint, parentPoint, color, config.thickness);
+    }
+}
+
 static bool renderPlayerEsp(ImDrawList* drawList, const PlayerData& playerData, const Player& playerConfig) noexcept
 {
     if (playerConfig.enabled && (!playerConfig.audibleOnly || playerData.audible)) {
