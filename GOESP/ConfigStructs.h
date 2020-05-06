@@ -148,27 +148,21 @@ struct Weapon : Shared {
     }
 };
 
-struct Trail {
-    bool enabled = false;
-
+struct Trail : ColorToggleThickness {
     enum Type {
         Line = 0,
         Circles,
-        FilledCircles,
+        FilledCircles
     };
 
     int type = Line;
     float time = 2.0f;
-    Color color;
-    float thickness = 1.0f;
 
     auto operator==(const Trail& t) const
     {
-        return enabled == t.enabled
+        return static_cast<const ColorToggleThickness&>(*this) == static_cast<const ColorToggleThickness&>(t)
             && type == t.type
-            && time == t.time
-            && color == t.color
-            && thickness == t.thickness;
+            && time == t.time;
     }
 };
 

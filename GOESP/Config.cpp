@@ -176,11 +176,10 @@ static void from_json(const json& j, Weapon& w)
 
 static void from_json(const json& j, Trail& t)
 {
-    read<value_t::boolean>(j, "Enabled", t.enabled);
+    from_json(j, static_cast<ColorToggleThickness&>(t));
+
     read_number(j, "Type", t.type);
     read_number(j, "Time", t.time);
-    read<value_t::object>(j, "Color", t.color);
-    read_number(j, "Thickness", t.thickness);
 }
 
 static void from_json(const json& j, Trails& t)
@@ -368,18 +367,14 @@ static void to_json(json& j, const Weapon& w)
 
 static void to_json(json& j, const Trail& t)
 {
+    j = static_cast<ColorToggleThickness>(t);
+
     const Trail dummy;
 
-    if (t.enabled != dummy.enabled)
-        j["Enabled"] = t.enabled;
     if (t.type != dummy.type)
         j["Type"] = t.type;
     if (t.time != dummy.time)
         j["Time"] = t.time;
-    if (t.color != dummy.color)
-        j["Color"] = t.color;
-    if (t.thickness != dummy.thickness)
-        j["Thickness"] = t.thickness;
 }
 
 static void to_json(json& j, const Trails& t)

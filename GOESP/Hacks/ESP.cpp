@@ -644,7 +644,7 @@ static void drawProjectileTrajectory(ImDrawList* drawList, const Trail& config, 
 
     std::vector<ImVec2> points;
 
-    const auto color = Helpers::calculateColor(config.color, memory->globalVars->realtime);
+    const auto color = Helpers::calculateColor(config, memory->globalVars->realtime);
 
     for (const auto& [time, point] : trajectory) {
         if (ImVec2 pos; time + config.time >= memory->globalVars->realtime && worldToScreen(point, pos)) {

@@ -405,7 +405,7 @@ void GUI::drawESPTab() noexcept
             if (ImGui::BeginPopup("##trails")) {
                 constexpr auto trailPicker = [](const char* name, Trail& trail) noexcept {
                     ImGui::PushID(name);
-                    ImGuiCustom::colorPicker(name, trail.color, &trail.enabled, &trail.thickness);
+                    ImGuiCustom::colorPicker(name, trail);
                     ImGui::SameLine(150.0f);
                     ImGui::SetNextItemWidth(95.0f);
                     ImGui::Combo("", &trail.type, "Line\0Circles\0Filled Circles\0");
