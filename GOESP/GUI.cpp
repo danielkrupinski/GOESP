@@ -388,6 +388,8 @@ void GUI::drawESPTab() noexcept
             ImGui::SameLine(spacing);
             ImGuiCustom::colorPicker("Flash Duration", playerConfig.flashDuration);
             ImGui::Checkbox("Audible Only", &playerConfig.audibleOnly);
+            ImGui::SameLine(spacing);
+            ImGuiCustom::colorPicker("Skeleton", playerConfig.skeleton);
         } else if (currentCategory == 2) {
             auto& weaponConfig = config->weapons[currentItem];
 
