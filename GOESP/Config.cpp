@@ -147,9 +147,8 @@ static void from_json(const json& j, Font& f)
 
 static void from_json(const json& j, Snapline& s)
 {
-    read<value_t::boolean>(j, "Enabled", s.enabled);
-    read<value_t::object>(j, "Color", s.color);
-    read_number(j, "Thickness", s.thickness);
+    from_json(j, static_cast<ColorToggleThickness&>(s));
+
     read_number(j, "Type", s.type);
 }
 
@@ -301,14 +300,10 @@ static void to_json(json& j, const Font& f)
 
 static void to_json(json& j, const Snapline& s)
 {
+    j = static_cast<ColorToggleThickness>(s);
+
     const Snapline dummy;
 
-    if (s.enabled != dummy.enabled)
-        j["Enabled"] = s.enabled;
-    if (s.color != dummy.color)
-        j["Color"] = s.color;
-    if (s.thickness != dummy.thickness)
-        j["Thickness"] = s.thickness;
     if (s.type != dummy.type)
         j["Type"] = s.type;
 }

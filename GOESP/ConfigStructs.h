@@ -68,17 +68,12 @@ struct Font {
     }
 };
 
-struct Snapline {
-    bool enabled = false;
-    Color color;
-    float thickness = 1.0f;
+struct Snapline : ColorToggleThickness {
     int type = 0;
 
     auto operator==(const Snapline& s) const
     {
-        return enabled == s.enabled
-            && color == s.color
-            && thickness == s.thickness
+        return static_cast<const ColorToggleThickness&>(*this) == static_cast<const ColorToggleThickness&>(s)
             && type == s.type;
     }
 };

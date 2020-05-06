@@ -572,7 +572,7 @@ static void renderSnaplines(ImDrawList* drawList, const BoundingBox& bbox, const
         return;
 
     const auto [width, height] = interfaces->engine->getScreenSize();
-    const ImU32 color = Helpers::calculateColor(config.color, memory->globalVars->realtime);
+    const ImU32 color = Helpers::calculateColor(config, memory->globalVars->realtime);
     drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(config.type == 0 ? height : config.type == 1 ? 0 : height / 2) }, { (bbox.min.x + bbox.max.x) / 2, config.type == 0 ? bbox.max.y : config.type == 1 ? bbox.min.y : (bbox.min.y + bbox.max.y) / 2 }, color, config.thickness);
 }
 

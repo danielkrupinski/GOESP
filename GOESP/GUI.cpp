@@ -348,7 +348,7 @@ void GUI::drawESPTab() noexcept
         ImGui::Separator();
 
         constexpr auto spacing = 220.0f;
-        ImGuiCustom::colorPicker("Snapline", sharedConfig.snapline.color, &sharedConfig.snapline.enabled, &sharedConfig.snapline.thickness);
+        ImGuiCustom::colorPicker("Snapline", sharedConfig.snapline);
         ImGui::SameLine();
         ImGui::SetNextItemWidth(90.0f);
         ImGui::Combo("##1", &sharedConfig.snapline.type, "Bottom\0Top\0Crosshair\0");
