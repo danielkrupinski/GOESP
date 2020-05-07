@@ -496,11 +496,11 @@ static void renderBox(ImDrawList* drawList, const BoundingBox& bbox, const Box& 
     const ImU32 color = Helpers::calculateColor(config, memory->globalVars->realtime);
 
     switch (config.type) {
-    case 0:
+    case Box::_2d:
         drawList->AddRect(bbox.min, bbox.max, color, config.rounding, ImDrawCornerFlags_All, config.thickness);
         break;
 
-    case 1:
+    case Box::_2dCorners:
         drawList->AddLine(bbox.min, { bbox.min.x, bbox.min.y * 0.75f + bbox.max.y * 0.25f }, color, config.thickness);
         drawList->AddLine(bbox.min, { bbox.min.x * 0.75f + bbox.max.x * 0.25f, bbox.min.y }, color, config.thickness);
 
@@ -513,7 +513,7 @@ static void renderBox(ImDrawList* drawList, const BoundingBox& bbox, const Box& 
         drawList->AddLine(bbox.max, { bbox.max.x * 0.75f + bbox.min.x * 0.25f, bbox.max.y }, color, config.thickness);
         drawList->AddLine(bbox.max, { bbox.max.x, bbox.max.y * 0.75f + bbox.min.y * 0.25f }, color, config.thickness);
         break;
-    case 2:
+    case Box::_3d:
         for (int i = 0; i < 8; ++i) {
             for (int j = 1; j <= 4; j <<= 1) {
                 if (!(i & j))
@@ -521,7 +521,7 @@ static void renderBox(ImDrawList* drawList, const BoundingBox& bbox, const Box& 
             }
         }
         break;
-    case 3:
+    case Box::_3dCorners:
         for (int i = 0; i < 8; ++i) {
             for (int j = 1; j <= 4; j <<= 1) {
                 if (!(i & j)) {
