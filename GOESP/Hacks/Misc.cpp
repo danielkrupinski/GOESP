@@ -39,10 +39,6 @@ struct LocalPlayerData {
         if (const auto activeWeapon = localPlayer->getActiveWeapon()) {
             inReload = activeWeapon->isInReload();
             shooting = localPlayer->shotsFired() > 1;
-
-            if (const auto weaponInfo = activeWeapon->getWeaponInfo())
-                fullAutoWeapon = weaponInfo->fullAuto;
-
             nextWeaponAttack = activeWeapon->nextPrimaryAttack();
         }
         aimPunch = localPlayer->getAimPunch();
@@ -52,7 +48,6 @@ struct LocalPlayerData {
     bool inBombZone = false;
     bool inReload = false;
     bool shooting = false;
-    bool fullAutoWeapon = false;
     float nextWeaponAttack = 0.0f;
     Vector aimPunch;
 };
@@ -103,7 +98,7 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
     if (!localPlayerData.exists || !localPlayerData.alive)
         return;
 
-    if (!localPlayerData.fullAutoWeapon || !localPlayerData.shooting)
+    if (!localPlayerData.shooting)
         return;
 
     const auto [width, height] = interfaces->engine->getScreenSize();
