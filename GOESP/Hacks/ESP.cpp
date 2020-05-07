@@ -50,10 +50,7 @@ static Vector localPlayerOrigin;
 struct BaseData {
     BaseData(Entity* entity) noexcept
     {
-        if (localPlayer)
-            distanceToLocal = entity->getAbsOrigin().distTo(localPlayerOrigin);
-        else
-            distanceToLocal = 0.0f;
+        distanceToLocal = entity->getAbsOrigin().distTo(localPlayerOrigin);
 
         if (const auto model = entity->getModel()) {
             modelMins = model->mins;
