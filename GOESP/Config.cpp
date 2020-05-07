@@ -152,6 +152,14 @@ static void from_json(const json& j, Snapline& s)
     read_number(j, "Type", s.type);
 }
 
+static void from_json(const json& j, Box& b)
+{
+    from_json(j, static_cast<ColorToggleThicknessRounding&>(b));
+
+    read_number(j, "Type", b.type);
+    read<value_t::array>(j, "Scale", b.scale);
+}
+
 static void from_json(const json& j, Shared& s)
 {
     read<value_t::boolean>(j, "Enabled", s.enabled);
@@ -159,8 +167,6 @@ static void from_json(const json& j, Shared& s)
     read<value_t::object>(j, "Font", s.font);
     read<value_t::object>(j, "Snapline", s.snapline);
     read<value_t::object>(j, "Box", s.box);
-    read_number(j, "Box Type", s.boxType);
-    read<value_t::array>(j, "Box Scale", s.boxScale);
     read<value_t::object>(j, "Name", s.name);
     read<value_t::object>(j, "Text Background", s.textBackground);
     read_number(j, "Text Cull Distance", s.textCullDistance);
@@ -308,6 +314,18 @@ static void to_json(json& j, const Snapline& s)
         j["Type"] = s.type;
 }
 
+static void to_json(json& j, const Box& b)
+{
+    j = static_cast<ColorToggleThicknessRounding>(b);
+
+    const Box dummy;
+
+    if (b.type != dummy.type)
+        j["Type"] = b.type;
+    if (b.scale != dummy.scale)
+        j["Scale"] = b.scale;
+}
+
 static void to_json(json& j, const Shared& s)
 {
     const Shared dummy;
@@ -322,10 +340,6 @@ static void to_json(json& j, const Shared& s)
         j["Snapline"] = s.snapline;
     if (s.box != dummy.box)
         j["Box"] = s.box;
-    if (s.boxType != dummy.boxType)
-        j["Box Type"] = s.boxType;
-    if (s.boxScale != dummy.boxScale)
-        j["Box Scale"] = s.boxScale;
     if (s.name != dummy.name)
         j["Name"] = s.name;
     if (s.textBackground != dummy.textBackground)

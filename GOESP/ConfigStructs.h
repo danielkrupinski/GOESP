@@ -78,14 +78,24 @@ struct Snapline : ColorToggleThickness {
     }
 };
 
+struct Box : ColorToggleThicknessRounding {
+    int type = 0;
+    std::array<float, 3> scale{ 0.25f, 0.25f, 0.25f };
+
+    auto operator==(const Box& b) const
+    {
+        return static_cast<const ColorToggleThicknessRounding&>(*this) == static_cast<const ColorToggleThicknessRounding&>(b)
+            && type == b.type
+            && scale == b.scale;
+    }
+};
+
 struct Shared {
     bool enabled = false;
     bool useModelBounds = false;
     Font font;
     Snapline snapline;
-    ColorToggleThicknessRounding box;
-    int boxType = 0;
-    std::array<float, 3> boxScale{ 0.25f, 0.25f, 0.25f };
+    Box box;
     ColorToggle name;
     ColorToggleRounding textBackground{ 0.0f, 0.0f, 0.0f, 1.0f };
     float textCullDistance = 0.0f;
@@ -97,8 +107,6 @@ struct Shared {
             && font == s.font
             && snapline == s.snapline
             && box == s.box
-            && boxType == s.boxType
-            && boxScale == s.boxScale
             && name == s.name
             && textBackground == s.textBackground
             && textCullDistance == s.textCullDistance;

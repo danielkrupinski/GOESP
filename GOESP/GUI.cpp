@@ -363,10 +363,10 @@ void GUI::drawESPTab() noexcept
 
         if (ImGui::BeginPopup("")) {
             ImGui::SetNextItemWidth(95.0f);
-            ImGui::Combo("Type", &sharedConfig.boxType, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
+            ImGui::Combo("Type", &sharedConfig.box.type, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
             ImGui::SetNextItemWidth(275.0f);
 
-            ImGui::SliderFloat3("Scale", sharedConfig.boxScale.data(), 0.0f, 0.50f, "%.2f");
+            ImGui::SliderFloat3("Scale", sharedConfig.box.scale.data(), 0.0f, 0.50f, "%.2f");
             ImGui::EndPopup();
         }
 

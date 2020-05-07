@@ -495,7 +495,7 @@ static void renderBox(ImDrawList* drawList, const BoundingBox& bbox, const Share
 
     const ImU32 color = Helpers::calculateColor(config.box, memory->globalVars->realtime);
 
-    switch (config.boxType) {
+    switch (config.box.type) {
     case 0:
         drawList->AddRect(bbox.min, bbox.max, color, config.box.rounding, ImDrawCornerFlags_All, config.box.thickness);
         break;
@@ -578,7 +578,7 @@ static void renderSnaplines(ImDrawList* drawList, const BoundingBox& bbox, const
 
 static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, const Player& config) noexcept
 {
-    const BoundingBox bbox{ playerData, config.boxScale, config.useModelBounds };
+    const BoundingBox bbox{ playerData, config.box.scale, config.useModelBounds };
 
     if (!bbox)
         return;
@@ -605,7 +605,7 @@ static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, 
 
 static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, const Weapon& config) noexcept
 {
-    const BoundingBox bbox{ weaponData, config.boxScale, config.useModelBounds };
+    const BoundingBox bbox{ weaponData, config.box.scale, config.useModelBounds };
 
     if (!bbox)
         return;
@@ -625,7 +625,7 @@ static void renderWeaponBox(ImDrawList* drawList, const WeaponData& weaponData, 
 
 static void renderEntityBox(ImDrawList* drawList, const BaseData& entityData, const char* name, const Shared& config) noexcept
 {
-    const BoundingBox bbox{ entityData, config.boxScale, config.useModelBounds };
+    const BoundingBox bbox{ entityData, config.box.scale, config.useModelBounds };
 
     if (!bbox)
         return;
