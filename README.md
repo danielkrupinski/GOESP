@@ -11,6 +11,10 @@ Stream-proof ESP hack for CS:GO.
 
 ![Purchase List](https://i.imgur.com/qXvoe6Y.png)
 
+### Player ESP
+
+![Player ESP](https://i.imgur.com/l4cOW0c.png)
+
 ### Drag & Drop
 
 ![Drag & Drop](https://i.imgur.com/yDhV2eQ.gif)
