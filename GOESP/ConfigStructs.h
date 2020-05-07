@@ -121,6 +121,11 @@ struct Shared {
 };
 
 struct Player : Shared {
+    Player() : Shared{}
+    {
+        box.type = Box::_2dCorners;
+    }
+
     ColorToggle weapon;
     ColorToggle flashDuration;
     bool audibleOnly = false;
