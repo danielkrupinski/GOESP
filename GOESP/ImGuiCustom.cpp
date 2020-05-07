@@ -1,7 +1,7 @@
-#include "imguiCustom.h"
+#include "ConfigStructs.h"
+#include "ImGuiCustom.h"
 
 #include "imgui/imgui.h"
-#include "imgui/imgui_internal.h"
 
 void ImGuiCustom::colorPopup(const char* name, std::array<float, 4>& color, bool* rainbow, float* rainbowSpeed, bool* enable, float* thickness, float* rounding) noexcept
 {

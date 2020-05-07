@@ -1,8 +1,12 @@
 #pragma once
 
-#include "ConfigStructs.h"
+#include <array>
 
-#include <functional>
+struct Color;
+struct ColorToggle;
+struct ColorToggleRounding;
+struct ColorToggleThickness;
+struct ColorToggleThicknessRounding;
 
 namespace ImGuiCustom
 {
