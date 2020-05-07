@@ -38,7 +38,7 @@ struct ColorToggleThickness : ColorToggle {
 };
 
 struct ColorToggleRounding : ColorToggle {
-    float rounding = 5.0f;
+    float rounding = 0.0f;
 
     auto operator==(const ColorToggleRounding& ctr) const
     {
