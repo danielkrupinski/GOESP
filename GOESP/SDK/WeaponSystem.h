@@ -1,8 +1,8 @@
 #pragma once
 
 #include "VirtualMethod.h"
-#include "WeaponId.h"
 
+enum class WeaponId : short;
 struct WeaponInfo;
 
 class WeaponSystem {
