@@ -477,10 +477,11 @@ bool Config::loadScheduledFonts() noexcept
                         cfg.FontDataOwnedByAtlas = false;
 
                         for (int i = 8; i <= 14; i += 2) {
-                            if (fonts.find(font + ' ' + std::to_string(i)) == fonts.cend())
+                            if (fonts.find(font + ' ' + std::to_string(i)) == fonts.cend()) {
                                 fonts[font + ' ' + std::to_string(i)] = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, static_cast<float>(i), &cfg, ranges);
+                                result = true;
+                            }
                         }
-                        result = true;
                     }
                 }
                 DeleteDC(hdc);
