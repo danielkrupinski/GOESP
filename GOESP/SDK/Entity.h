@@ -114,9 +114,10 @@ public:
     PROP(isInReload, 0x3264 + 0x41, bool)                                          // CBaseCombatWeapon->m_iClip1 + 0x41
     PROP(reserveAmmoCount, 0x326C, int)                                            // CBaseCombatWeapon->m_iPrimaryReserveAmmoCount
     PROP(nextPrimaryAttack, 0x3238, float)                                         // CBaseCombatWeapon->m_flNextPrimaryAttack
-
+        
     PROP(ownerEntity, 0x14C, int)                                                  // CBaseEntity->m_hOwnerEntity
-
+    PROP(spotted, 0x93D, bool)                                                     // CBaseEntity->m_bSpotted
+        
     PROP(inBombZone, 0x3954, bool)                                                 // CCSPlayer->m_bInBombZone
     PROP(flashDuration, 0xA40C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
     PROP(shotsFired, 0xA380, int)                                                  // CCSPlayer->m_iShotsFired
