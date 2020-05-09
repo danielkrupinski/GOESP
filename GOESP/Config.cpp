@@ -454,9 +454,6 @@ bool Config::loadScheduledFonts() noexcept
         if (font == "Default")
             continue;
 
-        if (fonts.find(font) != fonts.cend())
-            continue;
-
         HFONT fontHandle = CreateFontA(0, 0, 0, 0,
             FW_NORMAL, FALSE, FALSE, FALSE,
             ANSI_CHARSET, OUT_DEFAULT_PRECIS,
@@ -479,9 +476,10 @@ bool Config::loadScheduledFonts() noexcept
                         ImFontConfig cfg;
                         cfg.FontDataOwnedByAtlas = false;
 
-                        for (int i = 8; i <= 14; i += 2)
-                            fonts[font + ' ' + std::to_string(i)] = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, static_cast<float>(i), &cfg, ranges);
-
+                        for (int i = 8; i <= 14; i += 2) {
+                            if (fonts.find(font + ' ' + std::to_string(i)) == fonts.cend())
+                                fonts[font + ' ' + std::to_string(i)] = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, static_cast<float>(i), &cfg, ranges);
+                        }
                         result = true;
                     }
                 }
