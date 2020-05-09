@@ -49,7 +49,7 @@ Open git command prompt and enter following command:
 Press <kbd>INSERT</kbd> while focused on CS:GO window.
 
 ### Can I use custom font in the ESP?
-Of course. It is crucial to install your font **as an Administator** otherwise it won't be available. After font is successfully installed unload and load GOESP again.
+Of course. After installing new font you have to unload and load GOESP again.
 
 ### Does this hack hook any of game engine functions?
 Nope. Functions GOESP hooks are
