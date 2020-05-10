@@ -174,14 +174,19 @@ void Misc::purchaseList(GameEvent* event) noexcept
         
         ImGui::SetNextWindowSize({ 200.0f, 200.0f }, ImGuiCond_Once);
 
+        if (config->purchaseList.pos != ImVec2{}) {
+            ImGui::SetNextWindowPos(config->purchaseList.pos, ImGuiCond_Always);
+            config->purchaseList.pos = {};
+        }
+
         ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
         if (!gui->open)
             windowFlags |= ImGuiWindowFlags_NoInputs;
         if (config->purchaseList.noTitleBar)
             windowFlags |= ImGuiWindowFlags_NoTitleBar;
-        
+
         ImGui::Begin("Purchases", nullptr, windowFlags);
-        
+
         if (config->purchaseList.mode == PurchaseList::Details) {
             for (const auto& [playerName, purchases] : purchaseDetails) {
                 std::string s = std::accumulate(purchases.first.begin(), purchases.first.end(), std::string{ }, [](std::string s, const std::string& piece) { return s += piece + ", "; });

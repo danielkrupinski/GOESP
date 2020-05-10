@@ -2,6 +2,8 @@
 
 #include <array>
 
+#include "imgui/imgui.h"
+
 struct Color {
     std::array<float, 4> color{ 1.0f, 1.0f, 1.0f, 1.0f };
     bool rainbow = false;
@@ -227,12 +229,15 @@ struct PurchaseList {
     };
     int mode = Details;
 
+    ImVec2 pos;
+
     auto operator==(const PurchaseList& pl) const
     {
         return enabled == pl.enabled
             && onlyDuringFreezeTime == pl.onlyDuringFreezeTime
             && showPrices == pl.showPrices
             && noTitleBar == pl.noTitleBar
-            && mode == pl.mode;
+            && mode == pl.mode
+            && pos == pl.pos;
     }
 };

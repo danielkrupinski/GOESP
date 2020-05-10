@@ -1,6 +1,7 @@
 #include "Config.h"
 
 #include "imgui/imgui.h"
+#include "imgui/imgui_internal.h"
 #include "nlohmann/json.hpp"
 
 #include <fstream>
@@ -209,6 +210,12 @@ static void from_json(const json& j, Player& p)
     read<value_t::object>(j, "Skeleton", p.skeleton);
 }
 
+static void from_json(const json& j, ImVec2& v)
+{
+    read_number(j, "X", v.x);
+    read_number(j, "Y", v.y);
+}
+
 static void from_json(const json& j, PurchaseList& pl)
 {
     read<value_t::boolean>(j, "Enabled", pl.enabled);
@@ -216,6 +223,7 @@ static void from_json(const json& j, PurchaseList& pl)
     read<value_t::boolean>(j, "Show Prices", pl.showPrices);
     read<value_t::boolean>(j, "No Title Bar", pl.noTitleBar);
     read_number(j, "Mode", pl.mode);
+    read<value_t::object>(j, "Pos", pl.pos);
 }
 
 void Config::load() noexcept
@@ -385,6 +393,14 @@ static void to_json(json& j, const Projectile& o)
     WRITE("Trails", trails)
 }
 
+static void to_json(json& j, const ImVec2& o)
+{
+    const ImVec2 dummy;
+
+    WRITE("X", x)
+    WRITE("Y", y)
+}
+
 static void to_json(json& j, const PurchaseList& o)
 {
     const PurchaseList dummy;
@@ -394,6 +410,9 @@ static void to_json(json& j, const PurchaseList& o)
     WRITE("Show Prices", showPrices)
     WRITE("No Title Bar", noTitleBar)
     WRITE("Mode", mode)
+
+    if (const auto window = ImGui::FindWindowByName("Purchases"))
+        j["Pos"] = window->Pos;
 }
 
 void Config::save() noexcept
