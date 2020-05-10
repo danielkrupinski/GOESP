@@ -224,6 +224,7 @@ static void from_json(const json& j, PurchaseList& pl)
     read<value_t::boolean>(j, "No Title Bar", pl.noTitleBar);
     read_number(j, "Mode", pl.mode);
     read<value_t::object>(j, "Pos", pl.pos);
+    read<value_t::object>(j, "Size", pl.size);
 }
 
 void Config::load() noexcept
@@ -411,8 +412,10 @@ static void to_json(json& j, const PurchaseList& o)
     WRITE("No Title Bar", noTitleBar)
     WRITE("Mode", mode)
 
-    if (const auto window = ImGui::FindWindowByName("Purchases"))
+    if (const auto window = ImGui::FindWindowByName("Purchases")) {
         j["Pos"] = window->Pos;
+        j["Size"] = window->SizeFull;
+    }
 }
 
 void Config::save() noexcept

@@ -230,6 +230,7 @@ struct PurchaseList {
     int mode = Details;
 
     ImVec2 pos;
+    ImVec2 size{ 200.0f, 200.0f };
 
     auto operator==(const PurchaseList& pl) const
     {
@@ -238,6 +239,7 @@ struct PurchaseList {
             && showPrices == pl.showPrices
             && noTitleBar == pl.noTitleBar
             && mode == pl.mode
-            && pos == pl.pos;
+            && pos == pl.pos
+            && size == pl.size;
     }
 };

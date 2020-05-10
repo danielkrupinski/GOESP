@@ -171,12 +171,15 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
         if ((!interfaces->engine->isInGame() || freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + (!config->purchaseList.onlyDuringFreezeTime ? mp_buytime->getFloat() : 0.0f) || purchaseDetails.empty() || purchaseTotal.empty()) && !gui->open)
             return;
-        
-        ImGui::SetNextWindowSize({ 200.0f, 200.0f }, ImGuiCond_Once);
 
         if (config->purchaseList.pos != ImVec2{}) {
             ImGui::SetNextWindowPos(config->purchaseList.pos, ImGuiCond_Always);
             config->purchaseList.pos = {};
+        }
+
+        if (config->purchaseList.size != ImVec2{}) {
+            ImGui::SetNextWindowSize(config->purchaseList.size, ImGuiCond_Always);
+            config->purchaseList.size = {};
         }
 
         ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
