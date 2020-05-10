@@ -391,6 +391,7 @@ void GUI::drawESPTab() noexcept
             ImGui::Checkbox("Audible Only", &playerConfig.audibleOnly);
             ImGui::SameLine(spacing);
             ImGuiCustom::colorPicker("Skeleton", playerConfig.skeleton);
+            ImGui::Checkbox("Spotted Only", &playerConfig.spottedOnly);
         } else if (currentCategory == 2) {
             auto& weaponConfig = config->weapons[currentItem];
 
