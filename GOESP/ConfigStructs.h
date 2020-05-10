@@ -129,6 +129,7 @@ struct Player : Shared {
     ColorToggle weapon;
     ColorToggle flashDuration;
     bool audibleOnly = false;
+    bool spottedOnly = false;
     ColorToggleThickness skeleton;
 
     auto operator==(const Player& p) const
@@ -137,6 +138,7 @@ struct Player : Shared {
             && weapon == p.weapon
             && flashDuration == p.flashDuration
             && audibleOnly == p.audibleOnly
+            && spottedOnly == p.spottedOnly
             && skeleton == p.skeleton;
     }
 

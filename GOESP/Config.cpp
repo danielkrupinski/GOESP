@@ -205,6 +205,7 @@ static void from_json(const json& j, Player& p)
     read<value_t::object>(j, "Weapon", p.weapon);
     read<value_t::object>(j, "Flash Duration", p.flashDuration);
     read<value_t::boolean>(j, "Audible Only", p.audibleOnly);
+    read<value_t::boolean>(j, "Spotted Only", p.spottedOnly);
     read<value_t::object>(j, "Skeleton", p.skeleton);
 }
 
@@ -342,6 +343,7 @@ static void to_json(json& j, const Player& o)
     WRITE("Weapon", weapon)
     WRITE("Flash Duration", flashDuration)
     WRITE("Audible Only", audibleOnly)
+    WRITE("Spotted Only", spottedOnly)
     WRITE("Skeleton", skeleton)
 }
 
