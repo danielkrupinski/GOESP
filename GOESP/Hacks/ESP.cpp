@@ -156,6 +156,7 @@ struct PlayerData : BaseData {
         };
 
         audible = isEntityAudible(entity->index());
+        spotted = entity->spotted();
         flashDuration = entity->flashDuration();
         name = entity->getPlayerName(config->normalizePlayerNames);
 
@@ -189,6 +190,7 @@ struct PlayerData : BaseData {
     bool enemy = false;
     bool visible = false;
     bool audible;
+    bool spotted;
     float flashDuration;
     std::string name;
     std::string activeWeapon;
@@ -679,11 +681,17 @@ static void drawPlayerSkeleton(ImDrawList* drawList, const ColorToggleThickness&
 
 static bool renderPlayerEsp(ImDrawList* drawList, const PlayerData& playerData, const Player& playerConfig) noexcept
 {
-    if (playerConfig.enabled && (!playerConfig.audibleOnly || playerData.audible)) {
-        renderPlayerBox(drawList, playerData, playerConfig);
-        drawPlayerSkeleton(drawList, playerConfig.skeleton, playerData.bones);
-    }
-    return playerConfig.enabled;
+    if (!playerConfig.enabled)
+        return false;
+
+    if (playerConfig.audibleOnly && !playerData.audible && !playerConfig.spottedOnly
+     || playerConfig.spottedOnly && !playerData.spotted && !(playerConfig.audibleOnly && playerData.audible)) // if both "Audible Only" and "Spotted Only" are on treat them as audible OR spotted
+        return true;
+
+    renderPlayerBox(drawList, playerData, playerConfig);
+    drawPlayerSkeleton(drawList, playerConfig.skeleton, playerData.bones);
+
+    return true;
 }
 
 static void renderWeaponEsp(ImDrawList* drawList, const WeaponData& weaponData, const Weapon& parentConfig, const Weapon& itemConfig) noexcept
