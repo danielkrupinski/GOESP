@@ -16,29 +16,25 @@ int CALLBACK fontCallback(const LOGFONTA* lpelfe, const TEXTMETRICA*, DWORD, LPA
     if (fontName[0] == '@')
         return TRUE;
 
-    HFONT fontHandle = CreateFontA(0, 0, 0, 0,
+    if (HFONT font = CreateFontA(0, 0, 0, 0,
         FW_NORMAL, FALSE, FALSE, FALSE,
         ANSI_CHARSET, OUT_DEFAULT_PRECIS,
         CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
-        DEFAULT_PITCH, fontName.c_str());
-
-    if (fontHandle) {
-        HDC hdc = CreateCompatibleDC(nullptr);
+        DEFAULT_PITCH, fontName.c_str())) {
 
         DWORD fontData = GDI_ERROR;
 
-        if (hdc) {
-            SelectObject(hdc, fontHandle);
+        if (HDC hdc = CreateCompatibleDC(nullptr)) {
+            SelectObject(hdc, font);
             // Do not use TTC fonts as we only support TTF fonts
             fontData = GetFontData(hdc, 'fctt', 0, NULL, 0);
             DeleteDC(hdc);
         }
-        DeleteObject(fontHandle);
+        DeleteObject(font);
 
-        if (fontData != GDI_ERROR)
-            return TRUE;
+        if (fontData == GDI_ERROR)
+            reinterpret_cast<std::vector<std::string>*>(lParam)->push_back(fontName);
     }
-    reinterpret_cast<std::vector<std::string>*>(lParam)->push_back(fontName);
     return TRUE;
 }
 
