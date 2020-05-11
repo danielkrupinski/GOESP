@@ -434,13 +434,16 @@ public:
         min.y = min.x = std::numeric_limits<float>::max();
         max.y = max.x = -std::numeric_limits<float>::max();
 
-        const auto mins = useModelBounds ? data.modelMins + (data.modelMaxs - data.modelMins) * 2 * (0.25f - scale) : data.obbMins + (data.obbMaxs - data.obbMins) * 2 * (0.25f - scale);
-        const auto maxs = useModelBounds ? data.modelMaxs - (data.modelMaxs - data.modelMins) * 2 * (0.25f - scale) : data.obbMaxs - (data.obbMaxs - data.obbMins) * 2 * (0.25f - scale);
+        const auto& mins = useModelBounds ? data.modelMins : data.obbMins;
+        const auto& maxs = useModelBounds ? data.modelMaxs : data.obbMaxs;
+
+        const auto scaledMins = mins + (maxs - mins) * 2 * (0.25f - scale);
+        const auto scaledMaxs = maxs - (maxs - mins) * 2 * (0.25f - scale);
 
         for (int i = 0; i < 8; ++i) {
-            const Vector point{ i & 1 ? maxs.x : mins.x,
-                                i & 2 ? maxs.y : mins.y,
-                                i & 4 ? maxs.z : mins.z };
+            const Vector point{ i & 1 ? scaledMaxs.x : scaledMins.x,
+                                i & 2 ? scaledMaxs.y : scaledMins.y,
+                                i & 4 ? scaledMaxs.z : scaledMins.z };
 
             if (!worldToScreen(point.transform(data.coordinateFrame), vertices[i])) {
                 valid = false;
@@ -453,7 +456,6 @@ public:
         }
         valid = true;
     }
-
 
     BoundingBox(const Vector& center) noexcept
     {
