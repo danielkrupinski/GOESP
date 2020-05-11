@@ -90,7 +90,7 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
-    ESP::render(ImGui::GetBackgroundDrawList());
+    ESP::render();
     Misc::drawReloadProgress(ImGui::GetBackgroundDrawList());
     Misc::drawRecoilCrosshair(ImGui::GetBackgroundDrawList());
     Misc::purchaseList();
