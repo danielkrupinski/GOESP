@@ -28,7 +28,7 @@ public:
     ColorToggleThickness reloadProgress{ 5.0f };
     ColorToggleThickness recoilCrosshair;
     bool normalizePlayerNames = true;
-    bool bombZoneHint = false;
+    BombZoneHint bombZoneHint;
     PurchaseList purchaseList;
 
     std::vector<std::string> systemFonts{ "Default" };

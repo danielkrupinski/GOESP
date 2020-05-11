@@ -227,6 +227,12 @@ static void from_json(const json& j, PurchaseList& pl)
     read<value_t::object>(j, "Size", pl.size);
 }
 
+static void from_json(const json& j, BombZoneHint& b)
+{
+    read<value_t::boolean>(j, "Enabled", b.enabled);
+    read<value_t::object>(j, "Pos", b.pos);
+}
+
 void Config::load() noexcept
 {
     json j;
@@ -246,7 +252,7 @@ void Config::load() noexcept
     read<value_t::object>(j, "Reload Progress", reloadProgress);
     read<value_t::object>(j, "Recoil Crosshair", recoilCrosshair);
     read<value_t::boolean>(j, "Normalize Player Names", normalizePlayerNames);
-    read<value_t::boolean>(j, "Bomb Zone Hint", bombZoneHint);
+    read<value_t::object>(j, "Bomb Zone Hint", bombZoneHint);
     read<value_t::object>(j, "Purchase List", purchaseList);
 }
  
@@ -418,6 +424,16 @@ static void to_json(json& j, const PurchaseList& o)
     }
 }
 
+static void to_json(json& j, const BombZoneHint& o)
+{
+    const BombZoneHint dummy;
+
+    WRITE("Enabled", enabled)
+
+    if (const auto window = ImGui::FindWindowByName("Bomb Zone Hint"))
+        j["Pos"] = window->Pos;
+}
+
 void Config::save() noexcept
 {
     json j;
@@ -452,7 +468,7 @@ void Config::save() noexcept
         j["Recoil Crosshair"] = recoilCrosshair;
     if (normalizePlayerNames != true)
         j["Normalize Player Names"] = normalizePlayerNames;
-    if (bombZoneHint != false)
+    if (bombZoneHint != BombZoneHint{})
         j["Bomb Zone Hint"] = bombZoneHint;
     if (purchaseList != PurchaseList{})
         j["Purchase List"] = purchaseList;

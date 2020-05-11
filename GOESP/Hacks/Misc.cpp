@@ -216,7 +216,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
 void Misc::drawBombZoneHint() noexcept
 {
-    if (!config->bombZoneHint)
+    if (!config->bombZoneHint.enabled)
         return;
 
     std::scoped_lock _{ dataMutex };
@@ -228,6 +228,10 @@ void Misc::drawBombZoneHint() noexcept
         return;
 
     ImGui::SetNextWindowSize({});
+    if (config->bombZoneHint.pos != ImVec2{}) {
+        ImGui::SetNextWindowPos(config->bombZoneHint.pos);
+        config->bombZoneHint.pos = {};
+    }
     ImGui::Begin("Bomb Zone Hint", nullptr, ImGuiWindowFlags_NoDecoration | (gui->open ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoInputs));
     ImGui::TextUnformatted("You're in bomb zone!");
     ImGui::End();
