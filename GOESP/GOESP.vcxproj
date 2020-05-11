@@ -123,6 +123,7 @@
     <ClCompile Include="Hacks\ESP.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Hacks\Misc.cpp" />
+    <ClCompile Include="Helpers.cpp" />
     <ClCompile Include="Hooks.cpp" />
     <ClCompile Include="ImGuiCustom.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
