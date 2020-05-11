@@ -67,7 +67,7 @@ void GUI::render() noexcept
             ImGui::Checkbox("No Title Bar", &config->purchaseList.noTitleBar);
             ImGui::EndPopup();
         }
-        ImGui::Checkbox("Bomb Zone Hint", &config->bombZoneHint);
+        ImGui::Checkbox("Bomb Zone Hint", &config->bombZoneHint.enabled);
         ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Configs")) {
