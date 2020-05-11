@@ -79,7 +79,7 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
             reloadLength = localPlayerData.nextWeaponAttack - memory->globalVars->currenttime;
 
         const auto [width, height] = interfaces->engine->getScreenSize();
-        constexpr int segments = 20;
+        constexpr int segments = 40;
         drawList->PathArcTo({ width / 2.0f, height / 2.0f }, 20.0f, -IM_PI / 2, std::clamp(IM_PI * 2 * (0.75f - (localPlayerData.nextWeaponAttack - memory->globalVars->currenttime) / reloadLength), -IM_PI / 2, -IM_PI / 2 + IM_PI * 2), segments);
         const ImU32 color = Helpers::calculateColor(config->reloadProgress);
         drawList->PathStroke(color, false, config->reloadProgress.thickness);
