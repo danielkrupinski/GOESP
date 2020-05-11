@@ -173,12 +173,12 @@ void Misc::purchaseList(GameEvent* event) noexcept
             return;
 
         if (config->purchaseList.pos != ImVec2{}) {
-            ImGui::SetNextWindowPos(config->purchaseList.pos, ImGuiCond_Always);
+            ImGui::SetNextWindowPos(config->purchaseList.pos);
             config->purchaseList.pos = {};
         }
 
         if (config->purchaseList.size != ImVec2{}) {
-            ImGui::SetNextWindowSize(config->purchaseList.size, ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImClamp(config->purchaseList.size, {}, interfaces->engine->getScreenSize()));
             config->purchaseList.size = {};
         }
 
