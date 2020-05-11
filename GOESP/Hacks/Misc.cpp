@@ -221,10 +221,7 @@ void Misc::drawBombZoneHint() noexcept
 
     std::scoped_lock _{ dataMutex };
 
-    if (!localPlayerData.exists || !localPlayerData.alive)
-        return;
-
-    if (!gui->open && !localPlayerData.inBombZone)
+    if (!gui->open && (!localPlayerData.exists || !localPlayerData.alive || !localPlayerData.inBombZone))
         return;
 
     ImGui::SetNextWindowSize({});
