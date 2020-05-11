@@ -492,7 +492,7 @@ static void renderBox(ImDrawList* drawList, const BoundingBox& bbox, const Box& 
     if (!config.enabled)
         return;
 
-    const ImU32 color = Helpers::calculateColor(config, memory->globalVars->realtime);
+    const ImU32 color = Helpers::calculateColor(config);
 
     switch (config.type) {
     case Box::_2d:
@@ -557,10 +557,10 @@ static ImVec2 renderText(ImDrawList* drawList, const std::string& fontName, floa
     const auto verticalOffset = adjustHeight ? textSize.y : 0.0f;
 
     if (backgroundCfg.enabled) {
-        const ImU32 color = Helpers::calculateColor(backgroundCfg, memory->globalVars->realtime);
+        const ImU32 color = Helpers::calculateColor(backgroundCfg);
         drawList->AddRectFilled({ pos.x - horizontalOffset - 2, pos.y - verticalOffset - 2 }, { pos.x - horizontalOffset + textSize.x + 2, pos.y - verticalOffset + textSize.y + 2 }, color, backgroundCfg.rounding);
     }
-    const ImU32 color = Helpers::calculateColor(textCfg, memory->globalVars->realtime);
+    const ImU32 color = Helpers::calculateColor(textCfg);
     drawList->AddText(font, static_cast<float>(fontSize), { pos.x - horizontalOffset, pos.y - verticalOffset }, color, text);
     return textSize;
 }
@@ -571,7 +571,7 @@ static void drawSnapline(ImDrawList* drawList, const BoundingBox& bbox, const Sn
         return;
 
     const auto [width, height] = interfaces->engine->getScreenSize();
-    const ImU32 color = Helpers::calculateColor(config, memory->globalVars->realtime);
+    const ImU32 color = Helpers::calculateColor(config);
     drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(config.type == 0 ? height : config.type == 1 ? 0 : height / 2) }, { (bbox.min.x + bbox.max.x) / 2, config.type == 0 ? bbox.max.y : config.type == 1 ? bbox.min.y : (bbox.min.y + bbox.max.y) / 2 }, color, config.thickness);
 }
 
@@ -594,7 +594,7 @@ static void renderPlayerBox(ImDrawList* drawList, const PlayerData& playerData, 
 
     if (config.flashDuration.enabled && playerData.flashDuration > 0.0f) {
         drawList->PathArcTo(flashDurationPos, 5.0f, IM_PI / 2 - (playerData.flashDuration / 255.0f * IM_PI), IM_PI / 2 + (playerData.flashDuration / 255.0f * IM_PI));
-        const ImU32 color = Helpers::calculateColor(config.flashDuration, memory->globalVars->realtime);
+        const ImU32 color = Helpers::calculateColor(config.flashDuration);
         drawList->PathStroke(color, false, 1.5f);
     }
 
@@ -643,7 +643,7 @@ static void drawProjectileTrajectory(ImDrawList* drawList, const Trail& config, 
 
     std::vector<ImVec2> points;
 
-    const auto color = Helpers::calculateColor(config, memory->globalVars->realtime);
+    const auto color = Helpers::calculateColor(config);
 
     for (const auto& [time, point] : trajectory) {
         if (ImVec2 pos; time + config.time >= memory->globalVars->realtime && worldToScreen(point, pos)) {
@@ -674,7 +674,7 @@ static void drawPlayerSkeleton(ImDrawList* drawList, const ColorToggleThickness&
         if (!worldToScreen(parent, parentPoint))
             continue;
 
-        const auto color = Helpers::calculateColor(config, memory->globalVars->realtime);
+        const auto color = Helpers::calculateColor(config);
         drawList->AddLine(bonePoint, parentPoint, color, config.thickness);
     }
 }
