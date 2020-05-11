@@ -243,3 +243,14 @@ struct PurchaseList {
             && size == pl.size;
     }
 };
+
+struct BombZoneHint {
+    bool enabled = false;
+    ImVec2 pos;
+
+    auto operator==(const BombZoneHint& other) const
+    {
+        return enabled == other.enabled
+            && pos == other.pos;
+    }
+};
