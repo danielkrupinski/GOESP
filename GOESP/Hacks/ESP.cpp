@@ -560,10 +560,31 @@ static void drawSnapline(const BoundingBox& bbox, const Snapline& config) noexce
 {
     if (!config.enabled)
         return;
+    
+    const auto& screenSize = ImGui::GetIO().DisplaySize;
+    
+    ImVec2 p1, p2;
+    p1.x = screenSize.x / 2;
+    p2.x = (bbox.min.x + bbox.max.x) / 2;
 
-    const auto [width, height] = interfaces->engine->getScreenSize();
-    const ImU32 color = Helpers::calculateColor(config);
-    drawList->AddLine({ static_cast<float>(width / 2), static_cast<float>(config.type == 0 ? height : config.type == 1 ? 0 : height / 2) }, { (bbox.min.x + bbox.max.x) / 2, config.type == 0 ? bbox.max.y : config.type == 1 ? bbox.min.y : (bbox.min.y + bbox.max.y) / 2 }, color, config.thickness);
+    switch (config.type) {
+    case 0:
+        p1.y = screenSize.y;
+        p2.y = bbox.max.y;
+        break;
+    case 1:
+        p1.y = 0.0f;
+        p2.y = bbox.min.y;
+        break;
+    case 2:
+        p1.y = screenSize.y / 2;
+        p2.y = (bbox.min.y + bbox.max.y) / 2;
+        break;
+    default:
+        return;
+    }
+
+    drawList->AddLine(p1, p2, Helpers::calculateColor(config), config.thickness);
 }
 
 struct FontPush {
