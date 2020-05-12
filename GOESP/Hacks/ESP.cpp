@@ -619,7 +619,7 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
     renderBox(bbox, config.box);
     drawSnapline(bbox, config.snapline);
 
-    ImVec2 flashDurationPos{ (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 12.5f };
+    ImVec2 flashDurationPos{ (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 7.5f };
 
     FontPush font{ config.font.name, playerData.distanceToLocal };
 
@@ -629,8 +629,10 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
     }
 
     if (config.flashDuration.enabled && playerData.flashDuration > 0.0f) {
-        // TODO: scale radius by distance
-        drawList->PathArcTo(flashDurationPos, 5.0f, IM_PI / 2 - (playerData.flashDuration / 255.0f * IM_PI), IM_PI / 2 + (playerData.flashDuration / 255.0f * IM_PI), 40);
+        const auto radius = std::max(5.0f - playerData.distanceToLocal / 600.0f, 1.0f);
+        flashDurationPos.y -= radius;
+
+        drawList->PathArcTo(flashDurationPos, radius, -IM_PI / 2 - (playerData.flashDuration / 255.0f * IM_PI), -IM_PI / 2 + (playerData.flashDuration / 255.0f * IM_PI), 40);
         drawList->PathStroke(Helpers::calculateColor(config.flashDuration), false, 1.5f);
     }
 
