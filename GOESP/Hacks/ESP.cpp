@@ -568,15 +568,15 @@ static void drawSnapline(const BoundingBox& bbox, const Snapline& config) noexce
     p2.x = (bbox.min.x + bbox.max.x) / 2;
 
     switch (config.type) {
-    case 0:
+    case Snapline::Bottom:
         p1.y = screenSize.y;
         p2.y = bbox.max.y;
         break;
-    case 1:
+    case Snapline::Top:
         p1.y = 0.0f;
         p2.y = bbox.min.y;
         break;
-    case 2:
+    case Snapline::Crosshair:
         p1.y = screenSize.y / 2;
         p2.y = (bbox.min.y + bbox.max.y) / 2;
         break;

@@ -71,7 +71,13 @@ struct Font {
 };
 
 struct Snapline : ColorToggleThickness {
-    int type = 0;
+    enum Type {
+        Bottom = 0,
+        Top,
+        Crosshair
+    };
+
+    int type = Bottom;
 
     auto operator==(const Snapline& s) const
     {
