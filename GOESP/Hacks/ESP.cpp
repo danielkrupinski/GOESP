@@ -629,9 +629,9 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
     }
 
     if (config.flashDuration.enabled && playerData.flashDuration > 0.0f) {
-        drawList->PathArcTo(flashDurationPos, 5.0f, IM_PI / 2 - (playerData.flashDuration / 255.0f * IM_PI), IM_PI / 2 + (playerData.flashDuration / 255.0f * IM_PI));
-        const ImU32 color = Helpers::calculateColor(config.flashDuration);
-        drawList->PathStroke(color, false, 1.5f);
+        // TODO: scale radius by distance
+        drawList->PathArcTo(flashDurationPos, 5.0f, IM_PI / 2 - (playerData.flashDuration / 255.0f * IM_PI), IM_PI / 2 + (playerData.flashDuration / 255.0f * IM_PI), 40);
+        drawList->PathStroke(Helpers::calculateColor(config.flashDuration), false, 1.5f);
     }
 
     if (config.weapon.enabled && !playerData.activeWeapon.empty())
