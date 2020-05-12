@@ -224,7 +224,6 @@ void Misc::drawBombZoneHint() noexcept
     if (!gui->open && (!localPlayerData.exists || !localPlayerData.alive || !localPlayerData.inBombZone))
         return;
 
-    ImGui::SetNextWindowSize({}, ImGuiCond_Once);
     if (config->bombZoneHint.pos != ImVec2{}) {
         ImGui::SetNextWindowPos(config->bombZoneHint.pos);
         config->bombZoneHint.pos = {};
