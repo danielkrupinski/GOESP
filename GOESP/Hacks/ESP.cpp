@@ -632,7 +632,7 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
         const auto radius = std::max(5.0f - playerData.distanceToLocal / 600.0f, 1.0f);
         flashDurationPos.y -= radius;
 
-        drawList->PathArcTo(flashDurationPos, radius, -IM_PI / 2 - (playerData.flashDuration / 255.0f * IM_PI), -IM_PI / 2 + (playerData.flashDuration / 255.0f * IM_PI), 40);
+        drawList->PathArcTo(flashDurationPos, radius, IM_PI / 2 - (playerData.flashDuration / 255.0f * IM_PI), IM_PI / 2 + (playerData.flashDuration / 255.0f * IM_PI), 40);
         drawList->PathStroke(Helpers::calculateColor(config.flashDuration), false, 1.5f);
     }
 
