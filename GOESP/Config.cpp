@@ -12,7 +12,7 @@
 
 int CALLBACK fontCallback(const LOGFONTA* lpelfe, const TEXTMETRICA*, DWORD, LPARAM lParam)
 {
-    std::string fontName = (const char*)reinterpret_cast<const ENUMLOGFONTEXA*>(lpelfe)->elfFullName;
+    const auto fontName = (const char*)reinterpret_cast<const ENUMLOGFONTEXA*>(lpelfe)->elfFullName;
 
     if (fontName[0] == '@')
         return TRUE;
@@ -21,7 +21,7 @@ int CALLBACK fontCallback(const LOGFONTA* lpelfe, const TEXTMETRICA*, DWORD, LPA
         FW_NORMAL, FALSE, FALSE, FALSE,
         ANSI_CHARSET, OUT_DEFAULT_PRECIS,
         CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
-        DEFAULT_PITCH, fontName.c_str())) {
+        DEFAULT_PITCH, fontName)) {
 
         DWORD fontData = GDI_ERROR;
 
@@ -34,7 +34,7 @@ int CALLBACK fontCallback(const LOGFONTA* lpelfe, const TEXTMETRICA*, DWORD, LPA
         DeleteObject(font);
 
         if (fontData == GDI_ERROR)
-            reinterpret_cast<std::vector<std::string>*>(lParam)->push_back(fontName);
+            reinterpret_cast<std::vector<std::string>*>(lParam)->emplace_back(fontName);
     }
     return TRUE;
 }
