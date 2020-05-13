@@ -47,15 +47,10 @@ Config::Config(const char* folderName) noexcept
         CoTaskMemFree(pathToDocuments);
     }
 
-    if (!std::filesystem::is_directory(path)) {
-        std::filesystem::remove(path);
-        std::filesystem::create_directory(path);
-    }
-
     LOGFONTA logfont;
     logfont.lfCharSet = ANSI_CHARSET;
+    logfont.lfPitchAndFamily = DEFAULT_PITCH;
     logfont.lfFaceName[0] = '\0';
-    logfont.lfPitchAndFamily = 0;
 
     EnumFontFamiliesExA(GetDC(nullptr), &logfont, fontCallback, (LPARAM)&systemFonts, 0);
     std::sort(std::next(systemFonts.begin()), systemFonts.end());
@@ -472,6 +467,8 @@ void Config::save() noexcept
         j["Bomb Zone Hint"] = bombZoneHint;
     if (purchaseList != PurchaseList{})
         j["Purchase List"] = purchaseList;
+
+    std::error_code ec; std::filesystem::create_directory(path, ec);
 
     if (std::ofstream out{ path / "config.txt" }; out.good())
         out << std::setw(2) << j;
