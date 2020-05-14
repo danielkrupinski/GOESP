@@ -21,7 +21,6 @@ GUI::GUI() noexcept
     ImGuiIO& io = ImGui::GetIO();
     io.IniFilename = nullptr;
     io.LogFilename = nullptr;
-    io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
     io.Fonts->Flags |= ImFontAtlasFlags_NoPowerOfTwoHeight;
 }
 
