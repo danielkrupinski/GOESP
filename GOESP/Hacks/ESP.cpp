@@ -633,7 +633,7 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
         flashDurationPos.y -= radius;
 
         drawList->PathArcTo(flashDurationPos, radius, IM_PI / 2 - (playerData.flashDuration / 255.0f * IM_PI), IM_PI / 2 + (playerData.flashDuration / 255.0f * IM_PI), 40);
-        drawList->PathStroke(Helpers::calculateColor(config.flashDuration), false, 1.5f);
+        drawList->PathStroke(Helpers::calculateColor(config.flashDuration), false, 0.9f + radius * 0.1f);
     }
 
     if (config.weapon.enabled && !playerData.activeWeapon.empty())
