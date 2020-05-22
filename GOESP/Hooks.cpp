@@ -78,10 +78,8 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     IDirect3DVertexDeclaration9* vertexDeclaration;
     device->GetVertexDeclaration(&vertexDeclaration);
 
-    if (config->loadScheduledFonts()) {
+    if (config->loadScheduledFonts())
         ImGui_ImplDX9_InvalidateDeviceObjects();
-        ImGui_ImplDX9_CreateDeviceObjects();
-    }
 
     ImGui_ImplDX9_NewFrame();
     ImGui_ImplWin32_NewFrame();
@@ -137,7 +135,6 @@ Hooks::Hooks(HMODULE module) noexcept
 
 void Hooks::install() noexcept
 {
-    std::string s{ "imitator" };
     assert(memory);
 
     reset = *reinterpret_cast<decltype(reset)*>(memory->reset);
