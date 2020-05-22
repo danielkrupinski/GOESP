@@ -66,10 +66,7 @@ static HRESULT D3DAPI reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* par
     HookGuard guard;
 
     ImGui_ImplDX9_InvalidateDeviceObjects();
-    auto result = hooks->reset(device, params);
-    ImGui_ImplDX9_CreateDeviceObjects();
-
-    return result;
+    return hooks->reset(device, params);
 }
 
 static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const RECT* dest, HWND windowOverride, const RGNDATA* dirtyRegion) noexcept
@@ -140,6 +137,7 @@ Hooks::Hooks(HMODULE module) noexcept
 
 void Hooks::install() noexcept
 {
+    std::string s{ "imitator" };
     assert(memory);
 
     reset = *reinterpret_cast<decltype(reset)*>(memory->reset);
