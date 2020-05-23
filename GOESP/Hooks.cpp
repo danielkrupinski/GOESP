@@ -159,15 +159,9 @@ static DWORD WINAPI waitOnUnload(HMODULE hModule) noexcept
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
 
-    hooks.reset();
     eventListener.reset();
-    memory.reset();
-    interfaces.reset();
-    gui.reset();
-    config.reset();
 
     _CRT_INIT(hModule, DLL_PROCESS_DETACH, nullptr);
-
     FreeLibraryAndExitThread(hModule, 0);
 }
 
