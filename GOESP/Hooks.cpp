@@ -75,9 +75,6 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
 
     static const auto _ = ImGui_ImplDX9_Init(device);
 
-    IDirect3DVertexDeclaration9* vertexDeclaration;
-    device->GetVertexDeclaration(&vertexDeclaration);
-
     if (config->loadScheduledFonts())
         ImGui_ImplDX9_InvalidateDeviceObjects();
 
@@ -101,12 +98,18 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     ImGui::GetIO().MouseDrawCursor = gui->open;
 
     ImGui::EndFrame();
-
     ImGui::Render();
-    ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 
-    device->SetVertexDeclaration(vertexDeclaration);
-    vertexDeclaration->Release();
+    if (device->BeginScene() == D3D_OK) {
+        IDirect3DVertexDeclaration9* vertexDeclaration;
+        device->GetVertexDeclaration(&vertexDeclaration);
+
+        ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+
+        device->SetVertexDeclaration(vertexDeclaration);
+        vertexDeclaration->Release();
+        device->EndScene();
+    }
 
     return hooks->present(device, src, dest, windowOverride, dirtyRegion);
 }
