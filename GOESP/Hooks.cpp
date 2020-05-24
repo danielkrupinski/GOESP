@@ -101,13 +101,7 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     ImGui::Render();
 
     if (device->BeginScene() == D3D_OK) {
-        IDirect3DVertexDeclaration9* vertexDeclaration;
-        device->GetVertexDeclaration(&vertexDeclaration);
-
         ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-
-        device->SetVertexDeclaration(vertexDeclaration);
-        vertexDeclaration->Release();
         device->EndScene();
     }
 
