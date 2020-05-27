@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ClientClass.h"
+#include "Engine.h"
 #include "EngineTrace.h"
 #include "EntityList.h"
 #include "../Interfaces.h"
