@@ -140,6 +140,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="ConfigStructs.h" />
     <ClInclude Include="EventListener.h" />
+    <ClInclude Include="GameData.h" />
     <ClInclude Include="Hacks\ESP.h" />
     <ClInclude Include="fnv.h" />
     <ClInclude Include="GUI.h" />
