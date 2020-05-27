@@ -1,0 +1,365 @@
+#include <Windows.h>
+#include <d3d9types.h>
+#include <list>
+#include <mutex>
+
+#include "Config.h"
+#include "fnv.h"
+#include "GameData.h"
+#include "Memory.h"
+
+#include "SDK/Entity.h"
+#include "SDK/GlobalVars.h"
+#include "SDK/Localize.h"
+#include "SDK/LocalPlayer.h"
+#include "SDK/ModelInfo.h"
+#include "SDK/Sound.h"
+#include "SDK/WeaponInfo.h"
+
+static D3DMATRIX viewMatrix;
+static _LocalPlayerData localPlayerData;
+static std::vector<_PlayerData> players;
+static std::vector<_WeaponData> weapons;
+static std::vector<_EntityData> entities;
+static std::vector<_LootCrateData> lootCrates;
+static std::list<_ProjectileData> projectiles;
+
+void GameData::update() noexcept
+{
+    Lock lock;
+
+    players.clear();
+    weapons.clear();
+    entities.clear();
+    lootCrates.clear();
+
+    if (!localPlayer)
+        return;
+
+    viewMatrix = interfaces->engine->worldToScreenMatrix();
+    localPlayerData.update();
+
+    const auto observerTarget = localPlayer->getObserverMode() == ObsMode::InEye ? localPlayer->getObserverTarget() : nullptr;
+
+    for (int i = 1; i <= memory->globalVars->maxClients; ++i) {
+        const auto entity = interfaces->entityList->getEntity(i);
+        if (!entity || entity == localPlayer.get() || entity == observerTarget
+            || entity->isDormant() || !entity->isAlive())
+            continue;
+
+        players.emplace_back(entity);
+    }
+
+    for (int i = memory->globalVars->maxClients + 1; i <= interfaces->entityList->getHighestEntityIndex(); ++i) {
+        const auto entity = interfaces->entityList->getEntity(i);
+        if (!entity || entity->isDormant())
+            continue;
+
+        if (entity->isWeapon()) {
+            if (entity->ownerEntity() == -1)
+                weapons.emplace_back(entity);
+        } else {
+            switch (entity->getClientClass()->classId) {
+            case ClassId::BaseCSGrenadeProjectile:
+                if (entity->grenadeExploded()) {
+                    if (const auto it = std::find(projectiles.begin(), projectiles.end(), entity->handle()); it != projectiles.end())
+                        it->exploded = true;
+                    break;
+                }
+            case ClassId::BreachChargeProjectile:
+            case ClassId::BumpMineProjectile:
+            case ClassId::DecoyProjectile:
+            case ClassId::MolotovProjectile:
+            case ClassId::SensorGrenadeProjectile:
+            case ClassId::SmokeGrenadeProjectile:
+            case ClassId::SnowballProjectile:
+                if (const auto it = std::find(projectiles.begin(), projectiles.end(), entity->handle()); it != projectiles.end())
+                    it->update(entity);
+                else
+                    projectiles.emplace_back(entity);
+                break;
+            case ClassId::EconEntity:
+            case ClassId::Chicken:
+            case ClassId::PlantedC4:
+            case ClassId::Hostage:
+            case ClassId::Dronegun:
+            case ClassId::Cash:
+            case ClassId::AmmoBox:
+            case ClassId::RadarJammer:
+            case ClassId::SnowballPile:
+                entities.emplace_back(entity);
+                break;
+            case ClassId::LootCrate:
+                lootCrates.emplace_back(entity);
+            }
+        }
+    }
+
+    for (auto it = projectiles.begin(); it != projectiles.end();) {
+        if (!interfaces->entityList->getEntityFromHandle(it->handle)) {
+            it->exploded = true;
+
+            if (it->trajectory.size() < 1 || it->trajectory[it->trajectory.size() - 1].first + 60.0f < memory->globalVars->realtime) {
+                it = projectiles.erase(it);
+                continue;
+            }
+        }
+        ++it;
+    }
+}
+
+void _LocalPlayerData::update() noexcept
+{
+    if (!localPlayer) {
+        exists = false;
+        return;
+    }
+
+    exists = true;
+    alive = localPlayer->isAlive();
+    inBombZone = localPlayer->inBombZone();
+
+    if (const auto activeWeapon = localPlayer->getActiveWeapon()) {
+        inReload = activeWeapon->isInReload();
+        shooting = localPlayer->shotsFired() > 1;
+        nextWeaponAttack = activeWeapon->nextPrimaryAttack();
+    }
+    aimPunch = localPlayer->getAimPunch();
+    origin = localPlayer->getAbsOrigin();
+}
+
+_BaseData::_BaseData(Entity* entity) noexcept
+{
+    distanceToLocal = entity->getAbsOrigin().distTo(localPlayerData.origin);
+
+    if (const auto model = entity->getModel()) {
+        modelMins = model->mins;
+        modelMaxs = model->maxs;
+    }
+
+    obbMins = entity->getCollideable()->obbMins();
+    obbMaxs = entity->getCollideable()->obbMaxs();
+    coordinateFrame = entity->toWorldTransform();
+}
+
+_EntityData::_EntityData(Entity* entity) noexcept : _BaseData{ entity }
+{
+    name = [](ClassId classId) -> const char* {
+        switch (classId) {
+        case ClassId::EconEntity: return "Defuse Kit";
+        case ClassId::Chicken: return "Chicken";
+        case ClassId::PlantedC4: return "Planted C4";
+        case ClassId::Hostage: return "Hostage";
+        case ClassId::Dronegun: return "Sentry";
+        case ClassId::Cash: return "Cash";
+        case ClassId::AmmoBox: return "Ammo Box";
+        case ClassId::RadarJammer: return "Radar Jammer";
+        case ClassId::SnowballPile: return "Snowball Pile";
+        default: return nullptr;
+        }
+    }(entity->getClientClass()->classId);
+}
+
+_ProjectileData::_ProjectileData(Entity* projectile) noexcept : _BaseData { projectile }
+{
+    name = [](Entity* projectile) -> const char* {
+        switch (projectile->getClientClass()->classId) {
+        case ClassId::BaseCSGrenadeProjectile:
+            if (const auto model = projectile->getModel(); model && std::strstr(model->name, "flashbang"))
+                return "Flashbang";
+            else
+                return "HE Grenade";
+        case ClassId::BreachChargeProjectile: return "Breach Charge";
+        case ClassId::BumpMineProjectile: return "Bump Mine";
+        case ClassId::DecoyProjectile: return "Decoy Grenade";
+        case ClassId::MolotovProjectile: return "Molotov";
+        case ClassId::SensorGrenadeProjectile: return "TA Grenade";
+        case ClassId::SmokeGrenadeProjectile: return "Smoke Grenade";
+        case ClassId::SnowballProjectile: return "Snowball";
+        default: return nullptr;
+        }
+    }(projectile);
+
+    if (const auto thrower = interfaces->entityList->getEntityFromHandle(projectile->thrower()); thrower && localPlayer) {
+        if (thrower == localPlayer.get())
+            thrownByLocalPlayer = true;
+        else
+            thrownByEnemy = memory->isOtherEnemy(localPlayer.get(), thrower);
+    }
+
+    handle = projectile->handle();
+}
+
+void _ProjectileData::update(Entity* projectile) noexcept
+{
+    static_cast<_BaseData&>(*this) = { projectile };
+
+    if (const auto pos = projectile->getAbsOrigin(); trajectory.size() < 1 || trajectory[trajectory.size() - 1].second != pos)
+        trajectory.emplace_back(memory->globalVars->realtime, pos);
+}
+
+_PlayerData::_PlayerData(Entity* entity) noexcept : _BaseData{ entity }
+{
+    if (localPlayer) {
+        enemy = memory->isOtherEnemy(entity, localPlayer.get());
+        visible = entity->visibleTo(localPlayer.get());
+    }
+
+    constexpr auto isEntityAudible = [](int entityIndex) noexcept {
+        for (int i = 0; i < memory->activeChannels->count; ++i)
+            if (memory->channels[memory->activeChannels->list[i]].soundSource == entityIndex)
+                return true;
+        return false;
+    };
+
+    audible = isEntityAudible(entity->index());
+    spotted = entity->spotted();
+    flashDuration = entity->flashDuration();
+    name = entity->getPlayerName(config->normalizePlayerNames);
+
+    if (const auto weapon = entity->getActiveWeapon()) {
+        audible = audible || isEntityAudible(weapon->index());
+        if (const auto weaponInfo = weapon->getWeaponInfo())
+            activeWeapon = interfaces->localize->findAsUTF8(weaponInfo->name);
+    }
+
+    const auto model = entity->getModel();
+    if (!model)
+        return;
+
+    const auto studioModel = interfaces->modelInfo->getStudioModel(model);
+    if (!studioModel)
+        return;
+
+    Matrix3x4 boneMatrices[MAXSTUDIOBONES];
+    if (!entity->setupBones(boneMatrices, MAXSTUDIOBONES, BONE_USED_BY_HITBOX, memory->globalVars->currenttime))
+        return;
+
+    for (int i = 0; i < studioModel->numBones; ++i) {
+        const auto bone = studioModel->getBone(i);
+
+        if (!bone || bone->parent == -1 || !(bone->flags & BONE_USED_BY_HITBOX))
+            continue;
+
+        bones.emplace_back(boneMatrices[i].origin(), boneMatrices[bone->parent].origin());
+    }
+}
+
+_WeaponData::_WeaponData(Entity* entity) noexcept : _BaseData{ entity }
+{
+    clip = entity->clip();
+    reserveAmmo = entity->reserveAmmoCount();
+
+    if (const auto weaponInfo = entity->getWeaponInfo()) {
+        group = [](WeaponType type, WeaponId weaponId) {
+            switch (type) {
+            case WeaponType::Pistol: return "Pistols";
+            case WeaponType::SubMachinegun: return "SMGs";
+            case WeaponType::Rifle: return "Rifles";
+            case WeaponType::SniperRifle: return "Sniper Rifles";
+            case WeaponType::Shotgun: return "Shotguns";
+            case WeaponType::Machinegun: return "Machineguns";
+            case WeaponType::Grenade: return "Grenades";
+            case WeaponType::Melee: return "Melee";
+            default:
+                switch (weaponId) {
+                case WeaponId::C4:
+                case WeaponId::Healthshot:
+                case WeaponId::BumpMine:
+                case WeaponId::ZoneRepulsor:
+                case WeaponId::Shield:
+                    return "Other";
+                default: return "All";
+                }
+            }
+        }(weaponInfo->type, entity->weaponId());
+        name = [](WeaponId weaponId) {
+            switch (weaponId) {
+            default: return "All";
+
+            case WeaponId::Glock: return "Glock-18";
+            case WeaponId::Hkp2000: return "P2000";
+            case WeaponId::Usp_s: return "USP-S";
+            case WeaponId::Elite: return "Dual Berettas";
+            case WeaponId::P250: return "P250";
+            case WeaponId::Tec9: return "Tec-9";
+            case WeaponId::Fiveseven: return "Five-SeveN";
+            case WeaponId::Cz75a: return "CZ75-Auto";
+            case WeaponId::Deagle: return "Desert Eagle";
+            case WeaponId::Revolver: return "R8 Revolver";
+
+            case WeaponId::Mac10: return "MAC-10";
+            case WeaponId::Mp9: return "MP9";
+            case WeaponId::Mp7: return "MP7";
+            case WeaponId::Mp5sd: return "MP5-SD";
+            case WeaponId::Ump45: return "UMP-45";
+            case WeaponId::P90: return "P90";
+            case WeaponId::Bizon: return "PP-Bizon";
+
+            case WeaponId::GalilAr: return "Galil AR";
+            case WeaponId::Famas: return "FAMAS";
+            case WeaponId::Ak47: return "AK-47";
+            case WeaponId::M4A1: return "M4A4";
+            case WeaponId::M4a1_s: return "M4A1-S";
+            case WeaponId::Sg553: return "SG 553";
+            case WeaponId::Aug: return "AUG";
+
+            case WeaponId::Ssg08: return "SSG 08";
+            case WeaponId::Awp: return "AWP";
+            case WeaponId::G3SG1: return "G3SG1";
+            case WeaponId::Scar20: return "SCAR-20";
+
+            case WeaponId::Nova: return "Nova";
+            case WeaponId::Xm1014: return "XM1014";
+            case WeaponId::Sawedoff: return "Sawed-Off";
+            case WeaponId::Mag7: return "MAG-7";
+
+            case WeaponId::M249: return "M249";
+            case WeaponId::Negev: return "Negev";
+
+            case WeaponId::Flashbang: return "Flashbang";
+            case WeaponId::HeGrenade: return "HE Grenade";
+            case WeaponId::SmokeGrenade: return "Smoke Grenade";
+            case WeaponId::Molotov: return "Molotov";
+            case WeaponId::Decoy: return "Decoy Grenade";
+            case WeaponId::IncGrenade: return "Incendiary";
+            case WeaponId::TaGrenade: return "TA Grenade";
+            case WeaponId::Firebomb: return "Fire Bomb";
+            case WeaponId::Diversion: return "Diversion";
+            case WeaponId::FragGrenade: return "Frag Grenade";
+            case WeaponId::Snowball: return "Snowball";
+
+            case WeaponId::Axe: return "Axe";
+            case WeaponId::Hammer: return "Hammer";
+            case WeaponId::Spanner: return "Wrench";
+
+            case WeaponId::C4: return "C4";
+            case WeaponId::Healthshot: return "Healthshot";
+            case WeaponId::BumpMine: return "Bump Mine";
+            case WeaponId::ZoneRepulsor: return "Zone Repulsor";
+            case WeaponId::Shield: return "Shield";
+            }
+        }(entity->weaponId());
+
+        displayName = interfaces->localize->findAsUTF8(weaponInfo->name);
+    }
+}
+
+_LootCrateData::_LootCrateData(Entity* entity) noexcept : _BaseData{ entity }
+{
+    const auto model = entity->getModel();
+    if (!model)
+        return;
+
+    name = [](const char* modelName) -> const char* {
+        switch (fnv::hashRuntime(modelName)) {
+        case fnv::hash("models/props_survival/cases/case_pistol.mdl"): return "Pistol Case";
+        case fnv::hash("models/props_survival/cases/case_light_weapon.mdl"): return "Light Case";
+        case fnv::hash("models/props_survival/cases/case_heavy_weapon.mdl"): return "Heavy Case";
+        case fnv::hash("models/props_survival/cases/case_explosive.mdl"): return "Explosive Case";
+        case fnv::hash("models/props_survival/cases/case_tools.mdl"): return "Tools Case";
+        case fnv::hash("models/props_survival/cash/dufflebag.mdl"): return "Cash Dufflebag";
+        default: return nullptr;
+        }
+    }(model->name);
+}
