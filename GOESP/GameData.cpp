@@ -18,20 +18,20 @@
 
 static D3DMATRIX viewMatrix;
 static _LocalPlayerData localPlayerData;
-static std::vector<_PlayerData> players;
-static std::vector<_WeaponData> weapons;
-static std::vector<_EntityData> entities;
-static std::vector<_LootCrateData> lootCrates;
-static std::list<_ProjectileData> projectiles;
+static std::vector<_PlayerData> playerData;
+static std::vector<_WeaponData> weaponData;
+static std::vector<_EntityData> entityData;
+static std::vector<_LootCrateData> lootCrateData;
+static std::list<_ProjectileData> projectileData;
 
 void GameData::update() noexcept
 {
     Lock lock;
 
-    players.clear();
-    weapons.clear();
-    entities.clear();
-    lootCrates.clear();
+    playerData.clear();
+    weaponData.clear();
+    entityData.clear();
+    lootCrateData.clear();
 
     if (!localPlayer)
         return;
@@ -47,7 +47,7 @@ void GameData::update() noexcept
             || entity->isDormant() || !entity->isAlive())
             continue;
 
-        players.emplace_back(entity);
+        playerData.emplace_back(entity);
     }
 
     for (int i = memory->globalVars->maxClients + 1; i <= interfaces->entityList->getHighestEntityIndex(); ++i) {
@@ -57,12 +57,12 @@ void GameData::update() noexcept
 
         if (entity->isWeapon()) {
             if (entity->ownerEntity() == -1)
-                weapons.emplace_back(entity);
+                weaponData.emplace_back(entity);
         } else {
             switch (entity->getClientClass()->classId) {
             case ClassId::BaseCSGrenadeProjectile:
                 if (entity->grenadeExploded()) {
-                    if (const auto it = std::find(projectiles.begin(), projectiles.end(), entity->handle()); it != projectiles.end())
+                    if (const auto it = std::find(projectileData.begin(), projectileData.end(), entity->handle()); it != projectileData.end())
                         it->exploded = true;
                     break;
                 }
@@ -73,10 +73,10 @@ void GameData::update() noexcept
             case ClassId::SensorGrenadeProjectile:
             case ClassId::SmokeGrenadeProjectile:
             case ClassId::SnowballProjectile:
-                if (const auto it = std::find(projectiles.begin(), projectiles.end(), entity->handle()); it != projectiles.end())
+                if (const auto it = std::find(projectileData.begin(), projectileData.end(), entity->handle()); it != projectileData.end())
                     it->update(entity);
                 else
-                    projectiles.emplace_back(entity);
+                    projectileData.emplace_back(entity);
                 break;
             case ClassId::EconEntity:
             case ClassId::Chicken:
@@ -87,25 +87,60 @@ void GameData::update() noexcept
             case ClassId::AmmoBox:
             case ClassId::RadarJammer:
             case ClassId::SnowballPile:
-                entities.emplace_back(entity);
+                entityData.emplace_back(entity);
                 break;
             case ClassId::LootCrate:
-                lootCrates.emplace_back(entity);
+                lootCrateData.emplace_back(entity);
             }
         }
     }
 
-    for (auto it = projectiles.begin(); it != projectiles.end();) {
+    for (auto it = projectileData.begin(); it != projectileData.end();) {
         if (!interfaces->entityList->getEntityFromHandle(it->handle)) {
             it->exploded = true;
 
             if (it->trajectory.size() < 1 || it->trajectory[it->trajectory.size() - 1].first + 60.0f < memory->globalVars->realtime) {
-                it = projectiles.erase(it);
+                it = projectileData.erase(it);
                 continue;
             }
         }
         ++it;
     }
+}
+
+const _D3DMATRIX& GameData::toScreenMatrix() noexcept
+{
+    return viewMatrix;
+}
+
+const _LocalPlayerData& GameData::local() noexcept
+{
+    return localPlayerData;
+}
+
+const std::vector<_PlayerData>& GameData::players() noexcept
+{
+    return playerData;
+}
+
+const std::vector<_WeaponData>& GameData::weapons() noexcept
+{
+    return weaponData;
+}
+
+const std::vector<_EntityData>& GameData::entities() noexcept
+{
+    return entityData;
+}
+
+const std::vector<_LootCrateData>& GameData::lootCrates() noexcept
+{
+    return lootCrateData;
+}
+
+const std::list<_ProjectileData>& GameData::projectiles() noexcept
+{
+    return projectileData;
 }
 
 void _LocalPlayerData::update() noexcept

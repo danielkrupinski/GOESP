@@ -2,6 +2,7 @@
 
 //#include "SDK/Entity.h"
 
+#include <list>
 #include <mutex>
 #include <string>
 #include <tuple>
@@ -9,9 +10,28 @@
 
 #include "SDK/Vector.h"
 
+struct _LocalPlayerData;
+
+struct _PlayerData;
+struct _WeaponData;
+struct _EntityData;
+struct _LootCrateData;
+struct _ProjectileData;
+
+struct _D3DMATRIX;
+
 namespace GameData
 {
     void update() noexcept;
+
+    const _D3DMATRIX& toScreenMatrix() noexcept;
+
+    const _LocalPlayerData& local() noexcept;
+    const std::vector<_PlayerData>& players() noexcept;
+    const std::vector<_WeaponData>& weapons() noexcept;
+    const std::vector<_EntityData>& entities() noexcept;
+    const std::vector<_LootCrateData>& lootCrates() noexcept;
+    const std::list<_ProjectileData>& projectiles() noexcept;
 
     class Lock {
     public:
