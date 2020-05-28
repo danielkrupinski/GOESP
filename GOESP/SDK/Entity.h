@@ -74,18 +74,40 @@ public:
         return vec;
     }
 
-    bool visibleTo(Entity* other) noexcept
-    {
-        Trace trace;
-        interfaces->engineTrace->traceRay({ other->getEyePosition(), getEyePosition() }, 0x46004009, other, trace);
-        return (trace.entity == this || trace.fraction > 0.97f) && !memory->lineGoesThroughSmoke(other->getEyePosition(), getEyePosition(), 1);
-    }
-
     bool canSee(Entity* other, const Vector& pos) noexcept
     {
         Trace trace;
         interfaces->engineTrace->traceRay({ getEyePosition(), pos }, 0x46004009, this, trace);
         return (trace.entity == other || trace.fraction > 0.97f) && !memory->lineGoesThroughSmoke(getEyePosition(), pos, 1);
+    }
+
+    bool visibleTo(Entity* other) noexcept
+    {
+        if (other->canSee(this, getAbsOrigin() + Vector{ 0.0f, 0.0f, 5.0f }))
+            return true;
+
+        const auto model = getModel();
+        if (!model)
+            return false;
+
+        const auto studioModel = interfaces->modelInfo->getStudioModel(model);
+        if (!studioModel)
+            return false;
+
+        const auto hitboxSet = studioModel->getHitboxSet(0); // TODO: get hitbox set index dynamically
+        if (!hitboxSet)
+            return false;
+
+        Matrix3x4 boneMatrices[MAXSTUDIOBONES];
+        if (!setupBones(boneMatrices, MAXSTUDIOBONES, BONE_USED_BY_HITBOX, memory->globalVars->currenttime))
+            return false;
+
+        for (const auto boxNum : { 12, 9, 14, 17 }) { // head, guts, left & right elbow hitbox
+            if (boxNum < hitboxSet->numHitboxes && other->canSee(this, boneMatrices[hitboxSet->getHitbox(boxNum)->bone].origin()))
+                return true;
+        }
+
+        return false;
     }
 
     auto getAimPunch() noexcept
