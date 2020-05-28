@@ -8,6 +8,8 @@
 #include "../Memory.h"
 #include "VirtualMethod.h"
 #include "WeaponId.h"
+#include "ModelInfo.h"
+#include "GlobalVars.h"
 
 struct Vector;
 struct WeaponInfo;
@@ -77,6 +79,13 @@ public:
         Trace trace;
         interfaces->engineTrace->traceRay({ other->getEyePosition(), getEyePosition() }, 0x46004009, other, trace);
         return (trace.entity == this || trace.fraction > 0.97f) && !memory->lineGoesThroughSmoke(other->getEyePosition(), getEyePosition(), 1);
+    }
+
+    bool canSee(Entity* other, const Vector& pos) noexcept
+    {
+        Trace trace;
+        interfaces->engineTrace->traceRay({ getEyePosition(), pos }, 0x46004009, this, trace);
+        return (trace.entity == other || trace.fraction > 0.97f) && !memory->lineGoesThroughSmoke(getEyePosition(), pos, 1);
     }
 
     auto getAimPunch() noexcept
