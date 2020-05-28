@@ -5,6 +5,7 @@
 
 #include "../Config.h"
 #include "../fnv.h"
+#include "../GameData.h"
 #include "../GUI.h"
 #include "../Helpers.h"
 #include "../Interfaces.h"
@@ -21,45 +22,13 @@
 #include "../SDK/WeaponInfo.h"
 #include "../SDK/WeaponSystem.h"
 
-#include <mutex>
 #include <numeric>
 #include <unordered_map>
 #include <vector>
 
-struct LocalPlayerData {
-    void update() noexcept
-    {
-        if (!localPlayer)
-            return;
-
-        exists = true;
-        alive = localPlayer->isAlive();
-        inBombZone = localPlayer->inBombZone();
-
-        if (const auto activeWeapon = localPlayer->getActiveWeapon()) {
-            inReload = activeWeapon->isInReload();
-            shooting = localPlayer->shotsFired() > 1;
-            nextWeaponAttack = activeWeapon->nextPrimaryAttack();
-        }
-        aimPunch = localPlayer->getAimPunch();
-    }
-    bool exists = false;
-    bool alive = false;
-    bool inBombZone = false;
-    bool inReload = false;
-    bool shooting = false;
-    float nextWeaponAttack = 0.0f;
-    Vector aimPunch;
-};
-
-static LocalPlayerData localPlayerData;
-static std::mutex dataMutex;
-
 void Misc::collectData() noexcept
 {
-    std::scoped_lock _{ dataMutex };
 
-    localPlayerData.update();
 }
 
 void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
@@ -67,7 +36,8 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
     if (!config->reloadProgress.enabled)
         return;
 
-    std::scoped_lock _{ dataMutex };
+    GameData::Lock lock;
+    const auto& localPlayerData = GameData::local();
 
     if (!localPlayerData.exists || !localPlayerData.alive)
         return;
@@ -93,7 +63,8 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
     if (!config->recoilCrosshair.enabled)
         return;
 
-    std::scoped_lock _{ dataMutex };
+    GameData::Lock lock;
+    const auto& localPlayerData = GameData::local();
 
     if (!localPlayerData.exists || !localPlayerData.alive)
         return;
@@ -219,7 +190,8 @@ void Misc::drawBombZoneHint() noexcept
     if (!config->bombZoneHint.enabled)
         return;
 
-    std::scoped_lock _{ dataMutex };
+    GameData::Lock lock;
+    const auto& localPlayerData = GameData::local();
 
     if (!gui->open && (!localPlayerData.exists || !localPlayerData.alive || !localPlayerData.inBombZone))
         return;
