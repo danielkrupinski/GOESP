@@ -6,6 +6,7 @@
 
 #include "Config.h"
 #include "EventListener.h"
+#include "GameData.h"
 #include "GUI.h"
 #include "Hacks/ESP.h"
 #include "Hacks/Misc.h"
@@ -49,6 +50,8 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 
     if (lastDataGather != memory->globalVars->realtime) {
         lastDataGather = memory->globalVars->realtime;
+
+        GameData::update();
 
         ESP::collectData();
         Misc::collectData();
