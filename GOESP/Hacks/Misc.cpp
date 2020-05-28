@@ -26,11 +26,6 @@
 #include <unordered_map>
 #include <vector>
 
-void Misc::collectData() noexcept
-{
-
-}
-
 void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
 {
     if (!config->reloadProgress.enabled)
