@@ -140,6 +140,8 @@ public:
         return playerName;
     }
 
+    PROP(hitboxSet, 0x9FC, int)                                                    // CBaseAnimating->m_nHitboxSet
+
     PROP(weaponId, 0x2FAA, WeaponId)                                               // CBaseAttributableItem->m_iItemDefinitionIndex
 
     PROP(clip, 0x3264, int)                                                        // CBaseCombatWeapon->m_iClip1
