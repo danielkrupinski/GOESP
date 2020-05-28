@@ -27,9 +27,9 @@ struct StudioHitboxSet {
         return nameIndex ? reinterpret_cast<const char*>(std::uintptr_t(this) + nameIndex) : nullptr;
     }
 
-    StudioBbox* getHitbox(int i) noexcept
+    auto getHitbox(int i) noexcept
     {
-        return i >= 0 && i < numHitboxes ? reinterpret_cast<StudioBbox*>(std::uintptr_t(this) + hitboxIndex) + i : nullptr;
+        return reinterpret_cast<StudioBbox*>(std::uintptr_t(this) + hitboxIndex) + i;
     }
 };
 
