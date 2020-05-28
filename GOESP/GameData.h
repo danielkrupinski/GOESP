@@ -24,15 +24,6 @@ namespace GameData
 {
     void update() noexcept;
 
-    const _D3DMATRIX& toScreenMatrix() noexcept;
-
-    const _LocalPlayerData& local() noexcept;
-    const std::vector<_PlayerData>& players() noexcept;
-    const std::vector<_WeaponData>& weapons() noexcept;
-    const std::vector<_EntityData>& entities() noexcept;
-    const std::vector<_LootCrateData>& lootCrates() noexcept;
-    const std::list<_ProjectileData>& projectiles() noexcept;
-
     class Lock {
     public:
         Lock() noexcept : lock{ mutex } {};
@@ -40,9 +31,16 @@ namespace GameData
         std::scoped_lock<std::mutex> lock;
         static inline std::mutex mutex;
     };
-}
 
-class Entity;
+    // You have to acquire lock before using these getters
+    const _D3DMATRIX& toScreenMatrix() noexcept;
+    const _LocalPlayerData& local() noexcept;
+    const std::vector<_PlayerData>& players() noexcept;
+    const std::vector<_WeaponData>& weapons() noexcept;
+    const std::vector<_EntityData>& entities() noexcept;
+    const std::vector<_LootCrateData>& lootCrates() noexcept;
+    const std::list<_ProjectileData>& projectiles() noexcept;
+}
 
 struct _LocalPlayerData {
     void update() noexcept;
@@ -56,6 +54,8 @@ struct _LocalPlayerData {
     Vector aimPunch;
     Vector origin;
 };
+
+class Entity;
 
 struct _BaseData {
     _BaseData(Entity* entity) noexcept;
