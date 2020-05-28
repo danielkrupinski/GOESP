@@ -2,7 +2,7 @@
 
 #include "EventListener.h"
 #include "fnv.h"
-#include "Hacks/ESP.h"
+#include "GameData.h"
 #include "Hacks/Misc.h"
 #include "Interfaces.h"
 
@@ -26,7 +26,7 @@ void EventListener::fireGameEvent(GameEvent* event)
 {
     switch (fnv::hashRuntime(event->getName())) {
     case fnv::hash("round_start"):
-        ESP::clearProjectileList();
+        GameData::clearProjectileList();
     case fnv::hash("item_purchase"):
     case fnv::hash("round_freeze_end"):
         Misc::purchaseList(event);
