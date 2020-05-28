@@ -44,11 +44,6 @@ static bool worldToScreen(const Vector& in, ImVec2& out) noexcept
     return false;
 }
 
-void ESP::collectData() noexcept
-{
- 
-}
-
 static constexpr auto operator-(float sub, const std::array<float, 3>& a) noexcept
 {
     return Vector{ sub - a[0], sub - a[1], sub - a[2] };
