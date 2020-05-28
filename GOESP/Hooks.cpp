@@ -50,10 +50,7 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 
     if (lastDataGather != memory->globalVars->realtime) {
         lastDataGather = memory->globalVars->realtime;
-
         GameData::update();
-
-        ESP::collectData();
     }
 
     LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
