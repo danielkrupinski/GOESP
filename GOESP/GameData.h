@@ -1,7 +1,5 @@
 #pragma once
 
-//#include "SDK/Entity.h"
-
 #include <list>
 #include <mutex>
 #include <string>
@@ -23,6 +21,7 @@ struct _D3DMATRIX;
 namespace GameData
 {
     void update() noexcept;
+    void clearProjectileList() noexcept;
 
     class Lock {
     public:

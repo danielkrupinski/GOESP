@@ -108,6 +108,12 @@ void GameData::update() noexcept
     }
 }
 
+void GameData::clearProjectileList() noexcept
+{
+    Lock lock;
+    projectileData.clear();
+}
+
 const _D3DMATRIX& GameData::toScreenMatrix() noexcept
 {
     return viewMatrix;
