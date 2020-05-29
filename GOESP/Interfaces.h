@@ -6,6 +6,7 @@
 #include <Windows.h>
 
 class Client;
+class ClientTools;
 class Cvar;
 class Engine;
 class EngineTrace;
@@ -21,6 +22,7 @@ type* name = reinterpret_cast<type*>(find(L##module, version));
 class Interfaces {
 public:
     GAME_INTERFACE(Client, client, "client_panorama", "VClient018")
+    GAME_INTERFACE(ClientTools, clientTools, "client_panorama", "VCLIENTTOOLS001")
     GAME_INTERFACE(Cvar, cvar, "vstdlib", "VEngineCvar007")
     GAME_INTERFACE(Engine, engine, "engine", "VEngineClient014")
     GAME_INTERFACE(EngineTrace, engineTrace, "engine", "EngineTraceClient004")
