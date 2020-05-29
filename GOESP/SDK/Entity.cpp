@@ -28,8 +28,8 @@ bool Entity::visibleTo(Entity* other) noexcept
     if (!studioModel)
         return false;
 
-    const auto hitboxSet = studioModel->getHitboxSet(0); // TODO: get hitbox set index dynamically
-    if (!hitboxSet)
+    const auto set = studioModel->getHitboxSet(hitboxSet());
+    if (!set)
         return false;
 
     Matrix3x4 boneMatrices[MAXSTUDIOBONES];
@@ -37,7 +37,7 @@ bool Entity::visibleTo(Entity* other) noexcept
         return false;
 
     for (const auto boxNum : { 12, 9, 14, 17 }) { // head, guts, left & right elbow hitbox
-        if (boxNum < hitboxSet->numHitboxes && other->canSee(this, boneMatrices[hitboxSet->getHitbox(boxNum)->bone].origin()))
+        if (boxNum < set->numHitboxes && other->canSee(this, boneMatrices[set->getHitbox(boxNum)->bone].origin()))
             return true;
     }
 
