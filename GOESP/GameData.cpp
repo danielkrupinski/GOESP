@@ -17,7 +17,7 @@
 #include "SDK/WeaponInfo.h"
 
 static D3DMATRIX viewMatrix;
-static _LocalPlayerData localPlayerData;
+static LocalPlayerData localPlayerData;
 static std::vector<_PlayerData> playerData;
 static std::vector<_WeaponData> weaponData;
 static std::vector<_EntityData> entityData;
@@ -119,7 +119,7 @@ const _D3DMATRIX& GameData::toScreenMatrix() noexcept
     return viewMatrix;
 }
 
-const _LocalPlayerData& GameData::local() noexcept
+const LocalPlayerData& GameData::local() noexcept
 {
     return localPlayerData;
 }
@@ -149,7 +149,7 @@ const std::list<_ProjectileData>& GameData::projectiles() noexcept
     return projectileData;
 }
 
-void _LocalPlayerData::update() noexcept
+void LocalPlayerData::update() noexcept
 {
     if (!localPlayer) {
         exists = false;

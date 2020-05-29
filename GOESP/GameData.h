@@ -8,7 +8,7 @@
 
 #include "SDK/Vector.h"
 
-struct _LocalPlayerData;
+struct LocalPlayerData;
 
 struct _PlayerData;
 struct _WeaponData;
@@ -33,7 +33,7 @@ namespace GameData
 
     // You have to acquire lock before using these getters
     const _D3DMATRIX& toScreenMatrix() noexcept;
-    const _LocalPlayerData& local() noexcept;
+    const LocalPlayerData& local() noexcept;
     const std::vector<_PlayerData>& players() noexcept;
     const std::vector<_WeaponData>& weapons() noexcept;
     const std::vector<_EntityData>& entities() noexcept;
@@ -41,7 +41,7 @@ namespace GameData
     const std::list<_ProjectileData>& projectiles() noexcept;
 }
 
-struct _LocalPlayerData {
+struct LocalPlayerData {
     void update() noexcept;
 
     bool exists = false;
