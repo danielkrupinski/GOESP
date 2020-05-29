@@ -1,17 +1,12 @@
 #pragma once
 
-#include "ClientClass.h"
-#include "Engine.h"
-#include "EngineTrace.h"
-#include "EntityList.h"
-#include "../Interfaces.h"
-#include "../Memory.h"
-#include "VirtualMethod.h"
-#include "WeaponId.h"
-#include "ModelInfo.h"
-#include "GlobalVars.h"
+#include <string>
 
-struct Vector;
+#include "Vector.h"
+#include "VirtualMethod.h"
+
+struct ClientClass;
+enum class WeaponId : short;
 struct WeaponInfo;
 class Matrix3x4;
 
@@ -75,42 +70,6 @@ public:
         return vec;
     }
 
-    bool canSee(Entity* other, const Vector& pos) noexcept
-    {
-        Trace trace;
-        interfaces->engineTrace->traceRay({ getEyePosition(), pos }, 0x46004009, this, trace);
-        return (trace.entity == other || trace.fraction > 0.97f) && !memory->lineGoesThroughSmoke(getEyePosition(), pos, 1);
-    }
-
-    bool visibleTo(Entity* other) noexcept
-    {
-        if (other->canSee(this, getAbsOrigin() + Vector{ 0.0f, 0.0f, 5.0f }))
-            return true;
-
-        const auto model = getModel();
-        if (!model)
-            return false;
-
-        const auto studioModel = interfaces->modelInfo->getStudioModel(model);
-        if (!studioModel)
-            return false;
-
-        const auto hitboxSet = studioModel->getHitboxSet(0); // TODO: get hitbox set index dynamically
-        if (!hitboxSet)
-            return false;
-
-        Matrix3x4 boneMatrices[MAXSTUDIOBONES];
-        if (!setupBones(boneMatrices, MAXSTUDIOBONES, BONE_USED_BY_HITBOX, memory->globalVars->currenttime))
-            return false;
-
-        for (const auto boxNum : { 12, 9, 14, 17 }) { // head, guts, left & right elbow hitbox
-            if (boxNum < hitboxSet->numHitboxes && other->canSee(this, boneMatrices[hitboxSet->getHitbox(boxNum)->bone].origin()))
-                return true;
-        }
-
-        return false;
-    }
-
     auto getAimPunch() noexcept
     {
         Vector vec;
@@ -118,28 +77,9 @@ public:
         return vec;
     }
 
-    [[nodiscard]] std::string getPlayerName(bool normalize) noexcept
-    {
-        std::string playerName = "unknown";
-
-        PlayerInfo playerInfo;
-        if (!interfaces->engine->getPlayerInfo(index(), playerInfo))
-            return playerName;
-
-        playerName = playerInfo.name;
-
-        if (normalize) {
-            if (wchar_t wide[128]; MultiByteToWideChar(CP_UTF8, 0, playerInfo.name, 128, wide, 128)) {
-                if (wchar_t wideNormalized[128]; NormalizeString(NormalizationKC, wide, -1, wideNormalized, 128)) {
-                    if (char nameNormalized[128]; WideCharToMultiByte(CP_UTF8, 0, wideNormalized, -1, nameNormalized, 128, nullptr, nullptr))
-                        playerName = nameNormalized;
-                }
-            }
-        }
-
-        playerName.erase(std::remove(playerName.begin(), playerName.end(), '\n'), playerName.cend());
-        return playerName;
-    }
+    bool canSee(Entity* other, const Vector& pos) noexcept;
+    bool visibleTo(Entity* other) noexcept;
+    [[nodiscard]] std::string getPlayerName(bool normalize) noexcept;
 
     PROP(hitboxSet, 0x9FC, int)                                                    // CBaseAnimating->m_nHitboxSet
 
