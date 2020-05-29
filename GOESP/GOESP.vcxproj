@@ -162,6 +162,7 @@
     <ClInclude Include="nlohmann\json.hpp" />
     <ClInclude Include="SDK\ClassId.h" />
     <ClInclude Include="SDK\ClientClass.h" />
+    <ClInclude Include="SDK\ClientTools.h" />
     <ClInclude Include="SDK\ConVar.h" />
     <ClInclude Include="SDK\Cvar.h" />
     <ClInclude Include="SDK\Engine.h" />
