@@ -267,7 +267,7 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
         renderText(playerData.distanceToLocal, config.textCullDistance, config.weapon, config.textBackground, playerData.activeWeapon.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
 }
 
-static void renderWeaponBox(const _WeaponData& weaponData, const Weapon& config) noexcept
+static void renderWeaponBox(const WeaponData& weaponData, const Weapon& config) noexcept
 {
     const BoundingBox bbox{ weaponData, config.box.scale, config.useModelBounds };
 
@@ -363,7 +363,7 @@ static bool renderPlayerEsp(const PlayerData& playerData, const Player& playerCo
     return true;
 }
 
-static void renderWeaponEsp(const _WeaponData& weaponData, const Weapon& parentConfig, const Weapon& itemConfig) noexcept
+static void renderWeaponEsp(const WeaponData& weaponData, const Weapon& parentConfig, const Weapon& itemConfig) noexcept
 {
     const auto& config = itemConfig.enabled ? itemConfig : (parentConfig.enabled ? parentConfig : ::config->weapons["All"]);
     if (config.enabled) {

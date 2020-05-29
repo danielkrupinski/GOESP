@@ -19,7 +19,7 @@
 static D3DMATRIX viewMatrix;
 static LocalPlayerData localPlayerData;
 static std::vector<PlayerData> playerData;
-static std::vector<_WeaponData> weaponData;
+static std::vector<WeaponData> weaponData;
 static std::vector<EntityData> entityData;
 static std::vector<_LootCrateData> lootCrateData;
 static std::list<ProjectileData> projectileData;
@@ -129,7 +129,7 @@ const std::vector<PlayerData>& GameData::players() noexcept
     return playerData;
 }
 
-const std::vector<_WeaponData>& GameData::weapons() noexcept
+const std::vector<WeaponData>& GameData::weapons() noexcept
 {
     return weaponData;
 }
@@ -286,7 +286,7 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
     }
 }
 
-_WeaponData::_WeaponData(Entity* entity) noexcept : BaseData{ entity }
+WeaponData::WeaponData(Entity* entity) noexcept : BaseData{ entity }
 {
     clip = entity->clip();
     reserveAmmo = entity->reserveAmmoCount();
