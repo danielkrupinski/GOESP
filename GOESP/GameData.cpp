@@ -8,6 +8,7 @@
 #include "GameData.h"
 #include "Memory.h"
 
+#include "SDK/ClientTools.h"
 #include "SDK/Entity.h"
 #include "SDK/GlobalVars.h"
 #include "SDK/Localize.h"
@@ -41,56 +42,54 @@ void GameData::update() noexcept
 
     const auto observerTarget = localPlayer->getObserverMode() == ObsMode::InEye ? localPlayer->getObserverTarget() : nullptr;
 
-    for (int i = 1; i <= memory->globalVars->maxClients; ++i) {
-        const auto entity = interfaces->entityList->getEntity(i);
-        if (!entity || entity == localPlayer.get() || entity == observerTarget
-            || entity->isDormant() || !entity->isAlive())
+    Entity* entity = nullptr;
+    while (entity = interfaces->clientTools->nextEntity(entity)) {
+        if (entity->isDormant())
             continue;
 
-        playerData.emplace_back(entity);
-    }
+        if (entity->isPlayer()) {
+            if (entity == localPlayer.get() || entity == observerTarget || !entity->isAlive())
+                continue;
 
-    for (int i = memory->globalVars->maxClients + 1; i <= interfaces->entityList->getHighestEntityIndex(); ++i) {
-        const auto entity = interfaces->entityList->getEntity(i);
-        if (!entity || entity->isDormant())
-            continue;
-
-        if (entity->isWeapon()) {
-            if (entity->ownerEntity() == -1)
-                weaponData.emplace_back(entity);
+            playerData.emplace_back(entity);
         } else {
-            switch (entity->getClientClass()->classId) {
-            case ClassId::BaseCSGrenadeProjectile:
-                if (entity->grenadeExploded()) {
+            if (entity->isWeapon()) {
+                if (entity->ownerEntity() == -1)
+                    weaponData.emplace_back(entity);
+            } else {
+                switch (entity->getClientClass()->classId) {
+                case ClassId::BaseCSGrenadeProjectile:
+                    if (entity->grenadeExploded()) {
+                        if (const auto it = std::find(projectileData.begin(), projectileData.end(), entity->handle()); it != projectileData.end())
+                            it->exploded = true;
+                        break;
+                    }
+                case ClassId::BreachChargeProjectile:
+                case ClassId::BumpMineProjectile:
+                case ClassId::DecoyProjectile:
+                case ClassId::MolotovProjectile:
+                case ClassId::SensorGrenadeProjectile:
+                case ClassId::SmokeGrenadeProjectile:
+                case ClassId::SnowballProjectile:
                     if (const auto it = std::find(projectileData.begin(), projectileData.end(), entity->handle()); it != projectileData.end())
-                        it->exploded = true;
+                        it->update(entity);
+                    else
+                        projectileData.emplace_back(entity);
                     break;
+                case ClassId::EconEntity:
+                case ClassId::Chicken:
+                case ClassId::PlantedC4:
+                case ClassId::Hostage:
+                case ClassId::Dronegun:
+                case ClassId::Cash:
+                case ClassId::AmmoBox:
+                case ClassId::RadarJammer:
+                case ClassId::SnowballPile:
+                    entityData.emplace_back(entity);
+                    break;
+                case ClassId::LootCrate:
+                    lootCrateData.emplace_back(entity);
                 }
-            case ClassId::BreachChargeProjectile:
-            case ClassId::BumpMineProjectile:
-            case ClassId::DecoyProjectile:
-            case ClassId::MolotovProjectile:
-            case ClassId::SensorGrenadeProjectile:
-            case ClassId::SmokeGrenadeProjectile:
-            case ClassId::SnowballProjectile:
-                if (const auto it = std::find(projectileData.begin(), projectileData.end(), entity->handle()); it != projectileData.end())
-                    it->update(entity);
-                else
-                    projectileData.emplace_back(entity);
-                break;
-            case ClassId::EconEntity:
-            case ClassId::Chicken:
-            case ClassId::PlantedC4:
-            case ClassId::Hostage:
-            case ClassId::Dronegun:
-            case ClassId::Cash:
-            case ClassId::AmmoBox:
-            case ClassId::RadarJammer:
-            case ClassId::SnowballPile:
-                entityData.emplace_back(entity);
-                break;
-            case ClassId::LootCrate:
-                lootCrateData.emplace_back(entity);
             }
         }
     }
