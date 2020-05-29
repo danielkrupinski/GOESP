@@ -169,7 +169,7 @@ void LocalPlayerData::update() noexcept
     origin = localPlayer->getAbsOrigin();
 }
 
-_BaseData::_BaseData(Entity* entity) noexcept
+BaseData::BaseData(Entity* entity) noexcept
 {
     distanceToLocal = entity->getAbsOrigin().distTo(localPlayerData.origin);
 
@@ -183,7 +183,7 @@ _BaseData::_BaseData(Entity* entity) noexcept
     coordinateFrame = entity->toWorldTransform();
 }
 
-_EntityData::_EntityData(Entity* entity) noexcept : _BaseData{ entity }
+_EntityData::_EntityData(Entity* entity) noexcept : BaseData{ entity }
 {
     name = [](ClassId classId) -> const char* {
         switch (classId) {
@@ -201,7 +201,7 @@ _EntityData::_EntityData(Entity* entity) noexcept : _BaseData{ entity }
     }(entity->getClientClass()->classId);
 }
 
-_ProjectileData::_ProjectileData(Entity* projectile) noexcept : _BaseData { projectile }
+_ProjectileData::_ProjectileData(Entity* projectile) noexcept : BaseData { projectile }
 {
     name = [](Entity* projectile) -> const char* {
         switch (projectile->getClientClass()->classId) {
@@ -233,13 +233,13 @@ _ProjectileData::_ProjectileData(Entity* projectile) noexcept : _BaseData { proj
 
 void _ProjectileData::update(Entity* projectile) noexcept
 {
-    static_cast<_BaseData&>(*this) = { projectile };
+    static_cast<BaseData&>(*this) = { projectile };
 
     if (const auto pos = projectile->getAbsOrigin(); trajectory.size() < 1 || trajectory[trajectory.size() - 1].second != pos)
         trajectory.emplace_back(memory->globalVars->realtime, pos);
 }
 
-_PlayerData::_PlayerData(Entity* entity) noexcept : _BaseData{ entity }
+_PlayerData::_PlayerData(Entity* entity) noexcept : BaseData{ entity }
 {
     if (localPlayer) {
         enemy = memory->isOtherEnemy(entity, localPlayer.get());
@@ -286,7 +286,7 @@ _PlayerData::_PlayerData(Entity* entity) noexcept : _BaseData{ entity }
     }
 }
 
-_WeaponData::_WeaponData(Entity* entity) noexcept : _BaseData{ entity }
+_WeaponData::_WeaponData(Entity* entity) noexcept : BaseData{ entity }
 {
     clip = entity->clip();
     reserveAmmo = entity->reserveAmmoCount();
@@ -386,7 +386,7 @@ _WeaponData::_WeaponData(Entity* entity) noexcept : _BaseData{ entity }
     }
 }
 
-_LootCrateData::_LootCrateData(Entity* entity) noexcept : _BaseData{ entity }
+_LootCrateData::_LootCrateData(Entity* entity) noexcept : BaseData{ entity }
 {
     const auto model = entity->getModel();
     if (!model)

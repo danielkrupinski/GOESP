@@ -56,8 +56,8 @@ struct LocalPlayerData {
 
 class Entity;
 
-struct _BaseData {
-    _BaseData(Entity* entity) noexcept;
+struct BaseData {
+    BaseData(Entity* entity) noexcept;
 
     float distanceToLocal;
     Vector modelMins, modelMaxs;
@@ -65,13 +65,13 @@ struct _BaseData {
     Matrix3x4 coordinateFrame;
 };
 
-struct _EntityData final : _BaseData {
+struct _EntityData final : BaseData {
     _EntityData(Entity* entity) noexcept;
    
     const char* name;
 };
 
-struct _ProjectileData : _BaseData {
+struct _ProjectileData : BaseData {
     _ProjectileData(Entity* projectile) noexcept;
 
     void update(Entity* projectile) noexcept;
@@ -89,7 +89,7 @@ struct _ProjectileData : _BaseData {
     std::vector<std::pair<float, Vector>> trajectory;
 };
 
-struct _PlayerData : _BaseData {
+struct _PlayerData : BaseData {
     _PlayerData(Entity* entity) noexcept;
 
     bool enemy = false;
@@ -102,7 +102,7 @@ struct _PlayerData : _BaseData {
     std::vector<std::pair<Vector, Vector>> bones;
 };
 
-struct _WeaponData : _BaseData {
+struct _WeaponData : BaseData {
     _WeaponData(Entity* entity) noexcept;
 
     int clip;
@@ -112,7 +112,7 @@ struct _WeaponData : _BaseData {
     std::string displayName;
 };
 
-struct _LootCrateData : _BaseData {
+struct _LootCrateData : BaseData {
     _LootCrateData(Entity* entity) noexcept;
 
     const char* name = nullptr;

@@ -56,7 +56,7 @@ public:
     ImVec2 min, max;
     ImVec2 vertices[8];
 
-    BoundingBox(const _BaseData& data, const std::array<float, 3>& scale, bool useModelBounds) noexcept
+    BoundingBox(const BaseData& data, const std::array<float, 3>& scale, bool useModelBounds) noexcept
     {
         min.y = min.x = std::numeric_limits<float>::max();
         max.y = max.x = -std::numeric_limits<float>::max();
@@ -289,7 +289,7 @@ static void renderWeaponBox(const _WeaponData& weaponData, const Weapon& config)
     }
 }
 
-static void renderEntityBox(const _BaseData& entityData, const char* name, const Shared& config) noexcept
+static void renderEntityBox(const BaseData& entityData, const char* name, const Shared& config) noexcept
 {
     const BoundingBox bbox{ entityData, config.box.scale, config.useModelBounds };
 
@@ -371,7 +371,7 @@ static void renderWeaponEsp(const _WeaponData& weaponData, const Weapon& parentC
     }
 }
 
-static void renderEntityEsp(const _BaseData& entityData, const Shared& parentConfig, const Shared& itemConfig, const char* name) noexcept
+static void renderEntityEsp(const BaseData& entityData, const Shared& parentConfig, const Shared& itemConfig, const char* name) noexcept
 {
     const auto& config = itemConfig.enabled ? itemConfig : parentConfig;
 
