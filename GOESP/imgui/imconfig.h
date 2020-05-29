@@ -79,11 +79,9 @@
 */
 
 #define IM_VEC4_CLASS_EXTRA \
-        ImVec4(const std::array<float, 4>& color) noexcept { x = color[0]; y = color[1]; z = color[2]; w = color[3]; } \
-        ImVec4(const std::tuple<float, float, float, float>& color) noexcept { x = std::get<0>(color); y = std::get<1>(color); z = std::get<2>(color); w = std::get<3>(color); }
+        ImVec4(const std::array<float, 4>& color) noexcept { x = color[0]; y = color[1]; z = color[2]; w = color[3]; }
 
 #define IM_VEC2_CLASS_EXTRA \
-        ImVec2(const std::pair<int, int>& p) : x{ static_cast<float>(p.first) }, y{ static_cast<float>(p.second) } {} \
         auto operator==(const ImVec2& other) const { return x == other.x && y == other.y; }
 
 //---- Use 32-bit vertex indices (default is 16-bit) is one way to allow large meshes with more than 64K vertices.
