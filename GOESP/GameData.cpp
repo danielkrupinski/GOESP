@@ -20,7 +20,7 @@ static D3DMATRIX viewMatrix;
 static LocalPlayerData localPlayerData;
 static std::vector<_PlayerData> playerData;
 static std::vector<_WeaponData> weaponData;
-static std::vector<_EntityData> entityData;
+static std::vector<EntityData> entityData;
 static std::vector<_LootCrateData> lootCrateData;
 static std::list<_ProjectileData> projectileData;
 
@@ -134,7 +134,7 @@ const std::vector<_WeaponData>& GameData::weapons() noexcept
     return weaponData;
 }
 
-const std::vector<_EntityData>& GameData::entities() noexcept
+const std::vector<EntityData>& GameData::entities() noexcept
 {
     return entityData;
 }
@@ -183,7 +183,7 @@ BaseData::BaseData(Entity* entity) noexcept
     coordinateFrame = entity->toWorldTransform();
 }
 
-_EntityData::_EntityData(Entity* entity) noexcept : BaseData{ entity }
+EntityData::EntityData(Entity* entity) noexcept : BaseData{ entity }
 {
     name = [](ClassId classId) -> const char* {
         switch (classId) {

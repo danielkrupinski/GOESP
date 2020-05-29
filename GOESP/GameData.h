@@ -12,7 +12,7 @@ struct LocalPlayerData;
 
 struct _PlayerData;
 struct _WeaponData;
-struct _EntityData;
+struct EntityData;
 struct _LootCrateData;
 struct _ProjectileData;
 
@@ -36,7 +36,7 @@ namespace GameData
     const LocalPlayerData& local() noexcept;
     const std::vector<_PlayerData>& players() noexcept;
     const std::vector<_WeaponData>& weapons() noexcept;
-    const std::vector<_EntityData>& entities() noexcept;
+    const std::vector<EntityData>& entities() noexcept;
     const std::vector<_LootCrateData>& lootCrates() noexcept;
     const std::list<_ProjectileData>& projectiles() noexcept;
 }
@@ -65,8 +65,8 @@ struct BaseData {
     Matrix3x4 coordinateFrame;
 };
 
-struct _EntityData final : BaseData {
-    _EntityData(Entity* entity) noexcept;
+struct EntityData final : BaseData {
+    EntityData(Entity* entity) noexcept;
    
     const char* name;
 };
