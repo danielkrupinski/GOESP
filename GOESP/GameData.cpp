@@ -21,7 +21,7 @@ static LocalPlayerData localPlayerData;
 static std::vector<PlayerData> playerData;
 static std::vector<WeaponData> weaponData;
 static std::vector<EntityData> entityData;
-static std::vector<_LootCrateData> lootCrateData;
+static std::vector<LootCrateData> lootCrateData;
 static std::list<ProjectileData> projectileData;
 
 void GameData::update() noexcept
@@ -139,7 +139,7 @@ const std::vector<EntityData>& GameData::entities() noexcept
     return entityData;
 }
 
-const std::vector<_LootCrateData>& GameData::lootCrates() noexcept
+const std::vector<LootCrateData>& GameData::lootCrates() noexcept
 {
     return lootCrateData;
 }
@@ -386,7 +386,7 @@ WeaponData::WeaponData(Entity* entity) noexcept : BaseData{ entity }
     }
 }
 
-_LootCrateData::_LootCrateData(Entity* entity) noexcept : BaseData{ entity }
+LootCrateData::LootCrateData(Entity* entity) noexcept : BaseData{ entity }
 {
     const auto model = entity->getModel();
     if (!model)
