@@ -236,7 +236,7 @@ struct FontPush {
     }
 };
 
-static void renderPlayerBox(const _PlayerData& playerData, const Player& config) noexcept
+static void renderPlayerBox(const PlayerData& playerData, const Player& config) noexcept
 {
     const BoundingBox bbox{ playerData, config.box.scale, config.useModelBounds };
 
@@ -348,7 +348,7 @@ static void drawPlayerSkeleton(const ColorToggleThickness& config, const std::ve
     }
 }
 
-static bool renderPlayerEsp(const _PlayerData& playerData, const Player& playerConfig) noexcept
+static bool renderPlayerEsp(const PlayerData& playerData, const Player& playerConfig) noexcept
 {
     if (!playerConfig.enabled)
         return false;

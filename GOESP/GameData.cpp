@@ -18,7 +18,7 @@
 
 static D3DMATRIX viewMatrix;
 static LocalPlayerData localPlayerData;
-static std::vector<_PlayerData> playerData;
+static std::vector<PlayerData> playerData;
 static std::vector<_WeaponData> weaponData;
 static std::vector<EntityData> entityData;
 static std::vector<_LootCrateData> lootCrateData;
@@ -124,7 +124,7 @@ const LocalPlayerData& GameData::local() noexcept
     return localPlayerData;
 }
 
-const std::vector<_PlayerData>& GameData::players() noexcept
+const std::vector<PlayerData>& GameData::players() noexcept
 {
     return playerData;
 }
@@ -239,7 +239,7 @@ void ProjectileData::update(Entity* projectile) noexcept
         trajectory.emplace_back(memory->globalVars->realtime, pos);
 }
 
-_PlayerData::_PlayerData(Entity* entity) noexcept : BaseData{ entity }
+PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
 {
     if (localPlayer) {
         enemy = memory->isOtherEnemy(entity, localPlayer.get());

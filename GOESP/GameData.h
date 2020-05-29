@@ -10,7 +10,7 @@
 
 struct LocalPlayerData;
 
-struct _PlayerData;
+struct PlayerData;
 struct _WeaponData;
 struct EntityData;
 struct _LootCrateData;
@@ -34,7 +34,7 @@ namespace GameData
     // You have to acquire lock before using these getters
     const _D3DMATRIX& toScreenMatrix() noexcept;
     const LocalPlayerData& local() noexcept;
-    const std::vector<_PlayerData>& players() noexcept;
+    const std::vector<PlayerData>& players() noexcept;
     const std::vector<_WeaponData>& weapons() noexcept;
     const std::vector<EntityData>& entities() noexcept;
     const std::vector<_LootCrateData>& lootCrates() noexcept;
@@ -89,8 +89,8 @@ struct ProjectileData : BaseData {
     std::vector<std::pair<float, Vector>> trajectory;
 };
 
-struct _PlayerData : BaseData {
-    _PlayerData(Entity* entity) noexcept;
+struct PlayerData : BaseData {
+    PlayerData(Entity* entity) noexcept;
 
     bool enemy = false;
     bool visible = false;
