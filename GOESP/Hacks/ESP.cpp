@@ -430,10 +430,3 @@ void ESP::render() noexcept
             renderProjectileEsp(projectile, config->projectiles["All"], config->projectiles[projectile.name], projectile.name);
     }
 }
-
-void ESP::clearProjectileList() noexcept
-{
-    // std::scoped_lock _{ dataMutex };
-    
-    // projectiles.clear();
-}
