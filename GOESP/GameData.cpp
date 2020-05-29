@@ -22,7 +22,7 @@ static std::vector<_PlayerData> playerData;
 static std::vector<_WeaponData> weaponData;
 static std::vector<EntityData> entityData;
 static std::vector<_LootCrateData> lootCrateData;
-static std::list<_ProjectileData> projectileData;
+static std::list<ProjectileData> projectileData;
 
 void GameData::update() noexcept
 {
@@ -144,7 +144,7 @@ const std::vector<_LootCrateData>& GameData::lootCrates() noexcept
     return lootCrateData;
 }
 
-const std::list<_ProjectileData>& GameData::projectiles() noexcept
+const std::list<ProjectileData>& GameData::projectiles() noexcept
 {
     return projectileData;
 }
@@ -201,7 +201,7 @@ EntityData::EntityData(Entity* entity) noexcept : BaseData{ entity }
     }(entity->getClientClass()->classId);
 }
 
-_ProjectileData::_ProjectileData(Entity* projectile) noexcept : BaseData { projectile }
+ProjectileData::ProjectileData(Entity* projectile) noexcept : BaseData { projectile }
 {
     name = [](Entity* projectile) -> const char* {
         switch (projectile->getClientClass()->classId) {
@@ -231,7 +231,7 @@ _ProjectileData::_ProjectileData(Entity* projectile) noexcept : BaseData { proje
     handle = projectile->handle();
 }
 
-void _ProjectileData::update(Entity* projectile) noexcept
+void ProjectileData::update(Entity* projectile) noexcept
 {
     static_cast<BaseData&>(*this) = { projectile };
 
