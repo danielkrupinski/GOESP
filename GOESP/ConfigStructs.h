@@ -1,6 +1,9 @@
 #pragma once
 
 #include <array>
+#include <string>
+
+#include "imgui/imgui.h"
 
 struct Color {
     std::array<float, 4> color{ 1.0f, 1.0f, 1.0f, 1.0f };
@@ -20,7 +23,7 @@ struct ColorToggle : Color {
 
     auto operator==(const ColorToggle& ct) const
     {
-        return static_cast<Color>(*this) == static_cast<Color>(ct)
+        return static_cast<const Color&>(*this) == static_cast<const Color&>(ct)
             && enabled == ct.enabled;
     }
 };
@@ -32,17 +35,17 @@ struct ColorToggleThickness : ColorToggle {
 
     auto operator==(const ColorToggleThickness& ctt) const
     {
-        return static_cast<ColorToggle>(*this) == static_cast<ColorToggle>(ctt)
+        return static_cast<const ColorToggle&>(*this) == static_cast<const ColorToggle&>(ctt)
             && thickness == ctt.thickness;
     }
 };
 
 struct ColorToggleRounding : ColorToggle {
-    float rounding = 5.0f;
+    float rounding = 0.0f;
 
     auto operator==(const ColorToggleRounding& ctr) const
     {
-        return static_cast<ColorToggle>(*this) == static_cast<ColorToggle>(ctr)
+        return static_cast<const ColorToggle&>(*this) == static_cast<const ColorToggle&>(ctr)
             && rounding == ctr.rounding;
     }
 };
@@ -52,33 +55,63 @@ struct ColorToggleThicknessRounding : ColorToggleRounding {
 
     auto operator==(const ColorToggleThicknessRounding& cttr) const
     {
-        return static_cast<ColorToggleRounding>(*this) == static_cast<ColorToggleRounding>(cttr)
+        return static_cast<const ColorToggleRounding&>(*this) == static_cast<const ColorToggleRounding&>(cttr)
             && thickness == cttr.thickness;
     }
 };
 
 struct Font {
     int index = 0; // do not save
-    int size = 15;
     std::string name;
-    std::string fullName; // do not save
 
     auto operator==(const Font& f) const
     {
         return index == f.index
-            && size == f.size
-            && name == f.name
-            && fullName == f.fullName;
+            && name == f.name;
+    }
+};
+
+struct Snapline : ColorToggleThickness {
+    enum Type {
+        Bottom = 0,
+        Top,
+        Crosshair
+    };
+
+    int type = Bottom;
+
+    auto operator==(const Snapline& s) const
+    {
+        return static_cast<const ColorToggleThickness&>(*this) == static_cast<const ColorToggleThickness&>(s)
+            && type == s.type;
+    }
+};
+
+struct Box : ColorToggleThicknessRounding {
+    enum Type {
+        _2d = 0,
+        _2dCorners,
+        _3d,
+        _3dCorners
+    };
+
+    int type = _2d;
+    std::array<float, 3> scale{ 0.25f, 0.25f, 0.25f };
+
+    auto operator==(const Box& b) const
+    {
+        return static_cast<const ColorToggleThicknessRounding&>(*this) == static_cast<const ColorToggleThicknessRounding&>(b)
+            && type == b.type
+            && scale == b.scale;
     }
 };
 
 struct Shared {
     bool enabled = false;
+    bool useModelBounds = false;
     Font font;
-    ColorToggleThickness snaplines;
-    int snaplineType = 0;
-    ColorToggleThicknessRounding box;
-    int boxType = 0;
+    Snapline snapline;
+    Box box;
     ColorToggle name;
     ColorToggleRounding textBackground{ 0.0f, 0.0f, 0.0f, 1.0f };
     float textCullDistance = 0.0f;
@@ -86,11 +119,10 @@ struct Shared {
     auto operator==(const Shared& s) const
     {
         return enabled == s.enabled
+            && useModelBounds == s.useModelBounds
             && font == s.font
-            && snaplines == s.snaplines
-            && snaplineType == s.snaplineType
+            && snapline == s.snapline
             && box == s.box
-            && boxType == s.boxType
             && name == s.name
             && textBackground == s.textBackground
             && textCullDistance == s.textCullDistance;
@@ -98,16 +130,31 @@ struct Shared {
 };
 
 struct Player : Shared {
+    Player() : Shared{}
+    {
+        box.type = Box::_2dCorners;
+    }
+
     ColorToggle weapon;
     ColorToggle flashDuration;
     bool audibleOnly = false;
+    bool spottedOnly = false;
+    ColorToggleThickness skeleton;
 
     auto operator==(const Player& p) const
     {
-        return static_cast<Shared>(*this) == static_cast<Shared>(p)
+        return static_cast<const Shared&>(*this) == static_cast<const Shared&>(p)
             && weapon == p.weapon
             && flashDuration == p.flashDuration
-            && audibleOnly == p.audibleOnly;
+            && audibleOnly == p.audibleOnly
+            && spottedOnly == p.spottedOnly
+            && skeleton == p.skeleton;
+    }
+
+    auto& operator=(const Shared& s)
+    {
+        static_cast<Shared&>(*this) = s;
+        return *this;
     }
 };
 
@@ -116,8 +163,64 @@ struct Weapon : Shared {
 
     auto operator==(const Weapon& w) const
     {
-        return static_cast<Shared>(*this) == static_cast<Shared>(w)
+        return static_cast<const Shared&>(*this) == static_cast<const Shared&>(w)
             && ammo == w.ammo;
+    }
+
+    auto& operator=(const Shared& s)
+    {
+        static_cast<Shared&>(*this) = s;
+        return *this;
+    }
+};
+
+struct Trail : ColorToggleThickness {
+    enum Type {
+        Line = 0,
+        Circles,
+        FilledCircles
+    };
+
+    int type = Line;
+    float time = 2.0f;
+
+    auto operator==(const Trail& t) const
+    {
+        return static_cast<const ColorToggleThickness&>(*this) == static_cast<const ColorToggleThickness&>(t)
+            && type == t.type
+            && time == t.time;
+    }
+};
+
+struct Trails {
+    bool enabled = false;
+
+    Trail localPlayer;
+    Trail allies;
+    Trail enemies;
+
+    auto operator==(const Trails& t) const
+    {
+        return enabled == t.enabled
+            && localPlayer == t.localPlayer
+            && allies == t.allies
+            && enemies == t.enemies;
+    }
+};
+
+struct Projectile : Shared {
+    Trails trails;
+  
+    auto operator==(const Projectile& p) const
+    {
+        return static_cast<const Shared&>(*this) == static_cast<const Shared&>(p)
+            && trails == p.trails;
+    }
+
+    auto& operator=(const Shared& s)
+    {
+        static_cast<Shared&>(*this) = s;
+        return *this;
     }
 };
 
@@ -125,6 +228,7 @@ struct PurchaseList {
     bool enabled = false;
     bool onlyDuringFreezeTime = false;
     bool showPrices = false;
+    bool noTitleBar = false;
 
     enum Mode {
         Details = 0,
@@ -132,11 +236,28 @@ struct PurchaseList {
     };
     int mode = Details;
 
+    ImVec2 pos;
+    ImVec2 size{ 200.0f, 200.0f };
+
     auto operator==(const PurchaseList& pl) const
     {
         return enabled == pl.enabled
             && onlyDuringFreezeTime == pl.onlyDuringFreezeTime
             && showPrices == pl.showPrices
-            && mode == pl.mode;
+            && noTitleBar == pl.noTitleBar
+            && mode == pl.mode
+            && pos == pl.pos
+            && size == pl.size;
+    }
+};
+
+struct BombZoneHint {
+    bool enabled = false;
+    ImVec2 pos;
+
+    auto operator==(const BombZoneHint& other) const
+    {
+        return enabled == other.enabled
+            && pos == other.pos;
     }
 };

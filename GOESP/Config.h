@@ -18,43 +18,27 @@ public:
     void load() noexcept;
     void save() noexcept;
 
-    // Legacy
-    /*
-    std::array<Player, 6> players;
-    Weapon weapons;
-    std::array<Weapon, 11> pistols;
-    std::array<Weapon, 8> smgs;
-    std::array<Weapon, 8> rifles;
-    std::array<Weapon, 5> sniperRifles;
-    std::array<Weapon, 7> shotguns;
-    std::array<Weapon, 3> machineguns;
-    std::array<Weapon, 12> grenades;
-    std::array<Shared, 10> projectiles;
-    std::array<Shared, 4> otherEntities;
-    */
-
-    //
     std::unordered_map<std::string, Player> allies;
     std::unordered_map<std::string, Player> enemies;
-    std::unordered_map<std::string, Weapon> _weapons;
-    std::unordered_map<std::string, Shared> _projectiles;
-    std::unordered_map<std::string, Shared> _otherEntities;
-    //
+    std::unordered_map<std::string, Weapon> weapons;
+    std::unordered_map<std::string, Projectile> projectiles;
+    std::unordered_map<std::string, Shared> lootCrates;
+    std::unordered_map<std::string, Shared> otherEntities;
 
     ColorToggleThickness reloadProgress{ 5.0f };
     ColorToggleThickness recoilCrosshair;
     bool normalizePlayerNames = true;
-
+    BombZoneHint bombZoneHint;
     PurchaseList purchaseList;
 
     std::vector<std::string> systemFonts{ "Default" };
     std::unordered_map<std::string, ImFont*> fonts;
 
-    void scheduleFontLoad(const std::string& name, int size = 15) noexcept;
+    void scheduleFontLoad(const std::string& name) noexcept;
     bool loadScheduledFonts() noexcept;
 
 private:
-    std::vector<std::pair<std::string, int>> scheduledFonts;
+    std::vector<std::string> scheduledFonts;
     std::filesystem::path path;
 };
 

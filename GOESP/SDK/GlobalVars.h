@@ -4,7 +4,7 @@ struct GlobalVars {
     float realtime;
     int framecount;
     float absoluteFrameTime;
-    float pad;
+    float absoluteFrameStartTimestddev;
     float currenttime;
     float frametime;
     int maxClients;

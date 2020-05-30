@@ -1,14 +1,12 @@
 #pragma once
 
-#include "ClientClass.h"
-#include "EngineTrace.h"
-#include "EntityList.h"
-#include "../Interfaces.h"
-#include "../Memory.h"
-#include "VirtualMethod.h"
-#include "WeaponId.h"
+#include <string>
 
-struct Vector;
+#include "Vector.h"
+#include "VirtualMethod.h"
+
+struct ClientClass;
+enum class WeaponId : short;
 struct WeaponInfo;
 class Matrix3x4;
 
@@ -21,10 +19,15 @@ public:
 struct Model {
     void* handle;
     char name[260];
+    int	loadFlags;
+    int	serverCount;
+    int	type;
+    int	flags;
+    Vector mins, maxs;
 };
 
 #define PROP(func_name, offset, type) \
-std::add_lvalue_reference_t<type> func_name() noexcept \
+std::add_lvalue_reference_t<std::add_const_t<type>> func_name() noexcept \
 { \
     return *reinterpret_cast<std::add_pointer_t<type>>(this + offset); \
 }
@@ -46,11 +49,14 @@ public:
     VIRTUAL_METHOD(int, index, 10, (), (this + 8))
 
     VIRTUAL_METHOD(const Model*, getModel, 8, (), (this + 4))
+    VIRTUAL_METHOD(bool, setupBones, 13, (Matrix3x4* out, int maxBones, int boneMask, float currentTime), (this + 4, out, maxBones, boneMask, currentTime))
     VIRTUAL_METHOD(const Matrix3x4&, toWorldTransform, 32, (), (this + 4))
 
+    VIRTUAL_METHOD(int&, handle, 2, (), (this))
     VIRTUAL_METHOD(Collideable*, getCollideable, 3, (), (this))
     VIRTUAL_METHOD(Vector&, getAbsOrigin, 10, (), (this))
     VIRTUAL_METHOD(bool, isAlive, 155, (), (this))
+    VIRTUAL_METHOD(bool, isPlayer, 157, (), (this))
     VIRTUAL_METHOD(bool, isWeapon, 165, (), (this))
     VIRTUAL_METHOD(Entity*, getActiveWeapon, 267, (), (this))
     VIRTUAL_METHOD(ObsMode, getObserverMode, 293, (), (this))
@@ -64,13 +70,6 @@ public:
         return vec;
     }
 
-    bool visibleTo(Entity* other) noexcept
-    {
-        Trace trace;
-        interfaces->engineTrace->traceRay({ other->getEyePosition(), getEyePosition() }, 0x46004009, other, trace);
-        return (trace.entity == this || trace.fraction > 0.97f) && !memory->lineGoesThroughSmoke(other->getEyePosition(), getEyePosition(), 1);
-    }
-
     auto getAimPunch() noexcept
     {
         Vector vec;
@@ -78,40 +77,26 @@ public:
         return vec;
     }
 
-    [[nodiscard]] std::string getPlayerName(bool normalize) noexcept
-    {
-        std::string playerName = "unknown";
+    bool canSee(Entity* other, const Vector& pos) noexcept;
+    bool visibleTo(Entity* other) noexcept;
+    [[nodiscard]] std::string getPlayerName(bool normalize) noexcept;
 
-        PlayerInfo playerInfo;
-        if (!interfaces->engine->getPlayerInfo(index(), playerInfo))
-            return playerName;
-
-        playerName = playerInfo.name;
-
-        if (normalize) {
-            if (wchar_t wide[128]; MultiByteToWideChar(CP_UTF8, 0, playerInfo.name, 128, wide, 128)) {
-                if (wchar_t wideNormalized[128]; NormalizeString(NormalizationKC, wide, -1, wideNormalized, 128)) {
-                    if (char nameNormalized[128]; WideCharToMultiByte(CP_UTF8, 0, wideNormalized, -1, nameNormalized, 128, nullptr, nullptr))
-                        playerName = nameNormalized;
-                }
-            }
-        }
-
-        playerName.erase(std::remove(playerName.begin(), playerName.end(), '\n'), playerName.end());
-        return playerName;
-    }
+    PROP(hitboxSet, 0x9FC, int)                                                    // CBaseAnimating->m_nHitboxSet
 
     PROP(weaponId, 0x2FAA, WeaponId)                                               // CBaseAttributableItem->m_iItemDefinitionIndex
 
-    PROP(clip, 0x3254, int)                                                        // CBaseCombatWeapon->m_iClip1
-    PROP(isInReload, 0x3254 + 0x41, bool)                                          // CBaseCombatWeapon->m_iClip1 + 0x41
-    PROP(reserveAmmoCount, 0x325C, int)                                            // CBaseCombatWeapon->m_iPrimaryReserveAmmoCount
-    PROP(nextPrimaryAttack, 0x3228, float)                                         // CBaseCombatWeapon->m_flNextPrimaryAttack
-
+    PROP(clip, 0x3264, int)                                                        // CBaseCombatWeapon->m_iClip1
+    PROP(isInReload, 0x3264 + 0x41, bool)                                          // CBaseCombatWeapon->m_iClip1 + 0x41
+    PROP(reserveAmmoCount, 0x326C, int)                                            // CBaseCombatWeapon->m_iPrimaryReserveAmmoCount
+    PROP(nextPrimaryAttack, 0x3238, float)                                         // CBaseCombatWeapon->m_flNextPrimaryAttack
+        
     PROP(ownerEntity, 0x14C, int)                                                  // CBaseEntity->m_hOwnerEntity
-
+    PROP(spotted, 0x93D, bool)                                                     // CBaseEntity->m_bSpotted
+        
+    PROP(inBombZone, 0x3954, bool)                                                 // CCSPlayer->m_bInBombZone
     PROP(flashDuration, 0xA40C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
     PROP(shotsFired, 0xA380, int)                                                  // CCSPlayer->m_iShotsFired
         
+    PROP(thrower, 0x29A0, int)                                                     // CBaseGrenade->m_hThrower
     PROP(grenadeExploded, 0x29E8, bool)
 };

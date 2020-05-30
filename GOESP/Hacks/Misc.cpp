@@ -5,6 +5,7 @@
 
 #include "../Config.h"
 #include "../fnv.h"
+#include "../GameData.h"
 #include "../GUI.h"
 #include "../Helpers.h"
 #include "../Interfaces.h"
@@ -21,55 +22,17 @@
 #include "../SDK/WeaponInfo.h"
 #include "../SDK/WeaponSystem.h"
 
-#include <mutex>
 #include <numeric>
 #include <unordered_map>
 #include <vector>
-
-struct LocalPlayerData {
-    void update() noexcept
-    {
-        if (!localPlayer)
-            return;
-
-        exists = true;
-        alive = localPlayer->isAlive();
-
-        if (const auto activeWeapon = localPlayer->getActiveWeapon()) {
-            inReload = activeWeapon->isInReload();
-            if (const auto weaponInfo = activeWeapon->getWeaponInfo())
-                fullAutoWeapon = weaponInfo->fullAuto;
-
-            shooting = localPlayer->shotsFired() > 0;
-            nextWeaponAttack = activeWeapon->nextPrimaryAttack();
-        }
-        aimPunch = localPlayer->getAimPunch();
-    }
-    bool exists = false;
-    bool alive = false;
-    bool inReload = false;
-    bool fullAutoWeapon = false;
-    bool shooting = false;
-    float nextWeaponAttack = 0.0f;
-    Vector aimPunch;
-};
-
-static LocalPlayerData localPlayerData;
-static std::mutex dataMutex;
-
-void Misc::collectData() noexcept
-{
-    std::scoped_lock _{ dataMutex };
-
-    localPlayerData.update();
-}
 
 void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
 {
     if (!config->reloadProgress.enabled)
         return;
 
-    std::scoped_lock _{ dataMutex };
+    GameData::Lock lock;
+    const auto& localPlayerData = GameData::local();
 
     if (!localPlayerData.exists || !localPlayerData.alive)
         return;
@@ -81,9 +44,9 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
             reloadLength = localPlayerData.nextWeaponAttack - memory->globalVars->currenttime;
 
         const auto [width, height] = interfaces->engine->getScreenSize();
-        constexpr int segments = 20;
+        constexpr int segments = 40;
         drawList->PathArcTo({ width / 2.0f, height / 2.0f }, 20.0f, -IM_PI / 2, std::clamp(IM_PI * 2 * (0.75f - (localPlayerData.nextWeaponAttack - memory->globalVars->currenttime) / reloadLength), -IM_PI / 2, -IM_PI / 2 + IM_PI * 2), segments);
-        const ImU32 color = Helpers::calculateColor(config->reloadProgress, memory->globalVars->realtime);
+        const ImU32 color = Helpers::calculateColor(config->reloadProgress);
         drawList->PathStroke(color, false, config->reloadProgress.thickness);
     } else {
         reloadLength = 0.0f;
@@ -95,19 +58,20 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
     if (!config->recoilCrosshair.enabled)
         return;
 
-    std::scoped_lock _{ dataMutex };
+    GameData::Lock lock;
+    const auto& localPlayerData = GameData::local();
 
     if (!localPlayerData.exists || !localPlayerData.alive)
         return;
 
-    if (!localPlayerData.fullAutoWeapon || !localPlayerData.shooting)
+    if (!localPlayerData.shooting)
         return;
 
     const auto [width, height] = interfaces->engine->getScreenSize();
 
     const float x = width * (0.5f - localPlayerData.aimPunch.y / 180.0f);
     const float y = height * (0.5f + localPlayerData.aimPunch.x / 180.0f);
-    const auto color = Helpers::calculateColor(config->recoilCrosshair, memory->globalVars->realtime);
+    const auto color = Helpers::calculateColor(config->recoilCrosshair);
 
     drawList->AddLine({ x, y - 10 }, { x, y + 10 }, color, config->recoilCrosshair.thickness);
     drawList->AddLine({ x - 10, y }, { x + 10, y }, color, config->recoilCrosshair.thickness);
@@ -130,8 +94,8 @@ void Misc::purchaseList(GameEvent* event) noexcept
             const auto player = interfaces->entityList->getEntity(interfaces->engine->getPlayerForUserId(event->getInt("userid")));
 
             if (player && localPlayer && memory->isOtherEnemy(player, localPlayer.get())) {
-                if (const auto defintion = memory->itemSystem()->getItemSchema()->getItemDefinitionByName(event->getString("weapon"))) {
-                    if (const auto weaponInfo = memory->weaponSystem->getWeaponInfo(defintion->getWeaponId())) {
+                if (const auto definition = memory->itemSystem()->getItemSchema()->getItemDefinitionByName(event->getString("weapon"))) {
+                    if (const auto weaponInfo = memory->weaponSystem->getWeaponInfo(definition->getWeaponId())) {
                         purchaseDetails[player->getPlayerName(config->normalizePlayerNames)].second += weaponInfo->price;
                         totalCost += weaponInfo->price;
                     }
@@ -142,6 +106,13 @@ void Misc::purchaseList(GameEvent* event) noexcept
                     weapon.erase(0, 7);
                 else if (weapon.starts_with("item_"))
                     weapon.erase(0, 5);
+
+                if (weapon.starts_with("smoke"))
+                    weapon = "smoke";
+                else if (weapon.starts_with("m4a1_s"))
+                    weapon = "m4a1_s";
+                else if (weapon.starts_with("usp_s"))
+                    weapon = "usp_s";
 
                 purchaseDetails[player->getPlayerName(config->normalizePlayerNames)].first.push_back(weapon);
                 ++purchaseTotal[weapon];
@@ -167,8 +138,23 @@ void Misc::purchaseList(GameEvent* event) noexcept
         if ((!interfaces->engine->isInGame() || freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + (!config->purchaseList.onlyDuringFreezeTime ? mp_buytime->getFloat() : 0.0f) || purchaseDetails.empty() || purchaseTotal.empty()) && !gui->open)
             return;
         
-        ImGui::SetNextWindowSize({ 100.0f, 100.0f }, ImGuiCond_Once);
-        ImGui::Begin("Purchases", nullptr, ImGuiWindowFlags_NoCollapse | (gui->open ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoInputs));
+        if (config->purchaseList.pos != ImVec2{}) {
+            ImGui::SetNextWindowPos(config->purchaseList.pos);
+            config->purchaseList.pos = {};
+        }
+
+        if (config->purchaseList.size != ImVec2{}) {
+            ImGui::SetNextWindowSize(ImClamp(config->purchaseList.size, {}, ImGui::GetIO().DisplaySize));
+            config->purchaseList.size = {};
+        }
+
+        ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
+        if (!gui->open)
+            windowFlags |= ImGuiWindowFlags_NoInputs;
+        if (config->purchaseList.noTitleBar)
+            windowFlags |= ImGuiWindowFlags_NoTitleBar;
+
+        ImGui::Begin("Purchases", nullptr, windowFlags);
 
         if (config->purchaseList.mode == PurchaseList::Details) {
             for (const auto& [playerName, purchases] : purchaseDetails) {
@@ -192,4 +178,24 @@ void Misc::purchaseList(GameEvent* event) noexcept
         }
         ImGui::End();
     }
+}
+
+void Misc::drawBombZoneHint() noexcept
+{
+    if (!config->bombZoneHint.enabled)
+        return;
+
+    GameData::Lock lock;
+    const auto& localPlayerData = GameData::local();
+
+    if (!gui->open && (!localPlayerData.exists || !localPlayerData.alive || !localPlayerData.inBombZone))
+        return;
+
+    if (config->bombZoneHint.pos != ImVec2{}) {
+        ImGui::SetNextWindowPos(config->bombZoneHint.pos);
+        config->bombZoneHint.pos = {};
+    }
+    ImGui::Begin("Bomb Zone Hint", nullptr, ImGuiWindowFlags_NoDecoration | (gui->open ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoInputs));
+    ImGui::TextUnformatted("You're in bomb zone!");
+    ImGui::End();
 }

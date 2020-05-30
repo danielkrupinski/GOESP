@@ -6,6 +6,7 @@
 
 #include "Config.h"
 #include "EventListener.h"
+#include "GameData.h"
 #include "GUI.h"
 #include "Hacks/ESP.h"
 #include "Hacks/Misc.h"
@@ -13,6 +14,7 @@
 #include "Memory.h"
 
 #include "SDK/Engine.h"
+#include "SDK/GlobalVars.h"
 #include "SDK/InputSystem.h"
 
 #include <atomic>
@@ -31,19 +33,25 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 {
     HookGuard guard;
 
-    static const auto once = [&window] {
-        interfaces = std::make_unique<const Interfaces>();
-        memory = std::make_unique<Memory>();
+    static const auto once = [](HWND window) noexcept {
         eventListener = std::make_unique<EventListener>();
         config = std::make_unique<Config>("GOESP");
-        gui = std::make_unique<GUI>(window);
+
+        ImGui::CreateContext();
+        ImGui_ImplWin32_Init(window);
+        gui = std::make_unique<GUI>();
+
         hooks->install();
 
         return true;
-    }();
+    }(window);
 
-    ESP::collectData();
-    Misc::collectData();
+    static auto lastDataGather = 0.0f;
+
+    if (lastDataGather != memory->globalVars->realtime) {
+        lastDataGather = memory->globalVars->realtime;
+        GameData::update();
+    }
 
     LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
@@ -57,34 +65,27 @@ static HRESULT D3DAPI reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* par
     HookGuard guard;
 
     ImGui_ImplDX9_InvalidateDeviceObjects();
-    auto result = hooks->reset(device, params);
-    ImGui_ImplDX9_CreateDeviceObjects();
-
-    return result;
+    return hooks->reset(device, params);
 }
 
 static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const RECT* dest, HWND windowOverride, const RGNDATA* dirtyRegion) noexcept
 {
     HookGuard guard;
 
-    static auto _ = ImGui_ImplDX9_Init(device);
+    static const auto _ = ImGui_ImplDX9_Init(device);
 
-    IDirect3DVertexDeclaration9* vertexDeclaration;
-    device->GetVertexDeclaration(&vertexDeclaration);
-
-    if (config->loadScheduledFonts()) {
+    if (config->loadScheduledFonts())
         ImGui_ImplDX9_InvalidateDeviceObjects();
-        ImGui_ImplDX9_CreateDeviceObjects();
-    }
 
     ImGui_ImplDX9_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
-    ESP::render(ImGui::GetBackgroundDrawList());
+    ESP::render();
     Misc::drawReloadProgress(ImGui::GetBackgroundDrawList());
     Misc::drawRecoilCrosshair(ImGui::GetBackgroundDrawList());
     Misc::purchaseList();
+    Misc::drawBombZoneHint();
 
     gui->render();
 
@@ -96,12 +97,12 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     ImGui::GetIO().MouseDrawCursor = gui->open;
 
     ImGui::EndFrame();
-
     ImGui::Render();
-    ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 
-    device->SetVertexDeclaration(vertexDeclaration);
-    vertexDeclaration->Release();
+    if (device->BeginScene() == D3D_OK) {
+        ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+        device->EndScene();
+    }
 
     return hooks->present(device, src, dest, windowOverride, dirtyRegion);
 }
@@ -119,6 +120,10 @@ Hooks::Hooks(HMODULE module) noexcept
 
     _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
     _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
+
+    // interfaces and memory shouldn't be initialized in wndProc because they show MessageBox on error which would cause deadlock
+    interfaces = std::make_unique<const Interfaces>();
+    memory = std::make_unique<const Memory>();
 
     window = FindWindowW(L"Valve001", nullptr);
     wndProc = WNDPROC(SetWindowLongPtrA(window, GWLP_WNDPROC, LONG_PTR(::wndProc)));
@@ -138,6 +143,8 @@ void Hooks::install() noexcept
     *reinterpret_cast<decltype(::setCursorPos)**>(memory->setCursorPos) = ::setCursorPos;
 }
 
+extern "C" BOOL WINAPI _CRT_INIT(HMODULE module, DWORD reason, LPVOID reserved);
+
 static DWORD WINAPI waitOnUnload(HMODULE hModule) noexcept
 {
     while (!HookGuard::freed())
@@ -148,17 +155,13 @@ static DWORD WINAPI waitOnUnload(HMODULE hModule) noexcept
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
 
-    hooks.reset();
     eventListener.reset();
-    memory.reset();
-    interfaces.reset();
-    gui.reset();
-    config.reset();
 
+    _CRT_INIT(hModule, DLL_PROCESS_DETACH, nullptr);
     FreeLibraryAndExitThread(hModule, 0);
 }
 
-void Hooks::restore() noexcept
+void Hooks::uninstall() noexcept
 {
     *reinterpret_cast<void**>(memory->reset) = reset;
     *reinterpret_cast<void**>(memory->present) = present;
