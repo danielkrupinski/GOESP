@@ -27,7 +27,7 @@ struct Model {
 };
 
 #define PROP(func_name, offset, type) \
-std::add_lvalue_reference_t<std::add_const_t<type>> func_name() noexcept \
+[[nodiscard]] std::add_lvalue_reference_t<std::add_const_t<type>> func_name() noexcept \
 { \
     return *reinterpret_cast<std::add_pointer_t<type>>(this + offset); \
 }
