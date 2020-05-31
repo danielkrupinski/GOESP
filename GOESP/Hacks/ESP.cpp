@@ -24,9 +24,6 @@
 #include "../SDK/WeaponId.h"
 
 #include <limits>
-#include <list>
-#include <mutex>
-#include <optional>
 #include <tuple>
 
 static bool worldToScreen(const Vector& in, ImVec2& out) noexcept
