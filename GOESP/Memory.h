@@ -34,7 +34,7 @@ public:
     Channel* channels;
     std::add_pointer_t<bool __cdecl(Vector, Vector, short)> lineGoesThroughSmoke;
 private:
-    static std::uintptr_t findPattern(const wchar_t* module, const char* pattern, size_t offset = 0) noexcept
+    static std::uintptr_t findPattern(const wchar_t* module, const char* pattern) noexcept
     {
         static auto id = 0;
         ++id;
@@ -58,7 +58,7 @@ private:
                 }
 
                 if (!*second)
-                    return reinterpret_cast<std::uintptr_t>(const_cast<char*>(start) + offset);
+                    return reinterpret_cast<std::uintptr_t>(const_cast<char*>(start));
             }
         }
         MessageBoxA(NULL, ("Failed to find pattern #" + std::to_string(id) + '!').c_str(), "GOESP", MB_OK | MB_ICONWARNING);
