@@ -169,6 +169,7 @@ void LocalPlayerData::update() noexcept
         shooting = localPlayer->shotsFired() > 1;
         nextWeaponAttack = activeWeapon->nextPrimaryAttack();
     }
+    fov = localPlayer->fovStart();
     aimPunch = localPlayer->getAimPunch();
     origin = localPlayer->getAbsOrigin();
 }

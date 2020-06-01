@@ -50,6 +50,7 @@ struct LocalPlayerData {
     bool inReload = false;
     bool shooting = false;
     float nextWeaponAttack = 0.0f;
+    int fov;
     Vector aimPunch;
     Vector origin;
 };
