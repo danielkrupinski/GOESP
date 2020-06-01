@@ -346,9 +346,10 @@ static void to_json(json& j, const Shared& o)
 
 static void to_json(json& j, const Player& o)
 {
-    j = static_cast<Shared>(o);
-
     const Player dummy;
+
+    if (static_cast<Shared>(o) != static_cast<Shared>(dummy))
+        j = static_cast<Shared>(o);
 
     WRITE("Weapon", weapon)
     WRITE("Flash Duration", flashDuration)
