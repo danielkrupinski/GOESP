@@ -259,6 +259,13 @@ void Config::load() noexcept
 if (o.##valueName != dummy.##valueName) \
     j[name] = o.##valueName;
 
+// WRITE_BASE macro requires:
+// - json object named 'j'
+// - object to write to json named 'o'
+#define WRITE_BASE(structName) \
+if (static_cast<structName>(o) != static_cast<structName>(dummy)) \
+    j = static_cast<structName>(o);
+
 static void to_json(json& j, const Color& o)
 {
     const Color dummy;
@@ -348,9 +355,7 @@ static void to_json(json& j, const Player& o)
 {
     const Player dummy;
 
-    if (static_cast<Shared>(o) != static_cast<Shared>(dummy))
-        j = static_cast<Shared>(o);
-
+    WRITE_BASE(Shared)
     WRITE("Weapon", weapon)
     WRITE("Flash Duration", flashDuration)
     WRITE("Audible Only", audibleOnly)
