@@ -2,6 +2,7 @@
 #include "ESP.h"
 
 #include "../imgui/imgui.h"
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include "../imgui/imgui_internal.h"
 
 #include "../Config.h"
@@ -30,15 +31,14 @@ static bool worldToScreen(const Vector& in, ImVec2& out) noexcept
 {
     const auto& matrix = GameData::toScreenMatrix();
 
-    float w = matrix._41 * in.x + matrix._42 * in.y + matrix._43 * in.z + matrix._44;
+    const auto w = matrix._41 * in.x + matrix._42 * in.y + matrix._43 * in.z + matrix._44;
+    if (w < 0.001f)
+        return false;
 
-    if (w > 0.001f) {
-        const auto [width, height] = interfaces->engine->getScreenSize();
-        out.x = width / 2 * (1 + (matrix._11 * in.x + matrix._12 * in.y + matrix._13 * in.z + matrix._14) / w);
-        out.y = height / 2 * (1 - (matrix._21 * in.x + matrix._22 * in.y + matrix._23 * in.z + matrix._24) / w);
-        return true;
-    }
-    return false;
+    out = ImGui::GetIO().DisplaySize / 2.0f;
+    out.x *= 1.0f + (matrix._11 * in.x + matrix._12 * in.y + matrix._13 * in.z + matrix._14) / w;
+    out.y *= 1.0f - (matrix._21 * in.x + matrix._22 * in.y + matrix._23 * in.z + matrix._24) / w;
+    return true;
 }
 
 static constexpr auto operator-(float sub, const std::array<float, 3>& a) noexcept
