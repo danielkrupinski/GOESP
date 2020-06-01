@@ -92,7 +92,9 @@ public:
         
     PROP(ownerEntity, 0x14C, int)                                                  // CBaseEntity->m_hOwnerEntity
     PROP(spotted, 0x93D, bool)                                                     // CBaseEntity->m_bSpotted
-        
+    
+    PROP(fovStart, 0x31E8, int)                                                    // CBasePlayer->m_iFOVStart
+
     PROP(inBombZone, 0x3954, bool)                                                 // CCSPlayer->m_bInBombZone
     PROP(flashDuration, 0xA40C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
     PROP(shotsFired, 0xA380, int)                                                  // CCSPlayer->m_iShotsFired
