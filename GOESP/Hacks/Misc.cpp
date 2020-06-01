@@ -68,8 +68,8 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
         return;
 
     auto pos = ImGui::GetIO().DisplaySize;
-    pos.x *= 0.5f - localPlayerData.aimPunch.y / 180.0f;
-    pos.y *= 0.5f + localPlayerData.aimPunch.x / 180.0f;
+    pos.x *= 0.5f - localPlayerData.aimPunch.y / (localPlayerData.fov * 2.0f);
+    pos.y *= 0.5f + localPlayerData.aimPunch.x / (localPlayerData.fov * 2.0f);
 
     const auto color = Helpers::calculateColor(config->recoilCrosshair);
 
