@@ -277,37 +277,33 @@ static void to_json(json& j, const Color& o)
 
 static void to_json(json& j, const ColorToggle& o)
 {
-    j = static_cast<Color>(o);
-
     const ColorToggle dummy;
 
+    WRITE_BASE(Color)
     WRITE("Enabled", enabled)
 }
 
 static void to_json(json& j, const ColorToggleRounding& o)
 {
-    j = static_cast<ColorToggle>(o);
-
     const ColorToggleRounding dummy;
 
+    WRITE_BASE(ColorToggle)
     WRITE("Rounding", rounding)
 }
 
 static void to_json(json& j, const ColorToggleThickness& o)
 {
-    j = static_cast<ColorToggle>(o);
-
     const ColorToggleThickness dummy;
 
+    WRITE_BASE(ColorToggle)
     WRITE("Thickness", thickness)
 }
 
 static void to_json(json& j, const ColorToggleThicknessRounding& o)
 {
-    j = static_cast<ColorToggleRounding>(o);
-
     const ColorToggleThicknessRounding dummy;
 
+    WRITE_BASE(ColorToggleRounding)
     WRITE("Thickness", thickness)
 }
 
@@ -320,19 +316,17 @@ static void to_json(json& j, const Font& o)
 
 static void to_json(json& j, const Snapline& o)
 {
-    j = static_cast<ColorToggleThickness>(o);
-
     const Snapline dummy;
 
+    WRITE_BASE(ColorToggleThickness)
     WRITE("Type", type)
 }
 
 static void to_json(json& j, const Box& o)
 {
-    j = static_cast<ColorToggleThicknessRounding>(o);
-
     const Box dummy;
 
+    WRITE_BASE(ColorToggleThicknessRounding)
     WRITE("Type", type)
     WRITE("Scale", scale)
 }
