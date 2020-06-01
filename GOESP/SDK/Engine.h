@@ -30,7 +30,7 @@ struct PlayerInfo {
 
 class Engine {
 public:
-    auto getScreenSize() noexcept
+    [[deprecated]] auto getScreenSize() noexcept
     {
         int w, h;
         VirtualMethod::call<void, 5>(this, std::ref(w), std::ref(h));
