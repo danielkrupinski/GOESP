@@ -261,3 +261,13 @@ struct BombZoneHint {
             && pos == other.pos;
     }
 };
+
+struct ObserverList {
+    bool enabled = false;
+    bool showMode = false;
+
+    auto operator==(const ObserverList& other) const
+    {
+        return enabled == other.enabled;
+    }
+};
