@@ -30,6 +30,7 @@ public:
     bool normalizePlayerNames = true;
     BombZoneHint bombZoneHint;
     PurchaseList purchaseList;
+    ObserverList observerList;
 
     std::vector<std::string> systemFonts{ "Default" };
     std::unordered_map<std::string, ImFont*> fonts;

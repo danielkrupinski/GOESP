@@ -228,6 +228,15 @@ static void from_json(const json& j, BombZoneHint& b)
     read<value_t::object>(j, "Pos", b.pos);
 }
 
+static void from_json(const json& j, ObserverList& ol)
+{
+    read<value_t::boolean>(j, "Enabled", ol.enabled);
+    read<value_t::boolean>(j, "Show Mode", ol.showMode);
+    read<value_t::boolean>(j, "Show Mode", ol.pos);
+    read<value_t::object>(j, "Pos", ol.pos);
+    read<value_t::object>(j, "Size", ol.size);
+}
+
 void Config::load() noexcept
 {
     json j;
@@ -249,6 +258,7 @@ void Config::load() noexcept
     read<value_t::boolean>(j, "Normalize Player Names", normalizePlayerNames);
     read<value_t::object>(j, "Bomb Zone Hint", bombZoneHint);
     read<value_t::object>(j, "Purchase List", purchaseList);
+    read<value_t::object>(j, "Observer List", observerList);
 }
  
 // WRITE macro requires:
@@ -429,6 +439,19 @@ static void to_json(json& j, const BombZoneHint& o)
         j["Pos"] = window->Pos;
 }
 
+static void to_json(json& j, const ObserverList& o)
+{
+    const ObserverList dummy;
+
+    WRITE("Enabled", enabled)
+    WRITE("Show Mode", showMode)
+
+    if (const auto window = ImGui::FindWindowByName("Observer List")) {
+        j["Pos"] = window->Pos;
+        j["Size"] = window->SizeFull;
+    }
+}
+
 void Config::save() noexcept
 {
     json j;
@@ -467,6 +490,8 @@ void Config::save() noexcept
         j["Bomb Zone Hint"] = bombZoneHint;
     if (purchaseList != PurchaseList{})
         j["Purchase List"] = purchaseList;
+    if (observerList != ObserverList{})
+        j["Observer List"] = observerList;
 
     std::error_code ec; std::filesystem::create_directory(path, ec);
 
