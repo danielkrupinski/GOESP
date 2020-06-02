@@ -30,13 +30,6 @@ struct PlayerInfo {
 
 class Engine {
 public:
-    [[deprecated]] auto getScreenSize() noexcept
-    {
-        int w, h;
-        VirtualMethod::call<void, 5>(this, std::ref(w), std::ref(h));
-        return std::make_pair(w, h);
-    }
-
     VIRTUAL_METHOD(bool, getPlayerInfo, 8, (int entityIndex, PlayerInfo& playerInfo), (this, entityIndex, std::ref(playerInfo)))
     VIRTUAL_METHOD(int, getPlayerForUserId, 9, (int userId), (this, userId))
     VIRTUAL_METHOD(bool, isInGame, 26, (), (this))
