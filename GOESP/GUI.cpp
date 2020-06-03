@@ -427,3 +427,125 @@ void GUI::drawESPTab() noexcept
 
     ImGui::EndChild();
 }
+
+// future implementation
+bool drawWeaponCategories(const char* (&currentCategory), const char* (&currentItem)) noexcept
+{
+    bool selected = false;
+
+    if (ImGui::Selectable("Weapons", std::string_view{ currentCategory } == "Weapons" && std::string_view{ currentItem } == "All")) {
+        currentCategory = "Weapons";
+        currentItem = "All";
+        selected = true;
+    }
+
+    if (ImGui::BeginDragDropSource()) {
+        ImGui::SetDragDropPayload("Weapon", &config->weapons["All"], sizeof(Weapon), ImGuiCond_Once);
+        ImGui::EndDragDropSource();
+    }
+
+    if (ImGui::BeginDragDropTarget()) {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Player"))
+            config->weapons["All"] = *(Player*)payload->Data;
+
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Weapon"))
+            config->weapons["All"] = *(Weapon*)payload->Data;
+
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Projectile"))
+            config->weapons["All"] = *(Projectile*)payload->Data;
+
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
+            config->weapons["All"] = *(Shared*)payload->Data;
+
+        ImGui::EndDragDropTarget();
+    }
+
+    ImGui::PushID("Weapons");
+    ImGui::Indent();
+
+    constexpr std::array items{ "Pistols", "SMGs", "Rifles", "Sniper Rifles", "Shotguns", "Machineguns", "Grenades", "Melee", "Other" };
+
+    for (std::size_t i = 0; i < items.size(); ++i) {
+        if (!config->weapons["All"].enabled || config->weapons[items[i]].enabled) {
+            if (ImGui::Selectable(items[i], std::string_view{ currentCategory } == "Weapons" && std::string_view{ currentItem } == items[i])) {
+                currentCategory = "Weapons";
+                currentItem = items[i];
+                selected = true;
+            }
+
+            if (ImGui::BeginDragDropSource()) {
+                ImGui::SetDragDropPayload("Weapon", &config->weapons[items[i]], sizeof(Weapon), ImGuiCond_Once);
+                ImGui::EndDragDropSource();
+            }
+
+            if (ImGui::BeginDragDropTarget()) {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Player"))
+                    config->weapons[items[i]] = *(Player*)payload->Data;
+
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Weapon"))
+                    config->weapons[items[i]] = *(Weapon*)payload->Data;
+
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Projectile"))
+                    config->weapons[items[i]] = *(Projectile*)payload->Data;
+
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
+                    config->weapons[items[i]] = *(Shared*)payload->Data;
+
+                ImGui::EndDragDropTarget();
+            }
+        }
+
+        const auto subItems = [](std::size_t item) noexcept -> std::vector<const char*> {
+            switch (item) {
+            case 0: return { "Glock-18", "P2000", "USP-S", "Dual Berettas", "P250", "Tec-9", "Five-SeveN", "CZ75-Auto", "Desert Eagle", "R8 Revolver" };
+            case 1: return { "MAC-10", "MP9", "MP7", "MP5-SD", "UMP-45", "P90", "PP-Bizon" };
+            case 2: return { "Galil AR", "FAMAS", "AK-47", "M4A4", "M4A1-S", "SG 553", "AUG" };
+            case 3: return { "SSG 08", "AWP", "G3SG1", "SCAR-20" };
+            case 4: return { "Nova", "XM1014", "Sawed-Off", "MAG-7" };
+            case 5: return { "M249", "Negev" };
+            case 6: return { "Flashbang", "HE Grenade", "Smoke Grenade", "Molotov", "Decoy Grenade", "Incendiary", "TA Grenade", "Fire Bomb", "Diversion", "Frag Grenade", "Snowball" };
+            case 7: return { "Axe", "Hammer", "Wrench" };
+            case 8: return { "C4", "Healthshot", "Bump Mine", "Zone Repulsor", "Shield" };
+            default: return { };
+            }
+        }(i);
+
+        ImGui::Indent();
+        for (const auto subItem : subItems) {
+            if ((config->weapons["All"].enabled || config->weapons[items[i]].enabled) && !config->weapons[subItem].enabled)
+                continue;
+
+            if (ImGui::Selectable(subItem, std::string_view{ currentCategory } == "Weapons" && std::string_view{ currentItem } == subItem)) {
+                currentCategory = "Weapons";
+                currentItem = subItem;
+                selected = true;
+            }
+
+            if (ImGui::BeginDragDropSource()) {
+                ImGui::SetDragDropPayload("Weapon", &config->weapons[subItem], sizeof(Weapon), ImGuiCond_Once);
+                ImGui::EndDragDropSource();
+            }
+
+            if (ImGui::BeginDragDropTarget()) {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Player"))
+                    config->weapons[subItem] = *(Player*)payload->Data;
+
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Weapon"))
+                    config->weapons[subItem] = *(Weapon*)payload->Data;
+
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Projectile"))
+                    config->weapons[subItem] = *(Projectile*)payload->Data;
+
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
+                    config->weapons[subItem] = *(Shared*)payload->Data;
+
+                ImGui::EndDragDropTarget();
+            }
+        }
+        ImGui::Unindent();
+    }
+
+    ImGui::Unindent();
+    ImGui::PopID();
+    return selected;
+}
