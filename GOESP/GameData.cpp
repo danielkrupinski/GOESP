@@ -61,7 +61,7 @@ void GameData::update() noexcept
             if (entity->isAlive())
                 playerData.emplace_back(entity);
             else if (const auto obs = entity->getObserverTarget())
-                observerData.push_back(ObserverData{ entity->getPlayerName(config->normalizePlayerNames), obs->getPlayerName(config->normalizePlayerNames) });
+                observerData.push_back(ObserverData{ entity->getPlayerName(config->normalizePlayerNames), obs->getPlayerName(config->normalizePlayerNames), obs == localPlayer.get() });
         } else {
             if (entity->isWeapon()) {
                 if (entity->ownerEntity() == -1)

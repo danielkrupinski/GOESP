@@ -124,4 +124,5 @@ struct LootCrateData : BaseData {
 struct ObserverData {
     std::string name;
     std::string target;
+    bool targetIsLocalPlayer;
 };
