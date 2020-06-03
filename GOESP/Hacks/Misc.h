@@ -9,4 +9,5 @@ namespace Misc
     void drawRecoilCrosshair(ImDrawList* drawList) noexcept;
     void purchaseList(GameEvent* event = nullptr) noexcept;
     void drawBombZoneHint() noexcept;
+    void drawObserverList() noexcept;
 }

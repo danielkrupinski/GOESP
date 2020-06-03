@@ -199,3 +199,8 @@ void Misc::drawBombZoneHint() noexcept
     ImGui::TextUnformatted("You're in bomb zone!");
     ImGui::End();
 }
+
+void Misc::drawObserverList() noexcept
+{
+
+}
