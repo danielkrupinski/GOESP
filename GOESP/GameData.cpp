@@ -25,6 +25,7 @@
 static D3DMATRIX viewMatrix;
 static LocalPlayerData localPlayerData;
 static std::vector<PlayerData> playerData;
+static std::vector<ObserverData> observerData;
 static std::vector<WeaponData> weaponData;
 static std::vector<EntityData> entityData;
 static std::vector<LootCrateData> lootCrateData;
@@ -35,6 +36,7 @@ void GameData::update() noexcept
     Lock lock;
 
     playerData.clear();
+    observerData.clear();
     weaponData.clear();
     entityData.clear();
     lootCrateData.clear();
@@ -53,10 +55,13 @@ void GameData::update() noexcept
             continue;
 
         if (entity->isPlayer()) {
-            if (entity == localPlayer.get() || entity == observerTarget || !entity->isAlive())
+            if (entity == localPlayer.get() || entity == observerTarget)
                 continue;
 
-            playerData.emplace_back(entity);
+            if (entity->isAlive())
+                playerData.emplace_back(entity);
+            else if (const auto obs = entity->getObserverTarget())
+                observerData.push_back(ObserverData{ entity->getPlayerName(config->normalizePlayerNames), obs->getPlayerName(config->normalizePlayerNames) });
         } else {
             if (entity->isWeapon()) {
                 if (entity->ownerEntity() == -1)
@@ -131,6 +136,11 @@ const LocalPlayerData& GameData::local() noexcept
 const std::vector<PlayerData>& GameData::players() noexcept
 {
     return playerData;
+}
+
+const std::vector<ObserverData>& GameData::observers() noexcept
+{
+    return observerData;
 }
 
 const std::vector<WeaponData>& GameData::weapons() noexcept
