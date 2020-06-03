@@ -202,5 +202,28 @@ void Misc::drawBombZoneHint() noexcept
 
 void Misc::drawObserverList() noexcept
 {
+    if (!config->observerList.enabled)
+        return;
 
+    GameData::Lock lock;
+
+    const auto& observers = GameData::observers();
+
+    if (std::none_of(observers.begin(), observers.end(), [](const auto& obs) { return obs.targetIsLocalPlayer; }) && !gui->open)
+        return;
+
+    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
+    if (!gui->open)
+        windowFlags |= ImGuiWindowFlags_NoInputs;
+
+    ImGui::Begin("Observer List", nullptr, windowFlags);
+
+    for (const auto& observer : observers) {
+        if (!observer.targetIsLocalPlayer)
+            continue;
+
+        ImGui::TextWrapped("%s", observer.name.c_str());
+    }
+
+    ImGui::End();
 }
