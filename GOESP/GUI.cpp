@@ -84,9 +84,9 @@ void GUI::render() noexcept
 void GUI::drawESPTab() noexcept
 {
     static std::size_t currentCategory;
-    static std::string currentItem = "All";
+    static auto currentItem = "All";
 
-    constexpr auto getConfigShared = [](std::size_t category, std::string item) noexcept -> Shared& {
+    constexpr auto getConfigShared = [](std::size_t category, const char* item) noexcept -> Shared& {
         switch (category) {
         case 0: default: return config->allies[item];
         case 1: return config->enemies[item];
@@ -97,7 +97,7 @@ void GUI::drawESPTab() noexcept
         }
     };
 
-    constexpr auto getConfigPlayer = [](std::size_t category, std::string item) noexcept -> Player& {
+    constexpr auto getConfigPlayer = [](std::size_t category, const char* item) noexcept -> Player& {
         switch (category) {
         case 0: default: return config->allies[item];
         case 1: return config->enemies[item];
@@ -108,7 +108,7 @@ void GUI::drawESPTab() noexcept
         constexpr std::array categories{ "Allies", "Enemies", "Weapons", "Projectiles", "Loot Crates", "Other Entities" };
 
         for (std::size_t i = 0; i < categories.size(); ++i) {
-            if (ImGui::Selectable(categories[i], currentCategory == i && currentItem == "All")) {
+            if (ImGui::Selectable(categories[i], currentCategory == i && std::string_view{ currentItem } == "All")) {
                 currentCategory = i;
                 currentItem = "All";
             }
@@ -190,7 +190,7 @@ void GUI::drawESPTab() noexcept
             for (std::size_t j = 0; j < items.size(); ++j) {
                 static bool selectedSubItem;
                 if (!categoryEnabled || getConfigShared(i, items[j]).enabled) {
-                    if (ImGui::Selectable(items[j], currentCategory == i && !selectedSubItem && currentItem == items[j])) {
+                    if (ImGui::Selectable(items[j], currentCategory == i && !selectedSubItem && std::string_view{ currentItem } == items[j])) {
                         currentCategory = i;
                         currentItem = items[j];
                         selectedSubItem = false;
@@ -280,7 +280,7 @@ void GUI::drawESPTab() noexcept
                     if ((categoryEnabled || itemEnabled) && !config->weapons[subItem].enabled)
                         continue;
 
-                    if (ImGui::Selectable(subItem, currentCategory == i && selectedSubItem && currentItem == subItem)) {
+                    if (ImGui::Selectable(subItem, currentCategory == i && selectedSubItem && std::string_view{ currentItem } == subItem)) {
                         currentCategory = i;
                         currentItem = subItem;
                         selectedSubItem = true;
