@@ -433,32 +433,36 @@ bool drawWeaponCategories(const char* (&currentCategory), const char* (&currentI
 {
     bool selected = false;
 
+    constexpr auto dragDrop = [](Weapon& weapon) {
+        if (ImGui::BeginDragDropSource()) {
+            ImGui::SetDragDropPayload("Weapon", &weapon, sizeof(Weapon), ImGuiCond_Once);
+            ImGui::EndDragDropSource();
+        }
+
+        if (ImGui::BeginDragDropTarget()) {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Player"))
+                weapon = *(Player*)payload->Data;
+
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Weapon"))
+                weapon = *(Weapon*)payload->Data;
+
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Projectile"))
+                weapon = *(Projectile*)payload->Data;
+
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
+                weapon = *(Shared*)payload->Data;
+
+            ImGui::EndDragDropTarget();
+        }
+    };
+
     if (ImGui::Selectable("Weapons", std::string_view{ currentCategory } == "Weapons" && std::string_view{ currentItem } == "All")) {
         currentCategory = "Weapons";
         currentItem = "All";
         selected = true;
     }
 
-    if (ImGui::BeginDragDropSource()) {
-        ImGui::SetDragDropPayload("Weapon", &config->weapons["All"], sizeof(Weapon), ImGuiCond_Once);
-        ImGui::EndDragDropSource();
-    }
-
-    if (ImGui::BeginDragDropTarget()) {
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Player"))
-            config->weapons["All"] = *(Player*)payload->Data;
-
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Weapon"))
-            config->weapons["All"] = *(Weapon*)payload->Data;
-
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Projectile"))
-            config->weapons["All"] = *(Projectile*)payload->Data;
-
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
-            config->weapons["All"] = *(Shared*)payload->Data;
-
-        ImGui::EndDragDropTarget();
-    }
+    dragDrop(config->weapons["All"]);
 
     ImGui::PushID("Weapons");
     ImGui::Indent();
@@ -473,26 +477,7 @@ bool drawWeaponCategories(const char* (&currentCategory), const char* (&currentI
                 selected = true;
             }
 
-            if (ImGui::BeginDragDropSource()) {
-                ImGui::SetDragDropPayload("Weapon", &config->weapons[items[i]], sizeof(Weapon), ImGuiCond_Once);
-                ImGui::EndDragDropSource();
-            }
-
-            if (ImGui::BeginDragDropTarget()) {
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Player"))
-                    config->weapons[items[i]] = *(Player*)payload->Data;
-
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Weapon"))
-                    config->weapons[items[i]] = *(Weapon*)payload->Data;
-
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Projectile"))
-                    config->weapons[items[i]] = *(Projectile*)payload->Data;
-
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
-                    config->weapons[items[i]] = *(Shared*)payload->Data;
-
-                ImGui::EndDragDropTarget();
-            }
+            dragDrop(config->weapons[items[i]]);
         }
 
         const auto subItems = [](std::size_t item) noexcept -> std::vector<const char*> {
@@ -521,26 +506,7 @@ bool drawWeaponCategories(const char* (&currentCategory), const char* (&currentI
                 selected = true;
             }
 
-            if (ImGui::BeginDragDropSource()) {
-                ImGui::SetDragDropPayload("Weapon", &config->weapons[subItem], sizeof(Weapon), ImGuiCond_Once);
-                ImGui::EndDragDropSource();
-            }
-
-            if (ImGui::BeginDragDropTarget()) {
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Player"))
-                    config->weapons[subItem] = *(Player*)payload->Data;
-
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Weapon"))
-                    config->weapons[subItem] = *(Weapon*)payload->Data;
-
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Projectile"))
-                    config->weapons[subItem] = *(Projectile*)payload->Data;
-
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
-                    config->weapons[subItem] = *(Shared*)payload->Data;
-
-                ImGui::EndDragDropTarget();
-            }
+            dragDrop(config->weapons[subItem]);
         }
         ImGui::Unindent();
     }
