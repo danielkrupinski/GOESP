@@ -212,6 +212,16 @@ void Misc::drawObserverList() noexcept
     if (std::none_of(observers.begin(), observers.end(), [](const auto& obs) { return obs.targetIsLocalPlayer; }) && !gui->open)
         return;
 
+    if (config->observerList.pos != ImVec2{}) {
+        ImGui::SetNextWindowPos(config->observerList.pos);
+        config->observerList.pos = {};
+    }
+
+    if (config->observerList.size != ImVec2{}) {
+        ImGui::SetNextWindowSize(ImClamp(config->observerList.size, {}, ImGui::GetIO().DisplaySize));
+        config->observerList.size = {};
+    }
+
     ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
     if (!gui->open)
         windowFlags |= ImGuiWindowFlags_NoInputs;
