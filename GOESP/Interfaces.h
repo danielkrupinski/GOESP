@@ -21,12 +21,12 @@ type* name = reinterpret_cast<type*>(find(L##module, version));
 
 class Interfaces {
 public:
-    GAME_INTERFACE(Client, client, "client_panorama", "VClient018")
-    GAME_INTERFACE(ClientTools, clientTools, "client_panorama", "VCLIENTTOOLS001")
+    GAME_INTERFACE(Client, client, "client", "VClient018")
+    GAME_INTERFACE(ClientTools, clientTools, "client", "VCLIENTTOOLS001")
     GAME_INTERFACE(Cvar, cvar, "vstdlib", "VEngineCvar007")
     GAME_INTERFACE(Engine, engine, "engine", "VEngineClient014")
     GAME_INTERFACE(EngineTrace, engineTrace, "engine", "EngineTraceClient004")
-    GAME_INTERFACE(EntityList, entityList, "client_panorama", "VClientEntityList003")
+    GAME_INTERFACE(EntityList, entityList, "client", "VClientEntityList003")
     GAME_INTERFACE(GameEventManager, gameEventManager, "engine", "GAMEEVENTSMANAGER002")
     GAME_INTERFACE(InputSystem, inputSystem, "inputsystem", "InputSystemVersion001")
     GAME_INTERFACE(Localize, localize, "localize", "Localize_001")
