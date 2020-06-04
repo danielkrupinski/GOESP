@@ -259,7 +259,7 @@ void Config::load() noexcept
     read<value_t::object>(j, "Purchase List", purchaseList);
     read<value_t::object>(j, "Observer List", observerList);
 }
- 
+
 // WRITE macro requires:
 // - json object named 'j'
 // - object holding default values named 'dummy'
@@ -280,8 +280,8 @@ static void to_json(json& j, const Color& o)
     const Color dummy;
 
     WRITE("Color", color)
-    WRITE("Rainbow", rainbow)
-    WRITE("Rainbow Speed", rainbowSpeed)
+        WRITE("Rainbow", rainbow)
+        WRITE("Rainbow Speed", rainbowSpeed)
 }
 
 static void to_json(json& j, const ColorToggle& o)
@@ -289,7 +289,7 @@ static void to_json(json& j, const ColorToggle& o)
     const ColorToggle dummy;
 
     WRITE_BASE(Color)
-    WRITE("Enabled", enabled)
+        WRITE("Enabled", enabled)
 }
 
 static void to_json(json& j, const ColorToggleRounding& o)
@@ -297,7 +297,7 @@ static void to_json(json& j, const ColorToggleRounding& o)
     const ColorToggleRounding dummy;
 
     WRITE_BASE(ColorToggle)
-    WRITE("Rounding", rounding)
+        WRITE("Rounding", rounding)
 }
 
 static void to_json(json& j, const ColorToggleThickness& o)
@@ -305,7 +305,7 @@ static void to_json(json& j, const ColorToggleThickness& o)
     const ColorToggleThickness dummy;
 
     WRITE_BASE(ColorToggle)
-    WRITE("Thickness", thickness)
+        WRITE("Thickness", thickness)
 }
 
 static void to_json(json& j, const ColorToggleThicknessRounding& o)
@@ -313,7 +313,7 @@ static void to_json(json& j, const ColorToggleThicknessRounding& o)
     const ColorToggleThicknessRounding dummy;
 
     WRITE_BASE(ColorToggleRounding)
-    WRITE("Thickness", thickness)
+        WRITE("Thickness", thickness)
 }
 
 static void to_json(json& j, const Font& o)
@@ -328,7 +328,7 @@ static void to_json(json& j, const Snapline& o)
     const Snapline dummy;
 
     WRITE_BASE(ColorToggleThickness)
-    WRITE("Type", type)
+        WRITE("Type", type)
 }
 
 static void to_json(json& j, const Box& o)
@@ -336,8 +336,8 @@ static void to_json(json& j, const Box& o)
     const Box dummy;
 
     WRITE_BASE(ColorToggleThicknessRounding)
-    WRITE("Type", type)
-    WRITE("Scale", scale)
+        WRITE("Type", type)
+        WRITE("Scale", scale)
 }
 
 static void to_json(json& j, const Shared& o)
@@ -345,13 +345,13 @@ static void to_json(json& j, const Shared& o)
     const Shared dummy;
 
     WRITE("Enabled", enabled)
-    WRITE("Use Model Bounds", useModelBounds)
-    WRITE("Font", font)
-    WRITE("Snapline", snapline)
-    WRITE("Box", box)
-    WRITE("Name", name)
-    WRITE("Text Background", textBackground)
-    WRITE("Text Cull Distance", textCullDistance)
+        WRITE("Use Model Bounds", useModelBounds)
+        WRITE("Font", font)
+        WRITE("Snapline", snapline)
+        WRITE("Box", box)
+        WRITE("Name", name)
+        WRITE("Text Background", textBackground)
+        WRITE("Text Cull Distance", textCullDistance)
 }
 
 static void to_json(json& j, const Player& o)
@@ -359,11 +359,11 @@ static void to_json(json& j, const Player& o)
     const Player dummy;
 
     WRITE_BASE(Shared)
-    WRITE("Weapon", weapon)
-    WRITE("Flash Duration", flashDuration)
-    WRITE("Audible Only", audibleOnly)
-    WRITE("Spotted Only", spottedOnly)
-    WRITE("Skeleton", skeleton)
+        WRITE("Weapon", weapon)
+        WRITE("Flash Duration", flashDuration)
+        WRITE("Audible Only", audibleOnly)
+        WRITE("Spotted Only", spottedOnly)
+        WRITE("Skeleton", skeleton)
 }
 
 static void to_json(json& j, const Weapon& o)
@@ -382,7 +382,7 @@ static void to_json(json& j, const Trail& o)
     const Trail dummy;
 
     WRITE("Type", type)
-    WRITE("Time", time)
+        WRITE("Time", time)
 }
 
 static void to_json(json& j, const Trails& o)
@@ -390,9 +390,9 @@ static void to_json(json& j, const Trails& o)
     const Trails dummy;
 
     WRITE("Enabled", enabled)
-    WRITE("Local Player", localPlayer)
-    WRITE("Allies", allies)
-    WRITE("Enemies", enemies)
+        WRITE("Local Player", localPlayer)
+        WRITE("Allies", allies)
+        WRITE("Enemies", enemies)
 }
 
 static void to_json(json& j, const Projectile& o)
@@ -409,7 +409,7 @@ static void to_json(json& j, const ImVec2& o)
     const ImVec2 dummy;
 
     WRITE("X", x)
-    WRITE("Y", y)
+        WRITE("Y", y)
 }
 
 static void to_json(json& j, const PurchaseList& o)
@@ -417,15 +417,15 @@ static void to_json(json& j, const PurchaseList& o)
     const PurchaseList dummy;
 
     WRITE("Enabled", enabled)
-    WRITE("Only During Freeze Time", onlyDuringFreezeTime)
-    WRITE("Show Prices", showPrices)
-    WRITE("No Title Bar", noTitleBar)
-    WRITE("Mode", mode)
+        WRITE("Only During Freeze Time", onlyDuringFreezeTime)
+        WRITE("Show Prices", showPrices)
+        WRITE("No Title Bar", noTitleBar)
+        WRITE("Mode", mode)
 
-    if (const auto window = ImGui::FindWindowByName("Purchases")) {
-        j["Pos"] = window->Pos;
-        j["Size"] = window->SizeFull;
-    }
+        if (const auto window = ImGui::FindWindowByName("Purchases")) {
+            j["Pos"] = window->Pos;
+            j["Size"] = window->SizeFull;
+        }
 }
 
 static void to_json(json& j, const BombZoneHint& o)
@@ -434,8 +434,8 @@ static void to_json(json& j, const BombZoneHint& o)
 
     WRITE("Enabled", enabled)
 
-    if (const auto window = ImGui::FindWindowByName("Bomb Zone Hint"))
-        j["Pos"] = window->Pos;
+        if (const auto window = ImGui::FindWindowByName("Bomb Zone Hint"))
+            j["Pos"] = window->Pos;
 }
 
 static void to_json(json& j, const ObserverList& o)
@@ -443,12 +443,12 @@ static void to_json(json& j, const ObserverList& o)
     const ObserverList dummy;
 
     WRITE("Enabled", enabled)
-    WRITE("No Title Bar", noTitleBar)
+        WRITE("No Title Bar", noTitleBar)
 
-    if (const auto window = ImGui::FindWindowByName("Observer List")) {
-        j["Pos"] = window->Pos;
-        j["Size"] = window->SizeFull;
-    }
+        if (const auto window = ImGui::FindWindowByName("Observer List")) {
+            j["Pos"] = window->Pos;
+            j["Size"] = window->SizeFull;
+        }
 }
 
 void Config::save() noexcept
@@ -503,6 +503,38 @@ void Config::scheduleFontLoad(const std::string& name) noexcept
     scheduledFonts.push_back(name);
 }
 
+static auto getFontData(const std::string& fontName) noexcept
+{
+    HFONT font = CreateFontA(0, 0, 0, 0,
+        FW_NORMAL, FALSE, FALSE, FALSE,
+        ANSI_CHARSET, OUT_DEFAULT_PRECIS,
+        CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+        DEFAULT_PITCH, fontName.c_str());
+
+    std::unique_ptr<std::byte[]> data;
+    DWORD dataSize = GDI_ERROR;
+
+    if (font) {
+        HDC hdc = CreateCompatibleDC(nullptr);
+
+        if (hdc) {
+            SelectObject(hdc, font);
+            dataSize = GetFontData(hdc, 0, 0, nullptr, 0);
+
+            if (dataSize != GDI_ERROR) {
+                data = std::make_unique<std::byte[]>(dataSize);
+                dataSize = GetFontData(hdc, 0, 0, data.get(), dataSize);
+
+                if (dataSize == GDI_ERROR)
+                    data.reset();
+            }
+            DeleteDC(hdc);
+        }
+        DeleteObject(font);
+    }
+    return std::make_pair(std::move(data), dataSize);
+}
+
 bool Config::loadScheduledFonts() noexcept
 {
     bool result = false;
@@ -511,39 +543,19 @@ bool Config::loadScheduledFonts() noexcept
         if (font == "Default")
             continue;
 
-        HFONT fontHandle = CreateFontA(0, 0, 0, 0,
-            FW_NORMAL, FALSE, FALSE, FALSE,
-            ANSI_CHARSET, OUT_DEFAULT_PRECIS,
-            CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
-            DEFAULT_PITCH, font.c_str());
+        const auto [fontData, fontDataSize] = getFontData(font);
+        if (fontDataSize == GDI_ERROR)
+            continue;
 
-        if (fontHandle) {
-            HDC hdc = CreateCompatibleDC(nullptr);
+        static constexpr ImWchar ranges[]{ 0x0020, 0xFFFF, 0 };
+        ImFontConfig cfg;
+        cfg.FontDataOwnedByAtlas = false;
 
-            if (hdc) {
-                SelectObject(hdc, fontHandle);
-                auto fontDataSize = GetFontData(hdc, 0, 0, nullptr, 0);
-
-                if (fontDataSize != GDI_ERROR) {
-                    const auto fontData = std::make_unique<std::byte[]>(fontDataSize);
-                    fontDataSize = GetFontData(hdc, 0, 0, fontData.get(), fontDataSize);
-
-                    if (fontDataSize != GDI_ERROR) {
-                        static constexpr ImWchar ranges[]{ 0x0020, 0xFFFF, 0 };
-                        ImFontConfig cfg;
-                        cfg.FontDataOwnedByAtlas = false;
-
-                        for (int i = 8; i <= 14; i += 2) {
-                            if (fonts.find(font + ' ' + std::to_string(i)) == fonts.cend()) {
-                                fonts[font + ' ' + std::to_string(i)] = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, static_cast<float>(i), &cfg, ranges);
-                                result = true;
-                            }
-                        }
-                    }
-                }
-                DeleteDC(hdc);
+        for (int i = 8; i <= 14; i += 2) {
+            if (fonts.find(font + ' ' + std::to_string(i)) == fonts.cend()) {
+                fonts[font + ' ' + std::to_string(i)] = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, static_cast<float>(i), &cfg, ranges);
+                result = true;
             }
-            DeleteObject(fontHandle);
         }
     }
     scheduledFonts.clear();
