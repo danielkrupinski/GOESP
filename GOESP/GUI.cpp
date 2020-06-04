@@ -429,6 +429,65 @@ void GUI::drawESPTab() noexcept
 }
 
 // future implementation
+
+bool drawPlayerCategories(const char* (&currentCategory), const char* (&currentItem)) noexcept
+{
+    bool selected = false;
+
+    constexpr auto dragDrop = [](Player& player) {
+        if (ImGui::BeginDragDropSource()) {
+            ImGui::SetDragDropPayload("Player", &player, sizeof(Player), ImGuiCond_Once);
+            ImGui::EndDragDropSource();
+        }
+
+        if (ImGui::BeginDragDropTarget()) {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Player"))
+                player = *(Player*)payload->Data;
+
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Weapon"))
+                player = *(Weapon*)payload->Data;
+
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Projectile"))
+                player = *(Projectile*)payload->Data;
+
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
+                player = *(Shared*)payload->Data;
+
+            ImGui::EndDragDropTarget();
+        }
+    };
+
+    auto category = [&](const char* name, std::unordered_map<std::string, Player>& cfg) {
+        if (ImGui::Selectable(name, std::string_view{ currentCategory } == name && std::string_view{ currentItem } == "All")) {
+            currentCategory = name;
+            currentItem = "All";
+            selected = true;
+        }
+
+        dragDrop(cfg["All"]);
+
+        ImGui::Indent();
+
+        for (const auto item : std::array{ "Visible", "Occluded" }) {
+            if (!cfg["All"].enabled || cfg[item].enabled) {
+                if (ImGui::Selectable(item, std::string_view{ currentCategory } == name && std::string_view{ currentItem } == item)) {
+                    currentCategory = name;
+                    currentItem = item;
+                    selected = true;
+                }
+                dragDrop(cfg[item]);
+            }
+        }
+
+        ImGui::Unindent();
+    };
+
+    category("Allies", config->allies);
+    category("Enemies", config->enemies);
+
+    return selected;
+}
+
 bool drawWeaponCategories(const char* (&currentCategory), const char* (&currentItem)) noexcept
 {
     bool selected = false;
