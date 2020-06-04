@@ -225,6 +225,8 @@ void Misc::drawObserverList() noexcept
     ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
     if (!gui->open)
         windowFlags |= ImGuiWindowFlags_NoInputs;
+    if (config->observerList.noTitleBar)
+        windowFlags |= ImGuiWindowFlags_NoTitleBar;
 
     ImGui::Begin("Observer List", nullptr, windowFlags);
 
