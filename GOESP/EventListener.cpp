@@ -15,7 +15,7 @@ EventListener::EventListener() noexcept
     interfaces->gameEventManager->addListener(this, "round_freeze_end");
 }
 
-EventListener::~EventListener()
+void EventListener::remove() noexcept
 {
     assert(interfaces);
 
