@@ -55,10 +55,11 @@ void GUI::render() noexcept
         ImGui::Checkbox("Purchase List", &config->purchaseList.enabled);
         ImGui::SameLine();
 
+        ImGui::PushID("Purchase List");
         if (ImGui::Button("..."))
-            ImGui::OpenPopup("##purchaselist");
+            ImGui::OpenPopup("");
 
-        if (ImGui::BeginPopup("##purchaselist")) {
+        if (ImGui::BeginPopup("")) {
             ImGui::SetNextItemWidth(75.0f);
             ImGui::Combo("Mode", &config->purchaseList.mode, "Details\0Summary\0");
             ImGui::Checkbox("Only During Freeze Time", &config->purchaseList.onlyDuringFreezeTime);
@@ -66,6 +67,21 @@ void GUI::render() noexcept
             ImGui::Checkbox("No Title Bar", &config->purchaseList.noTitleBar);
             ImGui::EndPopup();
         }
+        ImGui::PopID();
+
+        ImGui::PushID("Observer List");
+        ImGui::Checkbox("Observer List", &config->observerList.enabled);
+        ImGui::SameLine();
+
+        if (ImGui::Button("..."))
+            ImGui::OpenPopup("");
+
+        if (ImGui::BeginPopup("")) {
+            ImGui::Checkbox("No Title Bar", &config->observerList.noTitleBar);
+            ImGui::EndPopup();
+        }
+        ImGui::PopID();
+
         ImGui::Checkbox("Bomb Zone Hint", &config->bombZoneHint.enabled);
         ImGui::EndTabItem();
     }
