@@ -451,33 +451,27 @@ static void to_json(json& j, const ObserverList& o)
         }
 }
 
+template <typename T>
+static void save_map(json& j, const char* name, const std::unordered_map<std::string, T>& map)
+{
+    const T dummy;
+
+    for (const auto& [key, value] : map) {
+        if (value != dummy)
+            j[name][key] = value;
+    }
+}
+
 void Config::save() noexcept
 {
     json j;
 
-    for (const auto& [key, value] : allies)
-        if (value != Player{})
-            j["Allies"][key] = value;
-
-    for (const auto& [key, value] : enemies)
-        if (value != Player{})
-            j["Enemies"][key] = value;
-
-    for (const auto& [key, value] : weapons)
-        if (value != Weapon{})
-            j["Weapons"][key] = value;
-
-    for (const auto& [key, value] : projectiles)
-        if (value != Projectile{})
-            j["Projectiles"][key] = value;
-
-    for (const auto& [key, value] : lootCrates)
-        if (value != Shared{})
-            j["Loot Crates"][key] = value;
-
-    for (const auto& [key, value] : otherEntities)
-        if (value != Shared{})
-            j["Other Entities"][key] = value;
+    save_map(j, "Allies", allies);
+    save_map(j, "Enemies", enemies);
+    save_map(j, "Weapons", weapons);
+    save_map(j, "Projectiles", projectiles);
+    save_map(j, "Loot Crates", lootCrates);
+    save_map(j, "Other Entities", otherEntities);
 
     if (reloadProgress != ColorToggleThickness{ 5.0f })
         j["Reload Progress"] = reloadProgress;
