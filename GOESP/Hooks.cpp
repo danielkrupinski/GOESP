@@ -17,22 +17,10 @@
 #include "SDK/GlobalVars.h"
 #include "SDK/InputSystem.h"
 
-#include <atomic>
 #include <intrin.h>
-
-class HookGuard {
-public:
-    HookGuard() { ++atomic; }
-    ~HookGuard() { --atomic; }
-    static bool freed() { return atomic == 0; }
-private:
-    inline static std::atomic_int atomic;
-};
 
 static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
-    HookGuard guard;
-
     static const auto once = [](HWND window) noexcept {
         eventListener = std::make_unique<EventListener>();
         config = std::make_unique<Config>("GOESP");
@@ -62,16 +50,12 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 
 static HRESULT D3DAPI reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* params) noexcept
 {
-    HookGuard guard;
-
     ImGui_ImplDX9_InvalidateDeviceObjects();
     return hooks->reset(device, params);
 }
 
 static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const RECT* dest, HWND windowOverride, const RGNDATA* dirtyRegion) noexcept
 {
-    HookGuard guard;
-
     static const auto _ = ImGui_ImplDX9_Init(device);
 
     if (config->loadScheduledFonts())
@@ -110,8 +94,6 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
 
 static BOOL WINAPI setCursorPos(int X, int Y) noexcept
 {
-    HookGuard guard;
-
     return gui->open || hooks->setCursorPos(X, Y);
 }
 
@@ -148,15 +130,14 @@ extern "C" BOOL WINAPI _CRT_INIT(HMODULE module, DWORD reason, LPVOID reserved);
 
 static DWORD WINAPI waitOnUnload(HMODULE hModule) noexcept
 {
-    while (!HookGuard::freed())
-        Sleep(50);
+    Sleep(50);
 
     interfaces->inputSystem->enableInput(true);
+    eventListener->remove();
+
     ImGui_ImplDX9_Shutdown();
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
-
-    eventListener->remove();
 
     _CRT_INIT(hModule, DLL_PROCESS_DETACH, nullptr);
     FreeLibraryAndExitThread(hModule, 0);
