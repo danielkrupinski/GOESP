@@ -27,7 +27,6 @@ public:
 
     ColorToggleThickness reloadProgress{ 5.0f };
     ColorToggleThickness recoilCrosshair;
-    bool normalizePlayerNames = true;
     BombZoneHint bombZoneHint;
     PurchaseList purchaseList;
     ObserverList observerList;

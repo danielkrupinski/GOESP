@@ -51,7 +51,6 @@ void GUI::render() noexcept
     if (ImGui::BeginTabItem("Misc")) {
         ImGuiCustom::colorPicker("Reload Progress", config->reloadProgress);
         ImGuiCustom::colorPicker("Recoil Crosshair", config->recoilCrosshair);
-        ImGui::Checkbox("Normalize Player Names", &config->normalizePlayerNames);
         ImGui::Checkbox("Purchase List", &config->purchaseList.enabled);
         ImGui::SameLine();
 
