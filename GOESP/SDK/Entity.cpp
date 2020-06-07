@@ -44,7 +44,7 @@ bool Entity::visibleTo(Entity* other) noexcept
     return false;
 }
 
-[[nodiscard]] std::string Entity::getPlayerName(bool normalize) noexcept
+[[nodiscard]] std::string Entity::getPlayerName() noexcept
 {
     std::string playerName = "unknown";
 
@@ -54,12 +54,10 @@ bool Entity::visibleTo(Entity* other) noexcept
 
     playerName = playerInfo.name;
 
-    if (normalize) {
-        if (wchar_t wide[128]; MultiByteToWideChar(CP_UTF8, 0, playerInfo.name, 128, wide, 128)) {
-            if (wchar_t wideNormalized[128]; NormalizeString(NormalizationKC, wide, -1, wideNormalized, 128)) {
-                if (char nameNormalized[128]; WideCharToMultiByte(CP_UTF8, 0, wideNormalized, -1, nameNormalized, 128, nullptr, nullptr))
-                    playerName = nameNormalized;
-            }
+    if (wchar_t wide[128]; MultiByteToWideChar(CP_UTF8, 0, playerInfo.name, 128, wide, 128)) {
+        if (wchar_t wideNormalized[128]; NormalizeString(NormalizationKC, wide, -1, wideNormalized, 128)) {
+            if (char nameNormalized[128]; WideCharToMultiByte(CP_UTF8, 0, wideNormalized, -1, nameNormalized, 128, nullptr, nullptr))
+                playerName = nameNormalized;
         }
     }
 

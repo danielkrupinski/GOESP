@@ -61,7 +61,7 @@ void GameData::update() noexcept
             if (entity->isAlive())
                 playerData.emplace_back(entity);
             else if (const auto obs = entity->getObserverTarget())
-                observerData.push_back(ObserverData{ entity->getPlayerName(config->normalizePlayerNames), obs->getPlayerName(config->normalizePlayerNames), obs == localPlayer.get() });
+                observerData.push_back(ObserverData{ entity->getPlayerName(), obs->getPlayerName(), obs == localPlayer.get() });
         } else {
             if (entity->isWeapon()) {
                 if (entity->ownerEntity() == -1)
@@ -271,7 +271,7 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
     audible = isEntityAudible(entity->index());
     spotted = entity->spotted();
     flashDuration = entity->flashDuration();
-    name = entity->getPlayerName(config->normalizePlayerNames);
+    name = entity->getPlayerName();
 
     if (const auto weapon = entity->getActiveWeapon()) {
         audible = audible || isEntityAudible(weapon->index());
