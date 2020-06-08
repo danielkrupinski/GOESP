@@ -6,9 +6,10 @@
 #include "VirtualMethod.h"
 
 struct ClientClass;
+class Matrix3x4;
 enum class WeaponId : short;
 struct WeaponInfo;
-class Matrix3x4;
+enum class WeaponType;
 
 class Collideable {
 public:
@@ -62,6 +63,8 @@ public:
     VIRTUAL_METHOD(ObsMode, getObserverMode, 293, (), (this))
     VIRTUAL_METHOD(Entity*, getObserverTarget, 294, (), (this))
     VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, 460, (), (this))
+
+    [[nodiscard]] WeaponType getWeaponType() noexcept;
 
     auto getEyePosition() noexcept
     {
