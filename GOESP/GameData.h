@@ -51,6 +51,7 @@ struct LocalPlayerData {
     bool inBombZone = false;
     bool inReload = false;
     bool shooting = false;
+    bool noScope = false;
     float nextWeaponAttack = 0.0f;
     int fov;
     Vector aimPunch;
