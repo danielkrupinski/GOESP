@@ -239,3 +239,24 @@ void Misc::drawObserverList() noexcept
 
     ImGui::End();
 }
+
+void Misc::drawNoscopeCrosshair(ImDrawList* drawList) noexcept
+{
+    if (!config->noscopeCrosshair.enabled)
+        return;
+
+    GameData::Lock lock;
+    const auto& localPlayerData = GameData::local();
+
+    if (!localPlayerData.exists || !localPlayerData.alive)
+        return;
+
+    if (!localPlayerData.noScope)
+        return;
+
+    const auto pos = ImGui::GetIO().DisplaySize / 2;
+    const auto color = Helpers::calculateColor(config->noscopeCrosshair);
+
+    drawList->AddLine({ pos.x, pos.y - 10 }, { pos.x, pos.y + 10 }, color, config->noscopeCrosshair.thickness);
+    drawList->AddLine({ pos.x - 10, pos.y }, { pos.x + 10, pos.y }, color, config->noscopeCrosshair.thickness);
+}

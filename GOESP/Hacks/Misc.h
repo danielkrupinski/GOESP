@@ -10,4 +10,5 @@ namespace Misc
     void purchaseList(GameEvent* event = nullptr) noexcept;
     void drawBombZoneHint() noexcept;
     void drawObserverList() noexcept;
+    void drawNoscopeCrosshair(ImDrawList* drawList) noexcept;
 }
