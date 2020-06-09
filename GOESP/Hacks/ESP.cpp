@@ -124,9 +124,9 @@ static void renderBox(const BoundingBox& bbox, const Box& config) noexcept
 
     switch (config.type) {
     case Box::_2d:
+        drawList->AddRect(bbox.min + ImVec2{ 1.0f, 1.0f }, bbox.max + ImVec2{ 1.0f, 1.0f }, color & 0xFF000000, config.rounding, ImDrawCornerFlags_All, config.thickness);
         drawList->AddRect(bbox.min, bbox.max, color, config.rounding, ImDrawCornerFlags_All, config.thickness);
         break;
-
     case Box::_2dCorners:
         drawList->AddLine(bbox.min, { bbox.min.x, bbox.min.y * 0.75f + bbox.max.y * 0.25f }, color, config.thickness);
         drawList->AddLine(bbox.min, { bbox.min.x * 0.75f + bbox.max.x * 0.25f, bbox.min.y }, color, config.thickness);
