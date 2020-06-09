@@ -51,6 +51,7 @@ void GUI::render() noexcept
     if (ImGui::BeginTabItem("Misc")) {
         ImGuiCustom::colorPicker("Reload Progress", config->reloadProgress);
         ImGuiCustom::colorPicker("Recoil Crosshair", config->recoilCrosshair);
+        ImGuiCustom::colorPicker("Noscope Crosshair", config->noscopeCrosshair);
         ImGui::Checkbox("Purchase List", &config->purchaseList.enabled);
         ImGui::SameLine();
 
