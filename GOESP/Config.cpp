@@ -254,6 +254,7 @@ void Config::load() noexcept
 
     read<value_t::object>(j, "Reload Progress", reloadProgress);
     read<value_t::object>(j, "Recoil Crosshair", recoilCrosshair);
+    read<value_t::object>(j, "Noscope Crosshair", noscopeCrosshair);
     read<value_t::object>(j, "Bomb Zone Hint", bombZoneHint);
     read<value_t::object>(j, "Purchase List", purchaseList);
     read<value_t::object>(j, "Observer List", observerList);
@@ -476,6 +477,8 @@ void Config::save() noexcept
         j["Reload Progress"] = reloadProgress;
     if (recoilCrosshair != ColorToggleThickness{})
         j["Recoil Crosshair"] = recoilCrosshair;
+    if (noscopeCrosshair != ColorToggleThickness{})
+        j["Noscope Crosshair"] = noscopeCrosshair;
     if (bombZoneHint != BombZoneHint{})
         j["Bomb Zone Hint"] = bombZoneHint;
     if (purchaseList != PurchaseList{})

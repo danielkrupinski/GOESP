@@ -27,6 +27,7 @@ public:
 
     ColorToggleThickness reloadProgress{ 5.0f };
     ColorToggleThickness recoilCrosshair;
+    ColorToggleThickness noscopeCrosshair;
     BombZoneHint bombZoneHint;
     PurchaseList purchaseList;
     ObserverList observerList;
