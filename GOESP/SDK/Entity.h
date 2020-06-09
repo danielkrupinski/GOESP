@@ -4,6 +4,7 @@
 
 #include "Vector.h"
 #include "VirtualMethod.h"
+#include "WeaponInfo.h"
 
 struct ClientClass;
 class Matrix3x4;
@@ -62,9 +63,8 @@ public:
     VIRTUAL_METHOD(Entity*, getActiveWeapon, 267, (), (this))
     VIRTUAL_METHOD(ObsMode, getObserverMode, 293, (), (this))
     VIRTUAL_METHOD(Entity*, getObserverTarget, 294, (), (this))
+    VIRTUAL_METHOD(WeaponType, getWeaponType, 454, (), (this))
     VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, 460, (), (this))
-
-    [[nodiscard]] WeaponType getWeaponType() noexcept;
 
     auto getEyePosition() noexcept
     {

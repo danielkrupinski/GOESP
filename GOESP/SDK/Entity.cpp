@@ -7,15 +7,6 @@
 #include "ModelInfo.h"
 #include "GlobalVars.h"
 #include "Engine.h"
-#include "WeaponInfo.h"
-
-WeaponType Entity::getWeaponType() noexcept
-{
-    const auto weaponData = getWeaponInfo();
-    if (weaponData)
-        return weaponData->type;
-    return WeaponType::Unknown;
-}
 
 bool Entity::canSee(Entity* other, const Vector& pos) noexcept
 {
