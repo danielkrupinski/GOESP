@@ -103,6 +103,7 @@ public:
     
     PROP(fovStart, 0x31E8, int)                                                    // CBasePlayer->m_iFOVStart
 
+    PROP(isScoped, 0x3914, bool)                                                   // CCSPlayer->m_bIsScoped
     PROP(inBombZone, 0x3954, bool)                                                 // CCSPlayer->m_bInBombZone
     PROP(flashDuration, 0xA40C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
     PROP(shotsFired, 0xA380, int)                                                  // CCSPlayer->m_iShotsFired
