@@ -115,17 +115,18 @@ public:
 
 static ImDrawList* drawList;
 
+static void addLineWithShadow(const ImVec2& p1, const ImVec2& p2, ImU32 col, float thickness) noexcept
+{
+    drawList->AddLine(p1 + ImVec2{ 1.0f, 1.0f }, p2 + ImVec2{ 1.0f, 1.0f }, col & 0xFF000000, thickness);
+    drawList->AddLine(p1, p2, col, thickness);
+}
+
 static void renderBox(const BoundingBox& bbox, const Box& config) noexcept
 {
     if (!config.enabled)
         return;
 
     const ImU32 color = Helpers::calculateColor(config);
-
-    constexpr auto addLineWithShadow = [](const ImVec2& p1, const ImVec2& p2, ImU32 col, float thickness) {
-        drawList->AddLine(p1 + ImVec2{ 1.0f, 1.0f }, p2 + ImVec2{ 1.0f, 1.0f }, col & 0xFF000000, thickness);
-        drawList->AddLine(p1, p2, col, thickness);
-    };
 
     switch (config.type) {
     case Box::_2d:
