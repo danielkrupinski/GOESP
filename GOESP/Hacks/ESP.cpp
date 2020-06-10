@@ -147,6 +147,13 @@ static void renderBox(const BoundingBox& bbox, const Box& config) noexcept
         addLineWithShadow(bbox.max, { bbox.max.x, bbox.max.y * 0.75f + bbox.min.y * 0.25f }, color, config.thickness);
         break;
     case Box::_3d:
+        // two separate loops to make shadows not overlap normal lines
+        for (int i = 0; i < 8; ++i) {
+            for (int j = 1; j <= 4; j <<= 1) {
+                if (!(i & j))
+                    drawList->AddLine(bbox.vertices[i] + ImVec2{ 1.0f, 1.0f }, bbox.vertices[i + j] + ImVec2{ 1.0f, 1.0f }, color & 0xFF000000, config.thickness);
+            }
+        }
         for (int i = 0; i < 8; ++i) {
             for (int j = 1; j <= 4; j <<= 1) {
                 if (!(i & j))
