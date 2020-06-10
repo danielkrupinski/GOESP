@@ -162,6 +162,16 @@ static void renderBox(const BoundingBox& bbox, const Box& config) noexcept
         }
         break;
     case Box::_3dCorners:
+        // two separate loops to make shadows not overlap normal lines
+        for (int i = 0; i < 8; ++i) {
+            for (int j = 1; j <= 4; j <<= 1) {
+                if (!(i & j)) {
+                    drawList->AddLine(bbox.vertices[i] + ImVec2{ 1.0f, 1.0f }, ImVec2{ bbox.vertices[i].x * 0.75f + bbox.vertices[i + j].x * 0.25f, bbox.vertices[i].y * 0.75f + bbox.vertices[i + j].y * 0.25f } + ImVec2{ 1.0f, 1.0f }, color & 0xFF000000, config.thickness);
+                    drawList->AddLine(ImVec2{ bbox.vertices[i].x * 0.25f + bbox.vertices[i + j].x * 0.75f, bbox.vertices[i].y * 0.25f + bbox.vertices[i + j].y * 0.75f } + ImVec2{ 1.0f, 1.0f }, bbox.vertices[i + j] + ImVec2{ 1.0f, 1.0f }, color & 0xFF000000, config.thickness);
+                }
+            }
+        }
+
         for (int i = 0; i < 8; ++i) {
             for (int j = 1; j <= 4; j <<= 1) {
                 if (!(i & j)) {
