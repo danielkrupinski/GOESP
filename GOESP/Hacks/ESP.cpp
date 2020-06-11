@@ -392,12 +392,12 @@ static void renderWeaponEsp(const WeaponData& weaponData, const Weapon& parentCo
     }
 }
 
-static void renderEntityEsp(const BaseData& entityData, const Shared& parentConfig, const Shared& itemConfig, const char* name) noexcept
+static void renderEntityEsp(const BaseData& entityData, const std::unordered_map<std::string, Shared>& map, const char* name) noexcept
 {
-    const auto& config = itemConfig.enabled ? itemConfig : parentConfig;
-
-    if (config.enabled) {
-        renderEntityBox(entityData, name, config);
+    if (const auto cfg = map.find(name); cfg != map.cend() && cfg->second.enabled) {
+        renderEntityBox(entityData, name, cfg->second);
+    } else if (const auto cfg = map.find("All"); cfg != map.cend() && cfg->second.enabled) {
+        renderEntityBox(entityData, name, cfg->second);
     }
 }
 
@@ -438,12 +438,12 @@ void ESP::render() noexcept
 
     for (const auto& entity : GameData::entities()) {
         if (entity.name)
-            renderEntityEsp(entity, config->otherEntities["All"], config->otherEntities[entity.name], entity.name);
+            renderEntityEsp(entity, config->otherEntities, entity.name);
     }
 
     for (const auto& lootCrate : GameData::lootCrates()) {
         if (lootCrate.name)
-            renderEntityEsp(lootCrate, config->lootCrates["All"], config->lootCrates[lootCrate.name], lootCrate.name);
+            renderEntityEsp(lootCrate, config->lootCrates, lootCrate.name);
     }
 
     for (const auto& projectile : GameData::projectiles()) {
