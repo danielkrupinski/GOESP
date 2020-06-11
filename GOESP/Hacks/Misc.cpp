@@ -58,6 +58,15 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
     }
 }
 
+static void drawCrosshair(ImDrawList* drawList, const ImVec2& pos, ImU32 color, float thickness) noexcept
+{
+    drawList->AddLine(ImVec2{ pos.x, pos.y - 10 } + ImVec2{ 1.0f, 1.0f }, ImVec2{ pos.x, pos.y + 10 } + ImVec2{ 1.0f, 1.0f }, color & 0xFF000000, thickness);
+    drawList->AddLine(ImVec2{ pos.x - 10, pos.y } + ImVec2{ 1.0f, 1.0f }, ImVec2{ pos.x + 10, pos.y } + ImVec2{ 1.0f, 1.0f }, color & 0xFF000000, thickness);
+
+    drawList->AddLine({ pos.x, pos.y - 10 }, { pos.x, pos.y + 10 }, color, thickness);
+    drawList->AddLine({ pos.x - 10, pos.y }, { pos.x + 10, pos.y }, color, thickness);
+}
+
 void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
 {
     if (!config->recoilCrosshair.enabled)
@@ -76,13 +85,7 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
     pos.x *= 0.5f - localPlayerData.aimPunch.y / (localPlayerData.fov * 2.0f);
     pos.y *= 0.5f + localPlayerData.aimPunch.x / (localPlayerData.fov * 2.0f);
 
-    const auto color = Helpers::calculateColor(config->recoilCrosshair);
-
-    drawList->AddLine(ImVec2{ pos.x, pos.y - 10 } + ImVec2{ 1.0f, 1.0f }, ImVec2{ pos.x, pos.y + 10 } + ImVec2{ 1.0f, 1.0f }, color & 0xFF000000, config->recoilCrosshair.thickness);
-    drawList->AddLine(ImVec2{ pos.x - 10, pos.y } + ImVec2{ 1.0f, 1.0f }, ImVec2{ pos.x + 10, pos.y } + ImVec2{ 1.0f, 1.0f }, color & 0xFF000000, config->recoilCrosshair.thickness);
-
-    drawList->AddLine({ pos.x, pos.y - 10 }, { pos.x, pos.y + 10 }, color, config->recoilCrosshair.thickness);
-    drawList->AddLine({ pos.x - 10, pos.y }, { pos.x + 10, pos.y }, color, config->recoilCrosshair.thickness);
+    drawCrosshair(drawList, pos, Helpers::calculateColor(config->recoilCrosshair), config->recoilCrosshair.thickness);
 }
 
 void Misc::purchaseList(GameEvent* event) noexcept
