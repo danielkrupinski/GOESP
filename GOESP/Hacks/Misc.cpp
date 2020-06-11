@@ -78,6 +78,9 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
 
     const auto color = Helpers::calculateColor(config->recoilCrosshair);
 
+    drawList->AddLine(ImVec2{ pos.x, pos.y - 10 } + ImVec2{ 1.0f, 1.0f }, ImVec2{ pos.x, pos.y + 10 } + ImVec2{ 1.0f, 1.0f }, color & 0xFF000000, config->recoilCrosshair.thickness);
+    drawList->AddLine(ImVec2{ pos.x - 10, pos.y } + ImVec2{ 1.0f, 1.0f }, ImVec2{ pos.x + 10, pos.y } + ImVec2{ 1.0f, 1.0f }, color & 0xFF000000, config->recoilCrosshair.thickness);
+
     drawList->AddLine({ pos.x, pos.y - 10 }, { pos.x, pos.y + 10 }, color, config->recoilCrosshair.thickness);
     drawList->AddLine({ pos.x - 10, pos.y }, { pos.x + 10, pos.y }, color, config->recoilCrosshair.thickness);
 }
