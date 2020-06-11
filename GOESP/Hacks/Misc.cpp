@@ -265,9 +265,5 @@ void Misc::drawNoscopeCrosshair(ImDrawList* drawList) noexcept
     if (!localPlayerData.noScope)
         return;
 
-    const auto pos = ImGui::GetIO().DisplaySize / 2;
-    const auto color = Helpers::calculateColor(config->noscopeCrosshair);
-
-    drawList->AddLine({ pos.x, pos.y - 10 }, { pos.x, pos.y + 10 }, color, config->noscopeCrosshair.thickness);
-    drawList->AddLine({ pos.x - 10, pos.y }, { pos.x + 10, pos.y }, color, config->noscopeCrosshair.thickness);
+    drawCrosshair(drawList, ImGui::GetIO().DisplaySize / 2, Helpers::calculateColor(config->noscopeCrosshair), config->noscopeCrosshair.thickness);
 }
