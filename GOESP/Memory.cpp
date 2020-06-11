@@ -25,11 +25,14 @@ Memory::Memory() noexcept
 
     debugMsg = decltype(debugMsg)(GetProcAddress(GetModuleHandleW(L"tier0"), "Msg"));
 
-    if (GetModuleHandleW(L"discordhook") && overlay == Overlay::Discord) {
+    if (overlay == Overlay::Discord) {
+        if (!GetModuleHandleW(L"discordhook"))
+            goto steamOverlay;
         reset = *reinterpret_cast<std::uintptr_t*>(findPattern(L"discordhook", "\x8B\x1F\x68") + 3);
         present = *reinterpret_cast<std::uintptr_t*>(findPattern(L"discordhook", "\x8B\x46\x10\x68") + 4);
         setCursorPos = *reinterpret_cast<std::uintptr_t*>(findPattern(L"discordhook", "\x74\x1B\x8B\x4D\x08") + 32);
     } else {
+    steamOverlay:
         reset = *reinterpret_cast<std::uintptr_t*>(findPattern(L"gameoverlayrenderer", "\x53\x57\xC7\x45") + 11);
         present = reset + 4;
         setCursorPos = *reinterpret_cast<std::uintptr_t*>(findPattern(L"gameoverlayrenderer", "\xC2\x08?\x5D") + 6);
