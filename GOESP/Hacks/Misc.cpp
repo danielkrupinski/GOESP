@@ -45,8 +45,10 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
             reloadLength = localPlayerData.nextWeaponAttack - memory->globalVars->currenttime;
 
         constexpr int segments = 40;
-        drawList->PathArcTo(ImGui::GetIO().DisplaySize / 2.0f, 20.0f, -IM_PI / 2, std::clamp(IM_PI * 2 * (0.75f - (localPlayerData.nextWeaponAttack - memory->globalVars->currenttime) / reloadLength), -IM_PI / 2, -IM_PI / 2 + IM_PI * 2), segments);
+        drawList->PathArcTo(ImGui::GetIO().DisplaySize / 2.0f + ImVec2{ 1.0f, 1.0f }, 20.0f, -IM_PI / 2, std::clamp(IM_PI * 2 * (0.75f - (localPlayerData.nextWeaponAttack - memory->globalVars->currenttime) / reloadLength), -IM_PI / 2, -IM_PI / 2 + IM_PI * 2), segments);
         const ImU32 color = Helpers::calculateColor(config->reloadProgress);
+        drawList->PathStroke(color & 0xFF000000, false, config->reloadProgress.thickness);
+        drawList->PathArcTo(ImGui::GetIO().DisplaySize / 2.0f, 20.0f, -IM_PI / 2, std::clamp(IM_PI * 2 * (0.75f - (localPlayerData.nextWeaponAttack - memory->globalVars->currenttime) / reloadLength), -IM_PI / 2, -IM_PI / 2 + IM_PI * 2), segments);
         drawList->PathStroke(color, false, config->reloadProgress.thickness);
     } else {
         reloadLength = 0.0f;
