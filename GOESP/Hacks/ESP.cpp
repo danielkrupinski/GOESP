@@ -354,6 +354,8 @@ static void drawPlayerSkeleton(const ColorToggleThickness& config, const std::ve
     if (!config.enabled)
         return;
 
+    const auto color = Helpers::calculateColor(config);
+
     for (const auto& [bone, parent] : bones) {
         ImVec2 bonePoint;
         if (!worldToScreen(bone, bonePoint))
@@ -363,7 +365,6 @@ static void drawPlayerSkeleton(const ColorToggleThickness& config, const std::ve
         if (!worldToScreen(parent, parentPoint))
             continue;
 
-        const auto color = Helpers::calculateColor(config);
         drawList->AddLine(bonePoint, parentPoint, color, config.thickness);
     }
 }
