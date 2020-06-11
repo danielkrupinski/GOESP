@@ -444,8 +444,6 @@ void ESP::render() noexcept
             renderEntityEsp(lootCrate, config->lootCrates, lootCrate.name);
     }
 
-    for (const auto& projectile : GameData::projectiles()) {
-        if (projectile.name)
-            renderProjectileEsp(projectile, config->projectiles["All"], config->projectiles[projectile.name], projectile.name);
-    }
+    for (const auto& projectile : GameData::projectiles())
+        renderProjectileEsp(projectile, config->projectiles["All"], config->projectiles[projectile.name], projectile.name);
 }

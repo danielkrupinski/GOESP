@@ -201,7 +201,7 @@ BaseData::BaseData(Entity* entity) noexcept
 
 EntityData::EntityData(Entity* entity) noexcept : BaseData{ entity }
 {
-    name = [](ClassId classId) -> const char* {
+    name = [](ClassId classId) {
         switch (classId) {
         case ClassId::EconEntity: return "Defuse Kit";
         case ClassId::Chicken: return "Chicken";
@@ -219,7 +219,7 @@ EntityData::EntityData(Entity* entity) noexcept : BaseData{ entity }
 
 ProjectileData::ProjectileData(Entity* projectile) noexcept : BaseData { projectile }
 {
-    name = [](Entity* projectile) -> const char* {
+    name = [](Entity* projectile) {
         switch (projectile->getClientClass()->classId) {
         case ClassId::BaseCSGrenadeProjectile:
             if (const auto model = projectile->getModel(); model && std::strstr(model->name, "flashbang"))
@@ -233,7 +233,7 @@ ProjectileData::ProjectileData(Entity* projectile) noexcept : BaseData { project
         case ClassId::SensorGrenadeProjectile: return "TA Grenade";
         case ClassId::SmokeGrenadeProjectile: return "Smoke Grenade";
         case ClassId::SnowballProjectile: return "Snowball";
-        default: return nullptr;
+        default: assert(false); return "unknown";
         }
     }(projectile);
 
