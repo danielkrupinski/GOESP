@@ -436,10 +436,8 @@ void ESP::render() noexcept
     for (const auto& weapon : GameData::weapons())
         renderWeaponEsp(weapon, config->weapons[weapon.group], config->weapons[weapon.name]);
 
-    for (const auto& entity : GameData::entities()) {
-        if (entity.name)
-            renderEntityEsp(entity, config->otherEntities, entity.name);
-    }
+    for (const auto& entity : GameData::entities())
+        renderEntityEsp(entity, config->otherEntities, entity.name);
 
     for (const auto& lootCrate : GameData::lootCrates()) {
         if (lootCrate.name)

@@ -212,7 +212,7 @@ EntityData::EntityData(Entity* entity) noexcept : BaseData{ entity }
         case ClassId::AmmoBox: return "Ammo Box";
         case ClassId::RadarJammer: return "Radar Jammer";
         case ClassId::SnowballPile: return "Snowball Pile";
-        default: return nullptr;
+        default: assert(false); return "unknown";
         }
     }(entity->getClientClass()->classId);
 }
