@@ -38,7 +38,7 @@ Memory::Memory() noexcept
         setCursorPos = *reinterpret_cast<std::uintptr_t*>(findPattern(L"gameoverlayrenderer", "\xC2\x08?\x5D") + 6);
     }
 
-    isOtherEnemy = relativeToAbsolute<decltype(isOtherEnemy)>(findPattern(L"client", "\xE8????\x02\xC0") + 1);
+    isOtherEnemy = relativeToAbsolute<decltype(isOtherEnemy)>(findPattern(L"client", "\x8B\xCE\xE8????\x02\xC0") + 3);
     globalVars = **reinterpret_cast<GlobalVars***>((*reinterpret_cast<std::uintptr_t**>(interfaces->client))[11] + 10);
     itemSystem = relativeToAbsolute<decltype(itemSystem)>(findPattern(L"client", "\xE8????\x0F\xB7\x0F") + 1);
     weaponSystem = *reinterpret_cast<WeaponSystem**>(findPattern(L"client", "\x8B\x35????\xFF\x10\x0F\xB7\xC0") + 2);
