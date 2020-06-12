@@ -1,7 +1,6 @@
 #include "GUI.h"
 
 #include "imgui/imgui.h"
-#include "imgui/imgui_impl_win32.h"
 
 #include "Config.h"
 #include "Hooks.h"
