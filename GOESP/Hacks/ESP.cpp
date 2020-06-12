@@ -117,7 +117,7 @@ static ImDrawList* drawList;
 
 static void addLineWithShadow(const ImVec2& p1, const ImVec2& p2, ImU32 col, float thickness) noexcept
 {
-    drawList->AddLine(p1 + ImVec2{ 1.0f, 1.0f }, p2 + ImVec2{ 1.0f, 1.0f }, col & 0xFF000000, thickness);
+    drawList->AddLine(p1 + ImVec2{ 1.0f, 1.0f }, p2 + ImVec2{ 1.0f, 1.0f }, col & IM_COL32_A_MASK, thickness);
     drawList->AddLine(p1, p2, col, thickness);
 }
 
@@ -130,7 +130,7 @@ static void renderBox(const BoundingBox& bbox, const Box& config) noexcept
 
     switch (config.type) {
     case Box::_2d:
-        drawList->AddRect(bbox.min + ImVec2{ 1.0f, 1.0f }, bbox.max + ImVec2{ 1.0f, 1.0f }, color & 0xFF000000, config.rounding, ImDrawCornerFlags_All, config.thickness);
+        drawList->AddRect(bbox.min + ImVec2{ 1.0f, 1.0f }, bbox.max + ImVec2{ 1.0f, 1.0f }, color & IM_COL32_A_MASK, config.rounding, ImDrawCornerFlags_All, config.thickness);
         drawList->AddRect(bbox.min, bbox.max, color, config.rounding, ImDrawCornerFlags_All, config.thickness);
         break;
     case Box::_2dCorners:
@@ -151,7 +151,7 @@ static void renderBox(const BoundingBox& bbox, const Box& config) noexcept
         for (int i = 0; i < 8; ++i) {
             for (int j = 1; j <= 4; j <<= 1) {
                 if (!(i & j))
-                    drawList->AddLine(bbox.vertices[i] + ImVec2{ 1.0f, 1.0f }, bbox.vertices[i + j] + ImVec2{ 1.0f, 1.0f }, color & 0xFF000000, config.thickness);
+                    drawList->AddLine(bbox.vertices[i] + ImVec2{ 1.0f, 1.0f }, bbox.vertices[i + j] + ImVec2{ 1.0f, 1.0f }, color & IM_COL32_A_MASK, config.thickness);
             }
         }
         for (int i = 0; i < 8; ++i) {
@@ -166,8 +166,8 @@ static void renderBox(const BoundingBox& bbox, const Box& config) noexcept
         for (int i = 0; i < 8; ++i) {
             for (int j = 1; j <= 4; j <<= 1) {
                 if (!(i & j)) {
-                    drawList->AddLine(bbox.vertices[i] + ImVec2{ 1.0f, 1.0f }, ImVec2{ bbox.vertices[i].x * 0.75f + bbox.vertices[i + j].x * 0.25f, bbox.vertices[i].y * 0.75f + bbox.vertices[i + j].y * 0.25f } + ImVec2{ 1.0f, 1.0f }, color & 0xFF000000, config.thickness);
-                    drawList->AddLine(ImVec2{ bbox.vertices[i].x * 0.25f + bbox.vertices[i + j].x * 0.75f, bbox.vertices[i].y * 0.25f + bbox.vertices[i + j].y * 0.75f } + ImVec2{ 1.0f, 1.0f }, bbox.vertices[i + j] + ImVec2{ 1.0f, 1.0f }, color & 0xFF000000, config.thickness);
+                    drawList->AddLine(bbox.vertices[i] + ImVec2{ 1.0f, 1.0f }, ImVec2{ bbox.vertices[i].x * 0.75f + bbox.vertices[i + j].x * 0.25f, bbox.vertices[i].y * 0.75f + bbox.vertices[i + j].y * 0.25f } + ImVec2{ 1.0f, 1.0f }, color & IM_COL32_A_MASK, config.thickness);
+                    drawList->AddLine(ImVec2{ bbox.vertices[i].x * 0.25f + bbox.vertices[i + j].x * 0.75f, bbox.vertices[i].y * 0.25f + bbox.vertices[i + j].y * 0.75f } + ImVec2{ 1.0f, 1.0f }, bbox.vertices[i + j] + ImVec2{ 1.0f, 1.0f }, color & IM_COL32_A_MASK, config.thickness);
                 }
             }
         }
