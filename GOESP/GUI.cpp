@@ -82,7 +82,6 @@ void GUI::render() noexcept
         }
         ImGui::PopID();
 
-        ImGui::Checkbox("Bomb Zone Hint", &config->bombZoneHint.enabled);
         ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Configs")) {

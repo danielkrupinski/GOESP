@@ -222,12 +222,6 @@ static void from_json(const json& j, PurchaseList& pl)
     read<value_t::object>(j, "Size", pl.size);
 }
 
-static void from_json(const json& j, BombZoneHint& b)
-{
-    read<value_t::boolean>(j, "Enabled", b.enabled);
-    read<value_t::object>(j, "Pos", b.pos);
-}
-
 static void from_json(const json& j, ObserverList& ol)
 {
     read<value_t::boolean>(j, "Enabled", ol.enabled);
@@ -255,7 +249,6 @@ void Config::load() noexcept
     read<value_t::object>(j, "Reload Progress", reloadProgress);
     read<value_t::object>(j, "Recoil Crosshair", recoilCrosshair);
     read<value_t::object>(j, "Noscope Crosshair", noscopeCrosshair);
-    read<value_t::object>(j, "Bomb Zone Hint", bombZoneHint);
     read<value_t::object>(j, "Purchase List", purchaseList);
     read<value_t::object>(j, "Observer List", observerList);
 }
@@ -428,16 +421,6 @@ static void to_json(json& j, const PurchaseList& o)
         }
 }
 
-static void to_json(json& j, const BombZoneHint& o)
-{
-    const BombZoneHint dummy;
-
-    WRITE("Enabled", enabled)
-
-        if (const auto window = ImGui::FindWindowByName("Bomb Zone Hint"))
-            j["Pos"] = window->Pos;
-}
-
 static void to_json(json& j, const ObserverList& o)
 {
     const ObserverList dummy;
@@ -479,8 +462,6 @@ void Config::save() noexcept
         j["Recoil Crosshair"] = recoilCrosshair;
     if (noscopeCrosshair != ColorToggleThickness{})
         j["Noscope Crosshair"] = noscopeCrosshair;
-    if (bombZoneHint != BombZoneHint{})
-        j["Bomb Zone Hint"] = bombZoneHint;
     if (purchaseList != PurchaseList{})
         j["Purchase List"] = purchaseList;
     if (observerList != ObserverList{})

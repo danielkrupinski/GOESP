@@ -197,26 +197,6 @@ void Misc::purchaseList(GameEvent* event) noexcept
     }
 }
 
-void Misc::drawBombZoneHint() noexcept
-{
-    if (!config->bombZoneHint.enabled)
-        return;
-
-    GameData::Lock lock;
-    const auto& localPlayerData = GameData::local();
-
-    if (!gui->open && (!localPlayerData.exists || !localPlayerData.alive || !localPlayerData.inBombZone))
-        return;
-
-    if (config->bombZoneHint.pos != ImVec2{}) {
-        ImGui::SetNextWindowPos(config->bombZoneHint.pos);
-        config->bombZoneHint.pos = {};
-    }
-    ImGui::Begin("Bomb Zone Hint", nullptr, ImGuiWindowFlags_NoDecoration | (gui->open ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoInputs));
-    ImGui::TextUnformatted("You're in bomb zone!");
-    ImGui::End();
-}
-
 void Misc::drawObserverList() noexcept
 {
     if (!config->observerList.enabled)

@@ -251,17 +251,6 @@ struct PurchaseList {
     }
 };
 
-struct BombZoneHint {
-    bool enabled = false;
-    ImVec2 pos;
-
-    auto operator==(const BombZoneHint& other) const
-    {
-        return enabled == other.enabled
-            && pos == other.pos;
-    }
-};
-
 struct ObserverList {
     bool enabled = false;
     bool noTitleBar = false;
