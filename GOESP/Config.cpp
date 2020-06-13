@@ -273,8 +273,8 @@ static void to_json(json& j, const Color& o)
     const Color dummy;
 
     WRITE("Color", color)
-        WRITE("Rainbow", rainbow)
-        WRITE("Rainbow Speed", rainbowSpeed)
+    WRITE("Rainbow", rainbow)
+    WRITE("Rainbow Speed", rainbowSpeed)
 }
 
 static void to_json(json& j, const ColorToggle& o)
@@ -282,7 +282,7 @@ static void to_json(json& j, const ColorToggle& o)
     const ColorToggle dummy;
 
     WRITE_BASE(Color)
-        WRITE("Enabled", enabled)
+    WRITE("Enabled", enabled)
 }
 
 static void to_json(json& j, const ColorToggleRounding& o)
@@ -290,7 +290,7 @@ static void to_json(json& j, const ColorToggleRounding& o)
     const ColorToggleRounding dummy;
 
     WRITE_BASE(ColorToggle)
-        WRITE("Rounding", rounding)
+    WRITE("Rounding", rounding)
 }
 
 static void to_json(json& j, const ColorToggleThickness& o)
@@ -298,7 +298,7 @@ static void to_json(json& j, const ColorToggleThickness& o)
     const ColorToggleThickness dummy;
 
     WRITE_BASE(ColorToggle)
-        WRITE("Thickness", thickness)
+    WRITE("Thickness", thickness)
 }
 
 static void to_json(json& j, const ColorToggleThicknessRounding& o)
@@ -306,7 +306,7 @@ static void to_json(json& j, const ColorToggleThicknessRounding& o)
     const ColorToggleThicknessRounding dummy;
 
     WRITE_BASE(ColorToggleRounding)
-        WRITE("Thickness", thickness)
+    WRITE("Thickness", thickness)
 }
 
 static void to_json(json& j, const Font& o)
@@ -321,7 +321,7 @@ static void to_json(json& j, const Snapline& o)
     const Snapline dummy;
 
     WRITE_BASE(ColorToggleThickness)
-        WRITE("Type", type)
+    WRITE("Type", type)
 }
 
 static void to_json(json& j, const Box& o)
@@ -329,8 +329,8 @@ static void to_json(json& j, const Box& o)
     const Box dummy;
 
     WRITE_BASE(ColorToggleThicknessRounding)
-        WRITE("Type", type)
-        WRITE("Scale", scale)
+    WRITE("Type", type)
+    WRITE("Scale", scale)
 }
 
 static void to_json(json& j, const Shared& o)
@@ -338,13 +338,13 @@ static void to_json(json& j, const Shared& o)
     const Shared dummy;
 
     WRITE("Enabled", enabled)
-        WRITE("Use Model Bounds", useModelBounds)
-        WRITE("Font", font)
-        WRITE("Snapline", snapline)
-        WRITE("Box", box)
-        WRITE("Name", name)
-        WRITE("Text Background", textBackground)
-        WRITE("Text Cull Distance", textCullDistance)
+    WRITE("Use Model Bounds", useModelBounds)
+    WRITE("Font", font)
+    WRITE("Snapline", snapline)
+    WRITE("Box", box)
+    WRITE("Name", name)
+    WRITE("Text Background", textBackground)
+    WRITE("Text Cull Distance", textCullDistance)
 }
 
 static void to_json(json& j, const Player& o)
@@ -352,11 +352,11 @@ static void to_json(json& j, const Player& o)
     const Player dummy;
 
     WRITE_BASE(Shared)
-        WRITE("Weapon", weapon)
-        WRITE("Flash Duration", flashDuration)
-        WRITE("Audible Only", audibleOnly)
-        WRITE("Spotted Only", spottedOnly)
-        WRITE("Skeleton", skeleton)
+    WRITE("Weapon", weapon)
+    WRITE("Flash Duration", flashDuration)
+    WRITE("Audible Only", audibleOnly)
+    WRITE("Spotted Only", spottedOnly)
+    WRITE("Skeleton", skeleton)
 }
 
 static void to_json(json& j, const Weapon& o)
@@ -375,7 +375,7 @@ static void to_json(json& j, const Trail& o)
     const Trail dummy;
 
     WRITE("Type", type)
-        WRITE("Time", time)
+    WRITE("Time", time)
 }
 
 static void to_json(json& j, const Trails& o)
@@ -383,9 +383,9 @@ static void to_json(json& j, const Trails& o)
     const Trails dummy;
 
     WRITE("Enabled", enabled)
-        WRITE("Local Player", localPlayer)
-        WRITE("Allies", allies)
-        WRITE("Enemies", enemies)
+    WRITE("Local Player", localPlayer)
+    WRITE("Allies", allies)
+    WRITE("Enemies", enemies)
 }
 
 static void to_json(json& j, const Projectile& o)
@@ -402,7 +402,7 @@ static void to_json(json& j, const ImVec2& o)
     const ImVec2 dummy;
 
     WRITE("X", x)
-        WRITE("Y", y)
+    WRITE("Y", y)
 }
 
 static void to_json(json& j, const PurchaseList& o)
@@ -410,15 +410,15 @@ static void to_json(json& j, const PurchaseList& o)
     const PurchaseList dummy;
 
     WRITE("Enabled", enabled)
-        WRITE("Only During Freeze Time", onlyDuringFreezeTime)
-        WRITE("Show Prices", showPrices)
-        WRITE("No Title Bar", noTitleBar)
-        WRITE("Mode", mode)
+    WRITE("Only During Freeze Time", onlyDuringFreezeTime)
+    WRITE("Show Prices", showPrices)
+    WRITE("No Title Bar", noTitleBar)
+    WRITE("Mode", mode)
 
-        if (const auto window = ImGui::FindWindowByName("Purchases")) {
-            j["Pos"] = window->Pos;
-            j["Size"] = window->SizeFull;
-        }
+    if (const auto window = ImGui::FindWindowByName("Purchases")) {
+        j["Pos"] = window->Pos;
+        j["Size"] = window->SizeFull;
+    }
 }
 
 static void to_json(json& j, const ObserverList& o)
@@ -426,12 +426,12 @@ static void to_json(json& j, const ObserverList& o)
     const ObserverList dummy;
 
     WRITE("Enabled", enabled)
-        WRITE("No Title Bar", noTitleBar)
+    WRITE("No Title Bar", noTitleBar)
 
-        if (const auto window = ImGui::FindWindowByName("Observer List")) {
-            j["Pos"] = window->Pos;
-            j["Size"] = window->SizeFull;
-        }
+    if (const auto window = ImGui::FindWindowByName("Observer List")) {
+        j["Pos"] = window->Pos;
+        j["Size"] = window->SizeFull;
+    }
 }
 
 template <typename T>
