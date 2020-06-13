@@ -53,13 +53,13 @@ public:
     ImVec2 min, max;
     ImVec2 vertices[8];
 
-    BoundingBox(const BaseData& data, const std::array<float, 3>& scale, bool useModelBounds) noexcept
+    BoundingBox(const BaseData& data, const std::array<float, 3>& scale) noexcept
     {
         min.y = min.x = std::numeric_limits<float>::max();
         max.y = max.x = -std::numeric_limits<float>::max();
 
-        const auto& mins = useModelBounds ? data.modelMins : data.obbMins;
-        const auto& maxs = useModelBounds ? data.modelMaxs : data.obbMaxs;
+        const auto& mins = data.obbMins;
+        const auto& maxs = data.obbMaxs;
 
         const auto scaledMins = mins + (maxs - mins) * 2 * (0.25f - scale);
         const auto scaledMaxs = maxs - (maxs - mins) * 2 * (0.25f - scale);
@@ -258,7 +258,7 @@ struct FontPush {
 
 static void renderPlayerBox(const PlayerData& playerData, const Player& config) noexcept
 {
-    const BoundingBox bbox{ playerData, config.box.scale, config.useModelBounds };
+    const BoundingBox bbox{ playerData, config.box.scale };
 
     if (!bbox)
         return;
@@ -289,7 +289,7 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
 
 static void renderWeaponBox(const WeaponData& weaponData, const Weapon& config) noexcept
 {
-    const BoundingBox bbox{ weaponData, config.box.scale, config.useModelBounds };
+    const BoundingBox bbox{ weaponData, config.box.scale };
 
     if (!bbox)
         return;
@@ -311,7 +311,7 @@ static void renderWeaponBox(const WeaponData& weaponData, const Weapon& config) 
 
 static void renderEntityBox(const BaseData& entityData, const char* name, const Shared& config) noexcept
 {
-    const BoundingBox bbox{ entityData, config.box.scale, config.useModelBounds };
+    const BoundingBox bbox{ entityData, config.box.scale };
 
     if (!bbox)
         return;

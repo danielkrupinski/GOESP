@@ -189,13 +189,14 @@ BaseData::BaseData(Entity* entity) noexcept
 {
     distanceToLocal = entity->getAbsOrigin().distTo(localPlayerData.origin);
 
-    if (const auto model = entity->getModel()) {
-        modelMins = model->mins;
-        modelMaxs = model->maxs;
+    if (entity->isPlayer()) {
+        obbMins = entity->getCollideable()->obbMins();
+        obbMaxs = entity->getCollideable()->obbMaxs();
+    } else if (const auto model = entity->getModel()) {
+        obbMins = model->mins;
+        obbMaxs = model->maxs;
     }
 
-    obbMins = entity->getCollideable()->obbMins();
-    obbMaxs = entity->getCollideable()->obbMaxs();
     coordinateFrame = entity->toWorldTransform();
 }
 

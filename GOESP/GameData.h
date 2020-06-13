@@ -64,7 +64,6 @@ struct BaseData {
     BaseData(Entity* entity) noexcept;
 
     float distanceToLocal;
-    Vector modelMins, modelMaxs;
     Vector obbMins, obbMaxs;
     Matrix3x4 coordinateFrame;
 };
