@@ -94,7 +94,14 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
 
 static BOOL WINAPI setCursorPos(int X, int Y) noexcept
 {
-    return gui->open || hooks->setCursorPos(X, Y);
+    if (gui->open) {
+        POINT p;
+        GetCursorPos(&p);
+        X = p.x;
+        Y = p.y;
+    }
+
+    return hooks->setCursorPos(X, Y);
 }
 
 Hooks::Hooks(HMODULE module) noexcept
