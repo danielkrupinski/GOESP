@@ -182,7 +182,10 @@ void LocalPlayerData::update() noexcept
     }
     fov = localPlayer->fovStart();
     aimPunch = localPlayer->getAimPunch();
-    origin = localPlayer->getAbsOrigin();
+    if (const auto obs = localPlayer->getObserverTarget())
+        origin = obs->getAbsOrigin();
+    else
+        origin = localPlayer->getAbsOrigin();
 }
 
 BaseData::BaseData(Entity* entity) noexcept
