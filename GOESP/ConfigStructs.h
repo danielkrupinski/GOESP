@@ -108,7 +108,6 @@ struct Box : ColorToggleThicknessRounding {
 
 struct Shared {
     bool enabled = false;
-    bool useModelBounds = false;
     Font font;
     Snapline snapline;
     Box box;
@@ -119,7 +118,6 @@ struct Shared {
     auto operator==(const Shared& s) const
     {
         return enabled == s.enabled
-            && useModelBounds == s.useModelBounds
             && font == s.font
             && snapline == s.snapline
             && box == s.box

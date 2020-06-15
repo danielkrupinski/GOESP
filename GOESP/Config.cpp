@@ -155,7 +155,6 @@ static void from_json(const json& j, Box& b)
 static void from_json(const json& j, Shared& s)
 {
     read<value_t::boolean>(j, "Enabled", s.enabled);
-    read<value_t::boolean>(j, "Use Model Bounds", s.useModelBounds);
     read<value_t::object>(j, "Font", s.font);
     read<value_t::object>(j, "Snapline", s.snapline);
     read<value_t::object>(j, "Box", s.box);
@@ -338,7 +337,6 @@ static void to_json(json& j, const Shared& o)
     const Shared dummy;
 
     WRITE("Enabled", enabled)
-    WRITE("Use Model Bounds", useModelBounds)
     WRITE("Font", font)
     WRITE("Snapline", snapline)
     WRITE("Box", box)

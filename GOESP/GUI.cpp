@@ -380,7 +380,6 @@ void GUI::drawESPTab() noexcept
             ImGui::SetNextItemWidth(95.0f);
             ImGui::Combo("Type", &sharedConfig.box.type, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
             ImGui::SetNextItemWidth(275.0f);
-
             ImGui::SliderFloat3("Scale", sharedConfig.box.scale.data(), 0.0f, 0.50f, "%.2f");
             ImGui::EndPopup();
         }
@@ -390,8 +389,6 @@ void GUI::drawESPTab() noexcept
         ImGuiCustom::colorPicker("Name", sharedConfig.name);
         ImGui::SameLine(spacing);
         ImGuiCustom::colorPicker("Text Background", sharedConfig.textBackground);
-        // ImGui::Checkbox("Use Model Bounds", &sharedConfig.useModelBounds);
-        // ImGui::SameLine();
         ImGui::SetNextItemWidth(95.0f);
         ImGui::InputFloat("Text Cull Distance", &sharedConfig.textCullDistance, 0.4f, 0.8f, "%.1fm");
         sharedConfig.textCullDistance = std::clamp(sharedConfig.textCullDistance, 0.0f, 999.9f);
