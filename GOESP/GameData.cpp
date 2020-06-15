@@ -33,11 +33,11 @@ static std::list<ProjectileData> projectileData;
 
 void GameData::update() noexcept
 {
-    static auto lastDataGather = 0.0f;
-    if (lastDataGather == memory->globalVars->realtime)
+    static int lastFrame;
+    if (lastFrame == memory->globalVars->framecount)
         return;
 
-    lastDataGather = memory->globalVars->realtime;
+    lastFrame = memory->globalVars->framecount;
 
     Lock lock;
 
