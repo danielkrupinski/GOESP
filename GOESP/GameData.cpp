@@ -33,6 +33,12 @@ static std::list<ProjectileData> projectileData;
 
 void GameData::update() noexcept
 {
+    static auto lastDataGather = 0.0f;
+    if (lastDataGather == memory->globalVars->realtime)
+        return;
+
+    lastDataGather = memory->globalVars->realtime;
+
     Lock lock;
 
     playerData.clear();
