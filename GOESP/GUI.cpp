@@ -292,7 +292,8 @@ void GUI::drawESPTab() noexcept
                 const auto itemEnabled = getConfigShared(i, items[j]).enabled;
 
                 for (const auto subItem : subItems) {
-                    if ((categoryEnabled || itemEnabled) && !config->weapons[subItem].enabled)
+                    auto& subItemConfig = config->weapons[subItem];
+                    if ((categoryEnabled || itemEnabled) && !subItemConfig.enabled)
                         continue;
 
                     if (ImGui::Selectable(subItem, currentCategory == i && selectedSubItem && std::string_view{ currentItem } == subItem)) {
@@ -302,29 +303,29 @@ void GUI::drawESPTab() noexcept
                     }
 
                     if (ImGui::BeginDragDropSource()) {
-                        ImGui::SetDragDropPayload("Weapon", &config->weapons[subItem], sizeof(Weapon), ImGuiCond_Once);
+                        ImGui::SetDragDropPayload("Weapon", &subItemConfig, sizeof(Weapon), ImGuiCond_Once);
                         ImGui::EndDragDropSource();
                     }
 
                     if (ImGui::BeginDragDropTarget()) {
                         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Player")) {
                             const auto& data = *(Player*)payload->Data;
-                            config->weapons[subItem] = data;
+                            subItemConfig = data;
                         }
 
                         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Weapon")) {
                             const auto& data = *(Weapon*)payload->Data;
-                            config->weapons[subItem] = data;
+                            subItemConfig = data;
                         }
 
                         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Projectile")) {
                             const auto& data = *(Projectile*)payload->Data;
-                            config->weapons[subItem] = data;
+                            subItemConfig = data;
                         }
 
                         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity")) {
                             const auto& data = *(Shared*)payload->Data;
-                            config->weapons[subItem] = data;
+                            subItemConfig = data;
                         }
                         ImGui::EndDragDropTarget();
                     }
