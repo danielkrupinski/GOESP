@@ -411,11 +411,12 @@ void GUI::drawESPTab() noexcept
         } else if (currentCategory == 3) {
             ImGui::Checkbox("Trails", &config->projectiles[currentItem].trails.enabled);
             ImGui::SameLine();
-           
-            if (ImGui::Button("..."))
-                ImGui::OpenPopup("##trails");
+            ImGui::PushID("Trails");
 
-            if (ImGui::BeginPopup("##trails")) {
+            if (ImGui::Button("..."))
+                ImGui::OpenPopup("");
+
+            if (ImGui::BeginPopup("")) {
                 constexpr auto trailPicker = [](const char* name, Trail& trail) noexcept {
                     ImGui::PushID(name);
                     ImGuiCustom::colorPicker(name, trail);
@@ -434,6 +435,8 @@ void GUI::drawESPTab() noexcept
                 trailPicker("Enemies", config->projectiles[currentItem].trails.enemies);
                 ImGui::EndPopup();
             }
+
+            ImGui::PopID();
         }
     }
 
