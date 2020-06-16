@@ -409,7 +409,9 @@ void GUI::drawESPTab() noexcept
            // if (currentItem != 7)
                 ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
         } else if (currentCategory == 3) {
-            ImGui::Checkbox("Trails", &config->projectiles[currentItem].trails.enabled);
+            auto& trails = config->projectiles[currentItem].trails;
+
+            ImGui::Checkbox("Trails", &trails.enabled);
             ImGui::SameLine();
             ImGui::PushID("Trails");
 
@@ -430,9 +432,9 @@ void GUI::drawESPTab() noexcept
                     ImGui::PopID();
                 };
 
-                trailPicker("Local Player", config->projectiles[currentItem].trails.localPlayer);
-                trailPicker("Allies", config->projectiles[currentItem].trails.allies);
-                trailPicker("Enemies", config->projectiles[currentItem].trails.enemies);
+                trailPicker("Local Player", trails.localPlayer);
+                trailPicker("Allies", trails.allies);
+                trailPicker("Enemies", trails.enemies);
                 ImGui::EndPopup();
             }
 
