@@ -40,7 +40,7 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
     ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
     interfaces->inputSystem->enableInput(!gui->open);
 
-    return CallWindowProc(hooks->wndProc, window, msg, wParam, lParam);
+    return CallWindowProcW(hooks->wndProc, window, msg, wParam, lParam);
 }
 
 static HRESULT D3DAPI reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* params) noexcept
@@ -111,7 +111,7 @@ Hooks::Hooks(HMODULE module) noexcept
     memory = std::make_unique<const Memory>();
 
     window = FindWindowW(L"Valve001", nullptr);
-    wndProc = WNDPROC(SetWindowLongPtrA(window, GWLP_WNDPROC, LONG_PTR(::wndProc)));
+    wndProc = WNDPROC(SetWindowLongPtrW(window, GWLP_WNDPROC, LONG_PTR(::wndProc)));
 }
 
 void Hooks::install() noexcept
@@ -151,7 +151,7 @@ void Hooks::uninstall() noexcept
     *reinterpret_cast<void**>(memory->present) = present;
     *reinterpret_cast<void**>(memory->setCursorPos) = setCursorPos;
 
-    SetWindowLongPtrA(window, GWLP_WNDPROC, LONG_PTR(wndProc));
+    SetWindowLongPtrW(window, GWLP_WNDPROC, LONG_PTR(wndProc));
 
     if (HANDLE thread = CreateThread(nullptr, 0, LPTHREAD_START_ROUTINE(waitOnUnload), module, 0, nullptr))
         CloseHandle(thread);
