@@ -286,8 +286,12 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
         const auto radius = std::max(5.0f - playerData.distanceToLocal / 600.0f, 1.0f);
         flashDurationPos.y -= radius;
 
+        const auto color = Helpers::calculateColor(config.flashDuration);
+        drawList->PathArcTo(flashDurationPos + ImVec2{ 1.0f, 1.0f }, radius, IM_PI / 2 - (playerData.flashDuration / 255.0f * IM_PI), IM_PI / 2 + (playerData.flashDuration / 255.0f * IM_PI), 40);
+        drawList->PathStroke(color & IM_COL32_A_MASK, false, 0.9f + radius * 0.1f);
+
         drawList->PathArcTo(flashDurationPos, radius, IM_PI / 2 - (playerData.flashDuration / 255.0f * IM_PI), IM_PI / 2 + (playerData.flashDuration / 255.0f * IM_PI), 40);
-        drawList->PathStroke(Helpers::calculateColor(config.flashDuration), false, 0.9f + radius * 0.1f);
+        drawList->PathStroke(color, false, 0.9f + radius * 0.1f);
     }
 
     if (config.weapon.enabled && !playerData.activeWeapon.empty())
