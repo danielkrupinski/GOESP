@@ -389,31 +389,25 @@ void GUI::drawESPTab() noexcept
 
         ImGuiCustom::colorPicker("Name", sharedConfig.name);
         ImGui::SameLine(spacing);
-        ImGuiCustom::colorPicker("Text Background", sharedConfig.textBackground);
-        ImGui::SetNextItemWidth(95.0f);
-        ImGui::InputFloat("Text Cull Distance", &sharedConfig.textCullDistance, 0.4f, 0.8f, "%.1fm");
-        sharedConfig.textCullDistance = std::clamp(sharedConfig.textCullDistance, 0.0f, 999.9f);
 
         if (currentCategory < 2) {
             auto& playerConfig = getConfigPlayer(currentCategory, currentItem);
 
             ImGuiCustom::colorPicker("Weapon", playerConfig.weapon);
-            ImGui::SameLine(spacing);
             ImGuiCustom::colorPicker("Flash Duration", playerConfig.flashDuration);
-            ImGui::Checkbox("Audible Only", &playerConfig.audibleOnly);
             ImGui::SameLine(spacing);
             ImGuiCustom::colorPicker("Skeleton", playerConfig.skeleton);
+            ImGui::Checkbox("Audible Only", &playerConfig.audibleOnly);
+            ImGui::SameLine(spacing);
             ImGui::Checkbox("Spotted Only", &playerConfig.spottedOnly);
         } else if (currentCategory == 2) {
             auto& weaponConfig = config->weapons[currentItem];
-
-           // if (currentItem != 7)
-                ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
+            ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
         } else if (currentCategory == 3) {
             auto& trails = config->projectiles[currentItem].trails;
 
             ImGui::Checkbox("Trails", &trails.enabled);
-            ImGui::SameLine();
+            ImGui::SameLine(spacing + 77.0f);
             ImGui::PushID("Trails");
 
             if (ImGui::Button("..."))
@@ -441,6 +435,10 @@ void GUI::drawESPTab() noexcept
 
             ImGui::PopID();
         }
+
+        ImGui::SetNextItemWidth(95.0f);
+        ImGui::InputFloat("Text Cull Distance", &sharedConfig.textCullDistance, 0.4f, 0.8f, "%.1fm");
+        sharedConfig.textCullDistance = std::clamp(sharedConfig.textCullDistance, 0.0f, 999.9f);
     }
 
     ImGui::EndChild();

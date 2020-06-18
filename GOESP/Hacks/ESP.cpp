@@ -194,10 +194,14 @@ static ImVec2 renderText(float distance, float cullDistance, const Color& textCf
     const auto horizontalOffset = centered ? textSize.x / 2 : 0.0f;
     const auto verticalOffset = adjustHeight ? textSize.y : 0.0f;
 
+    /*
+
     if (backgroundCfg.enabled) {
         const ImU32 color = Helpers::calculateColor(backgroundCfg);
         drawList->AddRectFilled({ pos.x - horizontalOffset - 2, pos.y - verticalOffset - 2 }, { pos.x - horizontalOffset + textSize.x + 2, pos.y - verticalOffset + textSize.y + 2 }, color, backgroundCfg.rounding);
     }
+
+    */
 
     const auto color = Helpers::calculateColor(textCfg);
     drawList->AddText({ pos.x - horizontalOffset + 1.0f, pos.y - verticalOffset + 1.0f }, color & IM_COL32_A_MASK, text);
