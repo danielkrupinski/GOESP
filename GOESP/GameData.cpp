@@ -111,6 +111,7 @@ void GameData::update() noexcept
     }
 
     std::sort(playerData.begin(), playerData.end(), [](const PlayerData& a, const PlayerData& b) { return a.distanceToLocal > b.distanceToLocal; });
+    std::sort(weaponData.begin(), weaponData.end(), [](const WeaponData& a, const WeaponData& b) { return a.distanceToLocal > b.distanceToLocal; });
 
     for (auto it = projectileData.begin(); it != projectileData.end();) {
         if (!interfaces->entityList->getEntityFromHandle(it->handle)) {
