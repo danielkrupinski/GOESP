@@ -200,10 +200,11 @@ void LocalPlayerData::update() noexcept
 BaseData::BaseData(Entity* entity) noexcept
 {
     distanceToLocal = entity->getAbsOrigin().distTo(localPlayerData.origin);
-
+ 
     if (entity->isPlayer()) {
-        obbMins = entity->getCollideable()->obbMins();
-        obbMaxs = entity->getCollideable()->obbMaxs();
+        const auto collideable = entity->getCollideable();
+        obbMins = collideable->obbMins();
+        obbMaxs = collideable->obbMaxs();
     } else if (const auto model = entity->getModel()) {
         obbMins = model->mins;
         obbMaxs = model->maxs;
