@@ -112,7 +112,7 @@ struct Shared {
     Snapline snapline;
     Box box;
     ColorToggle name;
-    ColorToggleRounding textBackground{ 0.0f, 0.0f, 0.0f, 1.0f };
+    [[deprecated]] ColorToggleRounding textBackground{ 0.0f, 0.0f, 0.0f, 1.0f };
     float textCullDistance = 0.0f;
 
     auto operator==(const Shared& s) const
