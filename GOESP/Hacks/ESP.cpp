@@ -437,13 +437,6 @@ void ESP::render() noexcept
 
     GameData::Lock lock;
 
-    for (const auto& player : GameData::players()) {
-        auto& playerConfig = player.enemy ? config->enemies : config->allies;
-
-        if (!renderPlayerEsp(player, playerConfig["All"]))
-            renderPlayerEsp(player, playerConfig[player.visible ? "Visible" : "Occluded"]);
-    }
-
     for (const auto& weapon : GameData::weapons())
         renderWeaponEsp(weapon, config->weapons[weapon.group], config->weapons[weapon.name]);
 
@@ -457,4 +450,11 @@ void ESP::render() noexcept
 
     for (const auto& projectile : GameData::projectiles())
         renderProjectileEsp(projectile, config->projectiles["All"], config->projectiles[projectile.name], projectile.name);
+
+    for (const auto& player : GameData::players()) {
+        auto& playerConfig = player.enemy ? config->enemies : config->allies;
+
+        if (!renderPlayerEsp(player, playerConfig["All"]))
+            renderPlayerEsp(player, playerConfig[player.visible ? "Visible" : "Occluded"]);
+    }
 }
