@@ -191,7 +191,9 @@ void LocalPlayerData::update() noexcept
     }
     fov = localPlayer->fovStart();
     aimPunch = localPlayer->getAimPunch();
-    if (const auto obs = localPlayer->getObserverTarget(); obs && localPlayer->getObserverMode() != ObsMode::Roaming)
+
+    const auto obsMode = localPlayer->getObserverMode();
+    if (const auto obs = localPlayer->getObserverTarget(); obs && obsMode != ObsMode::Roaming && obsMode != ObsMode::Deathcam)
         origin = obs->getAbsOrigin();
     else
         origin = localPlayer->getAbsOrigin();
