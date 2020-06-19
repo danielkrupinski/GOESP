@@ -112,6 +112,7 @@ void GameData::update() noexcept
 
     std::sort(playerData.begin(), playerData.end());
     std::sort(weaponData.begin(), weaponData.end());
+    std::sort(entityData.begin(), entityData.end());
 
     for (auto it = projectileData.begin(); it != projectileData.end();) {
         if (!interfaces->entityList->getEntityFromHandle(it->handle)) {
