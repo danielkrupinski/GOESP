@@ -29,7 +29,7 @@ Memory::Memory() noexcept
         if (!GetModuleHandleW(L"discordhook"))
             goto steamOverlay;
         reset = *reinterpret_cast<std::uintptr_t*>(findPattern(L"discordhook", "\x8B\x1F\x68") + 3);
-        present = *reinterpret_cast<std::uintptr_t*>(findPattern(L"discordhook", "\x8B\x46\x10\x68") + 4);
+        present = *reinterpret_cast<std::uintptr_t*>(findPattern(L"discordhook", "\x4E\x10\x8B\x45\xFC\x68") + 6);
         setCursorPos = *reinterpret_cast<std::uintptr_t*>(findPattern(L"discordhook", "\x74\x1B\x8B\x4D\x08") + 32);
     } else {
     steamOverlay:
