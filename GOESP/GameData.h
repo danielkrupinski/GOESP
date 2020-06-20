@@ -105,7 +105,7 @@ struct PlayerData : BaseData {
     bool audible;
     bool spotted;
     float flashDuration;
-    std::string name;
+    char name[128];
     std::string activeWeapon;
     std::vector<std::pair<Vector, Vector>> bones;
 };

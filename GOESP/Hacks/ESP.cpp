@@ -268,8 +268,8 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
 
     FontPush font{ config.font.name, playerData.distanceToLocal };
 
-    if (config.name.enabled && !playerData.name.empty()) {
-        const auto nameSize = renderText(playerData.distanceToLocal, config.textCullDistance, config.name, playerData.name.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+    if (config.name.enabled) {
+        const auto nameSize = renderText(playerData.distanceToLocal, config.textCullDistance, config.name, playerData.name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
         flashDurationPos.y -= nameSize.y;
     }
 

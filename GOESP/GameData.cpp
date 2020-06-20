@@ -289,7 +289,7 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
     audible = isEntityAudible(entity->index());
     spotted = entity->spotted();
     flashDuration = entity->flashDuration();
-    name = entity->getPlayerName();
+    entity->getPlayerName(name);
 
     if (const auto weapon = entity->getActiveWeapon()) {
         audible = audible || isEntityAudible(weapon->index());
