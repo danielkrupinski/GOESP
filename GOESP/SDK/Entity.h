@@ -88,6 +88,7 @@ public:
     bool canSee(Entity* other, const Vector& pos) noexcept;
     bool visibleTo(Entity* other) noexcept;
     [[nodiscard]] std::string getPlayerName() noexcept;
+    void getPlayerName(char(&out)[128]) noexcept;
 
     PROP(hitboxSet, 0x9FC, int)                                                    // CBaseAnimating->m_nHitboxSet
 

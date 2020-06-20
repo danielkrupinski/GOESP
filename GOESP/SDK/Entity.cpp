@@ -48,9 +48,18 @@ bool Entity::visibleTo(Entity* other) noexcept
 
 [[nodiscard]] std::string Entity::getPlayerName() noexcept
 {
+    char name[128];
+    getPlayerName(name);
+    return name;
+}
+
+void Entity::getPlayerName(char(&out)[128]) noexcept
+{
     PlayerInfo playerInfo;
-    if (!interfaces->engine->getPlayerInfo(index(), playerInfo))
-        return "unknown";
+    if (!interfaces->engine->getPlayerInfo(index(), playerInfo)) {
+        strcpy_s(out, "unknown");
+        return;
+    }
 
     auto end = std::remove(playerInfo.name, playerInfo.name + std::strlen(playerInfo.name), '\n');
     *end = '\0';
@@ -63,5 +72,5 @@ bool Entity::visibleTo(Entity* other) noexcept
     NormalizeString(NormalizationKC, wide, -1, wideNormalized, 128);
     interfaces->localize->convertUnicodeToAnsi(wideNormalized, playerInfo.name, 128);
 
-    return playerInfo.name;
+    strcpy_s(out, playerInfo.name);
 }
