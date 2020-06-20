@@ -52,9 +52,9 @@ bool Entity::visibleTo(Entity* other) noexcept
     if (!interfaces->engine->getPlayerInfo(index(), playerInfo))
         return "unknown";
 
-    auto end = std::remove(std::begin(playerInfo.name), std::end(playerInfo.name), '\n');
+    auto end = std::remove(playerInfo.name, playerInfo.name + std::strlen(playerInfo.name), '\n');
     *end = '\0';
-    end = std::unique(std::begin(playerInfo.name), std::end(playerInfo.name), [](char a, char b) { return a == b && a == ' '; });
+    end = std::unique(playerInfo.name, end, [](char a, char b) { return a == b && a == ' '; });
     *end = '\0';
 
     wchar_t wide[128];
