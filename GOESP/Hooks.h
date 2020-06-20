@@ -18,9 +18,17 @@ public:
     void install() noexcept;
     void uninstall() noexcept;
 
+    enum class State {
+        NotInstalled,
+        Installing,
+        Installed
+    };
+
+    constexpr auto getState() noexcept { return state; }
 private:
     HMODULE module;
     HWND window;
+    State state = State::NotInstalled;
 };
 
 inline std::unique_ptr<Hooks> hooks;

@@ -21,24 +21,16 @@
 
 static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
-    static const auto once = [](HWND window) noexcept {
-        eventListener = std::make_unique<EventListener>();
-        config = std::make_unique<Config>("GOESP");
-
-        ImGui::CreateContext();
-        ImGui_ImplWin32_Init(window);
-        gui = std::make_unique<GUI>();
-
+    if (hooks->getState() == Hooks::State::NotInstalled)
         hooks->install();
 
-        return true;
-    }(window);
+    if (hooks->getState() == Hooks::State::Installed) {
+        GameData::update();
 
-    GameData::update();
-
-    LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
-    interfaces->inputSystem->enableInput(!gui->open);
+        LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+        ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
+        interfaces->inputSystem->enableInput(!gui->open);
+    }
 
     return CallWindowProcW(hooks->wndProc, window, msg, wParam, lParam);
 }
@@ -106,17 +98,22 @@ Hooks::Hooks(HMODULE module) noexcept
     _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
     _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
 
-    // interfaces and memory shouldn't be initialized in wndProc because they show MessageBox on error which would cause deadlock
-    interfaces = std::make_unique<const Interfaces>();
-    memory = std::make_unique<const Memory>();
-
     window = FindWindowW(L"Valve001", nullptr);
     wndProc = WNDPROC(SetWindowLongPtrW(window, GWLP_WNDPROC, LONG_PTR(::wndProc)));
 }
 
 void Hooks::install() noexcept
 {
-    assert(memory);
+    state = State::Installing;
+
+    interfaces = std::make_unique<const Interfaces>();
+    memory = std::make_unique<const Memory>();
+    eventListener = std::make_unique<EventListener>();
+    config = std::make_unique<Config>("GOESP");
+
+    ImGui::CreateContext();
+    ImGui_ImplWin32_Init(window);
+    gui = std::make_unique<GUI>();
 
     reset = *reinterpret_cast<decltype(reset)*>(memory->reset);
     *reinterpret_cast<decltype(::reset)**>(memory->reset) = ::reset;
@@ -126,6 +123,8 @@ void Hooks::install() noexcept
 
     setCursorPos = *reinterpret_cast<decltype(setCursorPos)*>(memory->setCursorPos);
     *reinterpret_cast<decltype(::setCursorPos)**>(memory->setCursorPos) = ::setCursorPos;
+
+    state = State::Installed;
 }
 
 extern "C" BOOL WINAPI _CRT_INIT(HMODULE module, DWORD reason, LPVOID reserved);
