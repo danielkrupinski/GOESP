@@ -127,6 +127,8 @@ struct LootCrateData : BaseData {
 };
 
 struct ObserverData {
+    ObserverData(Entity* entity, Entity* obs, bool targetIsLocalPlayer) noexcept;
+
     std::string name;
     std::string target;
     bool targetIsLocalPlayer;
