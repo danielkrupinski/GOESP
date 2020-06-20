@@ -363,7 +363,7 @@ void GUI::drawESPTab() noexcept
 
         ImGui::Separator();
 
-        constexpr auto spacing = 220.0f;
+        constexpr auto spacing = 250.0f;
         ImGuiCustom::colorPicker("Snapline", sharedConfig.snapline);
         ImGui::SameLine();
         ImGui::SetNextItemWidth(90.0f);
