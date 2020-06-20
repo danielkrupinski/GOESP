@@ -57,6 +57,7 @@ public:
     VIRTUAL_METHOD(int&, handle, 2, (), (this))
     VIRTUAL_METHOD(Collideable*, getCollideable, 3, (), (this))
     VIRTUAL_METHOD(Vector&, getAbsOrigin, 10, (), (this))
+    VIRTUAL_METHOD(int, getHealth, 121, (), (this))
     VIRTUAL_METHOD(bool, isAlive, 155, (), (this))
     VIRTUAL_METHOD(bool, isPlayer, 157, (), (this))
     VIRTUAL_METHOD(bool, isWeapon, 165, (), (this))
