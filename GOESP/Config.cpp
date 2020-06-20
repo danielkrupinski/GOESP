@@ -159,7 +159,6 @@ static void from_json(const json& j, Shared& s)
     read<value_t::object>(j, "Snapline", s.snapline);
     read<value_t::object>(j, "Box", s.box);
     read<value_t::object>(j, "Name", s.name);
-    read<value_t::object>(j, "Text Background", s.textBackground);
     read_number(j, "Text Cull Distance", s.textCullDistance);
 }
 
@@ -341,7 +340,6 @@ static void to_json(json& j, const Shared& o)
     WRITE("Snapline", snapline)
     WRITE("Box", box)
     WRITE("Name", name)
-    WRITE("Text Background", textBackground)
     WRITE("Text Cull Distance", textCullDistance)
 }
 
