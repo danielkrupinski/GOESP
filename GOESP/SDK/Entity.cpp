@@ -51,14 +51,14 @@ bool Entity::visibleTo(Entity* other) noexcept
     if (!interfaces->engine->getPlayerInfo(index(), playerInfo))
         return "unknown";
 
+    auto end = std::remove(std::begin(playerInfo.name), std::end(playerInfo.name), '\n');
+    *end = '\0';
+
     wchar_t wide[128];
     interfaces->localize->convertAnsiToUnicode(playerInfo.name, wide, sizeof(wide));
     wchar_t wideNormalized[128];
     NormalizeString(NormalizationKC, wide, -1, wideNormalized, 128);
     interfaces->localize->convertUnicodeToAnsi(wideNormalized, playerInfo.name, 128);
 
-    std::string playerName = playerInfo.name;
-
-    playerName.erase(std::remove(playerName.begin(), playerName.end(), '\n'), playerName.cend());
-    return playerName;
+    return playerInfo.name;
 }
