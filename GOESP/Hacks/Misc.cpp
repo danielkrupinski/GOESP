@@ -239,7 +239,7 @@ void Misc::drawObserverList() noexcept
         if (!observer.targetIsLocalPlayer)
             continue;
 
-        ImGui::TextWrapped("%s", observer.name.c_str());
+        ImGui::TextWrapped("%s", observer.name);
     }
 
     ImGui::End();

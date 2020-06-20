@@ -440,7 +440,7 @@ LootCrateData::LootCrateData(Entity* entity) noexcept : BaseData{ entity }
 
 ObserverData::ObserverData(Entity* entity, Entity* obs, bool targetIsLocalPlayer) noexcept
 {
-    name = entity->getPlayerName();
-    target = obs->getPlayerName();
+    entity->getPlayerName(name);
+    obs->getPlayerName(target);
     this->targetIsLocalPlayer = targetIsLocalPlayer;
 }
