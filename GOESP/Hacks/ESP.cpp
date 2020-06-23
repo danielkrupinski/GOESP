@@ -362,6 +362,8 @@ static void drawPlayerSkeleton(const ColorToggleThickness& config, const std::ve
 
     const auto color = Helpers::calculateColor(config);
 
+    std::vector<std::pair<ImVec2, ImVec2>> points, shadowPoints;
+
     for (const auto& [bone, parent] : bones) {
         ImVec2 bonePoint;
         if (!worldToScreen(bone, bonePoint))
@@ -371,8 +373,15 @@ static void drawPlayerSkeleton(const ColorToggleThickness& config, const std::ve
         if (!worldToScreen(parent, parentPoint))
             continue;
 
-        drawList->AddLine(bonePoint, parentPoint, color, config.thickness);
+        points.emplace_back(bonePoint, parentPoint);
+        shadowPoints.emplace_back(bonePoint + ImVec2{ 1.0f, 1.0f }, parentPoint + ImVec2{ 1.0f, 1.0f });
     }
+
+    for (const auto& [bonePoint, parentPoint] : shadowPoints)
+        drawList->AddLine(bonePoint, parentPoint, color & IM_COL32_A_MASK, config.thickness);
+
+    for (const auto& [bonePoint, parentPoint] : shadowPoints)
+        drawList->AddLine(bonePoint, parentPoint, color, config.thickness);
 }
 
 static bool renderPlayerEsp(const PlayerData& playerData, const Player& playerConfig) noexcept
