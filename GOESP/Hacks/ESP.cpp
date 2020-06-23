@@ -332,23 +332,27 @@ static void drawProjectileTrajectory(const Trail& config, const std::vector<std:
     if (!config.enabled)
         return;
 
-    std::vector<ImVec2> points;
+    std::vector<ImVec2> points, shadowPoints;
 
     const auto color = Helpers::calculateColor(config);
 
     for (const auto& [time, point] : trajectory) {
         if (ImVec2 pos; time + config.time >= memory->globalVars->realtime && worldToScreen(point, pos)) {
-            if (config.type == Trail::Line)
+            if (config.type == Trail::Line) {
                 points.push_back(pos);
-            else if (config.type == Trail::Circles)
+                shadowPoints.push_back(pos + ImVec2{ 1.0f, 1.0f });
+            } else if (config.type == Trail::Circles) {
                 drawList->AddCircle(pos, 3.5f - point.distTo(GameData::local().origin) / 700.0f, color, 12, config.thickness);
-            else if (config.type == Trail::FilledCircles)
+            } else if (config.type == Trail::FilledCircles) {
                 drawList->AddCircleFilled(pos, 3.5f - point.distTo(GameData::local().origin) / 700.0f, color);
+            }
         }
     }
 
-    if (config.type == Trail::Line)
+    if (config.type == Trail::Line) {
+        drawList->AddPolyline(shadowPoints.data(), shadowPoints.size(), color & IM_COL32_A_MASK, false, config.thickness);
         drawList->AddPolyline(points.data(), points.size(), color, false, config.thickness);
+    }
 }
 
 static void drawPlayerSkeleton(const ColorToggleThickness& config, const std::vector<std::pair<Vector, Vector>>& bones) noexcept
