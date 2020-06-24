@@ -256,8 +256,8 @@ void Config::load() noexcept
 // - object holding default values named 'dummy'
 // - object to write to json named 'o'
 #define WRITE(name, valueName) \
-if (o.##valueName != dummy.##valueName) \
-    j[name] = o.##valueName;
+if (o.valueName != dummy.valueName) \
+    j[name] = o.valueName;
 
 // WRITE_BASE macro requires:
 // - json object named 'j'
