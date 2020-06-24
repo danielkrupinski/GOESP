@@ -89,11 +89,11 @@ static constexpr void read_number(const json& j, const char* key, T& o) noexcept
 }
 
 template <typename T>
-static constexpr void read_map(const json& j, const char* key, T& o) noexcept
+static constexpr void read_map(const json& j, const char* key, std::unordered_map<std::string, T>& o) noexcept
 {
     if (j.contains(key) && j[key].is_object()) {
         for (auto& element : j[key].items())
-            o[element.key()] = element.value();
+            o[element.key()] = static_cast<const T&>(element.value());
     }
 }
 
