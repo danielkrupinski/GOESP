@@ -1,12 +1,14 @@
 #pragma once
 
 #include <cstdint>
-#include <d3d9.h>
 #include <memory>
-#include <Windows.h>
-#include <Psapi.h>
 #include <string>
 #include <type_traits>
+
+#ifdef _WIN32
+#include <Windows.h>
+#include <Psapi.h>
+#endif
 
 class Entity;
 class ItemSystem;
@@ -25,13 +27,14 @@ public:
     std::uintptr_t present;
     std::uintptr_t setCursorPos;
 
-    bool(__thiscall* isOtherEnemy)(Entity*, Entity*);
     const GlobalVars* globalVars;
-    std::add_pointer_t<void __cdecl(const char* msg, ...)> debugMsg;
-    std::add_pointer_t<ItemSystem* __cdecl()> itemSystem;
     WeaponSystem* weaponSystem;
     ActiveChannels* activeChannels;
     Channel* channels;
+
+    bool(__thiscall* isOtherEnemy)(Entity*, Entity*);
+    std::add_pointer_t<void __cdecl(const char* msg, ...)> debugMsg;
+    std::add_pointer_t<ItemSystem* __cdecl()> itemSystem;
     std::add_pointer_t<bool __cdecl(Vector, Vector, short)> lineGoesThroughSmoke;
 private:
     static std::uintptr_t findPattern(const wchar_t* module, const char* pattern) noexcept
