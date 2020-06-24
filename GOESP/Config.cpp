@@ -47,13 +47,13 @@ int CALLBACK fontCallback(const LOGFONTA* lpelfe, const TEXTMETRICA*, DWORD, LPA
 
 Config::Config(const char* folderName) noexcept
 {
+#ifdef _WIN32
     if (PWSTR pathToDocuments; SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &pathToDocuments))) {
         path = pathToDocuments;
         path /= folderName;
         CoTaskMemFree(pathToDocuments);
     }
 
-#ifdef _WIN32
     LOGFONTA logfont;
     logfont.lfCharSet = ANSI_CHARSET;
     logfont.lfPitchAndFamily = DEFAULT_PITCH;
@@ -271,8 +271,8 @@ if (o.valueName != dummy.valueName) \
 // - json object named 'j'
 // - object to write to json named 'o'
 #define WRITE_BASE(structName) \
-if (static_cast<structName>(o) != static_cast<structName>(dummy)) \
-    j = static_cast<structName>(o);
+if (static_cast<const structName&>(o) != static_cast<const structName&>(dummy)) \
+    j = static_cast<const structName&>(o);
 
 static void to_json(json& j, const Color& o)
 {
