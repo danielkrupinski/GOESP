@@ -1,15 +1,20 @@
+#include <fstream>
+#include <memory>
+
+#ifdef _WIN32
+#include <ShlObj.h>
+#include <Windows.h>
+#endif
+
 #include "Config.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 #include "nlohmann/json.hpp"
 
-#include <fstream>
-#include <memory>
-#include <ShlObj.h>
-#include <Windows.h>
 #include "Memory.h"
 
+#ifdef _WIN32
 int CALLBACK fontCallback(const LOGFONTA* lpelfe, const TEXTMETRICA*, DWORD, LPARAM lParam)
 {
     const auto fontName = (const char*)reinterpret_cast<const ENUMLOGFONTEXA*>(lpelfe)->elfFullName;
@@ -38,6 +43,7 @@ int CALLBACK fontCallback(const LOGFONTA* lpelfe, const TEXTMETRICA*, DWORD, LPA
     }
     return TRUE;
 }
+#endif
 
 Config::Config(const char* folderName) noexcept
 {
@@ -47,12 +53,14 @@ Config::Config(const char* folderName) noexcept
         CoTaskMemFree(pathToDocuments);
     }
 
+#ifdef _WIN32
     LOGFONTA logfont;
     logfont.lfCharSet = ANSI_CHARSET;
     logfont.lfPitchAndFamily = DEFAULT_PITCH;
     logfont.lfFaceName[0] = '\0';
 
     EnumFontFamiliesExA(GetDC(nullptr), &logfont, fontCallback, (LPARAM)&systemFonts, 0);
+#endif
     std::sort(std::next(systemFonts.begin()), systemFonts.end());
 }
 
@@ -474,6 +482,7 @@ void Config::scheduleFontLoad(const std::string& name) noexcept
     scheduledFonts.push_back(name);
 }
 
+#ifdef _WIN32
 static auto getFontData(const std::string& fontName) noexcept
 {
     HFONT font = CreateFontA(0, 0, 0, 0,
@@ -505,6 +514,7 @@ static auto getFontData(const std::string& fontName) noexcept
     }
     return std::make_pair(std::move(data), dataSize);
 }
+#endif
 
 bool Config::loadScheduledFonts() noexcept
 {
@@ -514,6 +524,7 @@ bool Config::loadScheduledFonts() noexcept
         if (font == "Default")
             continue;
 
+#ifdef _WIN32
         const auto [fontData, fontDataSize] = getFontData(font);
         if (fontDataSize == GDI_ERROR)
             continue;
@@ -528,6 +539,7 @@ bool Config::loadScheduledFonts() noexcept
                 result = true;
             }
         }
+#endif
     }
     scheduledFonts.clear();
     return result;

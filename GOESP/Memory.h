@@ -42,6 +42,7 @@ private:
         static auto id = 0;
         ++id;
 
+#ifdef _WIN32
         if (HMODULE moduleHandle = GetModuleHandleW(module)) {
             if (MODULEINFO moduleInfo; GetModuleInformation(GetCurrentProcess(), GetModuleHandleW(module), &moduleInfo, sizeof(moduleInfo))) {
                 auto start = static_cast<const char*>(moduleInfo.lpBaseOfDll);
@@ -65,6 +66,7 @@ private:
             }
         }
         MessageBoxA(NULL, ("Failed to find pattern #" + std::to_string(id) + '!').c_str(), "GOESP", MB_OK | MB_ICONWARNING);
+#endif
         return 0;
     }
 };
