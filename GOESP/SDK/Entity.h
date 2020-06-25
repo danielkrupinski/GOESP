@@ -67,7 +67,7 @@ public:
     VIRTUAL_METHOD(WeaponType, getWeaponType, 454, (), (this))
     VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, 460, (), (this))
 
-    constexpr auto isSniperRifle() noexcept
+    auto isSniperRifle() noexcept
     {
         return getWeaponType() == WeaponType::SniperRifle;
     }
