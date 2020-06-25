@@ -22,7 +22,7 @@
 #include "SDK/WeaponId.h"
 #include "SDK/WeaponInfo.h"
 
-static D3DMATRIX viewMatrix;
+static Matrix4x4 viewMatrix;
 static LocalPlayerData localPlayerData;
 static std::vector<PlayerData> playerData;
 static std::vector<ObserverData> observerData;
@@ -134,7 +134,7 @@ void GameData::clearProjectileList() noexcept
     projectileData.clear();
 }
 
-const _D3DMATRIX& GameData::toScreenMatrix() noexcept
+const Matrix4x4& GameData::toScreenMatrix() noexcept
 {
     return viewMatrix;
 }

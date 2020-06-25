@@ -17,7 +17,7 @@ struct EntityData;
 struct LootCrateData;
 struct ProjectileData;
 
-struct _D3DMATRIX;
+struct Matrix4x4;
 
 namespace GameData
 {
@@ -33,7 +33,7 @@ namespace GameData
     };
 
     // You have to acquire lock before using these getters
-    const _D3DMATRIX& toScreenMatrix() noexcept;
+    const Matrix4x4& toScreenMatrix() noexcept;
     const LocalPlayerData& local() noexcept;
     const std::vector<PlayerData>& players() noexcept;
     const std::vector<ObserverData>& observers() noexcept;
