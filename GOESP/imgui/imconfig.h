@@ -82,7 +82,8 @@
         ImVec4(const std::array<float, 4>& color) noexcept { x = color[0]; y = color[1]; z = color[2]; w = color[3]; }
 
 #define IM_VEC2_CLASS_EXTRA \
-        auto operator==(const ImVec2& other) const { return x == other.x && y == other.y; }
+        auto operator==(const ImVec2& other) const { return x == other.x && y == other.y; } \
+        auto operator!=(const ImVec2& other) const { return !(*this == other); }
 
 //---- Use 32-bit vertex indices (default is 16-bit) is one way to allow large meshes with more than 64K vertices.
 // Your renderer back-end will need to support it (most example renderer back-ends support both 16/32-bit indices).
