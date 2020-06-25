@@ -17,8 +17,11 @@
 #include "SDK/GlobalVars.h"
 #include "SDK/InputSystem.h"
 
+#ifdef _WIN32
 #include <intrin.h>
+#endif
 
+#ifdef _WIN32
 static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
     if (hooks->getState() == Hooks::State::NotInstalled)
@@ -102,6 +105,8 @@ Hooks::Hooks(HMODULE module) noexcept
     wndProc = WNDPROC(SetWindowLongPtrW(window, GWLP_WNDPROC, LONG_PTR(::wndProc)));
 }
 
+#endif
+
 void Hooks::install() noexcept
 {
     state = State::Installing;
@@ -112,9 +117,12 @@ void Hooks::install() noexcept
     config = std::make_unique<Config>("GOESP");
 
     ImGui::CreateContext();
+#ifdef _WIN32
     ImGui_ImplWin32_Init(window);
+#endif
     gui = std::make_unique<GUI>();
 
+#ifdef _WIN32
     reset = *reinterpret_cast<decltype(reset)*>(memory->reset);
     *reinterpret_cast<decltype(::reset)**>(memory->reset) = ::reset;
 
@@ -123,9 +131,12 @@ void Hooks::install() noexcept
 
     setCursorPos = *reinterpret_cast<decltype(setCursorPos)*>(memory->setCursorPos);
     *reinterpret_cast<decltype(::setCursorPos)**>(memory->setCursorPos) = ::setCursorPos;
+#endif
 
     state = State::Installed;
 }
+
+#ifdef _WIN32
 
 extern "C" BOOL WINAPI _CRT_INIT(HMODULE module, DWORD reason, LPVOID reserved);
 
@@ -144,8 +155,12 @@ static DWORD WINAPI waitOnUnload(HMODULE hModule) noexcept
     FreeLibraryAndExitThread(hModule, 0);
 }
 
+#endif
+
 void Hooks::uninstall() noexcept
 {
+#ifdef _WIN32
+
     *reinterpret_cast<void**>(memory->reset) = reset;
     *reinterpret_cast<void**>(memory->present) = present;
     *reinterpret_cast<void**>(memory->setCursorPos) = setCursorPos;
@@ -154,4 +169,7 @@ void Hooks::uninstall() noexcept
 
     if (HANDLE thread = CreateThread(nullptr, 0, LPTHREAD_START_ROUTINE(waitOnUnload), module, 0, nullptr))
         CloseHandle(thread);
+
+#endif
 }
+

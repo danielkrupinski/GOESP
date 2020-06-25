@@ -1,12 +1,16 @@
 #pragma once
 
-#include <d3d9.h>
 #include <memory>
 #include <type_traits>
+
+#ifdef _WIN32
+#include <d3d9.h>
 #include <Windows.h>
+#endif
 
 class Hooks {
 public:
+#ifdef _WIN32
     Hooks(HMODULE module) noexcept;
     
     std::add_pointer_t<HRESULT D3DAPI(IDirect3DDevice9*, D3DPRESENT_PARAMETERS*)> reset;
@@ -14,6 +18,7 @@ public:
     std::add_pointer_t<BOOL WINAPI(int, int)> setCursorPos;
 
     WNDPROC wndProc;
+#endif
 
     void install() noexcept;
     void uninstall() noexcept;
@@ -26,8 +31,10 @@ public:
 
     constexpr auto getState() noexcept { return state; }
 private:
+#ifdef _WIN32
     HMODULE module;
     HWND window;
+#endif
     State state = State::NotInstalled;
 };
 
