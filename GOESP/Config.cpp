@@ -264,7 +264,7 @@ void Config::load() noexcept
 // - object holding default values named 'dummy'
 // - object to write to json named 'o'
 #define WRITE(name, valueName) \
-if (o.valueName != dummy.valueName) \
+if (!(o.valueName == dummy.valueName)) \
     j[name] = o.valueName;
 
 // WRITE_BASE macro requires:
@@ -444,7 +444,7 @@ static void save_map(json& j, const char* name, const std::unordered_map<std::st
     const T dummy;
 
     for (const auto& [key, value] : map) {
-        if (value != dummy)
+        if (!(value == dummy))
             j[name][key] = value;
     }
 }
@@ -460,15 +460,15 @@ void Config::save() noexcept
     save_map(j, "Loot Crates", lootCrates);
     save_map(j, "Other Entities", otherEntities);
 
-    if (reloadProgress != ColorToggleThickness{ 5.0f })
+    if (!(reloadProgress == ColorToggleThickness{ 5.0f }))
         j["Reload Progress"] = reloadProgress;
-    if (recoilCrosshair != ColorToggleThickness{})
+    if (!(recoilCrosshair == ColorToggleThickness{}))
         j["Recoil Crosshair"] = recoilCrosshair;
-    if (noscopeCrosshair != ColorToggleThickness{})
+    if (!(noscopeCrosshair == ColorToggleThickness{}))
         j["Noscope Crosshair"] = noscopeCrosshair;
-    if (purchaseList != PurchaseList{})
+    if (!(purchaseList == PurchaseList{}))
         j["Purchase List"] = purchaseList;
-    if (observerList != ObserverList{})
+    if (!(observerList == ObserverList{}))
         j["Observer List"] = observerList;
 
     std::error_code ec; std::filesystem::create_directory(path, ec);
