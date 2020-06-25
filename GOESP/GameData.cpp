@@ -238,7 +238,7 @@ ProjectileData::ProjectileData(Entity* projectile) noexcept : BaseData { project
     name = [](Entity* projectile) {
         switch (projectile->getClientClass()->classId) {
         case ClassId::BaseCSGrenadeProjectile:
-            if (const auto model = projectile->getModel(); model && std::strstr(model->name, "flashbang"))
+            if (const auto model = projectile->getModel(); model && strstr(model->name, "flashbang"))
                 return "Flashbang";
             else
                 return "HE Grenade";
