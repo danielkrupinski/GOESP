@@ -1,5 +1,8 @@
 #include <algorithm>
+
+#ifdef _WIN32
 #include <Windows.h>
+#endif
 
 #include "EngineTrace.h"
 #include "Entity.h"
@@ -66,11 +69,13 @@ void Entity::getPlayerName(char(&out)[128]) noexcept
     end = std::unique(playerInfo.name, end, [](char a, char b) { return a == b && a == ' '; });
     *end = '\0';
 
+#ifdef _WIN32
     wchar_t wide[128];
     interfaces->localize->convertAnsiToUnicode(playerInfo.name, wide, sizeof(wide));
     wchar_t wideNormalized[128];
     NormalizeString(NormalizationKC, wide, -1, wideNormalized, 128);
     interfaces->localize->convertUnicodeToAnsi(wideNormalized, playerInfo.name, 128);
+#endif
 
     strcpy_s(out, playerInfo.name);
 }
