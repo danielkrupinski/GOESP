@@ -7,7 +7,11 @@ namespace VirtualMethod
     template <typename T, std::size_t Idx, typename ...Args>
     constexpr auto call(void* classBase, Args... args) noexcept
     {
+#ifdef _WIN32
         return ((*reinterpret_cast<T(__thiscall***)(void*, Args...)>(classBase))[Idx])(classBase, args...);
+#else
+        return ((*reinterpret_cast<T(***)(void*, Args...)>(classBase))[Idx])(classBase, args...);
+#endif
     }
 }
 

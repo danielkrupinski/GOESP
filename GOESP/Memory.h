@@ -37,6 +37,11 @@ public:
     std::add_pointer_t<void __cdecl(const char* msg, ...)> debugMsg;
     std::add_pointer_t<ItemSystem* __cdecl()> itemSystem;
     std::add_pointer_t<bool __cdecl(Vector, Vector, short)> lineGoesThroughSmoke;
+#else
+    bool(*isOtherEnemy)(Entity*, Entity*);
+    std::add_pointer_t<void(const char* msg, ...)> debugMsg;
+    std::add_pointer_t<ItemSystem*()> itemSystem;
+    std::add_pointer_t<bool(Vector, Vector, short)> lineGoesThroughSmoke;
 #endif
 private:
     static std::uintptr_t findPattern(const wchar_t* module, const char* pattern) noexcept

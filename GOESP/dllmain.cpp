@@ -1,6 +1,8 @@
-#include <Windows.h>
-
 #include "Hooks.h"
+
+#ifdef _WIN32
+
+#include <Windows.h>
 
 extern "C" BOOL WINAPI _CRT_INIT(HMODULE module, DWORD reason, LPVOID reserved);
 
@@ -14,3 +16,7 @@ BOOL APIENTRY DllEntryPoint(HMODULE module, DWORD reason, LPVOID reserved)
 
     return TRUE;
 }
+
+#else
+
+#endif
