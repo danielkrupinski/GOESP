@@ -32,10 +32,12 @@ public:
     ActiveChannels* activeChannels;
     Channel* channels;
 
+#ifdef _WIN32
     bool(__thiscall* isOtherEnemy)(Entity*, Entity*);
     std::add_pointer_t<void __cdecl(const char* msg, ...)> debugMsg;
     std::add_pointer_t<ItemSystem* __cdecl()> itemSystem;
     std::add_pointer_t<bool __cdecl(Vector, Vector, short)> lineGoesThroughSmoke;
+#endif
 private:
     static std::uintptr_t findPattern(const wchar_t* module, const char* pattern) noexcept
     {

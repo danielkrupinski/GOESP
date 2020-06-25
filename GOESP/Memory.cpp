@@ -23,6 +23,7 @@ Memory::Memory() noexcept
 {
     assert(interfaces);
 
+#ifdef _WIN32
     debugMsg = decltype(debugMsg)(GetProcAddress(GetModuleHandleW(L"tier0"), "Msg"));
 
     if (overlay == Overlay::Discord) {
@@ -47,4 +48,5 @@ Memory::Memory() noexcept
     lineGoesThroughSmoke = relativeToAbsolute<decltype(lineGoesThroughSmoke)>(findPattern(L"client", "\xE8????\x8B\x4C\x24\x30\x33\xD2") + 1);
 
     localPlayer.init(*reinterpret_cast<Entity***>(findPattern(L"client", "\xA1????\x89\x45\xBC\x85\xC0") + 1));
+#endif
 }

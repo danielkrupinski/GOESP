@@ -3,7 +3,10 @@
 #include <memory>
 #include <string>
 #include <type_traits>
+
+#ifdef _WIN32
 #include <Windows.h>
+#endif
 
 class Interfaces {
 public:
@@ -25,11 +28,13 @@ class type* name = reinterpret_cast<type*>(find(L##module, version));
 private:
     static void* find(const wchar_t* module, const char* name) noexcept
     {
+#ifdef _WIN32
         if (const auto createInterface = reinterpret_cast<std::add_pointer_t<void* __cdecl (const char* name, int* returnCode)>>(GetProcAddress(GetModuleHandleW(module), "CreateInterface")))
             if (void* foundInterface = createInterface(name, nullptr))
                 return foundInterface;
 
         MessageBoxA(nullptr, ("Failed to find " + std::string{ name } + " interface!").c_str(), "GOESP", MB_OK | MB_ICONERROR);
+#endif
         std::exit(EXIT_FAILURE);
     }
 };
