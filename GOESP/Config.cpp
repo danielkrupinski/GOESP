@@ -271,7 +271,7 @@ if (o.valueName != dummy.valueName) \
 // - json object named 'j'
 // - object to write to json named 'o'
 #define WRITE_BASE(structName) \
-if (static_cast<const structName&>(o) != static_cast<const structName&>(dummy)) \
+if (!(static_cast<const structName&>(o) == static_cast<const structName&>(dummy))) \
     j = static_cast<const structName&>(o);
 
 static void to_json(json& j, const Color& o)
