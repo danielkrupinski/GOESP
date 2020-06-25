@@ -10,6 +10,11 @@ struct Vector {
         return x == v.x && y == v.y && z == v.z;
     }
 
+    constexpr auto operator!=(const Vector& v) const noexcept
+    {
+        return !(*this == v);
+    }
+
     constexpr Vector& operator=(float array[3]) noexcept
     {
         x = array[0];
