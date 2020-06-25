@@ -74,7 +74,7 @@ struct Vector {
 
     auto length() const noexcept
     {
-        return std::sqrtf(x * x + y * y + z * z);
+        return std::sqrt(x * x + y * y + z * z);
     }
 
     constexpr auto squareLength() const noexcept
