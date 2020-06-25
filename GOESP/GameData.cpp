@@ -1,5 +1,3 @@
-#include <Windows.h>
-#include <d3d9types.h>
 #include <list>
 #include <mutex>
 
