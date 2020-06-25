@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstring>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -64,7 +65,7 @@ void Entity::getPlayerName(char(&out)[128]) noexcept
         return;
     }
 
-    auto end = std::remove(playerInfo.name, playerInfo.name + std::strlen(playerInfo.name), '\n');
+    auto end = std::remove(playerInfo.name, playerInfo.name + strlen(playerInfo.name), '\n');
     *end = '\0';
     end = std::unique(playerInfo.name, end, [](char a, char b) { return a == b && a == ' '; });
     *end = '\0';
