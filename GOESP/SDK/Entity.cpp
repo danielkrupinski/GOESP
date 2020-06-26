@@ -61,7 +61,7 @@ void Entity::getPlayerName(char(&out)[128]) noexcept
 {
     PlayerInfo playerInfo;
     if (!interfaces->engine->getPlayerInfo(index(), playerInfo)) {
-        strcpy_s(out, "unknown");
+        strcpy(out, "unknown");
         return;
     }
 
@@ -78,5 +78,5 @@ void Entity::getPlayerName(char(&out)[128]) noexcept
     interfaces->localize->convertUnicodeToAnsi(wideNormalized, playerInfo.name, 128);
 #endif
 
-    strcpy_s(out, playerInfo.name);
+    strcpy(out, playerInfo.name);
 }
