@@ -57,6 +57,7 @@ Memory::Memory() noexcept
 
     globalVars = *relativeToAbsolute<GlobalVars**>((*reinterpret_cast<std::uintptr_t**>(interfaces->client))[11] + 16);
     weaponSystem = *relativeToAbsolute<WeaponSystem**>(findPattern("/client_client.so", "\x48\x8B\x58\x10\x48\x8B\x07\xFF\x10") + 12);
+    localPlayer.init(relativeToAbsolute<Entity**>(findPattern("/client_client.so", "\x83\xFF\xFF\x48\x8B\x05") + 6));
 
     // isOtherEnemy = relativeToAbsolute<decltype(isOtherEnemy)>(findPattern("/client_client.so", "\xE8????\x84\xC0\x44\x89\xE2") + 1);
     // itemSystem = relativeToAbsolute<decltype(itemSystem)>(findPattern("/client_client.so", "\xE8????\x45\x89\xEF") + 1);
