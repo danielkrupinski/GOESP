@@ -1,5 +1,9 @@
 #include <cassert>
 
+#ifdef __linux__
+#include <dlfcn.h>
+#endif
+
 #include "Interfaces.h"
 #include "Memory.h"
 #include "SDK/LocalPlayer.h"
@@ -48,5 +52,11 @@ Memory::Memory() noexcept
     lineGoesThroughSmoke = relativeToAbsolute<decltype(lineGoesThroughSmoke)>(findPattern("client", "\xE8????\x8B\x4C\x24\x30\x33\xD2") + 1);
 
     localPlayer.init(*reinterpret_cast<Entity***>(findPattern("client", "\xA1????\x89\x45\xBC\x85\xC0") + 1));
+#elif __linux__
+    debugMsg = decltype(debugMsg)(dlsym(dlopen("libtier0_client.so", RTLD_NOLOAD | RTLD_NOW), "Msg"));
+
+    //
+    const auto [base, size] = getModuleInformation("libtier0_client.so");
+    debugMsg("TIER0: %llx, size: %llu\n", base, size);
 #endif
 }
