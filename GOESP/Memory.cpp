@@ -11,7 +11,7 @@
 template <typename T>
 static constexpr auto relativeToAbsolute(std::uintptr_t address) noexcept
 {
-    return reinterpret_cast<T>(address + 4 + *reinterpret_cast<std::uintptr_t*>(address));
+    return reinterpret_cast<T>(address + 4 + *reinterpret_cast<std::uint32_t*>(address));
 }
 
 enum class Overlay {
@@ -55,8 +55,11 @@ Memory::Memory() noexcept
 #elif __linux__
     debugMsg = decltype(debugMsg)(dlsym(dlopen("libtier0_client.so", RTLD_NOLOAD | RTLD_NOW), "Msg"));
 
-    //
-    const auto [base, size] = getModuleInformation("libtier0_client.so");
-    debugMsg("TIER0: %llx, size: %llu\n", base, size);
+    globalVars = *relativeToAbsolute<GlobalVars**>((*reinterpret_cast<std::uintptr_t**>(interfaces->client))[11] + 16);
+    weaponSystem = *relativeToAbsolute<WeaponSystem**>(findPattern("/client_client.so", "\x48\x8B\x58\x10\x48\x8B\x07\xFF\x10") + 12);
+
+    // isOtherEnemy = relativeToAbsolute<decltype(isOtherEnemy)>(findPattern("/client_client.so", "\xE8????\x84\xC0\x44\x89\xE2") + 1);
+    // itemSystem = relativeToAbsolute<decltype(itemSystem)>(findPattern("/client_client.so", "\xE8????\x45\x89\xEF") + 1);
+
 #endif
 }
