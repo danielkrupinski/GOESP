@@ -4,10 +4,13 @@
 #include <memory>
 #include <string>
 #include <type_traits>
+#include <vector>
 
 #ifdef _WIN32
 #include <Windows.h>
 #include <Psapi.h>
+#elif __linux__
+#include <link.h>
 #endif
 
 class Entity;
@@ -37,7 +40,7 @@ public:
     std::add_pointer_t<void __cdecl(const char* msg, ...)> debugMsg;
     std::add_pointer_t<ItemSystem* __cdecl()> itemSystem;
     std::add_pointer_t<bool __cdecl(Vector, Vector, short)> lineGoesThroughSmoke;
-#else
+#elif __linux__
     bool(*isOtherEnemy)(Entity*, Entity*);
     std::add_pointer_t<void(const char* msg, ...)> debugMsg;
     std::add_pointer_t<ItemSystem*()> itemSystem;
@@ -51,6 +54,25 @@ private:
             if (MODULEINFO moduleInfo; GetModuleInformation(GetCurrentProcess(), handle, &moduleInfo, sizeof(moduleInfo)))
                 return std::make_pair(moduleInfo.lpBaseOfDll, moduleInfo.SizeOfImage);
         }
+#elif __linux__
+        struct ModuleInfo {
+            std::string name;
+            void* base;
+            std::size_t size;
+        };
+        static std::vector<ModuleInfo> modules;
+
+        if (modules.empty()) {
+            dl_iterate_phdr([](struct dl_phdr_info* info, std::size_t, void*) {
+                modules.emplace_back(info->dlpi_name,
+                             (void*)(info->dlpi_addr + info->dlpi_phdr[0].p_vaddr),
+                        (std::size_t)info->dlpi_phdr[0].p_memsz);
+                return 0;
+            }, nullptr);
+        }
+
+        if (const auto it = std::find_if(modules.begin(), modules.end(), [&name](const ModuleInfo& mi) { return mi.name.ends_with(name); }); it != modules.end())
+            return std::make_pair(it->base, it->size);
 #endif
         return {};
     }
