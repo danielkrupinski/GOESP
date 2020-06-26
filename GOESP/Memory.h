@@ -44,6 +44,17 @@ public:
     std::add_pointer_t<bool(Vector, Vector, short)> lineGoesThroughSmoke;
 #endif
 private:
+    static std::pair<void*, size_t> getModuleInformation(const char* name) noexcept
+    {
+#ifdef _WIN32
+        if (HMODULE handle = GetModuleHandleA(name)) {
+            if (MODULEINFO moduleInfo; GetModuleInformation(GetCurrentProcess(), handle, &moduleInfo, sizeof(moduleInfo)))
+                return std::make_pair(moduleInfo.lpBaseOfDll, moduleInfo.SizeOfImage);
+        }
+#endif
+        return {};
+    }
+
     static std::uintptr_t findPattern(const char* module, const char* pattern) noexcept
     {
         static auto id = 0;
