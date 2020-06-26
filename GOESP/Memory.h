@@ -44,14 +44,14 @@ public:
     std::add_pointer_t<bool(Vector, Vector, short)> lineGoesThroughSmoke;
 #endif
 private:
-    static std::uintptr_t findPattern(const wchar_t* module, const char* pattern) noexcept
+    static std::uintptr_t findPattern(const char* module, const char* pattern) noexcept
     {
         static auto id = 0;
         ++id;
 
 #ifdef _WIN32
-        if (HMODULE moduleHandle = GetModuleHandleW(module)) {
-            if (MODULEINFO moduleInfo; GetModuleInformation(GetCurrentProcess(), GetModuleHandleW(module), &moduleInfo, sizeof(moduleInfo))) {
+        if (HMODULE moduleHandle = GetModuleHandleA(module)) {
+            if (MODULEINFO moduleInfo; GetModuleInformation(GetCurrentProcess(), moduleHandle, &moduleInfo, sizeof(moduleInfo))) {
                 auto start = static_cast<const char*>(moduleInfo.lpBaseOfDll);
                 const auto end = start + moduleInfo.SizeOfImage;
 
