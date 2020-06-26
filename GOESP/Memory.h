@@ -44,7 +44,7 @@ public:
     std::add_pointer_t<bool(Vector, Vector, short)> lineGoesThroughSmoke;
 #endif
 private:
-    static std::pair<void*, size_t> getModuleInformation(const char* name) noexcept
+    static std::pair<void*, std::size_t> getModuleInformation(const char* name) noexcept
     {
 #ifdef _WIN32
         if (HMODULE handle = GetModuleHandleA(name)) {
@@ -60,29 +60,29 @@ private:
         static auto id = 0;
         ++id;
 
-#ifdef _WIN32
-        if (HMODULE moduleHandle = GetModuleHandleA(module)) {
-            if (MODULEINFO moduleInfo; GetModuleInformation(GetCurrentProcess(), moduleHandle, &moduleInfo, sizeof(moduleInfo))) {
-                auto start = static_cast<const char*>(moduleInfo.lpBaseOfDll);
-                const auto end = start + moduleInfo.SizeOfImage;
+        const auto [moduleBase, moduleSize] = getModuleInformation(module);
 
-                auto first = start;
-                auto second = pattern;
+        if (moduleBase && moduleSize) {
+            auto start = static_cast<const char*>(moduleBase);
+            const auto end = start + moduleSize;
 
-                while (first < end && *second) {
-                    if (*first == *second || *second == '?') {
-                        ++first;
-                        ++second;
-                    } else {
-                        first = ++start;
-                        second = pattern;
-                    }
+            auto first = start;
+            auto second = pattern;
+
+            while (first < end && *second) {
+                if (*first == *second || *second == '?') {
+                    ++first;
+                    ++second;
+                } else {
+                    first = ++start;
+                    second = pattern;
                 }
-
-                if (!*second)
-                    return reinterpret_cast<std::uintptr_t>(start);
             }
+
+            if (!*second)
+                return reinterpret_cast<std::uintptr_t>(start);
         }
+#ifdef _WIN32
         MessageBoxA(NULL, ("Failed to find pattern #" + std::to_string(id) + '!').c_str(), "GOESP", MB_OK | MB_ICONWARNING);
 #endif
         return 0;
