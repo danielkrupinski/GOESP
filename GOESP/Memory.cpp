@@ -11,7 +11,7 @@
 template <typename T>
 static constexpr auto relativeToAbsolute(std::uintptr_t address) noexcept
 {
-    return reinterpret_cast<T>(address + 4 + *reinterpret_cast<std::uint32_t*>(address));
+    return reinterpret_cast<T>(address + 4 + *reinterpret_cast<std::int32_t*>(address));
 }
 
 enum class Overlay {
