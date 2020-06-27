@@ -62,5 +62,6 @@ Memory::Memory() noexcept
 
     // isOtherEnemy = relativeToAbsolute<decltype(isOtherEnemy)>(findPattern("/client_client.so", "\xE8????\x84\xC0\x44\x89\xE2") + 1);
 
+    pollEvent = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(RTLD_NEXT, "SDL_PollEvent")) + 3);
 #endif
 }

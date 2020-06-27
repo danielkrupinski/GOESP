@@ -26,21 +26,23 @@ class Memory {
 public:
     Memory() noexcept;
 
-    std::uintptr_t reset;
-    std::uintptr_t present;
-    std::uintptr_t setCursorPos;
-
     const GlobalVars* globalVars;
     WeaponSystem* weaponSystem;
     ActiveChannels* activeChannels;
     Channel* channels;
 
 #ifdef _WIN32
+    std::uintptr_t reset;
+    std::uintptr_t present;
+    std::uintptr_t setCursorPos;
+
     bool(__thiscall* isOtherEnemy)(Entity*, Entity*);
     std::add_pointer_t<void __cdecl(const char* msg, ...)> debugMsg;
     std::add_pointer_t<ItemSystem* __cdecl()> itemSystem;
     std::add_pointer_t<bool __cdecl(Vector, Vector, short)> lineGoesThroughSmoke;
 #elif __linux__
+    std::uintptr_t pollEvent;
+
     bool(*isOtherEnemy)(Entity*, Entity*);
     std::add_pointer_t<void(const char* msg, ...)> debugMsg;
     std::add_pointer_t<ItemSystem*()> itemSystem;
