@@ -46,13 +46,13 @@ enum class ObsMode {
 
 class Entity {
 public:
-    VIRTUAL_METHOD(ClientClass*, getClientClass, 2, (), (this + 8))
-    VIRTUAL_METHOD(bool, isDormant, 9, (), (this + 8))
-    VIRTUAL_METHOD(int, index, 10, (), (this + 8))
+    VIRTUAL_METHOD(ClientClass*, getClientClass, 2, (), (this + sizeof(uintptr_t) * 2))
+    VIRTUAL_METHOD(bool, isDormant, 9, (), (this + sizeof(uintptr_t) * 2))
+    VIRTUAL_METHOD(int, index, 10, (), (this + sizeof(uintptr_t) * 2))
 
-    VIRTUAL_METHOD(const Model*, getModel, 8, (), (this + 4))
-    VIRTUAL_METHOD(bool, setupBones, 13, (Matrix3x4* out, int maxBones, int boneMask, float currentTime), (this + 4, out, maxBones, boneMask, currentTime))
-    VIRTUAL_METHOD(const Matrix3x4&, toWorldTransform, 32, (), (this + 4))
+    VIRTUAL_METHOD(const Model*, getModel, 8, (), (this + sizeof(uintptr_t)))
+    VIRTUAL_METHOD(bool, setupBones, 13, (Matrix3x4* out, int maxBones, int boneMask, float currentTime), (this + sizeof(uintptr_t), out, maxBones, boneMask, currentTime))
+    VIRTUAL_METHOD(const Matrix3x4&, toWorldTransform, 32, (), (this + sizeof(uintptr_t)))
 
     VIRTUAL_METHOD(int&, handle, 2, (), (this))
     VIRTUAL_METHOD(Collideable*, getCollideable, 3, (), (this))
