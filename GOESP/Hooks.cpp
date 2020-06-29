@@ -102,7 +102,6 @@ Hooks::Hooks(HMODULE module) noexcept
     _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
 
     window = FindWindowW(L"Valve001", nullptr);
-    wndProc = WNDPROC(SetWindowLongPtrW(window, GWLP_WNDPROC, LONG_PTR(::wndProc)));
 }
 
 #elif __linux__
@@ -118,19 +117,29 @@ Hooks::Hooks() noexcept
 {
     interfaces = std::make_unique<const Interfaces>();
     memory = std::make_unique<const Memory>();
-
-    pollEvent = *reinterpret_cast<decltype(pollEvent)*>(memory->pollEvent);
-    *reinterpret_cast<decltype(::pollEvent)**>(memory->pollEvent) = ::pollEvent;
 }
 
 #endif
+
+void Hooks::setup() noexcept
+{
+#ifdef _WIN32
+    wndProc = WNDPROC(SetWindowLongPtrW(window, GWLP_WNDPROC, LONG_PTR(::wndProc)));
+#elif __linux__
+    pollEvent = *reinterpret_cast<decltype(pollEvent)*>(memory->pollEvent);
+    *reinterpret_cast<decltype(::pollEvent)**>(memory->pollEvent) = ::pollEvent;
+#endif
+}
 
 void Hooks::install() noexcept
 {
     state = State::Installing;
 
+#ifndef __linux__
     interfaces = std::make_unique<const Interfaces>();
     memory = std::make_unique<const Memory>();
+#endif
+
     eventListener = std::make_unique<EventListener>();
     config = std::make_unique<Config>("GOESP");
 

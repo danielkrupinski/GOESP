@@ -14,7 +14,7 @@ class Hooks {
 public:
 #ifdef _WIN32
     Hooks(HMODULE module) noexcept;
-    
+
     std::add_pointer_t<HRESULT D3DAPI(IDirect3DDevice9*, D3DPRESENT_PARAMETERS*)> reset;
     std::add_pointer_t<HRESULT D3DAPI(IDirect3DDevice9*, const RECT*, const RECT*, HWND, const RGNDATA*)> present;
     std::add_pointer_t<BOOL WINAPI(int, int)> setCursorPos;
@@ -27,6 +27,7 @@ public:
 
 #endif
 
+    void setup() noexcept;
     void install() noexcept;
     void uninstall() noexcept;
 
