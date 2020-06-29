@@ -11,7 +11,7 @@
 template <typename T>
 static constexpr auto relativeToAbsolute(std::uintptr_t address) noexcept
 {
-    return reinterpret_cast<T>(address + 4 + *reinterpret_cast<std::int32_t*>(address));
+    return (T)(address + 4 + *reinterpret_cast<std::int32_t*>(address));
 }
 
 enum class Overlay {
@@ -61,6 +61,9 @@ Memory::Memory() noexcept
     localPlayer.init(relativeToAbsolute<Entity**>(findPattern("/client_client.so", "\x83\xFF\xFF\x48\x8B\x05") + 6));
 
     // isOtherEnemy = relativeToAbsolute<decltype(isOtherEnemy)>(findPattern("/client_client.so", "\xE8????\x84\xC0\x44\x89\xE2") + 1);
+
+    activeChannels = relativeToAbsolute<ActiveChannels*>(findPattern("engine_client.so", "\x48\x8D\x3D????\x4C\x89\xE6\xE8????\x8B\xBD") + 3);
+    channels = relativeToAbsolute<Channel*>(findPattern("engine_client.so", "\x4C\x8D\x35????\x49\x83\xC4\x04") + 3);
 
     pollEvent = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(RTLD_NEXT, "SDL_PollEvent")) + 3);
 #endif
