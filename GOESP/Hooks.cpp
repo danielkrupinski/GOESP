@@ -105,6 +105,24 @@ Hooks::Hooks(HMODULE module) noexcept
     wndProc = WNDPROC(SetWindowLongPtrW(window, GWLP_WNDPROC, LONG_PTR(::wndProc)));
 }
 
+#elif __linux__
+
+static int pollEvent(SDL_Event* window) noexcept
+{
+    // GameData::update();
+
+    return hooks->pollEvent(window);
+}
+
+Hooks::Hooks() noexcept
+{
+    interfaces = std::make_unique<const Interfaces>();
+    memory = std::make_unique<const Memory>();
+
+    pollEvent = *reinterpret_cast<decltype(pollEvent)*>(memory->pollEvent);
+    *reinterpret_cast<decltype(::pollEvent)**>(memory->pollEvent) = ::pollEvent;
+}
+
 #endif
 
 void Hooks::install() noexcept

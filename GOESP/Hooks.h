@@ -6,6 +6,8 @@
 #ifdef _WIN32
 #include <d3d9.h>
 #include <Windows.h>
+#elif __linux__
+struct SDL_Event;
 #endif
 
 class Hooks {
@@ -18,6 +20,11 @@ public:
     std::add_pointer_t<BOOL WINAPI(int, int)> setCursorPos;
 
     WNDPROC wndProc;
+#elif __linux__
+    Hooks() noexcept;
+
+    std::add_pointer_t<int(SDL_Event*)> pollEvent;
+
 #endif
 
     void install() noexcept;
