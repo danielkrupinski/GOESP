@@ -15,9 +15,15 @@ namespace VirtualMethod
     }
 }
 
+#define VIRTUAL_METHOD(returnType, name, idx, args, argsRaw) \
+auto name args noexcept \
+{ \
+    return VirtualMethod::call<returnType, idx>argsRaw; \
+}
+
 #ifdef _WIN32
 
-#define VIRTUAL_METHOD(returnType, name, idx, args, argsRaw) \
+#define VIRTUAL_METHOD_V(returnType, name, idx, args, argsRaw) \
 auto name args noexcept \
 { \
     return VirtualMethod::call<returnType, idx>argsRaw; \
@@ -25,7 +31,7 @@ auto name args noexcept \
 
 #else
 
-#define VIRTUAL_METHOD(returnType, name, idx, args, argsRaw) \
+#define VIRTUAL_METHOD_V(returnType, name, idx, args, argsRaw) \
 auto name args noexcept \
 { \
     return VirtualMethod::call<returnType, idx + 1>argsRaw; \
