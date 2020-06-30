@@ -58,19 +58,19 @@ public:
     VIRTUAL_METHOD(Collideable*, getCollideable, 3, (), (this))
 
 #ifdef _WIN32
-        VIRTUAL_METHOD(Vector&, getAbsOrigin, 10, (), (this))
-        VIRTUAL_METHOD(int, getHealth, 121, (), (this))
-        VIRTUAL_METHOD(bool, isAlive, 155, (), (this))
-        VIRTUAL_METHOD(bool, isPlayer, 157, (), (this))
-        VIRTUAL_METHOD(bool, isWeapon, 165, (), (this))
-        VIRTUAL_METHOD(Entity*, getActiveWeapon, 267, (), (this))
+    VIRTUAL_METHOD(Vector&, getAbsOrigin, 10, (), (this))
+    VIRTUAL_METHOD(int, getHealth, 121, (), (this))
+    VIRTUAL_METHOD(bool, isAlive, 155, (), (this))
+    VIRTUAL_METHOD(bool, isPlayer, 157, (), (this))
+    VIRTUAL_METHOD(bool, isWeapon, 165, (), (this))
+    VIRTUAL_METHOD(Entity*, getActiveWeapon, 267, (), (this))
 #elif __linux__
-        VIRTUAL_METHOD(Vector&, getAbsOrigin, 12, (), (this))
-        VIRTUAL_METHOD(int, getHealth, 166, (), (this))
-        VIRTUAL_METHOD(bool, isAlive, 207, (), (this))
-        VIRTUAL_METHOD(bool, isPlayer, 209, (), (this))
-        VIRTUAL_METHOD(bool, isWeapon, 217, (), (this))
-        VIRTUAL_METHOD(Entity*, getActiveWeapon, 330, (), (this))
+    VIRTUAL_METHOD(Vector&, getAbsOrigin, 12, (), (this))
+    VIRTUAL_METHOD(int, getHealth, 166, (), (this))
+    VIRTUAL_METHOD(bool, isAlive, 207, (), (this))
+    VIRTUAL_METHOD(bool, isPlayer, 209, (), (this))
+    VIRTUAL_METHOD(bool, isWeapon, 217, (), (this))
+    VIRTUAL_METHOD(Entity*, getActiveWeapon, 330, (), (this))
 #endif
 
     VIRTUAL_METHOD(ObsMode, getObserverMode, 293, (), (this))
