@@ -64,6 +64,7 @@ public:
     VIRTUAL_METHOD(bool, isPlayer, 157, (), (this))
     VIRTUAL_METHOD(bool, isWeapon, 165, (), (this))
     VIRTUAL_METHOD(Entity*, getActiveWeapon, 267, (), (this))
+    VIRTUAL_METHOD(void, getEyePosition, 284, (Vector& v), (this, std::ref(v)))
     VIRTUAL_METHOD(ObsMode, getObserverMode, 293, (), (this))
     VIRTUAL_METHOD(Entity*, getObserverTarget, 294, (), (this))
     VIRTUAL_METHOD(WeaponType, getWeaponType, 454, (), (this))
@@ -75,6 +76,7 @@ public:
     VIRTUAL_METHOD(bool, isPlayer, 209, (), (this))
     VIRTUAL_METHOD(bool, isWeapon, 217, (), (this))
     VIRTUAL_METHOD(Entity*, getActiveWeapon, 330, (), (this))
+    VIRTUAL_METHOD(void, getEyePosition, 347, (Vector& v), (this, std::ref(v)))
     VIRTUAL_METHOD(ObsMode, getObserverMode, 356, (), (this))
     VIRTUAL_METHOD(Entity*, getObserverTarget, 357, (), (this))
     VIRTUAL_METHOD(WeaponType, getWeaponType, 522, (), (this))
@@ -89,7 +91,7 @@ public:
     auto getEyePosition() noexcept
     {
         Vector vec;
-        VirtualMethod::call<void, 284>(this, std::ref(vec));
+        getEyePosition(vec);
         return vec;
     }
 
