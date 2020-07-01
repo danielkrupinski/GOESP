@@ -67,6 +67,7 @@ public:
     VIRTUAL_METHOD(void, getEyePosition, 284, (Vector& v), (this, std::ref(v)))
     VIRTUAL_METHOD(ObsMode, getObserverMode, 293, (), (this))
     VIRTUAL_METHOD(Entity*, getObserverTarget, 294, (), (this))
+    VIRTUAL_METHOD(void, getAimPunch, 345, (Vector& v), (this, std::ref(v)))
     VIRTUAL_METHOD(WeaponType, getWeaponType, 454, (), (this))
     VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, 460, (), (this))
 #elif __linux__
@@ -79,10 +80,11 @@ public:
     VIRTUAL_METHOD(void, getEyePosition, 347, (Vector& v), (this, std::ref(v)))
     VIRTUAL_METHOD(ObsMode, getObserverMode, 356, (), (this))
     VIRTUAL_METHOD(Entity*, getObserverTarget, 357, (), (this))
+    VIRTUAL_METHOD(void, getAimPunch, 408, (Vector& v), (this, std::ref(v)))
     VIRTUAL_METHOD(WeaponType, getWeaponType, 522, (), (this))
     VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, 528, (), (this))
 #endif
-
+        
     auto isSniperRifle() noexcept
     {
         return getWeaponType() == WeaponType::SniperRifle;
@@ -98,7 +100,7 @@ public:
     auto getAimPunch() noexcept
     {
         Vector vec;
-        VirtualMethod::call<void, 345>(this, std::ref(vec));
+        getAimPunch(vec);
         return vec;
     }
 
