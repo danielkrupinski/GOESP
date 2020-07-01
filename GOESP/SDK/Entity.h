@@ -64,6 +64,10 @@ public:
     VIRTUAL_METHOD(bool, isPlayer, 157, (), (this))
     VIRTUAL_METHOD(bool, isWeapon, 165, (), (this))
     VIRTUAL_METHOD(Entity*, getActiveWeapon, 267, (), (this))
+    VIRTUAL_METHOD(ObsMode, getObserverMode, 293, (), (this))
+    VIRTUAL_METHOD(Entity*, getObserverTarget, 294, (), (this))
+    VIRTUAL_METHOD(WeaponType, getWeaponType, 454, (), (this))
+    VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, 460, (), (this))
 #elif __linux__
     VIRTUAL_METHOD(Vector&, getAbsOrigin, 12, (), (this))
     VIRTUAL_METHOD(int, getHealth, 166, (), (this))
@@ -71,12 +75,11 @@ public:
     VIRTUAL_METHOD(bool, isPlayer, 209, (), (this))
     VIRTUAL_METHOD(bool, isWeapon, 217, (), (this))
     VIRTUAL_METHOD(Entity*, getActiveWeapon, 330, (), (this))
+    VIRTUAL_METHOD(ObsMode, getObserverMode, 356, (), (this))
+    VIRTUAL_METHOD(Entity*, getObserverTarget, 357, (), (this))
+    VIRTUAL_METHOD(WeaponType, getWeaponType, 522, (), (this))
+    VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, 528, (), (this))
 #endif
-
-    VIRTUAL_METHOD(ObsMode, getObserverMode, 293, (), (this))
-    VIRTUAL_METHOD(Entity*, getObserverTarget, 294, (), (this))
-    VIRTUAL_METHOD(WeaponType, getWeaponType, 454, (), (this))
-    VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, 460, (), (this))
 
     auto isSniperRifle() noexcept
     {
