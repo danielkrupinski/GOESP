@@ -4,6 +4,8 @@
 #include <string>
 #include <type_traits>
 
+#include "SDK/CallingConvention.h"
+
 #ifdef _WIN32
 #include <Windows.h>
 
@@ -43,11 +45,13 @@ class type* name = reinterpret_cast<type*>(find(module, version));
 private:
     static void* find(const char* module, const char* name) noexcept
     {
+        if (const auto createInterface = reinterpret_cast<std::add_pointer_t<void* __CDECL(const char* name, int* returnCode)>>(
 #ifdef _WIN32
-        if (const auto createInterface = reinterpret_cast<std::add_pointer_t<void* __cdecl (const char* name, int* returnCode)>>(GetProcAddress(GetModuleHandleA(module), "CreateInterface"))) {
+            GetProcAddress(GetModuleHandleA(module), "CreateInterface")
 #elif __linux__
-        if (const auto createInterface = reinterpret_cast<std::add_pointer_t<void* (const char* name, int* returnCode)>>(dlsym(dlopen(module, RTLD_NOLOAD | RTLD_NOW), "CreateInterface"))) {
+            dlsym(dlopen(module, RTLD_NOLOAD | RTLD_NOW), "CreateInterface")
 #endif
+            )) {
             if (void* foundInterface = createInterface(name, nullptr))
                 return foundInterface;
         }

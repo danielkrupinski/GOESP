@@ -13,6 +13,8 @@
 #include <link.h>
 #endif
 
+#include "SDK/CallingConvention.h"
+
 class Entity;
 class ItemSystem;
 class WeaponSystem;
@@ -31,22 +33,17 @@ public:
     ActiveChannels* activeChannels;
     Channel* channels;
 
+    bool(__THISCALL* isOtherEnemy)(Entity*, Entity*);
+    std::add_pointer_t<void __CDECL(const char* msg, ...)> debugMsg;
+    std::add_pointer_t<ItemSystem* __CDECL()> itemSystem;
+    std::add_pointer_t<bool __CDECL(Vector, Vector, short)> lineGoesThroughSmoke;
+
 #ifdef _WIN32
     std::uintptr_t reset;
     std::uintptr_t present;
     std::uintptr_t setCursorPos;
-
-    bool(__thiscall* isOtherEnemy)(Entity*, Entity*);
-    std::add_pointer_t<void __cdecl(const char* msg, ...)> debugMsg;
-    std::add_pointer_t<ItemSystem* __cdecl()> itemSystem;
-    std::add_pointer_t<bool __cdecl(Vector, Vector, short)> lineGoesThroughSmoke;
 #elif __linux__
     std::uintptr_t pollEvent;
-
-    bool(*isOtherEnemy)(Entity*, Entity*);
-    std::add_pointer_t<void(const char* msg, ...)> debugMsg;
-    std::add_pointer_t<ItemSystem*()> itemSystem;
-    std::add_pointer_t<bool(Vector, Vector, short)> lineGoesThroughSmoke;
 #endif
 private:
     static std::pair<void*, std::size_t> getModuleInformation(const char* name) noexcept

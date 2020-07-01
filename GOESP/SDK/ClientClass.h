@@ -1,18 +1,15 @@
 #pragma once
 
-#include "ClassId.h"
-
 #include <type_traits>
+
+#include "CallingConvention.h"
+#include "ClassId.h"
 
 class Entity;
 struct RecvTable;
 
 struct ClientClass {
-#ifdef _WIN32
-    std::add_pointer_t<Entity* __cdecl(int, int)> createFunction;
-#else
-    std::add_pointer_t<Entity*(int, int)> createFunction;
-#endif
+    std::add_pointer_t<Entity* __CDECL(int, int)> createFunction;
     void* createEventFunction;
     char* networkName;
     RecvTable* recvTable;
