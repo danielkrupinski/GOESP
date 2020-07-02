@@ -109,12 +109,13 @@ public:
     [[nodiscard]] std::string getPlayerName() noexcept;
     void getPlayerName(char(&out)[128]) noexcept;
 
+#ifdef _WIN32
     PROP(hitboxSet, 0x9FC, int)                                                    // CBaseAnimating->m_nHitboxSet
 
     PROP(weaponId, 0x2FAA, WeaponId)                                               // CBaseAttributableItem->m_iItemDefinitionIndex
 
     PROP(clip, 0x3264, int)                                                        // CBaseCombatWeapon->m_iClip1
-    PROP(isInReload, 0x3264 + 0x41, bool)                                          // CBaseCombatWeapon->m_iClip1 + 0x41
+    PROP(isInReload, 0x32A5, bool)                                                 // CBaseCombatWeapon->m_bInReload (client-side only)
     PROP(reserveAmmoCount, 0x326C, int)                                            // CBaseCombatWeapon->m_iPrimaryReserveAmmoCount
     PROP(nextPrimaryAttack, 0x3238, float)                                         // CBaseCombatWeapon->m_flNextPrimaryAttack
 
@@ -126,10 +127,46 @@ public:
     PROP(fovStart, 0x31E8, int)                                                    // CBasePlayer->m_iFOVStart
 
     PROP(isScoped, 0x3928, bool)                                                   // CCSPlayer->m_bIsScoped
-    PROP(inBombZone, 0x3954, bool)                                                 // CCSPlayer->m_bInBombZone
+    PROP(inBombZone, 0x3968, bool)                                                 // CCSPlayer->m_bInBombZone
     PROP(flashDuration, 0xA41C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
     PROP(shotsFired, 0xA390, int)                                                  // CCSPlayer->m_iShotsFired
         
     PROP(thrower, 0x29A0, int)                                                     // CBaseGrenade->m_hThrower
     PROP(grenadeExploded, 0x29E8, bool)
+
+#elif __linux__
+    PROP(hitboxSet, 0xFA8, int)                                                    // CBaseAnimating->m_nHitboxSet
+
+    PROP(weaponId, 0x37b2, WeaponId)                                               // CBaseAttributableItem->m_iItemDefinitionIndex
+
+    PROP(clip, 0x3AE4, int)                                                        // CBaseCombatWeapon->m_iClip1
+    PROP(isInReload, 0x3B29, bool)                                                 // CBaseCombatWeapon->m_bInReload (client-side only)
+
+    PROP(reserveAmmoCount, 0x3AEC, int)                                            // CBaseCombatWeapon->m_iPrimaryReserveAmmoCount
+    PROP(nextPrimaryAttack, 0x3AB8, float)                                         // CBaseCombatWeapon->m_flNextPrimaryAttack
+
+    PROP(prevOwner, 0x3C1C, int)                                                   // CWeaponCSBase->m_hPrevOwner
+
+    PROP(ownerEntity, 0x184, int)                                                  // CBaseEntity->m_hOwnerEntity
+    PROP(spotted, 0xECD, bool)                                                     // CBaseEntity->m_bSpotted
+
+    PROP(fovStart, 0x39AC, int)                                                    // CBasePlayer->m_iFOVStart
+
+    PROP(isScoped, 0x4228, bool)                                                   // CCSPlayer->m_bIsScoped
+    PROP(inBombZone, 0x4268, bool)                                                 // CCSPlayer->m_bInBombZone
+    PROP(flashDuration, 0xAD4C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
+
+    PROP(shotsFired, 0xACC0, int)                                                  // CCSPlayer->m_iShotsFired
+
+    PROP(thrower, 0x3040, int)                                                     // CBaseGrenade->m_hThrower
+
+    // TODO: update this
+    // PROP(grenadeExploded, 0x29E8, bool)
+    bool grenadeExploded()
+    {
+        return false;
+    }
+
+#endif
 };
+
