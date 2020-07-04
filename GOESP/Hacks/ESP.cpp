@@ -9,20 +9,9 @@
 #include "../fnv.h"
 #include "../GameData.h"
 #include "../Helpers.h"
-#include "../Interfaces.h"
-#include "../Memory.h"
-#include "../SDK/ClassId.h"
 #include "../SDK/Engine.h"
-#include "../SDK/Entity.h"
-#include "../SDK/EntityList.h"
 #include "../SDK/GlobalVars.h"
-#include "../SDK/Localize.h"
-#include "../SDK/LocalPlayer.h"
-#include "../SDK/ModelInfo.h"
-#include "../SDK/Sound.h"
-#include "../SDK/Vector.h"
-#include "../SDK/WeaponInfo.h"
-#include "../SDK/WeaponId.h"
+#include "../Memory.h"
 
 #include <limits>
 #include <tuple>
