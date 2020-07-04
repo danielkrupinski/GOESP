@@ -82,6 +82,8 @@ void GUI::render() noexcept
         }
         ImGui::PopID();
 
+        ImGui::Checkbox("Ignore Flashbang", &config->ignoreFlashbang);
+
         ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Configs")) {
