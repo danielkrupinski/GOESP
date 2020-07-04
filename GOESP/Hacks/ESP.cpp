@@ -245,6 +245,7 @@ struct FontPush {
             return 8;
         };
 
+        distance *= GameData::local().fov / 90.0f;
         ImGui::PushFont(config->fonts[name + ' ' + std::to_string(fontSizeFromDist(distance))]);
     }
 
