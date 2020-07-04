@@ -30,6 +30,7 @@ public:
     ColorToggleThickness noscopeCrosshair;
     PurchaseList purchaseList;
     ObserverList observerList;
+    bool ignoreFlashbang = false;
 
     std::vector<std::string> systemFonts{ "Default" };
     std::unordered_map<std::string, ImFont*> fonts;

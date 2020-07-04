@@ -255,6 +255,7 @@ void Config::load() noexcept
     read<value_t::object>(j, "Noscope Crosshair", noscopeCrosshair);
     read<value_t::object>(j, "Purchase List", purchaseList);
     read<value_t::object>(j, "Observer List", observerList);
+    read<value_t::boolean>(j, "Ignore Flashbang", ignoreFlashbang);
 }
 
 // WRITE macro requires:
@@ -468,6 +469,8 @@ void Config::save() noexcept
         j["Purchase List"] = purchaseList;
     if (!(observerList == ObserverList{}))
         j["Observer List"] = observerList;
+    if (ignoreFlashbang)
+        j["Ignore Flashbang"] = ignoreFlashbang;
 
     std::error_code ec; std::filesystem::create_directory(path, ec);
 
