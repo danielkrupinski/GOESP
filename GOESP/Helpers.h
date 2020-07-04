@@ -4,7 +4,7 @@ struct Color;
 
 namespace Helpers
 {
-    unsigned int calculateColor(const Color& color) noexcept;
+    unsigned int calculateColor(Color color) noexcept;
 
     constexpr auto units2meters(float units) noexcept
     {
