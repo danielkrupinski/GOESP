@@ -380,7 +380,7 @@ static void drawPlayerSkeleton(const ColorToggleThickness& config, const std::ve
     for (const auto& [bonePoint, parentPoint] : shadowPoints)
         drawList->AddLine(bonePoint, parentPoint, color & IM_COL32_A_MASK, config.thickness);
 
-    for (const auto& [bonePoint, parentPoint] : shadowPoints)
+    for (const auto& [bonePoint, parentPoint] : points)
         drawList->AddLine(bonePoint, parentPoint, color, config.thickness);
 }
 
