@@ -109,6 +109,14 @@ Hooks::Hooks(HMODULE module) noexcept
 static int pollEvent(SDL_Event* window) noexcept
 {
     // GameData::update();
+    if (hooks->getState() == Hooks::State::NotInstalled)
+        hooks->install();
+
+    if (hooks->getState() == Hooks::State::Installed) {
+        GameData::update();
+
+        interfaces->inputSystem->enableInput(!gui->open);
+    }
 
     return hooks->pollEvent(window);
 }
@@ -199,4 +207,3 @@ void Hooks::uninstall() noexcept
 
 #endif
 }
-
