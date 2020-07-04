@@ -189,6 +189,8 @@ void LocalPlayerData::update() noexcept
         nextWeaponAttack = activeWeapon->nextPrimaryAttack();
     }
     fov = localPlayer->fovStart();
+    flashDuration = localPlayer->flashDuration();
+
     aimPunch = localPlayer->getAimPunch();
 
     const auto obsMode = localPlayer->getObserverMode();
