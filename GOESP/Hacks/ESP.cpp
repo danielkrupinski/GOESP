@@ -254,18 +254,18 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
     renderBox(bbox, config.box);
     drawSnapline(bbox, config.snapline);
 
-    ImVec2 flashDurationPos{ (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 7.5f };
+    ImVec2 bloatedMins{ bbox.min }, bloatedMaxs{ bbox.max };
 
     FontPush font{ config.font.name, playerData.distanceToLocal };
 
     if (config.name.enabled) {
         const auto nameSize = renderText(playerData.distanceToLocal, config.textCullDistance, config.name, playerData.name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
-        flashDurationPos.y -= nameSize.y;
+        bloatedMins.y -= nameSize.y + 5;
     }
 
     if (config.flashDuration.enabled && playerData.flashDuration > 0.0f) {
         const auto radius = std::max(5.0f - playerData.distanceToLocal / 600.0f, 1.0f);
-        flashDurationPos.y -= radius;
+        ImVec2 flashDurationPos{ (bbox.min.x + bbox.max.x) / 2, bloatedMins.y - radius * 1.5f };
 
         const auto color = Helpers::calculateColor(config.flashDuration);
         drawList->PathArcTo(flashDurationPos + ImVec2{ 1.0f, 1.0f }, radius, IM_PI / 2 - (playerData.flashDuration / 255.0f * IM_PI), IM_PI / 2 + (playerData.flashDuration / 255.0f * IM_PI), 40);
