@@ -190,7 +190,7 @@ static ImVec2 renderText(float distance, float cullDistance, const Color& textCf
     return textSize;
 }
 
-static void drawSnapline(const BoundingBox& bbox, const Snapline& config) noexcept
+static void drawSnapline(const Snapline& config, const ImVec2& min, const ImVec2& max) noexcept
 {
     if (!config.enabled)
         return;
@@ -199,20 +199,20 @@ static void drawSnapline(const BoundingBox& bbox, const Snapline& config) noexce
     
     ImVec2 p1, p2;
     p1.x = screenSize.x / 2;
-    p2.x = (bbox.min.x + bbox.max.x) / 2;
+    p2.x = (min.x + max.x) / 2;
 
     switch (config.type) {
     case Snapline::Bottom:
         p1.y = screenSize.y;
-        p2.y = bbox.max.y;
+        p2.y = max.y;
         break;
     case Snapline::Top:
         p1.y = 0.0f;
-        p2.y = bbox.min.y;
+        p2.y = min.y;
         break;
     case Snapline::Crosshair:
         p1.y = screenSize.y / 2;
-        p2.y = (bbox.min.y + bbox.max.y) / 2;
+        p2.y = (min.y + max.y) / 2;
         break;
     default:
         return;
@@ -252,7 +252,6 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
         return;
     
     renderBox(bbox, config.box);
-    drawSnapline(bbox, config.snapline);
 
     ImVec2 bloatedMins{ bbox.min }, bloatedMaxs{ bbox.max };
 
@@ -273,10 +272,17 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
 
         drawList->PathArcTo(flashDurationPos, radius, IM_PI / 2 - (playerData.flashDuration / 255.0f * IM_PI), IM_PI / 2 + (playerData.flashDuration / 255.0f * IM_PI), 40);
         drawList->PathStroke(color, false, 0.9f + radius * 0.1f);
+
+        bloatedMins.y -= radius * 2.5f;
     }
 
-    if (config.weapon.enabled && !playerData.activeWeapon.empty())
-        renderText(playerData.distanceToLocal, config.textCullDistance, config.weapon, playerData.activeWeapon.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
+    if (config.weapon.enabled && !playerData.activeWeapon.empty()) {
+        const auto weaponTextSize = renderText(playerData.distanceToLocal, config.textCullDistance, config.weapon, playerData.activeWeapon.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
+        bloatedMaxs.y += weaponTextSize.y + 5.0f;
+    }
+
+    drawSnapline(config.snapline, bloatedMins, bloatedMaxs);
+
 }
 
 static void renderWeaponBox(const WeaponData& weaponData, const Weapon& config) noexcept
@@ -287,7 +293,7 @@ static void renderWeaponBox(const WeaponData& weaponData, const Weapon& config) 
         return;
 
     renderBox(bbox, config.box);
-    drawSnapline(bbox, config.snapline);
+    drawSnapline(config.snapline, bbox.min, bbox.max);
 
     FontPush font{ config.font.name, weaponData.distanceToLocal };
 
@@ -309,7 +315,7 @@ static void renderEntityBox(const BaseData& entityData, const char* name, const 
         return;
 
     renderBox(bbox, config.box);
-    drawSnapline(bbox, config.snapline);
+    drawSnapline(config.snapline, bbox.min, bbox.max);
 
     FontPush font{ config.font.name, entityData.distanceToLocal };
 
