@@ -40,7 +40,7 @@ private:
     bool valid;
 public:
     ImVec2 min, max;
-    ImVec2 vertices[8];
+    std::array<ImVec2, 8> vertices;
 
     BoundingBox(const BaseData& data, const std::array<float, 3>& scale) noexcept
     {
