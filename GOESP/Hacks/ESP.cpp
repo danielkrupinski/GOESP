@@ -253,18 +253,18 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
     
     renderBox(bbox, config.box);
 
-    ImVec2 bloatedMins{ bbox.min }, bloatedMaxs{ bbox.max };
+    ImVec2 offsetMins{}, offsetMaxs{};
 
     FontPush font{ config.font.name, playerData.distanceToLocal };
 
     if (config.name.enabled) {
         const auto nameSize = renderText(playerData.distanceToLocal, config.textCullDistance, config.name, playerData.name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
-        bloatedMins.y -= nameSize.y + 5;
+        offsetMins.y -= nameSize.y + 5;
     }
 
     if (config.flashDuration.enabled && playerData.flashDuration > 0.0f) {
         const auto radius = std::max(5.0f - playerData.distanceToLocal / 600.0f, 1.0f);
-        ImVec2 flashDurationPos{ (bbox.min.x + bbox.max.x) / 2, bloatedMins.y - radius * 1.5f };
+        ImVec2 flashDurationPos{ (bbox.min.x + bbox.max.x) / 2, bbox.min.y + offsetMins.y - radius * 1.5f };
 
         const auto color = Helpers::calculateColor(config.flashDuration);
         drawList->PathArcTo(flashDurationPos + ImVec2{ 1.0f, 1.0f }, radius, IM_PI / 2 - (playerData.flashDuration / 255.0f * IM_PI), IM_PI / 2 + (playerData.flashDuration / 255.0f * IM_PI), 40);
@@ -273,15 +273,15 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
         drawList->PathArcTo(flashDurationPos, radius, IM_PI / 2 - (playerData.flashDuration / 255.0f * IM_PI), IM_PI / 2 + (playerData.flashDuration / 255.0f * IM_PI), 40);
         drawList->PathStroke(color, false, 0.9f + radius * 0.1f);
 
-        bloatedMins.y -= radius * 2.5f;
+        offsetMins.y -= radius * 2.5f;
     }
 
     if (config.weapon.enabled && !playerData.activeWeapon.empty()) {
         const auto weaponTextSize = renderText(playerData.distanceToLocal, config.textCullDistance, config.weapon, playerData.activeWeapon.c_str(), { (bbox.min.x + bbox.max.x) / 2, bbox.max.y + 5 }, true, false);
-        bloatedMaxs.y += weaponTextSize.y + 5.0f;
+        offsetMaxs.y += weaponTextSize.y + 5.0f;
     }
 
-    drawSnapline(config.snapline, bloatedMins, bloatedMaxs);
+    drawSnapline(config.snapline, bbox.min + offsetMins, bbox.max + offsetMaxs);
 
 }
 
