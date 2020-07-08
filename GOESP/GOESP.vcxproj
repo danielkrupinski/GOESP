@@ -180,6 +180,7 @@
     <ClInclude Include="SDK\Matrix3x4.h" />
     <ClInclude Include="SDK\ModelInfo.h" />
     <ClInclude Include="SDK\Pad.h" />
+    <ClInclude Include="SDK\UtlVector.h" />
     <ClInclude Include="SDK\VirtualMethod.h" />
     <ClInclude Include="SDK\Vector.h" />
     <ClInclude Include="SDK\WeaponInfo.h" />
