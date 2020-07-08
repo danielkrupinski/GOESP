@@ -125,6 +125,10 @@ struct Shared {
     }
 };
 
+struct Bar : ColorToggleRounding {
+
+};
+
 struct Player : Shared {
     Player() : Shared{}
     {
