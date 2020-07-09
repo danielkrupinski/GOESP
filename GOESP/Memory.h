@@ -18,6 +18,8 @@
 class Entity;
 class ItemSystem;
 class WeaponSystem;
+template <typename T>
+class UtlVector;
 
 struct ActiveChannels;
 struct Channel;
@@ -32,6 +34,7 @@ public:
     WeaponSystem* weaponSystem;
     ActiveChannels* activeChannels;
     Channel* channels;
+    UtlVector<Entity*>* plantedC4s;
 
     bool(__THISCALL* isOtherEnemy)(Entity*, Entity*);
     std::add_pointer_t<void __CDECL(const char* msg, ...)> debugMsg;
