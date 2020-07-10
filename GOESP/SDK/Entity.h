@@ -133,6 +133,8 @@ public:
     PROP(thrower, 0x29A0, int)                                                     // CBaseGrenade->m_hThrower
     PROP(grenadeExploded, 0x29E8, bool)
 
+    PROP(bombTicking, 0x2980, bool)                                                // CPlantedC4->m_bBombTicking
+
 #elif __linux__
     PROP(hitboxSet, 0xFA8, int)                                                    // CBaseAnimating->m_nHitboxSet
 
