@@ -134,6 +134,7 @@ public:
     PROP(grenadeExploded, 0x29E8, bool)
 
     PROP(bombTicking, 0x2980, bool)                                                // CPlantedC4->m_bBombTicking
+    PROP(bombSite, 0x2984, bool)                                                   // CPlantedC4->m_nBombSite
 
 #elif __linux__
     PROP(hitboxSet, 0xFA8, int)                                                    // CBaseAnimating->m_nHitboxSet
