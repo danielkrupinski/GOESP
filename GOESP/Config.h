@@ -46,7 +46,7 @@ public:
     bool loadScheduledFonts() noexcept;
 
 private:
-    std::vector<std::string> scheduledFonts;
+    std::vector<std::string> scheduledFonts{ "Default" };
     std::filesystem::path path;
 };
 
