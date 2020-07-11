@@ -133,3 +133,11 @@ struct ObserverData {
     char target[128];
     bool targetIsLocalPlayer;
 };
+
+struct BombData {
+    BombData(Entity* entity) noexcept;
+
+    int bombsite;
+    float blowTime;
+    float defuseCountDown;
+};
