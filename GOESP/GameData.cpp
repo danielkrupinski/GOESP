@@ -17,6 +17,7 @@
 #include "SDK/LocalPlayer.h"
 #include "SDK/ModelInfo.h"
 #include "SDK/Sound.h"
+#include "SDK/UtlVector.h"
 #include "SDK/WeaponId.h"
 #include "SDK/WeaponInfo.h"
 
@@ -28,6 +29,7 @@ static std::vector<WeaponData> weaponData;
 static std::vector<EntityData> entityData;
 static std::vector<LootCrateData> lootCrateData;
 static std::list<ProjectileData> projectileData;
+static std::vector<BombData> bombData;
 
 void GameData::update() noexcept
 {
@@ -44,12 +46,16 @@ void GameData::update() noexcept
     weaponData.clear();
     entityData.clear();
     lootCrateData.clear();
+    bombData.clear();
 
     if (!localPlayer)
         return;
 
     viewMatrix = interfaces->engine->worldToScreenMatrix();
     localPlayerData.update();
+    
+    for (int i = 0; i < memory->plantedC4s->size; ++i)
+        bombData.emplace_back((*memory->plantedC4s)[i]);
 
     const auto observerTarget = localPlayer->getObserverMode() == ObsMode::InEye ? localPlayer->getObserverTarget() : nullptr;
 
@@ -443,4 +449,9 @@ ObserverData::ObserverData(Entity* entity, Entity* obs, bool targetIsLocalPlayer
     entity->getPlayerName(name);
     obs->getPlayerName(target);
     this->targetIsLocalPlayer = targetIsLocalPlayer;
+}
+
+BombData::BombData(Entity* entity) noexcept
+{
+
 }
