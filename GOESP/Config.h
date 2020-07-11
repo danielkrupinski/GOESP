@@ -33,7 +33,14 @@ public:
     bool ignoreFlashbang = false;
 
     std::vector<std::string> systemFonts{ "Default" };
-    std::unordered_map<std::string, ImFont*> fonts;
+
+    struct Font {
+        ImFont* tiny;
+        ImFont* medium;
+        ImFont* big;
+    };
+
+    std::unordered_map<std::string, Font> fonts;
 
     void scheduleFontLoad(const std::string& name) noexcept;
     bool loadScheduledFonts() noexcept;

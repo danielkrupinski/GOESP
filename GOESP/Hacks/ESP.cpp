@@ -224,18 +224,15 @@ static void drawSnapline(const Snapline& config, const ImVec2& min, const ImVec2
 struct FontPush {
     FontPush(const std::string& name, float distance)
     {
-        constexpr auto fontSizeFromDist = [](float dist) constexpr noexcept {
-            if (dist <= 200.0f)
-                return 14;
-            if (dist <= 500.0f)
-                return 12;
-            if (dist <= 1000.0f)
-                return 10;
-            return 8;
-        };
-
         distance *= GameData::local().fov / 90.0f;
-        ImGui::PushFont(config->fonts[name + ' ' + std::to_string(fontSizeFromDist(distance))]);
+
+        ImGui::PushFont([](const Config::Font& font, float dist) {
+            if (dist <= 400.0f)
+                return font.big;
+            if (dist <= 1000.0f)
+                return font.medium;
+            return font.tiny;
+        }(config->fonts[name], distance));
     }
 
     ~FontPush()
