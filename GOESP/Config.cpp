@@ -66,28 +66,34 @@ using json = nlohmann::basic_json<std::map, std::vector, std::string, bool, std:
 using value_t = json::value_t;
 
 template <value_t Type, typename T>
-static constexpr void read(const json& j, const char* key, T& o) noexcept
+static void read(const json& j, const char* key, T& o) noexcept
 {
     if (j.contains(key) && j[key].type() == Type)
         o = j[key];
 }
 
+static void read(const json& j, const char* key, bool& o) noexcept
+{
+    if (j.contains(key) && j[key].type() == value_t::boolean)
+        o = j[key];
+}
+
 template <value_t Type, typename T, size_t Size>
-static constexpr void read(const json& j, const char* key, std::array<T, Size>& o) noexcept
+static void read(const json& j, const char* key, std::array<T, Size>& o) noexcept
 {
     if (j.contains(key) && j[key].type() == Type && j[key].size() == o.size())
         o = j[key];
 }
 
 template <typename T>
-static constexpr void read_number(const json& j, const char* key, T& o) noexcept
+static void read_number(const json& j, const char* key, T& o) noexcept
 {
     if (j.contains(key) && j[key].is_number())
         o = j[key];
 }
 
 template <typename T>
-static constexpr void read_map(const json& j, const char* key, std::unordered_map<std::string, T>& o) noexcept
+static void read_map(const json& j, const char* key, std::unordered_map<std::string, T>& o) noexcept
 {
     if (j.contains(key) && j[key].is_object()) {
         for (auto& element : j[key].items())
@@ -98,7 +104,7 @@ static constexpr void read_map(const json& j, const char* key, std::unordered_ma
 static void from_json(const json& j, Color& c)
 {
     read<value_t::array>(j, "Color", c.color);
-    read<value_t::boolean>(j, "Rainbow", c.rainbow);
+    read(j, "Rainbow", c.rainbow);
     read_number(j, "Rainbow Speed", c.rainbowSpeed);
 }
 
@@ -106,7 +112,7 @@ static void from_json(const json& j, ColorToggle& ct)
 {
     from_json(j, static_cast<Color&>(ct));
 
-    read<value_t::boolean>(j, "Enabled", ct.enabled);
+    read(j, "Enabled", ct.enabled);
 }
 
 static void from_json(const json& j, ColorToggleRounding& ctr)
@@ -160,7 +166,7 @@ static void from_json(const json& j, Box& b)
 
 static void from_json(const json& j, Shared& s)
 {
-    read<value_t::boolean>(j, "Enabled", s.enabled);
+    read(j, "Enabled", s.enabled);
     read<value_t::object>(j, "Font", s.font);
     read<value_t::object>(j, "Snapline", s.snapline);
     read<value_t::object>(j, "Box", s.box);
@@ -185,7 +191,7 @@ static void from_json(const json& j, Trail& t)
 
 static void from_json(const json& j, Trails& t)
 {
-    read<value_t::boolean>(j, "Enabled", t.enabled);
+    read(j, "Enabled", t.enabled);
     read<value_t::object>(j, "Local Player", t.localPlayer);
     read<value_t::object>(j, "Allies", t.allies);
     read<value_t::object>(j, "Enemies", t.enemies);
@@ -204,8 +210,8 @@ static void from_json(const json& j, Player& p)
 
     read<value_t::object>(j, "Weapon", p.weapon);
     read<value_t::object>(j, "Flash Duration", p.flashDuration);
-    read<value_t::boolean>(j, "Audible Only", p.audibleOnly);
-    read<value_t::boolean>(j, "Spotted Only", p.spottedOnly);
+    read(j, "Audible Only", p.audibleOnly);
+    read(j, "Spotted Only", p.spottedOnly);
     read<value_t::object>(j, "Skeleton", p.skeleton);
 }
 
@@ -217,10 +223,10 @@ static void from_json(const json& j, ImVec2& v)
 
 static void from_json(const json& j, PurchaseList& pl)
 {
-    read<value_t::boolean>(j, "Enabled", pl.enabled);
-    read<value_t::boolean>(j, "Only During Freeze Time", pl.onlyDuringFreezeTime);
-    read<value_t::boolean>(j, "Show Prices", pl.showPrices);
-    read<value_t::boolean>(j, "No Title Bar", pl.noTitleBar);
+    read(j, "Enabled", pl.enabled);
+    read(j, "Only During Freeze Time", pl.onlyDuringFreezeTime);
+    read(j, "Show Prices", pl.showPrices);
+    read(j, "No Title Bar", pl.noTitleBar);
     read_number(j, "Mode", pl.mode);
     read<value_t::object>(j, "Pos", pl.pos);
     read<value_t::object>(j, "Size", pl.size);
@@ -228,8 +234,8 @@ static void from_json(const json& j, PurchaseList& pl)
 
 static void from_json(const json& j, ObserverList& ol)
 {
-    read<value_t::boolean>(j, "Enabled", ol.enabled);
-    read<value_t::boolean>(j, "No Title Bar", ol.noTitleBar);
+    read(j, "Enabled", ol.enabled);
+    read(j, "No Title Bar", ol.noTitleBar);
     read<value_t::object>(j, "Pos", ol.pos);
     read<value_t::object>(j, "Size", ol.size);
 }
@@ -255,7 +261,7 @@ void Config::load() noexcept
     read<value_t::object>(j, "Noscope Crosshair", noscopeCrosshair);
     read<value_t::object>(j, "Purchase List", purchaseList);
     read<value_t::object>(j, "Observer List", observerList);
-    read<value_t::boolean>(j, "Ignore Flashbang", ignoreFlashbang);
+    read(j, "Ignore Flashbang", ignoreFlashbang);
 }
 
 // WRITE macro requires:
