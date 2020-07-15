@@ -386,8 +386,8 @@ static bool renderPlayerEsp(const PlayerData& playerData, const Player& playerCo
      || playerConfig.spottedOnly && !playerData.spotted && !(playerConfig.audibleOnly && playerData.audible)) // if both "Audible Only" and "Spotted Only" are on treat them as audible OR spotted
         return true;
 
-    renderPlayerBox(playerData, playerConfig);
     drawPlayerSkeleton(playerConfig.skeleton, playerData.bones);
+    renderPlayerBox(playerData, playerConfig);
 
     return true;
 }
