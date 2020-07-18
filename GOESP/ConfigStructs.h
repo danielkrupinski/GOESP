@@ -247,12 +247,4 @@ struct ObserverList {
     bool noTitleBar = false;
     ImVec2 pos;
     ImVec2 size{ 200.0f, 200.0f };
-
-    auto operator==(const ObserverList& other) const
-    {
-        return enabled == other.enabled
-            && noTitleBar == other.noTitleBar
-            && pos == other.pos
-            && size == other.size;
-    }
 };
