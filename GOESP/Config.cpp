@@ -460,7 +460,7 @@ void removeEmptyObjects(json& j) noexcept
         auto& val = el.value();
         if (val.is_object())
             removeEmptyObjects(val);
-        else if (val.empty())
+        if (val.empty())
             j.erase(el.key());
     }
 }
