@@ -240,17 +240,6 @@ struct PurchaseList {
 
     ImVec2 pos;
     ImVec2 size{ 200.0f, 200.0f };
-
-    auto operator==(const PurchaseList& pl) const
-    {
-        return enabled == pl.enabled
-            && onlyDuringFreezeTime == pl.onlyDuringFreezeTime
-            && showPrices == pl.showPrices
-            && noTitleBar == pl.noTitleBar
-            && mode == pl.mode
-            && pos == pl.pos
-            && size == pl.size;
-    }
 };
 
 struct ObserverList {
