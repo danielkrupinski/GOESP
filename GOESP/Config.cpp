@@ -454,6 +454,17 @@ static void save_map(json& j, const char* name, const std::unordered_map<std::st
     }
 }
 
+void removeEmptyObjects(json& j) noexcept
+{
+    for (auto& el : j.items()) {
+        auto& val = el.value();
+        if (val.is_object())
+            removeEmptyObjects(val);
+        else if (val.empty())
+            j.erase(el.key());
+    }
+}
+
 void Config::save() noexcept
 {
     json j;
@@ -467,16 +478,16 @@ void Config::save() noexcept
 
     if (!(reloadProgress == ColorToggleThickness{ 5.0f }))
         j["Reload Progress"] = reloadProgress;
-    if (!(recoilCrosshair == ColorToggleThickness{}))
-        j["Recoil Crosshair"] = recoilCrosshair;
-    if (!(noscopeCrosshair == ColorToggleThickness{}))
-        j["Noscope Crosshair"] = noscopeCrosshair;
-    if (!(purchaseList == PurchaseList{}))
-        j["Purchase List"] = purchaseList;
-    if (!(observerList == ObserverList{}))
-        j["Observer List"] = observerList;
+
     if (ignoreFlashbang)
         j["Ignore Flashbang"] = ignoreFlashbang;
+
+    j["Recoil Crosshair"] = recoilCrosshair;
+    j["Noscope Crosshair"] = noscopeCrosshair;
+    j["Purchase List"] = purchaseList;
+    j["Observer List"] = observerList;
+
+    removeEmptyObjects(j);
 
     std::error_code ec; std::filesystem::create_directory(path, ec);
 
