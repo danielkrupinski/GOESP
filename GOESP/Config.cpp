@@ -7,6 +7,7 @@
 #endif
 
 #include "Config.h"
+#include "Helpers.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
@@ -563,11 +564,11 @@ bool Config::loadScheduledFonts() noexcept
         if (fontDataSize == GDI_ERROR)
             continue;
 
-        static constexpr ImWchar ranges[]{ 0x0020, 0xFFFF, 0 };
-        ImFontConfig cfg;
-        cfg.FontDataOwnedByAtlas = false;
-
         if (fonts.find(fontName) == fonts.cend()) {
+            ImFontConfig cfg;
+            cfg.FontDataOwnedByAtlas = false;
+            const auto ranges = Helpers::getFontGlyphRanges();
+
             Font newFont;
             newFont.tiny = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, 8.0f, &cfg, ranges);
             newFont.medium = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, 10.0f, &cfg, ranges);
