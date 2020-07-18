@@ -446,12 +446,8 @@ static void to_json(json& j, const ObserverList& o)
 template <typename T>
 static void save_map(json& j, const char* name, const std::unordered_map<std::string, T>& map)
 {
-    const T dummy;
-
-    for (const auto& [key, value] : map) {
-        if (!(value == dummy))
-            j[name][key] = value;
-    }
+    for (const auto& [key, value] : map)
+        j[name][key] = value;
 }
 
 void removeEmptyObjects(json& j) noexcept
