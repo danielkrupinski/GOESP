@@ -32,7 +32,7 @@ struct ColorToggle : Color {
 
 struct ColorToggleThickness : ColorToggle {
     ColorToggleThickness() = default;
-    ColorToggleThickness(float thickness) : thickness{ thickness } { }
+    explicit ColorToggleThickness(float thickness) : thickness{ thickness } { }
     float thickness = 1.0f;
 
     auto operator==(const ColorToggleThickness& ctt) const
