@@ -273,13 +273,6 @@ void Config::load() noexcept
 if (!(o.valueName == dummy.valueName)) \
     j[name] = o.valueName;
 
-// WRITE_BASE macro requires:
-// - json object named 'j'
-// - object to write to json named 'o'
-#define WRITE_BASE(structName) \
-if (!(static_cast<const structName&>(o) == static_cast<const structName&>(dummy))) \
-    j = static_cast<const structName&>(o);
-
 static void to_json(json& j, const Color& o, const Color& dummy = {})
 {
     WRITE("Color", color)
@@ -289,25 +282,25 @@ static void to_json(json& j, const Color& o, const Color& dummy = {})
 
 static void to_json(json& j, const ColorToggle& o, const ColorToggle& dummy = {})
 {
-    WRITE_BASE(Color)
+    to_json(j, static_cast<const Color&>(o), dummy);
     WRITE("Enabled", enabled)
 }
 
 static void to_json(json& j, const ColorToggleRounding& o, const ColorToggleRounding& dummy = {})
 {
-    WRITE_BASE(ColorToggle)
+    to_json(j, static_cast<const ColorToggle&>(o), dummy);
     WRITE("Rounding", rounding)
 }
 
 static void to_json(json& j, const ColorToggleThickness& o, const ColorToggleThickness& dummy = {})
 {
-    WRITE_BASE(ColorToggle)
+    to_json(j, static_cast<const ColorToggle&>(o), dummy);
     WRITE("Thickness", thickness)
 }
 
 static void to_json(json& j, const ColorToggleThicknessRounding& o, const ColorToggleThicknessRounding& dummy = {})
 {
-    WRITE_BASE(ColorToggleRounding)
+    to_json(j, static_cast<const ColorToggleRounding&>(o), dummy);
     WRITE("Thickness", thickness)
 }
 
@@ -318,13 +311,13 @@ static void to_json(json& j, const Font& o, const Font& dummy = {})
 
 static void to_json(json& j, const Snapline& o, const Snapline& dummy = {})
 {
-    WRITE_BASE(ColorToggleThickness)
+    to_json(j, static_cast<const ColorToggleThickness&>(o), dummy);
     WRITE("Type", type)
 }
 
 static void to_json(json& j, const Box& o, const Box& dummy = {})
 {
-    WRITE_BASE(ColorToggleThicknessRounding)
+    to_json(j, static_cast<const ColorToggleThicknessRounding&>(o), dummy);
     WRITE("Type", type)
     WRITE("Scale", scale)
 }
@@ -332,16 +325,16 @@ static void to_json(json& j, const Box& o, const Box& dummy = {})
 static void to_json(json& j, const Shared& o, const Shared& dummy = {})
 {
     WRITE("Enabled", enabled)
-    j["Font"] = o.font;
-    j["Snapline"] = o.snapline;
-    j["Box"] = o.box;
-    j["Name"] = o.name;
+    to_json(j["Font"], o.font, dummy.font);
+    to_json(j["Snapline"], o.snapline, dummy.snapline);
+    to_json(j["Box"], o.box, dummy.box);
+    to_json(j["Name"], o.name, dummy.name);
     WRITE("Text Cull Distance", textCullDistance)
 }
 
 static void to_json(json& j, const Player& o, const Player& dummy = {})
 {
-    WRITE_BASE(Shared)
+    to_json(j, static_cast<const Shared&>(o), dummy);
     WRITE("Weapon", weapon)
     WRITE("Flash Duration", flashDuration)
     WRITE("Audible Only", audibleOnly)
