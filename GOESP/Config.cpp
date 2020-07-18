@@ -280,75 +280,57 @@ if (!(o.valueName == dummy.valueName)) \
 if (!(static_cast<const structName&>(o) == static_cast<const structName&>(dummy))) \
     j = static_cast<const structName&>(o);
 
-static void to_json(json& j, const Color& o)
+static void to_json(json& j, const Color& o, const Color& dummy = {})
 {
-    const Color dummy;
-
     WRITE("Color", color)
     WRITE("Rainbow", rainbow)
     WRITE("Rainbow Speed", rainbowSpeed)
 }
 
-static void to_json(json& j, const ColorToggle& o)
+static void to_json(json& j, const ColorToggle& o, const ColorToggle& dummy = {})
 {
-    const ColorToggle dummy;
-
     WRITE_BASE(Color)
     WRITE("Enabled", enabled)
 }
 
-static void to_json(json& j, const ColorToggleRounding& o)
+static void to_json(json& j, const ColorToggleRounding& o, const ColorToggleRounding& dummy = {})
 {
-    const ColorToggleRounding dummy;
-
     WRITE_BASE(ColorToggle)
     WRITE("Rounding", rounding)
 }
 
-static void to_json(json& j, const ColorToggleThickness& o)
+static void to_json(json& j, const ColorToggleThickness& o, const ColorToggleThickness& dummy = {})
 {
-    const ColorToggleThickness dummy;
-
     WRITE_BASE(ColorToggle)
     WRITE("Thickness", thickness)
 }
 
-static void to_json(json& j, const ColorToggleThicknessRounding& o)
+static void to_json(json& j, const ColorToggleThicknessRounding& o, const ColorToggleThicknessRounding& dummy = {})
 {
-    const ColorToggleThicknessRounding dummy;
-
     WRITE_BASE(ColorToggleRounding)
     WRITE("Thickness", thickness)
 }
 
-static void to_json(json& j, const Font& o)
+static void to_json(json& j, const Font& o, const Font& dummy = {})
 {
-    const Font dummy;
-
     WRITE("Name", name)
 }
 
-static void to_json(json& j, const Snapline& o)
+static void to_json(json& j, const Snapline& o, const Snapline& dummy = {})
 {
-    const Snapline dummy;
-
     WRITE_BASE(ColorToggleThickness)
     WRITE("Type", type)
 }
 
-static void to_json(json& j, const Box& o)
+static void to_json(json& j, const Box& o, const Box& dummy = {})
 {
-    const Box dummy;
-
     WRITE_BASE(ColorToggleThicknessRounding)
     WRITE("Type", type)
     WRITE("Scale", scale)
 }
 
-static void to_json(json& j, const Shared& o)
+static void to_json(json& j, const Shared& o, const Shared& dummy = {})
 {
-    const Shared dummy;
-
     WRITE("Enabled", enabled)
     j["Font"] = o.font;
     j["Snapline"] = o.snapline;
@@ -357,10 +339,8 @@ static void to_json(json& j, const Shared& o)
     WRITE("Text Cull Distance", textCullDistance)
 }
 
-static void to_json(json& j, const Player& o)
+static void to_json(json& j, const Player& o, const Player& dummy = {})
 {
-    const Player dummy;
-
     WRITE_BASE(Shared)
     WRITE("Weapon", weapon)
     WRITE("Flash Duration", flashDuration)
@@ -369,56 +349,45 @@ static void to_json(json& j, const Player& o)
     WRITE("Skeleton", skeleton)
 }
 
-static void to_json(json& j, const Weapon& o)
-{
-    j = static_cast<Shared>(o);
 
-    const Weapon dummy;
+static void to_json(json& j, const Weapon& o, const Weapon& dummy = {})
+{
+    j = static_cast<const Shared&>(o);
 
     WRITE("Ammo", ammo)
 }
 
-static void to_json(json& j, const Trail& o)
+static void to_json(json& j, const Trail& o, const Trail& dummy = {})
 {
-    j = static_cast<ColorToggleThickness>(o);
-
-    const Trail dummy;
+    j = static_cast<const ColorToggleThickness&>(o);
 
     WRITE("Type", type)
     WRITE("Time", time)
 }
 
-static void to_json(json& j, const Trails& o)
+static void to_json(json& j, const Trails& o, const Trails& dummy = {})
 {
-    const Trails dummy;
-
     WRITE("Enabled", enabled)
     WRITE("Local Player", localPlayer)
     WRITE("Allies", allies)
     WRITE("Enemies", enemies)
 }
 
-static void to_json(json& j, const Projectile& o)
+static void to_json(json& j, const Projectile& o, const Projectile& dummy = {})
 {
-    j = static_cast<Shared>(o);
-
-    const Projectile dummy;
+    j = static_cast<const Shared&>(o);
 
     WRITE("Trails", trails)
 }
 
-static void to_json(json& j, const ImVec2& o)
+static void to_json(json& j, const ImVec2& o, const ImVec2& dummy = {})
 {
-    const ImVec2 dummy;
-
     WRITE("X", x)
     WRITE("Y", y)
 }
 
-static void to_json(json& j, const PurchaseList& o)
+static void to_json(json& j, const PurchaseList& o, const PurchaseList& dummy = {})
 {
-    const PurchaseList dummy;
-
     WRITE("Enabled", enabled)
     WRITE("Only During Freeze Time", onlyDuringFreezeTime)
     WRITE("Show Prices", showPrices)
@@ -431,10 +400,8 @@ static void to_json(json& j, const PurchaseList& o)
     }
 }
 
-static void to_json(json& j, const ObserverList& o)
+static void to_json(json& j, const ObserverList& o, const ObserverList& dummy = {})
 {
-    const ObserverList dummy;
-
     WRITE("Enabled", enabled)
     WRITE("No Title Bar", noTitleBar)
 
