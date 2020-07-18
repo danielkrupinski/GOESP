@@ -143,16 +143,6 @@ struct Player : Shared {
     bool spottedOnly = false;
     ColorToggleThickness skeleton;
 
-    auto operator==(const Player& p) const
-    {
-        return static_cast<const Shared&>(*this) == static_cast<const Shared&>(p)
-            && weapon == p.weapon
-            && flashDuration == p.flashDuration
-            && audibleOnly == p.audibleOnly
-            && spottedOnly == p.spottedOnly
-            && skeleton == p.skeleton;
-    }
-
     auto& operator=(const Shared& s)
     {
         static_cast<Shared&>(*this) = s;
