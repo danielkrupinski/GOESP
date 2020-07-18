@@ -350,10 +350,10 @@ static void to_json(json& j, const Shared& o)
     const Shared dummy;
 
     WRITE("Enabled", enabled)
-    WRITE("Font", font)
-    WRITE("Snapline", snapline)
-    WRITE("Box", box)
-    WRITE("Name", name)
+    j["Font"] = o.font;
+    j["Snapline"] = o.snapline;
+    j["Box"] = o.box;
+    j["Name"] = o.name;
     WRITE("Text Cull Distance", textCullDistance)
 }
 
