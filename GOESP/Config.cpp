@@ -335,11 +335,11 @@ static void to_json(json& j, const Shared& o, const Shared& dummy = {})
 static void to_json(json& j, const Player& o, const Player& dummy = {})
 {
     to_json(j, static_cast<const Shared&>(o), dummy);
-    WRITE("Weapon", weapon)
-    WRITE("Flash Duration", flashDuration)
+    to_json(j["Weapon"], o.weapon, dummy.weapon);
+    to_json(j["Flash Duration"], o.flashDuration, dummy.flashDuration);
     WRITE("Audible Only", audibleOnly)
     WRITE("Spotted Only", spottedOnly)
-    WRITE("Skeleton", skeleton)
+    to_json(j["Skeleton"], o.skeleton, dummy.skeleton);
 }
 
 
@@ -347,7 +347,7 @@ static void to_json(json& j, const Weapon& o, const Weapon& dummy = {})
 {
     j = static_cast<const Shared&>(o);
 
-    WRITE("Ammo", ammo)
+    to_json(j["Ammo"], o.ammo, dummy.ammo);
 }
 
 static void to_json(json& j, const Trail& o, const Trail& dummy = {})
@@ -361,9 +361,9 @@ static void to_json(json& j, const Trail& o, const Trail& dummy = {})
 static void to_json(json& j, const Trails& o, const Trails& dummy = {})
 {
     WRITE("Enabled", enabled)
-    WRITE("Local Player", localPlayer)
-    WRITE("Allies", allies)
-    WRITE("Enemies", enemies)
+    to_json(j["Local Player"], o.localPlayer, dummy.localPlayer);
+    to_json(j["Allies"], o.allies, dummy.allies);
+    to_json(j["Enemies"], o.enemies, dummy.enemies);
 }
 
 static void to_json(json& j, const Projectile& o, const Projectile& dummy = {})
@@ -433,8 +433,8 @@ void Config::save() noexcept
     save_map(j, "Loot Crates", lootCrates);
     save_map(j, "Other Entities", otherEntities);
 
-    if (!(reloadProgress == ColorToggleThickness{ 5.0f }))
-        j["Reload Progress"] = reloadProgress;
+   // if (!(reloadProgress == ColorToggleThickness{ 5.0f }))
+        to_json(j["Reload Progress"], reloadProgress, ColorToggleThickness{ 5.0f });
 
     if (ignoreFlashbang)
         j["Ignore Flashbang"] = ignoreFlashbang;

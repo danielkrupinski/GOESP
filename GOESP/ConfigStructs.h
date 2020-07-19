@@ -10,13 +10,6 @@ struct Color {
     std::array<float, 4> color{ 1.0f, 1.0f, 1.0f, 1.0f };
     float rainbowSpeed = 0.6f;
     bool rainbow = false;
-
-    auto operator==(const Color& c) const
-    {
-        return color == c.color
-            && rainbowSpeed == c.rainbowSpeed
-            && rainbow == c.rainbow;
-    }
 };
 #pragma pack(pop)
 
