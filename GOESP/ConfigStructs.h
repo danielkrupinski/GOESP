@@ -190,14 +190,6 @@ struct Trails {
     Trail localPlayer;
     Trail allies;
     Trail enemies;
-
-    auto operator==(const Trails& t) const
-    {
-        return enabled == t.enabled
-            && localPlayer == t.localPlayer
-            && allies == t.allies
-            && enemies == t.enemies;
-    }
 };
 
 struct Projectile : Shared {

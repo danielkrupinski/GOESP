@@ -370,7 +370,7 @@ static void to_json(json& j, const Projectile& o, const Projectile& dummy = {})
 {
     j = static_cast<const Shared&>(o);
 
-    WRITE("Trails", trails)
+    to_json(j["Trails"], o.trails, dummy.trails);
 }
 
 static void to_json(json& j, const ImVec2& o, const ImVec2& dummy = {})
