@@ -202,12 +202,6 @@ struct Trails {
 
 struct Projectile : Shared {
     Trails trails;
-  
-    auto operator==(const Projectile& p) const
-    {
-        return static_cast<const Shared&>(*this) == static_cast<const Shared&>(p)
-            && trails == p.trails;
-    }
 
     auto& operator=(const Shared& s)
     {
