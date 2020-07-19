@@ -34,12 +34,6 @@ struct ColorToggleThickness : ColorToggle {
     ColorToggleThickness() = default;
     explicit ColorToggleThickness(float thickness) : thickness{ thickness } { }
     float thickness = 1.0f;
-
-    auto operator==(const ColorToggleThickness& ctt) const
-    {
-        return static_cast<const ColorToggle&>(*this) == static_cast<const ColorToggle&>(ctt)
-            && thickness == ctt.thickness;
-    }
 };
 
 struct ColorToggleRounding : ColorToggle {
