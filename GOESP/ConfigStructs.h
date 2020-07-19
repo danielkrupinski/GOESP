@@ -153,12 +153,6 @@ struct Player : Shared {
 struct Weapon : Shared {
     ColorToggle ammo;
 
-    auto operator==(const Weapon& w) const
-    {
-        return static_cast<const Shared&>(*this) == static_cast<const Shared&>(w)
-            && ammo == w.ammo;
-    }
-
     auto& operator=(const Shared& s)
     {
         static_cast<Shared&>(*this) = s;
