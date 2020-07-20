@@ -413,12 +413,14 @@ static void save_map(json& j, const char* name, const std::unordered_map<std::st
 
 void removeEmptyObjects(json& j) noexcept
 {
-    for (auto& el : j.items()) {
-        auto& val = el.value();
+    for (auto it = j.begin(); it != j.end();) {
+        auto& val = it.value();
         if (val.is_object())
             removeEmptyObjects(val);
         if (val.empty())
-            j.erase(el.key());
+            it = j.erase(it);
+        else
+            ++it;
     }
 }
 
@@ -433,8 +435,7 @@ void Config::save() noexcept
     save_map(j, "Loot Crates", lootCrates);
     save_map(j, "Other Entities", otherEntities);
 
-   // if (!(reloadProgress == ColorToggleThickness{ 5.0f }))
-        to_json(j["Reload Progress"], reloadProgress, ColorToggleThickness{ 5.0f });
+    to_json(j["Reload Progress"], reloadProgress, ColorToggleThickness{ 5.0f });
 
     if (ignoreFlashbang)
         j["Ignore Flashbang"] = ignoreFlashbang;
