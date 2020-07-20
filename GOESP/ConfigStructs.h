@@ -83,21 +83,13 @@ struct Player : Shared {
     bool spottedOnly = false;
     ColorToggleThickness skeleton;
 
-    auto& operator=(const Shared& s)
-    {
-        static_cast<Shared&>(*this) = s;
-        return *this;
-    }
+    using Shared::operator=;
 };
 
 struct Weapon : Shared {
     ColorToggle ammo;
 
-    auto& operator=(const Shared& s)
-    {
-        static_cast<Shared&>(*this) = s;
-        return *this;
-    }
+    using Shared::operator=;
 };
 
 struct Trail : ColorToggleThickness {
@@ -122,11 +114,7 @@ struct Trails {
 struct Projectile : Shared {
     Trails trails;
 
-    auto& operator=(const Shared& s)
-    {
-        static_cast<Shared&>(*this) = s;
-        return *this;
-    }
+    using Shared::operator=;
 };
 
 struct PurchaseList {
