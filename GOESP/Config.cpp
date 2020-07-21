@@ -400,13 +400,6 @@ static void to_json(json& j, const ObserverList& o, const ObserverList& dummy = 
     }
 }
 
-template <typename T>
-static void save_map(json& j, const char* name, const std::unordered_map<std::string, T>& map)
-{
-    for (const auto& [key, value] : map)
-        j[name][key] = value;
-}
-
 void removeEmptyObjects(json& j) noexcept
 {
     for (auto it = j.begin(); it != j.end();) {
@@ -424,12 +417,12 @@ void Config::save() noexcept
 {
     json j;
 
-    save_map(j, "Allies", allies);
-    save_map(j, "Enemies", enemies);
-    save_map(j, "Weapons", weapons);
-    save_map(j, "Projectiles", projectiles);
-    save_map(j, "Loot Crates", lootCrates);
-    save_map(j, "Other Entities", otherEntities);
+    j["Allies"] = allies;
+    j["Enemies"] = enemies;
+    j["Weapons"] = weapons;
+    j["Projectiles"] = projectiles;
+    j["Loot Crates"] = lootCrates;
+    j["Other Entities"] = otherEntities;
 
     to_json(j["Reload Progress"], reloadProgress, ColorToggleThickness{ 5.0f });
 
