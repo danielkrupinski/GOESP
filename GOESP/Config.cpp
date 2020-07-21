@@ -342,18 +342,15 @@ static void to_json(json& j, const Player& o, const Player& dummy = {})
     to_json(j["Skeleton"], o.skeleton, dummy.skeleton);
 }
 
-
 static void to_json(json& j, const Weapon& o, const Weapon& dummy = {})
 {
-    j = static_cast<const Shared&>(o);
-
+    to_json(j, static_cast<const Shared&>(o), dummy);
     to_json(j["Ammo"], o.ammo, dummy.ammo);
 }
 
 static void to_json(json& j, const Trail& o, const Trail& dummy = {})
 {
-    j = static_cast<const ColorToggleThickness&>(o);
-
+    to_json(j, static_cast<const ColorToggleThickness&>(o), dummy);
     WRITE("Type", type)
     WRITE("Time", time)
 }
@@ -368,8 +365,7 @@ static void to_json(json& j, const Trails& o, const Trails& dummy = {})
 
 static void to_json(json& j, const Projectile& o, const Projectile& dummy = {})
 {
-    j = static_cast<const Shared&>(o);
-
+    to_json(j, static_cast<const Shared&>(o), dummy);
     to_json(j["Trails"], o.trails, dummy.trails);
 }
 
