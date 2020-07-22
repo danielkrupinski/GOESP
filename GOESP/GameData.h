@@ -108,6 +108,7 @@ struct PlayerData : BaseData {
     char name[128];
     std::string activeWeapon;
     std::vector<std::pair<Vector, Vector>> bones;
+    Vector headMins, headMaxs;
 };
 
 struct WeaponData : BaseData {
