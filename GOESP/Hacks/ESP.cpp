@@ -70,6 +70,32 @@ public:
         valid = true;
     }
 
+    BoundingBox(const Vector& mins, const Vector& maxs, const std::array<float, 3>& scale) noexcept
+    {
+        min.y = min.x = std::numeric_limits<float>::max();
+        max.y = max.x = -std::numeric_limits<float>::max();
+
+        const auto scaledMins = mins + (maxs - mins) * 2 * (0.25f - scale);
+        const auto scaledMaxs = maxs - (maxs - mins) * 2 * (0.25f - scale);
+
+        for (int i = 0; i < 8; ++i) {
+            const Vector point{ i & 1 ? scaledMaxs.x : scaledMins.x,
+                                i & 2 ? scaledMaxs.y : scaledMins.y,
+                                i & 4 ? scaledMaxs.z : scaledMins.z };
+
+            if (!worldToScreen(point, vertices[i])) {
+                valid = false;
+                return;
+            }
+
+            min.x = std::min(min.x, vertices[i].x);
+            min.y = std::min(min.y, vertices[i].y);
+            max.x = std::max(max.x, vertices[i].x);
+            max.y = std::max(max.y, vertices[i].y);
+        }
+        valid = true;
+    }
+
     BoundingBox(const Vector& center) noexcept
     {
         min.y = min.x = std::numeric_limits<float>::max();
@@ -94,7 +120,6 @@ public:
         }
         valid = true;
     }
-
 
     operator bool() const noexcept
     {
@@ -388,6 +413,9 @@ static bool renderPlayerEsp(const PlayerData& playerData, const Player& playerCo
 
     drawPlayerSkeleton(playerConfig.skeleton, playerData.bones);
     renderPlayerBox(playerData, playerConfig);
+
+    if (const BoundingBox headBbox{ playerData.headMins, playerData.headMaxs, playerConfig.headBox.scale })
+        renderBox(headBbox, playerConfig.headBox);
 
     return true;
 }
