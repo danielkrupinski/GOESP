@@ -82,6 +82,7 @@ struct Player : Shared {
     bool audibleOnly = false;
     bool spottedOnly = false;
     ColorToggleThickness skeleton;
+    Box headBox;
 
     using Shared::operator=;
 };
