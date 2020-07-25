@@ -16,10 +16,13 @@
 
 bool Entity::canSee(Entity* other, const Vector& pos) noexcept
 {
-    Trace trace;
     const auto eyePos = getEyePosition();
+    if (memory->lineGoesThroughSmoke(eyePos, pos, 1))
+        return false;
+
+    Trace trace;
     interfaces->engineTrace->traceRay({ eyePos, pos }, 0x46004009, this, trace);
-    return (trace.entity == other || trace.fraction > 0.97f) && !memory->lineGoesThroughSmoke(eyePos, pos, 1);
+    return trace.entity == other || trace.fraction > 0.97f;
 }
 
 bool Entity::visibleTo(Entity* other) noexcept
