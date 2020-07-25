@@ -1,6 +1,10 @@
 #include <list>
 #include <mutex>
 
+#include "imgui/imgui.h"
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui/imgui_internal.h"
+
 #include "Config.h"
 #include "fnv.h"
 #include "GameData.h"
@@ -30,6 +34,20 @@ static std::vector<EntityData> entityData;
 static std::vector<LootCrateData> lootCrateData;
 static std::list<ProjectileData> projectileData;
 static std::vector<BombData> bombData;
+
+static bool worldToScreen(const Vector& in, ImVec2& out) noexcept
+{
+    const auto& matrix = viewMatrix;
+
+    const auto w = matrix._41 * in.x + matrix._42 * in.y + matrix._43 * in.z + matrix._44;
+    if (w < 0.001f)
+        return false;
+
+    out = ImGui::GetIO().DisplaySize / 2.0f;
+    out.x *= 1.0f + (matrix._11 * in.x + matrix._12 * in.y + matrix._13 * in.z + matrix._14) / w;
+    out.y *= 1.0f - (matrix._21 * in.x + matrix._22 * in.y + matrix._23 * in.z + matrix._24) / w;
+    return true;
+}
 
 void GameData::update() noexcept
 {
@@ -321,7 +339,15 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
         if (!bone || bone->parent == -1 || !(bone->flags & BONE_USED_BY_HITBOX))
             continue;
 
-        bones.emplace_back(boneMatrices[i].origin(), boneMatrices[bone->parent].origin());
+        ImVec2 bonePoint;
+        if (!worldToScreen(boneMatrices[i].origin(), bonePoint))
+            continue;
+
+        ImVec2 parentPoint;
+        if (!worldToScreen(boneMatrices[bone->parent].origin(), parentPoint))
+            continue;
+
+        bones.emplace_back(bonePoint, parentPoint);
     }
 
     const auto set = studioModel->getHitboxSet(entity->hitboxSet());
