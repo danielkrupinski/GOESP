@@ -70,27 +70,27 @@ template <value_t Type, typename T>
 static void read(const json& j, const char* key, T& o) noexcept
 {
     if (j.contains(key) && j[key].type() == Type)
-        o = j[key];
+        j[key].get_to(o);
 }
 
 static void read(const json& j, const char* key, bool& o) noexcept
 {
     if (j.contains(key) && j[key].type() == value_t::boolean)
-        o = j[key];
+        j[key].get_to(o);
 }
 
 template <value_t Type, typename T, size_t Size>
 static void read(const json& j, const char* key, std::array<T, Size>& o) noexcept
 {
     if (j.contains(key) && j[key].type() == Type && j[key].size() == o.size())
-        o = j[key];
+        j[key].get_to(o);
 }
 
 template <typename T>
 static void read_number(const json& j, const char* key, T& o) noexcept
 {
     if (j.contains(key) && j[key].is_number())
-        o = j[key];
+        j[key].get_to(o);
 }
 
 template <typename T>
@@ -98,7 +98,7 @@ static void read_map(const json& j, const char* key, std::unordered_map<std::str
 {
     if (j.contains(key) && j[key].is_object()) {
         for (auto& element : j[key].items())
-            o[element.key()] = static_cast<const T&>(element.value());
+            element.value().get_to(o[element.key()]);
     }
 }
 
@@ -277,8 +277,8 @@ if (!(o.valueName == dummy.valueName)) \
 static void to_json(json& j, const Color& o, const Color& dummy = {})
 {
     WRITE("Color", color)
-    WRITE("Rainbow", rainbow)
-    WRITE("Rainbow Speed", rainbowSpeed)
+        WRITE("Rainbow", rainbow)
+        WRITE("Rainbow Speed", rainbowSpeed)
 }
 
 static void to_json(json& j, const ColorToggle& o, const ColorToggle& dummy = {})
@@ -320,13 +320,13 @@ static void to_json(json& j, const Box& o, const Box& dummy = {})
 {
     to_json(j, static_cast<const ColorToggleThicknessRounding&>(o), dummy);
     WRITE("Type", type)
-    WRITE("Scale", scale)
+        WRITE("Scale", scale)
 }
 
 static void to_json(json& j, const Shared& o, const Shared& dummy = {})
 {
     WRITE("Enabled", enabled)
-    to_json(j["Font"], o.font, dummy.font);
+        to_json(j["Font"], o.font, dummy.font);
     to_json(j["Snapline"], o.snapline, dummy.snapline);
     to_json(j["Box"], o.box, dummy.box);
     to_json(j["Name"], o.name, dummy.name);
@@ -339,8 +339,8 @@ static void to_json(json& j, const Player& o, const Player& dummy = {})
     to_json(j["Weapon"], o.weapon, dummy.weapon);
     to_json(j["Flash Duration"], o.flashDuration, dummy.flashDuration);
     WRITE("Audible Only", audibleOnly)
-    WRITE("Spotted Only", spottedOnly)
-    to_json(j["Skeleton"], o.skeleton, dummy.skeleton);
+        WRITE("Spotted Only", spottedOnly)
+        to_json(j["Skeleton"], o.skeleton, dummy.skeleton);
     to_json(j["Head Box"], o.headBox, dummy.headBox);
 }
 
@@ -354,13 +354,13 @@ static void to_json(json& j, const Trail& o, const Trail& dummy = {})
 {
     to_json(j, static_cast<const ColorToggleThickness&>(o), dummy);
     WRITE("Type", type)
-    WRITE("Time", time)
+        WRITE("Time", time)
 }
 
 static void to_json(json& j, const Trails& o, const Trails& dummy = {})
 {
     WRITE("Enabled", enabled)
-    to_json(j["Local Player"], o.localPlayer, dummy.localPlayer);
+        to_json(j["Local Player"], o.localPlayer, dummy.localPlayer);
     to_json(j["Allies"], o.allies, dummy.allies);
     to_json(j["Enemies"], o.enemies, dummy.enemies);
 }
@@ -374,32 +374,32 @@ static void to_json(json& j, const Projectile& o, const Projectile& dummy = {})
 static void to_json(json& j, const ImVec2& o, const ImVec2& dummy = {})
 {
     WRITE("X", x)
-    WRITE("Y", y)
+        WRITE("Y", y)
 }
 
 static void to_json(json& j, const PurchaseList& o, const PurchaseList& dummy = {})
 {
     WRITE("Enabled", enabled)
-    WRITE("Only During Freeze Time", onlyDuringFreezeTime)
-    WRITE("Show Prices", showPrices)
-    WRITE("No Title Bar", noTitleBar)
-    WRITE("Mode", mode)
+        WRITE("Only During Freeze Time", onlyDuringFreezeTime)
+        WRITE("Show Prices", showPrices)
+        WRITE("No Title Bar", noTitleBar)
+        WRITE("Mode", mode)
 
-    if (const auto window = ImGui::FindWindowByName("Purchases")) {
-        j["Pos"] = window->Pos;
-        j["Size"] = window->SizeFull;
-    }
+        if (const auto window = ImGui::FindWindowByName("Purchases")) {
+            j["Pos"] = window->Pos;
+            j["Size"] = window->SizeFull;
+        }
 }
 
 static void to_json(json& j, const ObserverList& o, const ObserverList& dummy = {})
 {
     WRITE("Enabled", enabled)
-    WRITE("No Title Bar", noTitleBar)
+        WRITE("No Title Bar", noTitleBar)
 
-    if (const auto window = ImGui::FindWindowByName("Observer List")) {
-        j["Pos"] = window->Pos;
-        j["Size"] = window->SizeFull;
-    }
+        if (const auto window = ImGui::FindWindowByName("Observer List")) {
+            j["Pos"] = window->Pos;
+            j["Size"] = window->SizeFull;
+        }
 }
 
 void removeEmptyObjects(json& j) noexcept
