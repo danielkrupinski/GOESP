@@ -46,6 +46,7 @@ bool Entity::visibleTo(Entity* other) noexcept
     if (!setupBones(boneMatrices, MAXSTUDIOBONES, BONE_USED_BY_HITBOX, memory->globalVars->currenttime))
         return false;
 
+    // This is wrong! TODO: use correct hitboxes
     for (const auto boxNum : { 9, 14, 17 }) { // guts, left & right elbow hitbox
         if (boxNum < set->numHitboxes && other->canSee(this, boneMatrices[set->getHitbox(boxNum)->bone].origin()))
             return true;
