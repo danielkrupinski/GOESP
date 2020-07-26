@@ -355,7 +355,7 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
     if (!set)
         return;
 
-    const auto headBox = set->getHitbox(0);
+    const auto headBox = set->getHitbox(Hitbox::Head);
 
     headMins = headBox->bbMin.transform(boneMatrices[headBox->bone]);
     headMaxs = headBox->bbMax.transform(boneMatrices[headBox->bone]);
