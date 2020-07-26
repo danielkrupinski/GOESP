@@ -66,12 +66,13 @@ void GameData::update() noexcept
     lootCrateData.clear();
     bombData.clear();
 
+    localPlayerData.update();
+
     if (!localPlayer)
         return;
 
     viewMatrix = interfaces->engine->worldToScreenMatrix();
-    localPlayerData.update();
-    
+
     for (int i = 0; i < memory->plantedC4s->size; ++i)
         bombData.emplace_back((*memory->plantedC4s)[i]);
 
