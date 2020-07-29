@@ -261,3 +261,23 @@ void Misc::drawNoscopeCrosshair(ImDrawList* drawList) noexcept
 
     drawCrosshair(drawList, ImGui::GetIO().DisplaySize / 2, Helpers::calculateColor(config->noscopeCrosshair), config->noscopeCrosshair.thickness);
 }
+
+void Misc::drawFpsCounter() noexcept
+{
+    if (!config->fpsCounter.enabled)
+        return;
+
+    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize;
+    if (!gui->open)
+        windowFlags |= ImGuiWindowFlags_NoInputs;
+
+    ImGui::SetNextWindowBgAlpha(0.35f);
+    ImGui::Begin("FPS Counter", nullptr, windowFlags);
+    
+    static auto frameRate = 1.0f;
+    frameRate = 0.9f * frameRate + 0.1f * memory->globalVars->absoluteFrameTime;
+    if (frameRate != 0.0f)
+        ImGui::Text("%d fps", static_cast<int>(1 / frameRate));
+
+    ImGui::End();
+}
