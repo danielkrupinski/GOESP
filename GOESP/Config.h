@@ -31,6 +31,7 @@ public:
     PurchaseList purchaseList;
     ObserverList observerList;
     bool ignoreFlashbang = false;
+    OverlayWindow fpsCounter{ "FPS Counter" };
 
     std::vector<std::string> systemFonts{ "Default" };
 

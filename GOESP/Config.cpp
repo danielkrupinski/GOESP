@@ -270,7 +270,7 @@ void Config::load() noexcept
     read<value_t::object>(j, "Purchase List", purchaseList);
     read<value_t::object>(j, "Observer List", observerList);
     read(j, "Ignore Flashbang", ignoreFlashbang);
-    // read<value_t::object>(j, "FPS Counter", fpsCounter);
+    read<value_t::object>(j, "FPS Counter", fpsCounter);
 }
 
 // WRITE macro requires:
@@ -450,7 +450,7 @@ void Config::save() noexcept
     j["Noscope Crosshair"] = noscopeCrosshair;
     j["Purchase List"] = purchaseList;
     j["Observer List"] = observerList;
-    // j["FPS Counter"] = fpsCounter;
+    j["FPS Counter"] = fpsCounter;
 
     removeEmptyObjects(j);
 
