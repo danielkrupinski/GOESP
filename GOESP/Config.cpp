@@ -242,6 +242,12 @@ static void from_json(const json& j, ObserverList& ol)
     read<value_t::object>(j, "Size", ol.size);
 }
 
+static void from_json(const json& j, OverlayWindow& o)
+{
+    read(j, "Enabled", o.enabled);
+    read<value_t::object>(j, "Pos", o.pos);
+}
+
 void Config::load() noexcept
 {
     json j;
@@ -264,6 +270,7 @@ void Config::load() noexcept
     read<value_t::object>(j, "Purchase List", purchaseList);
     read<value_t::object>(j, "Observer List", observerList);
     read(j, "Ignore Flashbang", ignoreFlashbang);
+    // read<value_t::object>(j, "FPS Counter", fpsCounter);
 }
 
 // WRITE macro requires:
@@ -277,8 +284,8 @@ if (!(o.valueName == dummy.valueName)) \
 static void to_json(json& j, const Color& o, const Color& dummy = {})
 {
     WRITE("Color", color)
-        WRITE("Rainbow", rainbow)
-        WRITE("Rainbow Speed", rainbowSpeed)
+    WRITE("Rainbow", rainbow)
+    WRITE("Rainbow Speed", rainbowSpeed)
 }
 
 static void to_json(json& j, const ColorToggle& o, const ColorToggle& dummy = {})
@@ -320,13 +327,13 @@ static void to_json(json& j, const Box& o, const Box& dummy = {})
 {
     to_json(j, static_cast<const ColorToggleThicknessRounding&>(o), dummy);
     WRITE("Type", type)
-        WRITE("Scale", scale)
+    WRITE("Scale", scale)
 }
 
 static void to_json(json& j, const Shared& o, const Shared& dummy = {})
 {
     WRITE("Enabled", enabled)
-        to_json(j["Font"], o.font, dummy.font);
+    to_json(j["Font"], o.font, dummy.font);
     to_json(j["Snapline"], o.snapline, dummy.snapline);
     to_json(j["Box"], o.box, dummy.box);
     to_json(j["Name"], o.name, dummy.name);
@@ -339,8 +346,8 @@ static void to_json(json& j, const Player& o, const Player& dummy = {})
     to_json(j["Weapon"], o.weapon, dummy.weapon);
     to_json(j["Flash Duration"], o.flashDuration, dummy.flashDuration);
     WRITE("Audible Only", audibleOnly)
-        WRITE("Spotted Only", spottedOnly)
-        to_json(j["Skeleton"], o.skeleton, dummy.skeleton);
+    WRITE("Spotted Only", spottedOnly)
+    to_json(j["Skeleton"], o.skeleton, dummy.skeleton);
     to_json(j["Head Box"], o.headBox, dummy.headBox);
 }
 
@@ -354,13 +361,13 @@ static void to_json(json& j, const Trail& o, const Trail& dummy = {})
 {
     to_json(j, static_cast<const ColorToggleThickness&>(o), dummy);
     WRITE("Type", type)
-        WRITE("Time", time)
+    WRITE("Time", time)
 }
 
 static void to_json(json& j, const Trails& o, const Trails& dummy = {})
 {
     WRITE("Enabled", enabled)
-        to_json(j["Local Player"], o.localPlayer, dummy.localPlayer);
+    to_json(j["Local Player"], o.localPlayer, dummy.localPlayer);
     to_json(j["Allies"], o.allies, dummy.allies);
     to_json(j["Enemies"], o.enemies, dummy.enemies);
 }
@@ -374,32 +381,40 @@ static void to_json(json& j, const Projectile& o, const Projectile& dummy = {})
 static void to_json(json& j, const ImVec2& o, const ImVec2& dummy = {})
 {
     WRITE("X", x)
-        WRITE("Y", y)
+    WRITE("Y", y)
 }
 
 static void to_json(json& j, const PurchaseList& o, const PurchaseList& dummy = {})
 {
     WRITE("Enabled", enabled)
-        WRITE("Only During Freeze Time", onlyDuringFreezeTime)
-        WRITE("Show Prices", showPrices)
-        WRITE("No Title Bar", noTitleBar)
-        WRITE("Mode", mode)
+    WRITE("Only During Freeze Time", onlyDuringFreezeTime)
+    WRITE("Show Prices", showPrices)
+    WRITE("No Title Bar", noTitleBar)
+    WRITE("Mode", mode)
 
-        if (const auto window = ImGui::FindWindowByName("Purchases")) {
-            j["Pos"] = window->Pos;
-            j["Size"] = window->SizeFull;
-        }
+    if (const auto window = ImGui::FindWindowByName("Purchases")) {
+        j["Pos"] = window->Pos;
+        j["Size"] = window->SizeFull;
+    }
 }
 
 static void to_json(json& j, const ObserverList& o, const ObserverList& dummy = {})
 {
     WRITE("Enabled", enabled)
-        WRITE("No Title Bar", noTitleBar)
+    WRITE("No Title Bar", noTitleBar)
 
-        if (const auto window = ImGui::FindWindowByName("Observer List")) {
-            j["Pos"] = window->Pos;
-            j["Size"] = window->SizeFull;
-        }
+    if (const auto window = ImGui::FindWindowByName("Observer List")) {
+        j["Pos"] = window->Pos;
+        j["Size"] = window->SizeFull;
+    }
+}
+
+static void to_json(json& j, const OverlayWindow& o, const OverlayWindow& dummy = {})
+{
+    WRITE("Enabled", enabled)
+
+    if (const auto window = ImGui::FindWindowByName(o.name))
+        j["Pos"] = window->Pos;
 }
 
 void removeEmptyObjects(json& j) noexcept
@@ -435,6 +450,7 @@ void Config::save() noexcept
     j["Noscope Crosshair"] = noscopeCrosshair;
     j["Purchase List"] = purchaseList;
     j["Observer List"] = observerList;
+    // j["FPS Counter"] = fpsCounter;
 
     removeEmptyObjects(j);
 

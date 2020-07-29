@@ -140,3 +140,11 @@ struct ObserverList {
     ImVec2 pos;
     ImVec2 size{ 200.0f, 200.0f };
 };
+
+struct OverlayWindow {
+    OverlayWindow() = default;
+    OverlayWindow(const char* windowName) : name{ windowName } {}
+    bool enabled = false;
+    const char* name = "";
+    ImVec2 pos;
+};
