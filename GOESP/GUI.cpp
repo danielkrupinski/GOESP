@@ -83,6 +83,7 @@ void GUI::render() noexcept
         ImGui::PopID();
 
         ImGui::Checkbox("Ignore Flashbang", &config->ignoreFlashbang);
+        ImGui::Checkbox("FPS Counter", &config->fpsCounter.enabled);
 
         ImGui::EndTabItem();
     }
