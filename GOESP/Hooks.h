@@ -7,7 +7,8 @@
 #include <d3d9.h>
 #include <Windows.h>
 #elif __linux__
-struct SDL_Event;
+struct SDL_Window;
+union SDL_Event;
 #endif
 
 class Hooks {
@@ -24,7 +25,7 @@ public:
     Hooks() noexcept;
 
     std::add_pointer_t<int(SDL_Event*)> pollEvent;
-
+    std::add_pointer_t<void(SDL_Window*)> swapWindow;
 #endif
 
     void setup() noexcept;
