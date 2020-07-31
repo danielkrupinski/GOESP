@@ -346,11 +346,16 @@ static bool renderPlayerEsp(const PlayerData& playerData, const Player& playerCo
      || playerConfig.spottedOnly && !playerData.spotted && !(playerConfig.audibleOnly && playerData.audible)) // if both "Audible Only" and "Spotted Only" are on treat them as audible OR spotted
         return true;
 
+    if (playerData.immune)
+        Helpers::setAlphaFactor(0.5f);
+
     drawPlayerSkeleton(playerConfig.skeleton, playerData.bones);
     renderPlayerBox(playerData, playerConfig);
 
     if (const BoundingBox headBbox{ playerData.headMins, playerData.headMaxs, playerConfig.headBox.scale })
         renderBox(headBbox, playerConfig.headBox);
+
+    Helpers::setAlphaFactor(1.0f);
 
     return true;
 }
