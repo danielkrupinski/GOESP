@@ -155,11 +155,13 @@ public:
     PROP(ownerEntity, 0x184, int)                                                  // CBaseEntity->m_hOwnerEntity
     PROP(spotted, 0xECD, bool)                                                     // CBaseEntity->m_bSpotted
 
+    PROP(fov, 0x39A8, int)                                                         // CBasePlayer->m_iFOV
     PROP(fovStart, 0x39AC, int)                                                    // CBasePlayer->m_iFOVStart
+    PROP(defaultFov, 0x3B14, int)                                                  // CBasePlayer->m_iDefaultFOV
 
     PROP(isScoped, 0x4228, bool)                                                   // CCSPlayer->m_bIsScoped
+    PROP(gunGameImmunity, 0x4244, bool)                                            // CCSPlayer->m_bGunGameImmunity
     PROP(flashDuration, 0xAD4C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
-
     PROP(shotsFired, 0xACC0, int)                                                  // CCSPlayer->m_iShotsFired
 
     PROP(thrower, 0x3040, int)                                                     // CBaseGrenade->m_hThrower
