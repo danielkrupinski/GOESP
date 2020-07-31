@@ -129,6 +129,7 @@ public:
     PROP(defaultFov, 0x332C, int)                                                  // CBasePlayer->m_iDefaultFOV
  
     PROP(isScoped, 0x3928, bool)                                                   // CCSPlayer->m_bIsScoped
+    PROP(gunGameImmunity, 0x3944, bool)                                            // CCSPlayer->m_bGunGameImmunity
     PROP(flashDuration, 0xA41C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
     PROP(shotsFired, 0xA390, int)                                                  // CCSPlayer->m_iShotsFired
         
