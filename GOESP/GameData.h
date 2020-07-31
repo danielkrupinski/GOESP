@@ -106,6 +106,7 @@ struct PlayerData : BaseData {
     bool visible = false;
     bool audible;
     bool spotted;
+    bool immune;
     float flashDuration;
     char name[128];
     std::string activeWeapon;
