@@ -47,6 +47,7 @@ public:
     std::uintptr_t setCursorPos;
 #elif __linux__
     std::uintptr_t pollEvent;
+    std::uintptr_t swapWindow;
 #endif
 private:
     static std::pair<void*, std::size_t> getModuleInformation(const char* name) noexcept
