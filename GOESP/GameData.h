@@ -83,10 +83,9 @@ struct EntityData final : BaseData {
 
 struct ProjectileData : BaseData {
     ProjectileData(Entity* projectile) noexcept;
-
     void update(Entity* projectile) noexcept;
 
-    constexpr auto operator==(int otherHandle) const noexcept
+    constexpr auto operator==(uintptr_t otherHandle) const noexcept
     {
         return handle == otherHandle;
     }
@@ -94,7 +93,7 @@ struct ProjectileData : BaseData {
     bool exploded = false;
     bool thrownByLocalPlayer = false;
     bool thrownByEnemy = false;
-    int handle;
+    uintptr_t handle;
     const char* name = nullptr;
     std::vector<std::pair<float, Vector>> trajectory;
 };
