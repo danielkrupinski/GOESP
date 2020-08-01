@@ -1,8 +1,4 @@
-#include "Hooks.h"
-
 #include "imgui/imgui.h"
-#include "imgui/imgui_impl_dx9.h"
-#include "imgui/imgui_impl_win32.h"
 
 #include "Config.h"
 #include "EventListener.h"
@@ -10,6 +6,7 @@
 #include "GUI.h"
 #include "Hacks/ESP.h"
 #include "Hacks/Misc.h"
+#include "Hooks.h"
 #include "Interfaces.h"
 #include "Memory.h"
 
@@ -19,6 +16,13 @@
 
 #ifdef _WIN32
 #include <intrin.h>
+
+#include "imgui/imgui_impl_dx9.h"
+#include "imgui/imgui_impl_win32.h"
+#elif __linux__
+#include "imgui/GL/gl3w.h"
+#include "imgui/imgui_impl_sdl.h"
+#include "imgui/imgui_impl_opengl3.h"
 #endif
 
 #ifdef _WIN32
