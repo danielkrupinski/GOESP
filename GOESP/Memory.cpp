@@ -66,6 +66,7 @@ Memory::Memory() noexcept
 
     activeChannels = relativeToAbsolute<ActiveChannels*>(findPattern("engine_client.so", "\x48\x8D\x3D????\x4C\x89\xE6\xE8????\x8B\xBD") + 3);
     channels = relativeToAbsolute<Channel*>(findPattern("engine_client.so", "\x4C\x8D\x35????\x49\x83\xC4\x04") + 3);
+    plantedC4s = *reinterpret_cast<decltype(plantedC4s)*>(findPattern("/client_client.so", "\x48\x8D\x3D????\x49\x8B\x0C\x24") + 3);
 
     pollEvent = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(RTLD_NEXT, "SDL_PollEvent")) + 3);
     swapWindow = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(RTLD_NEXT, "SDL_GL_SwapWindow")) + 3);
