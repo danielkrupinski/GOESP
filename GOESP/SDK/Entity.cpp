@@ -17,8 +17,11 @@
 bool Entity::canSee(Entity* other, const Vector& pos) noexcept
 {
     const auto eyePos = getEyePosition();
+
+#ifdef _WIN32
     if (memory->lineGoesThroughSmoke(eyePos, pos, 1))
         return false;
+#endif
 
     Trace trace;
     interfaces->engineTrace->traceRay({ eyePos, pos }, 0x46004009, this, trace);
