@@ -20,6 +20,8 @@
 #include "imgui/imgui_impl_dx9.h"
 #include "imgui/imgui_impl_win32.h"
 #elif __linux__
+#include <SDL2/SDL.h>
+
 #include "imgui/GL/gl3w.h"
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
@@ -118,10 +120,10 @@ static int pollEvent(SDL_Event* event) noexcept
 
     if (hooks->getState() == Hooks::State::Installed) {
         GameData::update();
+        ImGui_ImplSDL2_ProcessEvent(event);
         interfaces->inputSystem->enableInput(!gui->open);
     }
 
-    ImGui_ImplSDL2_ProcessEvent(event);
     return hooks->pollEvent(event);
 }
 
@@ -134,7 +136,21 @@ static void swapWindow(SDL_Window* window) noexcept
 
     ImGui::NewFrame();
 
+    ESP::render();
+    Misc::drawReloadProgress(ImGui::GetBackgroundDrawList());
+    Misc::drawRecoilCrosshair(ImGui::GetBackgroundDrawList());
+    Misc::drawNoscopeCrosshair(ImGui::GetBackgroundDrawList());
+    Misc::purchaseList();
+    Misc::drawObserverList();
+    Misc::drawFpsCounter();
+
     gui->render();
+
+    if (ImGui::IsKeyPressed(SDL_SCANCODE_INSERT, false)) {
+        gui->open = !gui->open;
+        if (!gui->open)
+            interfaces->inputSystem->resetInputState();
+    }
 
     ImGui::EndFrame();
     ImGui::Render();
