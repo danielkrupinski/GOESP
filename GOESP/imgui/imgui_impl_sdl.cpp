@@ -63,7 +63,6 @@ static Uint64       g_Time = 0;
 static bool         g_MousePressed[3] = { false, false, false };
 static SDL_Cursor*  g_MouseCursors[ImGuiMouseCursor_COUNT] = {};
 static char*        g_ClipboardTextData = NULL;
-static bool         g_MouseCanUseGlobalState = true;
 
 static const char* ImGui_ImplSDL2_GetClipboardText(void*)
 {
@@ -177,18 +176,6 @@ static bool ImGui_ImplSDL2_Init(SDL_Window* window)
     g_MouseCursors[ImGuiMouseCursor_Hand] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
     g_MouseCursors[ImGuiMouseCursor_NotAllowed] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
 
-    // Check and store if we are on Wayland
-    g_MouseCanUseGlobalState = strncmp(SDL_GetCurrentVideoDriver(), "wayland", 7) != 0;
-
-#ifdef _WIN32
-    SDL_SysWMinfo wmInfo;
-    SDL_VERSION(&wmInfo.version);
-    SDL_GetWindowWMInfo(window, &wmInfo);
-    io.ImeWindowHandle = wmInfo.info.win.window;
-#else
-    (void)window;
-#endif
-
     return true;
 }
 
@@ -251,32 +238,8 @@ static void ImGui_ImplSDL2_UpdateMousePosAndButtons()
     io.MouseDown[2] = g_MousePressed[2] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_MIDDLE)) != 0;
     g_MousePressed[0] = g_MousePressed[1] = g_MousePressed[2] = false;
 
-#if SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE && !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !(defined(__APPLE__) && TARGET_OS_IOS)
-    SDL_Window* focused_window = SDL_GetKeyboardFocus();
-    if (g_Window == focused_window)
-    {
-        if (g_MouseCanUseGlobalState)
-        {
-            // SDL_GetMouseState() gives mouse position seemingly based on the last window entered/focused(?)
-            // The creation of a new windows at runtime and SDL_CaptureMouse both seems to severely mess up with that, so we retrieve that position globally.
-            // Won't use this workaround when on Wayland, as there is no global mouse position.
-            int wx, wy;
-            SDL_GetWindowPosition(focused_window, &wx, &wy);
-            SDL_GetGlobalMouseState(&mx, &my);
-            mx -= wx;
-            my -= wy;
-        }
-        io.MousePos = ImVec2((float)mx, (float)my);
-    }
-
-    // SDL_CaptureMouse() let the OS know e.g. that our imgui drag outside the SDL window boundaries shouldn't e.g. trigger the OS window resize cursor.
-    // The function is only supported from SDL 2.0.4 (released Jan 2016)
-    bool any_mouse_button_down = ImGui::IsAnyMouseDown();
-    SDL_CaptureMouse(any_mouse_button_down ? SDL_TRUE : SDL_FALSE);
-#else
     if (SDL_GetWindowFlags(g_Window) & SDL_WINDOW_INPUT_FOCUS)
         io.MousePos = ImVec2((float)mx, (float)my);
-#endif
 }
 
 static void ImGui_ImplSDL2_UpdateMouseCursor()
@@ -347,15 +310,17 @@ void ImGui_ImplSDL2_NewFrame(SDL_Window* window)
 
     // Setup display size (every frame to accommodate for window resizing)
     int w, h;
-    int display_w, display_h;
+    
     SDL_GetWindowSize(window, &w, &h);
     if (SDL_GetWindowFlags(window) & SDL_WINDOW_MINIMIZED)
         w = h = 0;
-    SDL_GL_GetDrawableSize(window, &display_w, &display_h);
+    
     io.DisplaySize = ImVec2((float)w, (float)h);
-    if (w > 0 && h > 0)
+    if (w > 0 && h > 0) {
+        int display_w, display_h;
+        SDL_GL_GetDrawableSize(window, &display_w, &display_h);
         io.DisplayFramebufferScale = ImVec2((float)display_w / w, (float)display_h / h);
-
+    }
     // Setup time step (we don't use SDL_GetTicks() because it is using millisecond resolution)
     static Uint64 frequency = SDL_GetPerformanceFrequency();
     Uint64 current_time = SDL_GetPerformanceCounter();
