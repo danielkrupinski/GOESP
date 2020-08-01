@@ -111,7 +111,7 @@ Hooks::Hooks(HMODULE module) noexcept
 
 #elif __linux__
 
-static int pollEvent(SDL_Event* window) noexcept
+static int pollEvent(SDL_Event* event) noexcept
 {
     if (hooks->getState() == Hooks::State::NotInstalled)
         hooks->install();
@@ -122,7 +122,25 @@ static int pollEvent(SDL_Event* window) noexcept
     }
 
     ImGui_ImplSDL2_ProcessEvent(event);
-    return hooks->pollEvent(window);
+    return hooks->pollEvent(event);
+}
+
+static void swapWindow(SDL_Window* window) noexcept
+{
+    static const auto _ = ImGui_ImplSDL2_InitForOpenGL(window, nullptr);
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame(window);
+
+    ImGui::NewFrame();
+
+    gui->render();
+
+    ImGui::EndFrame();
+    ImGui::Render();
+
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    hooks->swapWindow(window);
 }
 
 Hooks::Hooks() noexcept
