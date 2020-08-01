@@ -6,5 +6,5 @@ class Entity;
 
 class ClientTools {
 public:
-    VIRTUAL_METHOD(Entity*, nextEntity, 7, (Entity* entity), (this, entity))
+    VIRTUAL_METHOD_V(Entity*, nextEntity, 7, (Entity* entity), (this, entity))
 };
