@@ -176,6 +176,9 @@ void Hooks::install() noexcept
     ImGui::CreateContext();
 #ifdef _WIN32
     ImGui_ImplWin32_Init(window);
+#elif __linux__
+    gl3wInit();
+    ImGui_ImplOpenGL3_Init();
 #endif
     gui = std::make_unique<GUI>();
 
