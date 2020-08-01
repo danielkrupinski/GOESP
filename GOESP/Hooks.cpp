@@ -191,6 +191,9 @@ void Hooks::install() noexcept
 
     setCursorPos = *reinterpret_cast<decltype(setCursorPos)*>(memory->setCursorPos);
     *reinterpret_cast<decltype(::setCursorPos)**>(memory->setCursorPos) = ::setCursorPos;
+#elif __linux__
+    swapWindow = *reinterpret_cast<decltype(swapWindow)*>(memory->swapWindow);
+    *reinterpret_cast<decltype(::swapWindow)**>(memory->swapWindow) = ::swapWindow;
 #endif
 
     state = State::Installed;
