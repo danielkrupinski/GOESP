@@ -54,8 +54,8 @@ public:
     VIRTUAL_METHOD(bool, setupBones, 13, (Matrix3x4* out, int maxBones, int boneMask, float currentTime), (this + sizeof(uintptr_t), out, maxBones, boneMask, currentTime))
     VIRTUAL_METHOD(const Matrix3x4&, toWorldTransform, 32, (), (this + sizeof(uintptr_t)))
 
-    VIRTUAL_METHOD(int&, handle, 2, (), (this))
-    VIRTUAL_METHOD(Collideable*, getCollideable, 3, (), (this))
+    VIRTUAL_METHOD_V(uintptr_t&, handle, 2, (), (this))
+    VIRTUAL_METHOD_V(Collideable*, getCollideable, 3, (), (this))
 
 #ifdef _WIN32
     VIRTUAL_METHOD(Vector&, getAbsOrigin, 10, (), (this))
