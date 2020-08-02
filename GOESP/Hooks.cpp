@@ -151,6 +151,7 @@ static void swapWindow(SDL_Window* window) noexcept
         if (!gui->open)
             interfaces->inputSystem->resetInputState();
     }
+    ImGui::GetIO().MouseDrawCursor = gui->open;
 
     ImGui::EndFrame();
     ImGui::Render();
