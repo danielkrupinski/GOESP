@@ -262,5 +262,11 @@ void Hooks::uninstall() noexcept
     if (HANDLE thread = CreateThread(nullptr, 0, LPTHREAD_START_ROUTINE(waitOnUnload), module, 0, nullptr))
         CloseHandle(thread);
 
+#elif __linux__
+
+    *reinterpret_cast<void**>(memory->pollEvent) = pollEvent;
+    *reinterpret_cast<void**>(memory->swapWindow) = swapWindow;
+    *reinterpret_cast<void**>(memory->warpMouseInWindow) = warpMouseInWindow;
+
 #endif
 }
