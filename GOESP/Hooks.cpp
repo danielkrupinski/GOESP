@@ -165,6 +165,12 @@ Hooks::Hooks() noexcept
     memory = std::make_unique<const Memory>();
 }
 
+static void warpMouseInWindow(SDL_Window* window, int x, int y) noexcept
+{
+    if (!gui->open)
+    	hooks->warpMouseInWindow(window, x, y);
+}
+
 #endif
 
 void Hooks::setup() noexcept
@@ -210,6 +216,9 @@ void Hooks::install() noexcept
 #elif __linux__
     swapWindow = *reinterpret_cast<decltype(swapWindow)*>(memory->swapWindow);
     *reinterpret_cast<decltype(::swapWindow)**>(memory->swapWindow) = ::swapWindow;
+
+    warpMouseInWindow = *reinterpret_cast<decltype(warpMouseInWindow)*>(memory->warpMouseInWindow);
+    *reinterpret_cast<decltype(::warpMouseInWindow)**>(memory->warpMouseInWindow) = ::warpMouseInWindow;
 #endif
 
     state = State::Installed;
