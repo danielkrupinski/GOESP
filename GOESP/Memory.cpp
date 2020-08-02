@@ -63,6 +63,7 @@ Memory::Memory() noexcept
     localPlayer.init(relativeToAbsolute<Entity**>(findPattern("/client_client.so", "\x83\xFF\xFF\x48\x8B\x05") + 6));
 
     isOtherEnemy = relativeToAbsolute<decltype(isOtherEnemy)>(findPattern("/client_client.so", "\xE8????\x84\xC0\x44\x89\xE2") + 1);
+    lineGoesThroughSmoke = relativeToAbsolute<decltype(lineGoesThroughSmoke)>(findPattern("/client_client.so", "\x40\x0F\xB6\xFF\x55") + 1);
 
     activeChannels = relativeToAbsolute<ActiveChannels*>(findPattern("engine_client.so", "\x48\x8D\x3D????\x4C\x89\xE6\xE8????\x8B\xBD") + 3);
     channels = relativeToAbsolute<Channel*>(findPattern("engine_client.so", "\x4C\x8D\x35????\x49\x83\xC4\x04") + 3);
