@@ -123,6 +123,8 @@ bool ImGui_ImplSDL2_ProcessEvent(const SDL_Event* event)
 #endif
             return true;
         }
+    case SDL_MOUSEMOTION:
+        return true;
     }
     return false;
 }
