@@ -118,13 +118,16 @@ static int pollEvent(SDL_Event* event) noexcept
     if (hooks->getState() == Hooks::State::NotInstalled)
         hooks->install();
 
+    const auto result = hooks->pollEvent(event);
+
     if (hooks->getState() == Hooks::State::Installed) {
         GameData::update();
-        ImGui_ImplSDL2_ProcessEvent(event);
-        interfaces->inputSystem->enableInput(!gui->open);
+        if (result && ImGui_ImplSDL2_ProcessEvent(event) && gui->open)
+            event->type = 0;
+        // works only on WIN32 -> interfaces->inputSystem->enableInput(!gui->open);
     }
 
-    return hooks->pollEvent(event);
+    return result;
 }
 
 static void swapWindow(SDL_Window* window) noexcept
