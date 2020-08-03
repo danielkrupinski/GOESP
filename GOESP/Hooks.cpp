@@ -124,7 +124,6 @@ static int pollEvent(SDL_Event* event) noexcept
         GameData::update();
         if (result && ImGui_ImplSDL2_ProcessEvent(event) && gui->open)
             event->type = 0;
-        // works only on WIN32 -> interfaces->inputSystem->enableInput(!gui->open);
     }
 
     return result;
@@ -133,6 +132,10 @@ static int pollEvent(SDL_Event* event) noexcept
 static void swapWindow(SDL_Window* window) noexcept
 {
     static const auto _ = ImGui_ImplSDL2_InitForOpenGL(window, nullptr);
+
+    if (config->loadScheduledFonts()) {
+        ImGui_ImplOpenGL3_DestroyDeviceObjects();
+    }
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window);

@@ -59,6 +59,23 @@ Config::Config(const char* folderName) noexcept
     logfont.lfFaceName[0] = '\0';
 
     EnumFontFamiliesExA(GetDC(nullptr), &logfont, fontCallback, (LPARAM)&systemFonts, 0);
+#elif __linux__
+    if (auto pipe = popen("fc-list :lang=en -f \"%{family[0]} %{style[0]}%{file}\\n\" | grep .ttf", "r")) {
+        char* line = nullptr;
+        std::size_t n = 0;
+        while (getline(&line, &n, pipe) != -1) {
+            auto path = strstr(line, "/");
+            if (path <= line)
+                continue;
+           
+            path[-1] = path[strlen(path) - 1] = '\0';
+            systemFonts.emplace_back(line);
+            systemFontPaths.emplace_back(path);
+        }
+        if (line)
+            free(line);
+        pclose(pipe);
+    }
 #endif
     std::sort(std::next(systemFonts.begin()), systemFonts.end());
 }
@@ -462,7 +479,12 @@ void Config::save() noexcept
 
 void Config::scheduleFontLoad(const std::string& name) noexcept
 {
+#ifdef _WIN32
     scheduledFonts.push_back(name);
+#elif __linux__
+    if (const auto it = std::find(systemFonts.begin(), systemFonts.end(), name); it != systemFonts.end())
+        scheduledFonts.push_back(systemFontPaths[std::distance(systemFonts.begin(), it)]);
+#endif
 }
 
 #ifdef _WIN32
@@ -542,6 +564,22 @@ bool Config::loadScheduledFonts() noexcept
             newFont.medium = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, 10.0f, &cfg, ranges);
             newFont.big = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, 13.0f, &cfg, ranges);
             fonts.emplace(fontName, newFont);
+            result = true;
+        }
+#elif __linux__
+        if (fonts.find(fontName) == fonts.cend()) {
+            ImFontConfig cfg;
+            cfg.FontDataOwnedByAtlas = false;
+            const auto ranges = Helpers::getFontGlyphRanges();
+
+            Font newFont;
+            newFont.tiny = ImGui::GetIO().Fonts->AddFontFromFileTTF(fontName.c_str(), 8.0f, &cfg, ranges);
+            newFont.medium = ImGui::GetIO().Fonts->AddFontFromFileTTF(fontName.c_str(), 10.0f, &cfg, ranges);
+            newFont.big = ImGui::GetIO().Fonts->AddFontFromFileTTF(fontName.c_str(), 13.0f, &cfg, ranges);
+
+            if (const auto it = std::find(systemFontPaths.begin(), systemFontPaths.end(), fontName); it != systemFontPaths.end())
+                fonts.emplace(systemFonts[std::distance(systemFontPaths.begin(), it)], newFont);
+
             result = true;
         }
 #endif

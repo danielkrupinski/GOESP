@@ -34,6 +34,9 @@ public:
     OverlayWindow fpsCounter{ "FPS Counter" };
 
     std::vector<std::string> systemFonts{ "Default" };
+#ifdef __linux__
+    std::vector<std::string> systemFontPaths{ "" };
+#endif
 
     struct Font {
         ImFont* tiny;
