@@ -264,9 +264,9 @@ void Hooks::uninstall() noexcept
 
 #elif __linux__
 
-    *reinterpret_cast<void**>(memory->pollEvent) = pollEvent;
-    *reinterpret_cast<void**>(memory->swapWindow) = swapWindow;
-    *reinterpret_cast<void**>(memory->warpMouseInWindow) = warpMouseInWindow;
+    *reinterpret_cast<decltype(pollEvent)*>(memory->pollEvent) = pollEvent;
+    *reinterpret_cast<decltype(swapWindow)*>(memory->swapWindow) = swapWindow;
+    *reinterpret_cast<decltype(warpMouseInWindow)*>(memory->warpMouseInWindow) = warpMouseInWindow;
 
 #endif
 }
