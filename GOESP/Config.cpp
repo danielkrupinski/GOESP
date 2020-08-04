@@ -533,9 +533,6 @@ bool Config::loadScheduledFonts() noexcept
         Font newFont;
 
         if (fontName == "Default") {
-            cfg.OversampleH = cfg.OversampleV = 1;
-            cfg.PixelSnapH = true;
-
             cfg.SizePixels = 13.0f;
             newFont.big = ImGui::GetIO().Fonts->AddFontDefault(&cfg);
 
