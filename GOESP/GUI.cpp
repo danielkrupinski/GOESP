@@ -22,6 +22,7 @@ GUI::GUI() noexcept
     io.IniFilename = nullptr;
     io.LogFilename = nullptr;
     io.Fonts->Flags |= ImFontAtlasFlags_NoPowerOfTwoHeight;
+    io.Fonts->AddFontDefault();
 }
 
 void GUI::render() noexcept
