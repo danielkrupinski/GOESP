@@ -33,7 +33,7 @@ struct ColorToggleThicknessRounding : ColorToggleRounding {
 
 struct Font {
     int index = 0; // do not save
-    std::string name;
+    std::string name = "Default";
 };
 
 struct Snapline : ColorToggleThickness {
