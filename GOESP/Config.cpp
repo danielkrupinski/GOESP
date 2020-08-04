@@ -481,9 +481,9 @@ void Config::scheduleFontLoad(std::size_t index) noexcept
     scheduledFonts.push_back(index);
 }
 
-#ifdef _WIN32
 static auto getFontData(const std::string& fontName) noexcept
 {
+#ifdef _WIN32
     HFONT font = CreateFontA(0, 0, 0, 0,
         FW_NORMAL, FALSE, FALSE, FALSE,
         ANSI_CHARSET, OUT_DEFAULT_PRECIS,
@@ -512,8 +512,13 @@ static auto getFontData(const std::string& fontName) noexcept
         DeleteObject(font);
     }
     return std::make_pair(std::move(data), dataSize);
-}
+#elif __linux__
+    std::size_t dataSize = (std::size_t)-1;
+    auto data = (std::byte*)ImFileLoadToMemory(fontName.c_str(), "rb", &dataSize);
+    return std::make_pair(std::unique_ptr<std::byte[]>{ data }, dataSize);
 #endif
+
+}
 
 bool Config::loadScheduledFonts() noexcept
 {
@@ -545,7 +550,7 @@ bool Config::loadScheduledFonts() noexcept
             fonts.emplace(fontName, newFont);
         } else {
             const auto [fontData, fontDataSize] = getFontData(fontPath);
-            if (fontDataSize == GDI_ERROR)
+            if (fontDataSize == -1)
                 continue;
 
             cfg.FontDataOwnedByAtlas = false;
