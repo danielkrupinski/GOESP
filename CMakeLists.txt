@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.11.0)
 project(GOESP)
+
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_FLAGS_RELEASE "-fvisibility=hidden")
 
 file(GLOB_RECURSE SOURCES "${CMAKE_SOURCE_DIR}/*.cpp")
 list(APPEND SOURCES "${CMAKE_SOURCE_DIR}/GOESP/imgui/GL/gl3w.c")
