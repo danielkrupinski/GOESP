@@ -60,7 +60,7 @@ Config::Config(const char* folderName) noexcept
 
     EnumFontFamiliesExA(GetDC(nullptr), &logfont, fontCallback, (LPARAM)&systemFonts, 0);
 #elif __linux__
-    if (auto pipe = popen("fc-list :lang=en -f \"%{family[0]} %{style[0]}%{file}\\n\" | grep .ttf", "r")) {
+    if (auto pipe = popen("fc-list :lang=en -f \"%{family[0]} %{style[0]} %{file}\\n\" | grep .ttf", "r")) {
         char* line = nullptr;
         std::size_t n = 0;
         while (getline(&line, &n, pipe) != -1) {
