@@ -357,7 +357,7 @@ void GUI::drawESPTab() noexcept
                 if (ImGui::Selectable(config->systemFonts[i].c_str(), isSelected, 0, { 250.0f, 0.0f })) {
                     sharedConfig.font.index = i;
                     sharedConfig.font.name = config->systemFonts[i];
-                    config->scheduleFontLoad(sharedConfig.font.name);
+                    config->scheduleFontLoad(i);
                 }
                 if (isSelected)
                     ImGui::SetItemDefaultFocus();

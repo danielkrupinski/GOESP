@@ -156,15 +156,14 @@ static void from_json(const json& j, ColorToggleThicknessRounding& cttr)
 
 static void from_json(const json& j, Font& f)
 {
-    read<value_t::string>(j, "Name", f.name);
+    read<value_t::string>(j, "Name", f.name); 
 
-    if (!f.name.empty())
-        config->scheduleFontLoad(f.name);
-
-    if (const auto it = std::find_if(std::cbegin(config->systemFonts), std::cend(config->systemFonts), [&f](const auto& e) { return e == f.name; }); it != std::cend(config->systemFonts))
+    if (const auto it = std::find_if(std::cbegin(config->systemFonts), std::cend(config->systemFonts), [&f](const auto& e) { return e == f.name; }); it != std::cend(config->systemFonts)) {
         f.index = std::distance(std::cbegin(config->systemFonts), it);
-    else
+        config->scheduleFontLoad(f.index);
+    } else {
         f.index = 0;
+    }
 }
 
 static void from_json(const json& j, Snapline& s)
@@ -477,14 +476,9 @@ void Config::save() noexcept
         out << std::setw(2) << j;
 }
 
-void Config::scheduleFontLoad(const std::string& name) noexcept
+void Config::scheduleFontLoad(std::size_t index) noexcept
 {
-#ifdef _WIN32
-    scheduledFonts.push_back(name);
-#elif __linux__
-    if (const auto it = std::find(systemFonts.begin(), systemFonts.end(), name); it != systemFonts.end())
-        scheduledFonts.push_back(systemFontPaths[std::distance(systemFonts.begin(), it)]);
-#endif
+    scheduledFonts.push_back(index);
 }
 
 #ifdef _WIN32
@@ -525,7 +519,13 @@ bool Config::loadScheduledFonts() noexcept
 {
     bool result = false;
 
-    for (const auto& fontName : scheduledFonts) {
+    for (const auto fontIndex : scheduledFonts) {
+        const auto& fontName = systemFonts[fontIndex];
+#ifdef _WIN32
+        const auto& fontPath = fontName;
+#elif __linux__
+        const auto& fontPath = systemFontPaths[fontIndex];
+#endif
         if (fonts.find(fontName) != fonts.cend())
             continue;
 
@@ -544,26 +544,17 @@ bool Config::loadScheduledFonts() noexcept
 
             fonts.emplace(fontName, newFont);
         } else {
-            cfg.FontDataOwnedByAtlas = false;
-            const auto ranges = Helpers::getFontGlyphRanges();
-
-#ifdef _WIN32
-            const auto [fontData, fontDataSize] = getFontData(fontName);
+            const auto [fontData, fontDataSize] = getFontData(fontPath);
             if (fontDataSize == GDI_ERROR)
                 continue;
+
+            cfg.FontDataOwnedByAtlas = false;
+            const auto ranges = Helpers::getFontGlyphRanges();
 
             newFont.tiny = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, 8.0f, &cfg, ranges);
             newFont.medium = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, 10.0f, &cfg, ranges);
             newFont.big = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, 13.0f, &cfg, ranges);
             fonts.emplace(fontName, newFont);
-#elif __linux__
-            newFont.tiny = ImGui::GetIO().Fonts->AddFontFromFileTTF(fontName.c_str(), 8.0f, &cfg, ranges);
-            newFont.medium = ImGui::GetIO().Fonts->AddFontFromFileTTF(fontName.c_str(), 10.0f, &cfg, ranges);
-            newFont.big = ImGui::GetIO().Fonts->AddFontFromFileTTF(fontName.c_str(), 13.0f, &cfg, ranges);
-
-            if (const auto it = std::find(systemFontPaths.begin(), systemFontPaths.end(), fontName); it != systemFontPaths.end())
-                fonts.emplace(systemFonts[std::distance(systemFontPaths.begin(), it)], newFont);
-#endif
         }
         result = true;
     }

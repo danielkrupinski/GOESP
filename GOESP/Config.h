@@ -46,11 +46,11 @@ public:
 
     std::unordered_map<std::string, Font> fonts;
 
-    void scheduleFontLoad(const std::string& name) noexcept;
+    void scheduleFontLoad(std::size_t index) noexcept;
     bool loadScheduledFonts() noexcept;
 
 private:
-    std::vector<std::string> scheduledFonts{ "Default" };
+    std::vector<std::size_t> scheduledFonts{ 0 };
     std::filesystem::path path;
 };
 
