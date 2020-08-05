@@ -81,7 +81,7 @@ void GameData::update() noexcept
     const auto observerTarget = localPlayer->getObserverMode() == ObsMode::InEye ? localPlayer->getObserverTarget() : nullptr;
 
     Entity* entity = nullptr;
-    while (entity = interfaces->clientTools->nextEntity(entity)) {
+    while ((entity = interfaces->clientTools->nextEntity(entity))) {
         if (entity->isDormant())
             continue;
 
@@ -130,6 +130,9 @@ void GameData::update() noexcept
                     break;
                 case ClassId::LootCrate:
                     lootCrateData.emplace_back(entity);
+                    break;
+                default:
+                    break;
                 }
             }
         }
