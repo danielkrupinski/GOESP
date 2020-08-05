@@ -86,42 +86,57 @@ using value_t = json::value_t;
 template <value_t Type, typename T>
 static void read(const json& j, const char* key, T& o) noexcept
 {
-    if (j.contains(key) && j[key].type() == Type)
-        j[key].get_to(o);
+    if (!j.contains(key))
+        return;
+
+    if (const auto& val = j[key]; val.type() == Type)
+        val.get_to(o);
 }
 
 static void read(const json& j, const char* key, bool& o) noexcept
 {
-    if (j.contains(key) && j[key].type() == value_t::boolean)
-        j[key].get_to(o);
+    if (!j.contains(key))
+        return;
+
+    if (const auto& val = j[key]; val.type() == value_t::boolean)
+        val.get_to(o);
 }
 
-template <value_t Type, typename T, size_t Size>
+template <typename T, size_t Size>
 static void read(const json& j, const char* key, std::array<T, Size>& o) noexcept
 {
-    if (j.contains(key) && j[key].type() == Type && j[key].size() == o.size())
-        j[key].get_to(o);
+    if (!j.contains(key))
+        return;
+
+    if (const auto& val = j[key]; val.type() == value_t::array && val.size() == o.size())
+        val.get_to(o);
 }
 
 template <typename T>
 static void read_number(const json& j, const char* key, T& o) noexcept
 {
-    if (j.contains(key) && j[key].is_number())
-        j[key].get_to(o);
+    if (!j.contains(key))
+        return;
+
+    if (const auto& val = j[key]; val.is_number())
+        val.get_to(o);
 }
 
 template <typename T>
 static void read_map(const json& j, const char* key, std::unordered_map<std::string, T>& o) noexcept
 {
-    if (j.contains(key) && j[key].is_object()) {
-        for (auto& element : j[key].items())
+    if (!j.contains(key))
+        return;
+
+    if (const auto& val = j[key]; val.is_object()) {
+        for (auto& element : val.items())
             element.value().get_to(o[element.key()]);
     }
 }
 
 static void from_json(const json& j, Color& c)
 {
-    read<value_t::array>(j, "Color", c.color);
+    read(j, "Color", c.color);
     read(j, "Rainbow", c.rainbow);
     read_number(j, "Rainbow Speed", c.rainbowSpeed);
 }
@@ -178,7 +193,7 @@ static void from_json(const json& j, Box& b)
     from_json(j, static_cast<ColorToggleThicknessRounding&>(b));
 
     read_number(j, "Type", b.type);
-    read<value_t::array>(j, "Scale", b.scale);
+    read(j, "Scale", b.scale);
 }
 
 static void from_json(const json& j, Shared& s)
