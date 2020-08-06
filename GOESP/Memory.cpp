@@ -44,30 +44,30 @@ Memory::Memory() noexcept
     }
 
     globalVars = **reinterpret_cast<GlobalVars***>((*reinterpret_cast<std::uintptr_t**>(interfaces->client))[11] + 10);
-    weaponSystem = *reinterpret_cast<WeaponSystem**>(findPattern("client", "\x8B\x35????\xFF\x10\x0F\xB7\xC0") + 2);
-    activeChannels = *reinterpret_cast<ActiveChannels**>(findPattern("engine", "\x8B\x1D????\x89\x5C\x24\x48") + 2);
-    channels = *reinterpret_cast<Channel**>(findPattern("engine", "\x81\xC2????\x8B\x72\x54") + 2);
-    plantedC4s = *reinterpret_cast<decltype(plantedC4s)*>(findPattern("client", "\x7E\x2C\x8B\x15") + 4);
+    weaponSystem = *reinterpret_cast<WeaponSystem**>(findPattern(CLIENT_DLL, "\x8B\x35????\xFF\x10\x0F\xB7\xC0") + 2);
+    activeChannels = *reinterpret_cast<ActiveChannels**>(findPattern(ENGINE_DLL, "\x8B\x1D????\x89\x5C\x24\x48") + 2);
+    channels = *reinterpret_cast<Channel**>(findPattern(ENGINE_DLL, "\x81\xC2????\x8B\x72\x54") + 2);
+    plantedC4s = *reinterpret_cast<decltype(plantedC4s)*>(findPattern(CLIENT_DLL, "\x7E\x2C\x8B\x15") + 4);
 
-    isOtherEnemy = relativeToAbsolute<decltype(isOtherEnemy)>(findPattern("client", "\x8B\xCE\xE8????\x02\xC0") + 3);
-    itemSystem = relativeToAbsolute<decltype(itemSystem)>(findPattern("client", "\xE8????\x0F\xB7\x0F") + 1);
-    lineGoesThroughSmoke = relativeToAbsolute<decltype(lineGoesThroughSmoke)>(findPattern("client", "\xE8????\x8B\x4C\x24\x30\x33\xD2") + 1);
+    isOtherEnemy = relativeToAbsolute<decltype(isOtherEnemy)>(findPattern(CLIENT_DLL, "\x8B\xCE\xE8????\x02\xC0") + 3);
+    itemSystem = relativeToAbsolute<decltype(itemSystem)>(findPattern(CLIENT_DLL, "\xE8????\x0F\xB7\x0F") + 1);
+    lineGoesThroughSmoke = relativeToAbsolute<decltype(lineGoesThroughSmoke)>(findPattern(CLIENT_DLL, "\xE8????\x8B\x4C\x24\x30\x33\xD2") + 1);
 
-    localPlayer.init(*reinterpret_cast<Entity***>(findPattern("client", "\xA1????\x89\x45\xBC\x85\xC0") + 1));
+    localPlayer.init(*reinterpret_cast<Entity***>(findPattern(CLIENT_DLL, "\xA1????\x89\x45\xBC\x85\xC0") + 1));
 #elif __linux__
     debugMsg = decltype(debugMsg)(dlsym(dlopen("libtier0_client.so", RTLD_NOLOAD | RTLD_NOW), "Msg"));
 
     globalVars = *relativeToAbsolute<GlobalVars**>((*reinterpret_cast<std::uintptr_t**>(interfaces->client))[11] + 16);
-    itemSystem = relativeToAbsolute<decltype(itemSystem)>(findPattern("/client_client.so", "\xE8????\x4D\x63\xEC") + 1);
-    weaponSystem = *relativeToAbsolute<WeaponSystem**>(findPattern("/client_client.so", "\x48\x8B\x58\x10\x48\x8B\x07\xFF\x10") + 12);
-    localPlayer.init(relativeToAbsolute<Entity**>(findPattern("/client_client.so", "\x83\xFF\xFF\x48\x8B\x05") + 6));
+    itemSystem = relativeToAbsolute<decltype(itemSystem)>(findPattern(CLIENT_DLL, "\xE8????\x4D\x63\xEC") + 1);
+    weaponSystem = *relativeToAbsolute<WeaponSystem**>(findPattern(CLIENT_DLL, "\x48\x8B\x58\x10\x48\x8B\x07\xFF\x10") + 12);
+    localPlayer.init(relativeToAbsolute<Entity**>(findPattern(CLIENT_DLL, "\x83\xFF\xFF\x48\x8B\x05") + 6));
 
-    isOtherEnemy = relativeToAbsolute<decltype(isOtherEnemy)>(findPattern("/client_client.so", "\xE8????\x84\xC0\x44\x89\xE2") + 1);
-    lineGoesThroughSmoke = reinterpret_cast<decltype(lineGoesThroughSmoke)>(findPattern("/client_client.so", "\x40\x0F\xB6\xFF\x55"));
+    isOtherEnemy = relativeToAbsolute<decltype(isOtherEnemy)>(findPattern(CLIENT_DLL, "\xE8????\x84\xC0\x44\x89\xE2") + 1);
+    lineGoesThroughSmoke = reinterpret_cast<decltype(lineGoesThroughSmoke)>(findPattern(CLIENT_DLL, "\x40\x0F\xB6\xFF\x55"));
 
-    activeChannels = relativeToAbsolute<ActiveChannels*>(findPattern("engine_client.so", "\x48\x8D\x3D????\x4C\x89\xE6\xE8????\x8B\xBD") + 3);
-    channels = relativeToAbsolute<Channel*>(findPattern("engine_client.so", "\x4C\x8D\x35????\x49\x83\xC4\x04") + 3);
-    plantedC4s = *reinterpret_cast<decltype(plantedC4s)*>(findPattern("/client_client.so", "\x48\x8D\x3D????\x49\x8B\x0C\x24") + 3);
+    activeChannels = relativeToAbsolute<ActiveChannels*>(findPattern(ENGINE_DLL, "\x48\x8D\x3D????\x4C\x89\xE6\xE8????\x8B\xBD") + 3);
+    channels = relativeToAbsolute<Channel*>(findPattern(ENGINE_DLL, "\x4C\x8D\x35????\x49\x83\xC4\x04") + 3);
+    plantedC4s = *reinterpret_cast<decltype(plantedC4s)*>(findPattern(CLIENT_DLL, "\x48\x8D\x3D????\x49\x8B\x0C\x24") + 3);
 
     pollEvent = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(RTLD_NEXT, "SDL_PollEvent")) + 3);
     swapWindow = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(RTLD_NEXT, "SDL_GL_SwapWindow")) + 3);
