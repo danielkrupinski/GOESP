@@ -75,7 +75,7 @@
       <Filter>SDK</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_impl_win32.cpp">
-      <Filter>SDK</Filter>
+      <Filter>imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -217,14 +217,11 @@
     <ClInclude Include="SDK\ClientTools.h">
       <Filter>SDK</Filter>
     </ClInclude>
-    <ClInclude Include="SDK\CallingConvention.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
     <ClInclude Include="SDK\UtlVector.h">
       <Filter>SDK</Filter>
     </ClInclude>
     <ClInclude Include="SDK\Platform.h">
-      <Filter>imgui</Filter>
+      <Filter>SDK</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
