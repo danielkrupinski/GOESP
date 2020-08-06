@@ -13,7 +13,7 @@
 #include <link.h>
 #endif
 
-#include "SDK/CallingConvention.h"
+#include "SDK/Platform.h"
 
 class Entity;
 class ItemSystem;

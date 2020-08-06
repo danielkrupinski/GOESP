@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-#include "CallingConvention.h"
+#include "Platform.h"
 #include "ClassId.h"
 
 class Entity;

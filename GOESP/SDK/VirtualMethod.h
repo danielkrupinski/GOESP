@@ -2,7 +2,7 @@
 
 #include <cstddef>
 
-#include "CallingConvention.h"
+#include "Platform.h"
 
 namespace VirtualMethod
 {

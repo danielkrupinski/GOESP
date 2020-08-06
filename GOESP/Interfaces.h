@@ -4,24 +4,12 @@
 #include <string>
 #include <type_traits>
 
-#include "SDK/CallingConvention.h"
+#include "SDK/Platform.h"
 
 #ifdef _WIN32
 #include <Windows.h>
-
-#define CLIENT_DLL "client"
-#define ENGINE_DLL "engine"
-#define INPUTSYSTEM_DLL "inputsystem"
-#define LOCALIZE_DLL "localize"
-#define VSTDLIB_DLL "vstdlib"
 #elif __linux__
 #include <dlfcn.h>
-
-#define CLIENT_DLL "csgo/bin/linux64/client_client.so"
-#define ENGINE_DLL "engine_client.so"
-#define INPUTSYSTEM_DLL "inputsystem_client.so"
-#define LOCALIZE_DLL "localize_client.so"
-#define VSTDLIB_DLL "libvstdlib_client.so"
 #endif
 
 class Interfaces {
