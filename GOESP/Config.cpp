@@ -194,6 +194,7 @@ static void from_json(const json& j, Box& b)
 
     read_number(j, "Type", b.type);
     read(j, "Scale", b.scale);
+    read<value_t::object>(j, "Fill", b.fill);
 }
 
 static void from_json(const json& j, Shared& s)
@@ -359,6 +360,7 @@ static void to_json(json& j, const Box& o, const Box& dummy = {})
     to_json(j, static_cast<const ColorToggleThicknessRounding&>(o), dummy);
     WRITE("Type", type)
     WRITE("Scale", scale)
+    to_json(j["Fill"], o.fill, dummy.fill);
 }
 
 static void to_json(json& j, const Shared& o, const Shared& dummy = {})
