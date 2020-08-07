@@ -13,7 +13,7 @@
 #define VSTDLIB_DLL "vstdlib"
 #define TIER0_DLL "tier0"
 
-#else
+#elif __linux__
 
 #define __THISCALL
 #define __FASTCALL
