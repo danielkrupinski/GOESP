@@ -11,6 +11,7 @@
 #define INPUTSYSTEM_DLL "inputsystem"
 #define LOCALIZE_DLL "localize"
 #define VSTDLIB_DLL "vstdlib"
+#define TIER0_DLL "tier0"
 
 #else
 
@@ -23,5 +24,6 @@
 #define INPUTSYSTEM_DLL "inputsystem_client.so"
 #define LOCALIZE_DLL "localize_client.so"
 #define VSTDLIB_DLL "libvstdlib_client.so"
+#define TIER0_DLL "libtier0_client.so"
 
 #endif
