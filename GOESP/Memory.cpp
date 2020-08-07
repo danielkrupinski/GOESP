@@ -28,7 +28,7 @@ Memory::Memory() noexcept
     assert(interfaces);
 
 #ifdef _WIN32
-    debugMsg = decltype(debugMsg)(GetProcAddress(GetModuleHandleW(L"tier0"), "Msg"));
+    debugMsg = decltype(debugMsg)(GetProcAddress(GetModuleHandleA(TIER0_DLL), "Msg"));
 
     if (overlay == Overlay::Discord) {
         if (!GetModuleHandleA("discordhook"))
@@ -57,7 +57,7 @@ Memory::Memory() noexcept
 
     localPlayer.init(*reinterpret_cast<Entity***>(findPattern(CLIENT_DLL, "\xA1????\x89\x45\xBC\x85\xC0") + 1));
 #elif __linux__
-    debugMsg = decltype(debugMsg)(dlsym(dlopen("libtier0_client.so", RTLD_NOLOAD | RTLD_NOW), "Msg"));
+    debugMsg = decltype(debugMsg)(dlsym(dlopen(TIER0_DLL, RTLD_NOLOAD | RTLD_NOW), "Msg"));
 
     globalVars = *relativeToAbsolute<GlobalVars**>((*reinterpret_cast<std::uintptr_t**>(interfaces->client))[11] + 16);
     itemSystem = relativeToAbsolute<decltype(itemSystem)>(findPattern(CLIENT_DLL, "\xE8????\x4D\x63\xEC") + 1);
