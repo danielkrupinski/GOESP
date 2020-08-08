@@ -66,6 +66,7 @@ public:
 
 #ifdef _WIN32
     VIRTUAL_METHOD(Vector&, getAbsOrigin, 10, (), (this))
+    VIRTUAL_METHOD(Team, getTeamNumber, 87, (), (this))
     VIRTUAL_METHOD(int, getHealth, 121, (), (this))
     VIRTUAL_METHOD(bool, isAlive, 155, (), (this))
     VIRTUAL_METHOD(bool, isPlayer, 157, (), (this))
@@ -79,6 +80,7 @@ public:
     VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, 460, (), (this))
 #elif __linux__
     VIRTUAL_METHOD(Vector&, getAbsOrigin, 12, (), (this))
+    VIRTUAL_METHOD(Team, getTeamNumber, 127, (), (this))
     VIRTUAL_METHOD(int, getHealth, 166, (), (this))
     VIRTUAL_METHOD(bool, isAlive, 207, (), (this))
     VIRTUAL_METHOD(bool, isPlayer, 209, (), (this))
