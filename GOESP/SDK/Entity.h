@@ -44,6 +44,13 @@ enum class ObsMode {
     Roaming
 };
 
+enum class Team {
+    None = 0,
+    Spectators,
+    TT,
+    CT
+};
+
 class Entity {
 public:
     VIRTUAL_METHOD(ClientClass*, getClientClass, 2, (), (this + sizeof(uintptr_t) * 2))
