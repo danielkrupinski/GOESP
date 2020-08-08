@@ -7,6 +7,7 @@
 #include "GlobalVars.h"
 #include "../Interfaces.h"
 #include "Localize.h"
+#include "LocalPlayer.h"
 #include "../Memory.h"
 #include "ModelInfo.h"
 #include "PlayerResource.h"
@@ -79,4 +80,19 @@ void Entity::getPlayerName(char(&out)[128]) noexcept
     *end = L'\0';
 
     interfaces->localize->convertUnicodeToAnsi(wide, out, 128);
+}
+
+bool Entity::isOtherEnemy(Entity* other, bool useObsTarget) noexcept
+{
+    if (!useObsTarget || !localPlayer)
+        return memory->isOtherEnemy(this, other);
+
+    if (const auto localTeam = localPlayer->getTeamNumber(); localTeam == Team::TT || localTeam == Team::CT)
+        return memory->isOtherEnemy(this, other);
+
+    if (const auto obsMode = localPlayer->getObserverMode(); obsMode == ObsMode::Roaming || obsMode == ObsMode::Deathcam)
+        return memory->isOtherEnemy(this, other);
+
+    const auto obs = localPlayer->getObserverTarget();
+    return memory->isOtherEnemy(obs ? obs : this, other);
 }
