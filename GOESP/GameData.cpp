@@ -223,11 +223,13 @@ void LocalPlayerData::update() noexcept
     flashDuration = localPlayer->flashDuration();
     aimPunch = localPlayer->getAimPunch();
 
-    const auto obsMode = localPlayer->getObserverMode();
-    if (const auto obs = localPlayer->getObserverTarget(); obs && obsMode != ObsMode::Roaming && obsMode != ObsMode::Deathcam)
-        origin = obs->getAbsOrigin();
-    else
-        origin = localPlayer->getAbsOrigin();
+    if (const auto obs = localPlayer->getObserverTarget()) {
+        if (const auto obsMode = localPlayer->getObserverMode(); obsMode != ObsMode::Roaming && obsMode != ObsMode::Deathcam) {
+            origin = obs->getAbsOrigin();
+            return;
+        }
+    }
+    origin = localPlayer->getAbsOrigin();
 }
 
 BaseData::BaseData(Entity* entity) noexcept
