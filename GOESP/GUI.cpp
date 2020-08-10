@@ -30,7 +30,16 @@ void GUI::render() noexcept
     if (!open)
         return;
 
-    ImGui::Begin("GOESP", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+    ImGui::Begin(
+        "GOESP for "
+#ifdef _WIN32
+        "Windows"
+#elif __linux__
+        "Linux"
+#else
+    #error("Unsupported platform!")
+#endif
+        , nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
 
     if (!ImGui::BeginTabBar("##tabbar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_NoTooltip)) {
         ImGui::End();
