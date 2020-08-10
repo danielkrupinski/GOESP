@@ -14,19 +14,20 @@ struct Color {
 #pragma pack(pop)
 
 struct ColorToggle : Color {
+    ColorToggle() = default;
+    explicit ColorToggle(float r, float g, float b, float a) { color[0] = r; color[1] = g; color[2] = b; color[3] = a; }
+
     bool enabled = false;
 };
 
 struct ColorToggleThickness : ColorToggle {
     ColorToggleThickness() = default;
     explicit ColorToggleThickness(float thickness) : thickness{ thickness } { }
+
     float thickness = 1.0f;
 };
 
 struct ColorToggleRounding : ColorToggle {
-    ColorToggleRounding() = default;
-    explicit ColorToggleRounding(float r, float g, float b, float a) { color[0] = r; color[1] = g; color[2] = b; color[3] = a; }
-
     float rounding = 0.0f;
 };
 
@@ -59,7 +60,7 @@ struct Box : ColorToggleThicknessRounding {
 
     int type = _2d;
     std::array<float, 3> scale{ 0.25f, 0.25f, 0.25f };
-    ColorToggleRounding fill{ 1.0f, 1.0f, 1.0f, 0.4f };
+    ColorToggle fill{ 1.0f, 1.0f, 1.0f, 0.4f };
 };
 
 struct Shared {
