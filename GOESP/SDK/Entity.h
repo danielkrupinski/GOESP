@@ -103,7 +103,7 @@ public:
     bool visibleTo(Entity* other) noexcept;
     [[nodiscard]] std::string getPlayerName() noexcept;
     void getPlayerName(char(&out)[128]) noexcept;
-    bool isOtherEnemy(Entity* other, bool useObsTarget) noexcept;
+    bool isEnemy() noexcept;
 
 #ifdef _WIN32
     PROP(hitboxSet, 0x9FC, int)                                                    // CBaseAnimating->m_nHitboxSet

@@ -82,17 +82,16 @@ void Entity::getPlayerName(char(&out)[128]) noexcept
     interfaces->localize->convertUnicodeToAnsi(wide, out, 128);
 }
 
-bool Entity::isOtherEnemy(Entity* other, bool useObsTarget) noexcept
+bool Entity::isEnemy() noexcept
 {
-    if (!useObsTarget || !localPlayer)
-        return memory->isOtherEnemy(this, other);
+    if (!localPlayer) {
+        assert(false);
+        return false;
+    }
 
-    if (const auto localTeam = localPlayer->getTeamNumber(); localTeam == Team::TT || localTeam == Team::CT)
-        return memory->isOtherEnemy(this, other);
-
-    if (const auto obsMode = localPlayer->getObserverMode(); obsMode == ObsMode::Roaming || obsMode == ObsMode::Deathcam)
-        return memory->isOtherEnemy(this, other);
-
-    const auto obs = localPlayer->getObserverTarget();
-    return memory->isOtherEnemy(obs ? obs : this, other);
+    if (const auto localTeam = localPlayer->getTeamNumber(); localTeam != Team::TT && localTeam != Team::CT) {
+        // if we're in Spectators team treat CTs as allies and TTs as enemies
+        return getTeamNumber() != Team::CT;
+    }
+    return memory->isOtherEnemy(this, localPlayer.get());
 }
