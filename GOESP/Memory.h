@@ -63,6 +63,7 @@ private:
         }
 #elif __linux__
         struct ModuleInfo {
+            ModuleInfo(const std::string& name, void* base, std::size_t size) : name(name), base(base), size(size) {}
             std::string name;
             void* base;
             std::size_t size;
