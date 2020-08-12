@@ -3,7 +3,7 @@ project(GOESP)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_C_FLAGS_RELEASE "-O3 -s -fvisibility=hidden -flto -fwhole-program -DNDEBUG")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fno-rtti")
 
 file(GLOB_RECURSE SOURCES "${CMAKE_SOURCE_DIR}/*.cpp")
 list(APPEND SOURCES "${CMAKE_SOURCE_DIR}/GOESP/imgui/GL/gl3w.c")
