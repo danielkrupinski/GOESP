@@ -1,5 +1,5 @@
 # GOESP
-Stream-proof ESP hack for CS:GO.
+Cross-platform streamproof ESP hack for CS:GO.
 
 ## Showcase
 
@@ -22,7 +22,14 @@ Stream-proof ESP hack for CS:GO.
 ## Getting started
 
 ### Prerequisites
+
+#### Windows
 Microsoft Visual Studio 2019 (preferably the latest version), platform toolset v142 and Windows 10 SDK (preferably 10.0.18362.0) are required in order to compile GOESP. If you don't have ones, you can download VS [here](https://visualstudio.microsoft.com/) (Tools and Windows SDK are installed during Visual Studio Setup).
+
+#### Linux
+ 
+##### Ubuntu
+
 
 ### Downloading
 There are two options of downloading the source code:
