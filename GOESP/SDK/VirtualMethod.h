@@ -14,7 +14,7 @@ namespace VirtualMethod
 }
 
 #define VIRTUAL_METHOD(returnType, name, idx, args, argsRaw) \
-auto name args noexcept \
+returnType name args noexcept \
 { \
     return VirtualMethod::call<returnType, idx>argsRaw; \
 }
