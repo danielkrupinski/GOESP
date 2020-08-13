@@ -61,28 +61,28 @@ private:
             if (MODULEINFO moduleInfo; GetModuleInformation(GetCurrentProcess(), handle, &moduleInfo, sizeof(moduleInfo)))
                 return std::make_pair(moduleInfo.lpBaseOfDll, moduleInfo.SizeOfImage);
         }
+        return {};
 #elif __linux__
         struct ModuleInfo {
-            ModuleInfo(const std::string& name, void* base, std::size_t size) : name(name), base(base), size(size) {}
-            std::string name;
-            void* base;
-            std::size_t size;
-        };
-        static std::vector<ModuleInfo> modules;
+            const char* name;
+            void* base = nullptr;
+            std::size_t size = 0;
+        } moduleInfo;
 
-        if (modules.empty()) {
-            dl_iterate_phdr([](struct dl_phdr_info* info, std::size_t, void*) {
-                modules.emplace_back(info->dlpi_name,
-                             (void*)(info->dlpi_addr + info->dlpi_phdr[0].p_vaddr),
-                        (std::size_t)info->dlpi_phdr[0].p_memsz);
-                return 0;
-            }, nullptr);
-        }
+        moduleInfo.name = name;
 
-        if (const auto it = std::find_if(modules.begin(), modules.end(), [&name](const ModuleInfo& mi) { return mi.name.ends_with(name); }); it != modules.end())
-            return std::make_pair(it->base, it->size);
+        dl_iterate_phdr([](struct dl_phdr_info* info, std::size_t, void* data) {
+            const auto moduleInfo = reinterpret_cast<ModuleInfo*>(data);
+       	    if (std::string_view{ info->dlpi_name }.ends_with(moduleInfo->name)) {
+                moduleInfo->base = (void*)(info->dlpi_addr + info->dlpi_phdr[0].p_vaddr);
+                moduleInfo->size = info->dlpi_phdr[0].p_memsz;
+                return 1;
+       	    }
+            return 0;
+        }, &moduleInfo);
+            
+       return std::make_pair(moduleInfo.base, moduleInfo.size);
 #endif
-        return {};
     }
 
     static std::uintptr_t findPattern(const char* module, const char* pattern) noexcept
