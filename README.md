@@ -1,5 +1,5 @@
 # GOESP
-Cross-platform streamproof ESP hack for CS:GO.
+Cross-platform streamproof ESP hack for CS:GO. Currently supports Windows and Linux.
 
 ## Showcase
 
@@ -35,7 +35,7 @@ Below are example commands for some distributions to install the required packag
 ##### Ubuntu
     sudo apt install cmake gcc g++ libsdl2-dev
 ##### Manjaro
-    sudo pacman -S cmake 
+    sudo pacman -S cmake gcc g++ sdl2
 
 ### Downloading
 There are two options of downloading the source code:
@@ -81,7 +81,7 @@ on linux:
 GOESP hooks game overlays and draw things using them. Currently supported overlays are Steam and Discord.
 
 ### Is the ESP visible on recording?
-Nope, but you have to uncheck 'Capture external overlays' option in your recording software.
+Nope, but you have to use 'Game capture' instead of 'Window capture' or 'Desktop capture'. Also remember to uncheck 'Capture external overlays' option in your recording software.
 
 ### Can I use this alongside other cheats?
 Yes, GOESP shouldn't collide with any other game modification.
