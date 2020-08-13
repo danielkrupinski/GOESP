@@ -56,6 +56,19 @@ Open git command prompt and enter following command:
 
 `GOESP` folder should have been succesfully created, containing all the source files.
 
+### Building
+
+#### Windows
+Open `GOESP.sln` file, select **Release** configuration and press <kbd>CTRL</kbd>+<kbd>B</kbd>.
+
+#### Linux
+Execute the following commands in the main GOESP directory:
+
+    mkdir Release
+    cd Release
+    cmake -DCMAKE_BUILD_TYPE=Release ..
+    make
+
 ## FAQ
 
 ### How do I open menu?
