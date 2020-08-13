@@ -24,12 +24,18 @@ Cross-platform streamproof ESP hack for CS:GO.
 ### Prerequisites
 
 #### Windows
-Microsoft Visual Studio 2019 (preferably the latest version), platform toolset v142 and Windows 10 SDK (preferably 10.0.18362.0) are required in order to compile GOESP. If you don't have ones, you can download VS [here](https://visualstudio.microsoft.com/) (Tools and Windows SDK are installed during Visual Studio Setup).
+Microsoft Visual Studio 2019 (preferably the latest version), platform toolset v142 and Windows 10 SDK are required in order to compile GOESP. If you don't have ones, you can download VS [here](https://visualstudio.microsoft.com/) (Tools and Windows SDK are installed during Visual Studio Setup).
 
 #### Linux
- 
-##### Ubuntu
+- CMake 3.11.0 or higher
+- gcc and g++ 9.3.0 or higher
+- SDL2 library
 
+Below are example commands for some distributions to install the required packages:
+##### Ubuntu
+    sudo apt install cmake gcc g++ libsdl2-dev
+##### Manjaro
+    sudo pacman -S cmake 
 
 ### Downloading
 There are two options of downloading the source code:
@@ -42,7 +48,7 @@ To download source code this way [click here](https://github.com/danielkrupinski
 
 #### With [git](https://git-scm.com)
 
-Choose this option if you're going to contribute to the repo or you want to use version control system. Git is required to step further, if not installed download it [here](https://git-scm.com).
+Choose this option if you're going to contribute to the repo or you want to use version control system. Git is required to step further, if not installed download it [here](https://git-scm.com) or install it from your package manager.
 
 Open git command prompt and enter following command:
 
@@ -59,10 +65,17 @@ Press <kbd>INSERT</kbd> while focused on CS:GO window.
 Of course. After installing new font you have to unload and load GOESP again.
 
 ### Does this hack hook any of game engine functions?
-Nope. Functions GOESP hooks are
+Nope. Functions GOESP hooks are:
+
+on windows:
 -   DirectX Present & Reset from overlay
 -   SetCursorPos from overlay
 -   game window WNDPROC
+
+on linux:
+- SDL_PollEvent
+- SDL_GL_SwapWindow
+- SDL_WarpMouseInWindow
 
 ### How GOESP renders its stuff?
 GOESP hooks game overlays and draw things using them. Currently supported overlays are Steam and Discord.
