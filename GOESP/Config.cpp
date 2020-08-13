@@ -49,7 +49,6 @@ Config::Config(const char* folderName) noexcept
 #ifdef _WIN32
     if (PWSTR pathToDocuments; SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &pathToDocuments))) {
         path = pathToDocuments;
-        path /= folderName;
         CoTaskMemFree(pathToDocuments);
     }
 
@@ -60,6 +59,9 @@ Config::Config(const char* folderName) noexcept
 
     EnumFontFamiliesExA(GetDC(nullptr), &logfont, fontCallback, (LPARAM)&systemFonts, 0);
 #elif __linux__
+    if (const char* homeDir = getenv("HOME"))
+        path = homeDir;
+
     if (auto pipe = popen("fc-list :lang=en -f \"%{family[0]} %{style[0]} %{file}\\n\" | grep .ttf", "r")) {
         char* line = nullptr;
         std::size_t n = 0;
@@ -77,6 +79,7 @@ Config::Config(const char* folderName) noexcept
         pclose(pipe);
     }
 #endif
+    path /= folderName;
     std::sort(std::next(systemFonts.begin()), systemFonts.end());
 }
 
