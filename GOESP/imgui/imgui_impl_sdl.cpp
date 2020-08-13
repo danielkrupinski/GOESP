@@ -167,17 +167,6 @@ static bool ImGui_ImplSDL2_Init(SDL_Window* window)
     io.GetClipboardTextFn = ImGui_ImplSDL2_GetClipboardText;
     io.ClipboardUserData = NULL;
 
-    // Load mouse cursors
-    g_MouseCursors[ImGuiMouseCursor_Arrow] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-    g_MouseCursors[ImGuiMouseCursor_TextInput] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
-    g_MouseCursors[ImGuiMouseCursor_ResizeAll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
-    g_MouseCursors[ImGuiMouseCursor_ResizeNS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
-    g_MouseCursors[ImGuiMouseCursor_ResizeEW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
-    g_MouseCursors[ImGuiMouseCursor_ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
-    g_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
-    g_MouseCursors[ImGuiMouseCursor_Hand] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-    g_MouseCursors[ImGuiMouseCursor_NotAllowed] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
-
     return true;
 }
 
@@ -216,11 +205,6 @@ void ImGui_ImplSDL2_Shutdown()
     if (g_ClipboardTextData)
         SDL_free(g_ClipboardTextData);
     g_ClipboardTextData = NULL;
-
-    // Destroy SDL mouse cursors
-    for (ImGuiMouseCursor cursor_n = 0; cursor_n < ImGuiMouseCursor_COUNT; cursor_n++)
-        SDL_FreeCursor(g_MouseCursors[cursor_n]);
-    memset(g_MouseCursors, 0, sizeof(g_MouseCursors));
 }
 
 static void ImGui_ImplSDL2_UpdateMousePosAndButtons()
@@ -242,26 +226,6 @@ static void ImGui_ImplSDL2_UpdateMousePosAndButtons()
 
     if (SDL_GetWindowFlags(g_Window) & SDL_WINDOW_INPUT_FOCUS)
         io.MousePos = ImVec2((float)mx, (float)my);
-}
-
-static void ImGui_ImplSDL2_UpdateMouseCursor()
-{
-    ImGuiIO& io = ImGui::GetIO();
-    if (io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)
-        return;
-
-    ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
-    if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None)
-    {
-        // Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
-        SDL_ShowCursor(SDL_FALSE);
-    }
-    else
-    {
-        // Show OS mouse cursor
-        SDL_SetCursor(g_MouseCursors[imgui_cursor] ? g_MouseCursors[imgui_cursor] : g_MouseCursors[ImGuiMouseCursor_Arrow]);
-        SDL_ShowCursor(SDL_TRUE);
-    }
 }
 
 static void ImGui_ImplSDL2_UpdateGamepads()
@@ -330,7 +294,6 @@ void ImGui_ImplSDL2_NewFrame(SDL_Window* window)
     g_Time = current_time;
 
     ImGui_ImplSDL2_UpdateMousePosAndButtons();
-    ImGui_ImplSDL2_UpdateMouseCursor();
 
     // Update game controllers (if enabled and available)
     ImGui_ImplSDL2_UpdateGamepads();
