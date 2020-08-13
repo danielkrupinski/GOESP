@@ -67,7 +67,7 @@ Execute the following commands in the main GOESP directory:
     mkdir Release
     cd Release
     cmake -DCMAKE_BUILD_TYPE=Release ..
-    make
+    make -j 4
 
 ## FAQ
 
