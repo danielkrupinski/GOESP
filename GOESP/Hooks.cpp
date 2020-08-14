@@ -52,7 +52,7 @@ static HRESULT D3DAPI reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* par
 
 static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const RECT* dest, HWND windowOverride, const RGNDATA* dirtyRegion) noexcept
 {
-    static const auto _ = ImGui_ImplDX9_Init(device);
+    [[maybe_unused]] static const auto _ = ImGui_ImplDX9_Init(device);
 
     if (config->loadScheduledFonts())
         ImGui_ImplDX9_InvalidateDeviceObjects();
@@ -256,9 +256,9 @@ void Hooks::uninstall() noexcept
 {
 #ifdef _WIN32
 
-    *reinterpret_cast<void**>(memory->reset) = reset;
-    *reinterpret_cast<void**>(memory->present) = present;
-    *reinterpret_cast<void**>(memory->setCursorPos) = setCursorPos;
+    *reinterpret_cast<void**>(memory->reset) = &reset;
+    *reinterpret_cast<void**>(memory->present) = &present;
+    *reinterpret_cast<void**>(memory->setCursorPos) = &setCursorPos;
 
     SetWindowLongPtrW(window, GWLP_WNDPROC, LONG_PTR(wndProc));
 
