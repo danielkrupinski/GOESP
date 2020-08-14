@@ -1,4 +1,4 @@
-# GOESP ![Windows](https://github.com/danielkrupinski/GOESP/workflows/Windows/badge.svg?branch=master&event=push)
+# GOESP ![Linux](https://github.com/danielkrupinski/GOESP/workflows/Linux/badge.svg?branch=master&event=push)
 Cross-platform streamproof ESP hack for CS:GO. Currently supports Windows and Linux.
 
 ## Showcase
