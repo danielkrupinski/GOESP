@@ -22,6 +22,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: configure
-      run: mkdir Release && cd Release && cmake -DCMAKE_BUILD_TYPE=Release ..
+      run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_C_COMPILER=gcc-9 -D CMAKE_CXX_COMPILER=g++-9 ..
     - name: build
       run: cd Release && make
