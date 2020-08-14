@@ -1,6 +1,7 @@
 #include "Misc.h"
 
 #include "../imgui/imgui.h"
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include "../imgui/imgui_internal.h"
 
 #include "../Config.h"
@@ -43,14 +44,37 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
         if (!reloadLength)
             reloadLength = localPlayerData.nextWeaponAttack - memory->globalVars->currenttime;
 
-        const auto [width, height] = interfaces->engine->getScreenSize();
         constexpr int segments = 40;
-        drawList->PathArcTo({ width / 2.0f, height / 2.0f }, 20.0f, -IM_PI / 2, std::clamp(IM_PI * 2 * (0.75f - (localPlayerData.nextWeaponAttack - memory->globalVars->currenttime) / reloadLength), -IM_PI / 2, -IM_PI / 2 + IM_PI * 2), segments);
+        constexpr float min = -IM_PI / 2;
+        const float max = std::clamp(IM_PI * 2 * (0.75f - (localPlayerData.nextWeaponAttack - memory->globalVars->currenttime) / reloadLength), -IM_PI / 2, -IM_PI / 2 + IM_PI * 2);
+
+        drawList->PathArcTo(ImGui::GetIO().DisplaySize / 2.0f + ImVec2{ 1.0f, 1.0f }, 20.0f, min, max, segments);
         const ImU32 color = Helpers::calculateColor(config->reloadProgress);
+        drawList->PathStroke(color & 0xFF000000, false, config->reloadProgress.thickness);
+        drawList->PathArcTo(ImGui::GetIO().DisplaySize / 2.0f, 20.0f, min, max, segments);
         drawList->PathStroke(color, false, config->reloadProgress.thickness);
     } else {
         reloadLength = 0.0f;
     }
+}
+
+static void drawCrosshair(ImDrawList* drawList, const ImVec2& pos, ImU32 color, float thickness) noexcept
+{
+    drawList->Flags &= ~ImDrawListFlags_AntiAliasedLines;
+
+    drawList->AddLine(ImVec2{ pos.x, pos.y - 10 } + ImVec2{ 1.0f, 1.0f }, ImVec2{ pos.x, pos.y - 3 } + ImVec2{ 1.0f, 1.0f }, color & IM_COL32_A_MASK, thickness);
+    drawList->AddLine(ImVec2{ pos.x, pos.y + 3 } + ImVec2{ 1.0f, 1.0f }, ImVec2{ pos.x, pos.y + 10 } + ImVec2{ 1.0f, 1.0f }, color & IM_COL32_A_MASK, thickness);
+
+    drawList->AddLine(ImVec2{ pos.x - 10, pos.y } + ImVec2{ 1.0f, 1.0f }, ImVec2{ pos.x - 3, pos.y } + ImVec2{ 1.0f, 1.0f }, color & IM_COL32_A_MASK, thickness);
+    drawList->AddLine(ImVec2{ pos.x + 3, pos.y } + ImVec2{ 1.0f, 1.0f }, ImVec2{ pos.x + 10, pos.y } + ImVec2{ 1.0f, 1.0f }, color & IM_COL32_A_MASK, thickness);
+
+    drawList->AddLine({ pos.x, pos.y - 10 }, { pos.x, pos.y - 3 }, color, thickness);
+    drawList->AddLine({ pos.x, pos.y + 3 }, { pos.x, pos.y + 10 }, color, thickness);
+
+    drawList->AddLine({ pos.x - 10, pos.y }, { pos.x - 3, pos.y }, color, thickness);
+    drawList->AddLine({ pos.x + 3, pos.y }, { pos.x + 10, pos.y }, color, thickness);
+
+    drawList->Flags |= ImDrawListFlags_AntiAliasedLines;
 }
 
 void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
@@ -67,14 +91,11 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
     if (!localPlayerData.shooting)
         return;
 
-    const auto [width, height] = interfaces->engine->getScreenSize();
+    auto pos = ImGui::GetIO().DisplaySize;
+    pos.x *= 0.5f - localPlayerData.aimPunch.y / (localPlayerData.fov * 2.0f);
+    pos.y *= 0.5f + localPlayerData.aimPunch.x / (localPlayerData.fov * 2.0f);
 
-    const float x = width * (0.5f - localPlayerData.aimPunch.y / 180.0f);
-    const float y = height * (0.5f + localPlayerData.aimPunch.x / 180.0f);
-    const auto color = Helpers::calculateColor(config->recoilCrosshair);
-
-    drawList->AddLine({ x, y - 10 }, { x, y + 10 }, color, config->recoilCrosshair.thickness);
-    drawList->AddLine({ x - 10, y }, { x + 10, y }, color, config->recoilCrosshair.thickness);
+    drawCrosshair(drawList, pos, Helpers::calculateColor(config->recoilCrosshair), config->recoilCrosshair.thickness);
 }
 
 void Misc::purchaseList(GameEvent* event) noexcept
@@ -94,13 +115,17 @@ void Misc::purchaseList(GameEvent* event) noexcept
             const auto player = interfaces->entityList->getEntity(interfaces->engine->getPlayerForUserId(event->getInt("userid")));
 
             if (player && localPlayer && memory->isOtherEnemy(player, localPlayer.get())) {
-                if (const auto definition = memory->itemSystem()->getItemSchema()->getItemDefinitionByName(event->getString("weapon"))) {
+                const auto weaponName = event->getString("weapon");
+                auto& purchase = purchaseDetails[player->getPlayerName()];
+
+                if (const auto definition = memory->itemSystem()->getItemSchema()->getItemDefinitionByName(weaponName)) {
                     if (const auto weaponInfo = memory->weaponSystem->getWeaponInfo(definition->getWeaponId())) {
-                        purchaseDetails[player->getPlayerName(config->normalizePlayerNames)].second += weaponInfo->price;
+                        purchase.second += weaponInfo->price;
                         totalCost += weaponInfo->price;
                     }
                 }
-                std::string weapon = event->getString("weapon");
+
+                std::string weapon = weaponName;
 
                 if (weapon.starts_with("weapon_"))
                     weapon.erase(0, 7);
@@ -108,13 +133,13 @@ void Misc::purchaseList(GameEvent* event) noexcept
                     weapon.erase(0, 5);
 
                 if (weapon.starts_with("smoke"))
-                    weapon = "smoke";
+                    weapon.erase(5);
                 else if (weapon.starts_with("m4a1_s"))
-                    weapon = "m4a1_s";
+                    weapon.erase(6);
                 else if (weapon.starts_with("usp_s"))
-                    weapon = "usp_s";
+                    weapon.erase(5);
 
-                purchaseDetails[player->getPlayerName(config->normalizePlayerNames)].first.push_back(weapon);
+                purchase.first.push_back(weapon);
                 ++purchaseTotal[weapon];
             }
             break;
@@ -158,7 +183,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
         if (config->purchaseList.mode == PurchaseList::Details) {
             for (const auto& [playerName, purchases] : purchaseDetails) {
-                std::string s = std::accumulate(purchases.first.begin(), purchases.first.end(), std::string{ }, [](std::string s, const std::string& piece) { return s += piece + ", "; });
+                std::string s = std::accumulate(purchases.first.begin(), purchases.first.end(), std::string{}, [](std::string s, const std::string& piece) { return s += piece + ", "; });
                 if (s.length() >= 2)
                     s.erase(s.length() - 2);
 
@@ -180,22 +205,79 @@ void Misc::purchaseList(GameEvent* event) noexcept
     }
 }
 
-void Misc::drawBombZoneHint() noexcept
+void Misc::drawObserverList() noexcept
 {
-    if (!config->bombZoneHint.enabled)
+    if (!config->observerList.enabled)
+        return;
+
+    GameData::Lock lock;
+
+    const auto& observers = GameData::observers();
+
+    if (std::none_of(observers.begin(), observers.end(), [](const auto& obs) { return obs.targetIsLocalPlayer; }) && !gui->open)
+        return;
+
+    if (config->observerList.pos != ImVec2{}) {
+        ImGui::SetNextWindowPos(config->observerList.pos);
+        config->observerList.pos = {};
+    }
+
+    if (config->observerList.size != ImVec2{}) {
+        ImGui::SetNextWindowSize(ImClamp(config->observerList.size, {}, ImGui::GetIO().DisplaySize));
+        config->observerList.size = {};
+    }
+
+    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
+    if (!gui->open)
+        windowFlags |= ImGuiWindowFlags_NoInputs;
+    if (config->observerList.noTitleBar)
+        windowFlags |= ImGuiWindowFlags_NoTitleBar;
+
+    ImGui::Begin("Observer List", nullptr, windowFlags);
+
+    for (const auto& observer : observers) {
+        if (!observer.targetIsLocalPlayer)
+            continue;
+
+        ImGui::TextWrapped("%s", observer.name);
+    }
+
+    ImGui::End();
+}
+
+void Misc::drawNoscopeCrosshair(ImDrawList* drawList) noexcept
+{
+    if (!config->noscopeCrosshair.enabled)
         return;
 
     GameData::Lock lock;
     const auto& localPlayerData = GameData::local();
 
-    if (!gui->open && (!localPlayerData.exists || !localPlayerData.alive || !localPlayerData.inBombZone))
+    if (!localPlayerData.exists || !localPlayerData.alive)
         return;
 
-    if (config->bombZoneHint.pos != ImVec2{}) {
-        ImGui::SetNextWindowPos(config->bombZoneHint.pos);
-        config->bombZoneHint.pos = {};
-    }
-    ImGui::Begin("Bomb Zone Hint", nullptr, ImGuiWindowFlags_NoDecoration | (gui->open ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoInputs));
-    ImGui::TextUnformatted("You're in bomb zone!");
+    if (!localPlayerData.noScope)
+        return;
+
+    drawCrosshair(drawList, ImGui::GetIO().DisplaySize / 2, Helpers::calculateColor(config->noscopeCrosshair), config->noscopeCrosshair.thickness);
+}
+
+void Misc::drawFpsCounter() noexcept
+{
+    if (!config->fpsCounter.enabled)
+        return;
+
+    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize;
+    if (!gui->open)
+        windowFlags |= ImGuiWindowFlags_NoInputs;
+
+    ImGui::SetNextWindowBgAlpha(0.35f);
+    ImGui::Begin("FPS Counter", nullptr, windowFlags);
+    
+    static auto frameRate = 1.0f;
+    frameRate = 0.9f * frameRate + 0.1f * memory->globalVars->absoluteFrameTime;
+    if (frameRate != 0.0f)
+        ImGui::Text("%d fps", static_cast<int>(1 / frameRate));
+
     ImGui::End();
 }

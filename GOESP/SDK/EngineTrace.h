@@ -11,7 +11,11 @@ struct Ray {
     Vector start{ };
     float pad = 0.0f;
     Vector delta{ };
+#ifdef _WIN32
     std::byte pad2[40]{ };
+#elif __linux__
+    std::byte pad2[44]{ };
+#endif
     bool isRay = true;
     bool isSwept = false;
 };
@@ -34,14 +38,17 @@ struct Trace {
     unsigned short dispFlags;
     bool allSolid;
     bool startSolid;
-    std::byte pad1[4];
+    float fractionLeftSolid;
+
     struct Surface {
         const char* name;
         short surfaceProps;
         unsigned short flags;
     } surface;
+
     int hitgroup;
-    std::byte pad2[4];
+    short physicsBone;
+    unsigned short worldSurfaceIndex;
     Entity* entity;
     int hitbox;
 };

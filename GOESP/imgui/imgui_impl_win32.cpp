@@ -108,11 +108,6 @@ void    ImGui_ImplWin32_Shutdown()
     g_hWnd = (HWND)0;
 }
 
-static bool ImGui_ImplWin32_UpdateMouseCursor()
-{
-    return false;
-}
-
 static void ImGui_ImplWin32_UpdateMousePos()
 {
     ImGuiIO& io = ImGui::GetIO();
@@ -209,14 +204,6 @@ void    ImGui_ImplWin32_NewFrame()
     // Update OS mouse position
     ImGui_ImplWin32_UpdateMousePos();
 
-    // Update OS mouse cursor with the cursor requested by imgui
-    ImGuiMouseCursor mouse_cursor = io.MouseDrawCursor ? ImGuiMouseCursor_None : ImGui::GetMouseCursor();
-    if (g_LastMouseCursor != mouse_cursor)
-    {
-        g_LastMouseCursor = mouse_cursor;
-        ImGui_ImplWin32_UpdateMouseCursor();
-    }
-
     // Update game controllers (if enabled and available)
     ImGui_ImplWin32_UpdateGamepads();
 }
@@ -299,10 +286,6 @@ IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARA
         // You can also use ToAscii()+GetKeyboardState() to retrieve characters.
         if (wParam > 0 && wParam < 0x10000)
             io.AddInputCharacterUTF16((unsigned short)wParam);
-        return 0;
-    case WM_SETCURSOR:
-        if (LOWORD(lParam) == HTCLIENT && ImGui_ImplWin32_UpdateMouseCursor())
-            return 1;
         return 0;
     case WM_DEVICECHANGE:
         if ((UINT)wParam == DBT_DEVNODES_CHANGED)

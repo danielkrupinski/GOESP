@@ -27,18 +27,30 @@ public:
 
     ColorToggleThickness reloadProgress{ 5.0f };
     ColorToggleThickness recoilCrosshair;
-    bool normalizePlayerNames = true;
-    BombZoneHint bombZoneHint;
+    ColorToggleThickness noscopeCrosshair;
     PurchaseList purchaseList;
+    ObserverList observerList;
+    bool ignoreFlashbang = false;
+    OverlayWindow fpsCounter{ "FPS Counter" };
 
     std::vector<std::string> systemFonts{ "Default" };
-    std::unordered_map<std::string, ImFont*> fonts;
+#ifdef __linux__
+    std::vector<std::string> systemFontPaths{ "" };
+#endif
 
-    void scheduleFontLoad(const std::string& name) noexcept;
+    struct Font {
+        ImFont* tiny;
+        ImFont* medium;
+        ImFont* big;
+    };
+
+    std::unordered_map<std::string, Font> fonts;
+
+    void scheduleFontLoad(std::size_t index) noexcept;
     bool loadScheduledFonts() noexcept;
 
 private:
-    std::vector<std::string> scheduledFonts;
+    std::vector<std::size_t> scheduledFonts{ 0 };
     std::filesystem::path path;
 };
 

@@ -1,23 +1,35 @@
-#include <Windows.h>
+﻿#include <algorithm>
+#include <cstring>
 
+#include "Engine.h"
 #include "EngineTrace.h"
 #include "Entity.h"
+#include "GlobalVars.h"
 #include "../Interfaces.h"
+#include "Localize.h"
+#include "LocalPlayer.h"
 #include "../Memory.h"
 #include "ModelInfo.h"
-#include "GlobalVars.h"
-#include "Engine.h"
+#include "PlayerResource.h"
 
 bool Entity::canSee(Entity* other, const Vector& pos) noexcept
 {
+    const auto eyePos = getEyePosition();
+
+    if (memory->lineGoesThroughSmoke(eyePos, pos, 1))
+        return false;
+
     Trace trace;
-    interfaces->engineTrace->traceRay({ getEyePosition(), pos }, 0x46004009, this, trace);
-    return (trace.entity == other || trace.fraction > 0.97f) && !memory->lineGoesThroughSmoke(getEyePosition(), pos, 1);
+    interfaces->engineTrace->traceRay({ eyePos, pos }, 0x46004009, this, trace);
+    return trace.entity == other || trace.fraction > 0.97f;
 }
 
 bool Entity::visibleTo(Entity* other) noexcept
 {
     if (other->canSee(this, getAbsOrigin() + Vector{ 0.0f, 0.0f, 5.0f }))
+        return true;
+
+    if (other->canSee(this, getEyePosition() + Vector{ 0.0f, 0.0f, 5.0f }))
         return true;
 
     const auto model = getModel();
@@ -36,33 +48,50 @@ bool Entity::visibleTo(Entity* other) noexcept
     if (!setupBones(boneMatrices, MAXSTUDIOBONES, BONE_USED_BY_HITBOX, memory->globalVars->currenttime))
         return false;
 
-    for (const auto boxNum : { 12, 9, 14, 17 }) { // head, guts, left & right elbow hitbox
-        if (boxNum < set->numHitboxes && other->canSee(this, boneMatrices[set->getHitbox(boxNum)->bone].origin()))
+    for (const auto boxNum : { Hitbox::Belly, Hitbox::LeftForearm, Hitbox::RightForearm }) {
+        const auto hitbox = set->getHitbox(boxNum);
+        if (hitbox && other->canSee(this, boneMatrices[hitbox->bone].origin()))
             return true;
     }
 
     return false;
 }
 
-[[nodiscard]] std::string Entity::getPlayerName(bool normalize) noexcept
+[[nodiscard]] std::string Entity::getPlayerName() noexcept
 {
-    std::string playerName = "unknown";
+    char name[128];
+    getPlayerName(name);
+    return name;
+}
 
-    PlayerInfo playerInfo;
-    if (!interfaces->engine->getPlayerInfo(index(), playerInfo))
-        return playerName;
-
-    playerName = playerInfo.name;
-
-    if (normalize) {
-        if (wchar_t wide[128]; MultiByteToWideChar(CP_UTF8, 0, playerInfo.name, 128, wide, 128)) {
-            if (wchar_t wideNormalized[128]; NormalizeString(NormalizationKC, wide, -1, wideNormalized, 128)) {
-                if (char nameNormalized[128]; WideCharToMultiByte(CP_UTF8, 0, wideNormalized, -1, nameNormalized, 128, nullptr, nullptr))
-                    playerName = nameNormalized;
-            }
-        }
+void Entity::getPlayerName(char(&out)[128]) noexcept
+{
+    if (!*memory->playerResource) {
+        strcpy(out, "unknown");
+        return;
     }
 
-    playerName.erase(std::remove(playerName.begin(), playerName.end(), '\n'), playerName.cend());
-    return playerName;
+    wchar_t wide[128];
+    memory->getDecoratedPlayerName(*memory->playerResource, index(), wide, sizeof(wide), 28);
+
+    auto end = std::remove(wide, wide + wcslen(wide), L'\n');
+    *end = L'\0';
+    end = std::unique(wide, end, [](wchar_t a, wchar_t b) { return a == L' ' && a == b; });
+    *end = L'\0';
+
+    interfaces->localize->convertUnicodeToAnsi(wide, out, 128);
+}
+
+bool Entity::isEnemy() noexcept
+{
+    if (!localPlayer) {
+        assert(false);
+        return false;
+    }
+
+    if (const auto localTeam = localPlayer->getTeamNumber(); localTeam != Team::TT && localTeam != Team::CT) {
+        // if we're in Spectators team treat CTs as allies and TTs as enemies
+        return getTeamNumber() != Team::CT;
+    }
+    return memory->isOtherEnemy(this, localPlayer.get());
 }

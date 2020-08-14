@@ -6,17 +6,20 @@
 #include <tuple>
 #include <vector>
 
+#include "imgui/imgui.h"
+
 #include "SDK/Vector.h"
 
 struct LocalPlayerData;
 
 struct PlayerData;
+struct ObserverData;
 struct WeaponData;
 struct EntityData;
 struct LootCrateData;
 struct ProjectileData;
 
-struct _D3DMATRIX;
+struct Matrix4x4;
 
 namespace GameData
 {
@@ -32,9 +35,10 @@ namespace GameData
     };
 
     // You have to acquire lock before using these getters
-    const _D3DMATRIX& toScreenMatrix() noexcept;
+    const Matrix4x4& toScreenMatrix() noexcept;
     const LocalPlayerData& local() noexcept;
     const std::vector<PlayerData>& players() noexcept;
+    const std::vector<ObserverData>& observers() noexcept;
     const std::vector<WeaponData>& weapons() noexcept;
     const std::vector<EntityData>& entities() noexcept;
     const std::vector<LootCrateData>& lootCrates() noexcept;
@@ -46,10 +50,12 @@ struct LocalPlayerData {
 
     bool exists = false;
     bool alive = false;
-    bool inBombZone = false;
     bool inReload = false;
     bool shooting = false;
+    bool noScope = false;
     float nextWeaponAttack = 0.0f;
+    int fov;
+    float flashDuration;
     Vector aimPunch;
     Vector origin;
 };
@@ -59,8 +65,12 @@ class Entity;
 struct BaseData {
     BaseData(Entity* entity) noexcept;
 
+    constexpr auto operator<(const BaseData& other) const
+    {
+        return distanceToLocal > other.distanceToLocal;
+    }
+
     float distanceToLocal;
-    Vector modelMins, modelMaxs;
     Vector obbMins, obbMaxs;
     Matrix3x4 coordinateFrame;
 };
@@ -73,7 +83,6 @@ struct EntityData final : BaseData {
 
 struct ProjectileData : BaseData {
     ProjectileData(Entity* projectile) noexcept;
-
     void update(Entity* projectile) noexcept;
 
     constexpr auto operator==(int otherHandle) const noexcept
@@ -96,10 +105,12 @@ struct PlayerData : BaseData {
     bool visible = false;
     bool audible;
     bool spotted;
+    bool immune;
     float flashDuration;
-    std::string name;
+    char name[128];
     std::string activeWeapon;
-    std::vector<std::pair<Vector, Vector>> bones;
+    std::vector<std::pair<ImVec2, ImVec2>> bones;
+    Vector headMins, headMaxs;
 };
 
 struct WeaponData : BaseData {
@@ -116,4 +127,20 @@ struct LootCrateData : BaseData {
     LootCrateData(Entity* entity) noexcept;
 
     const char* name = nullptr;
+};
+
+struct ObserverData {
+    ObserverData(Entity* entity, Entity* obs, bool targetIsLocalPlayer) noexcept;
+
+    char name[128];
+    char target[128];
+    bool targetIsLocalPlayer;
+};
+
+struct BombData {
+    BombData(Entity* entity) noexcept;
+
+    int bombsite;
+    float blowTime;
+    float defuseCountDown;
 };

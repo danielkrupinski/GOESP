@@ -1,7 +1,9 @@
-#include <Windows.h>
-#include <d3d9types.h>
 #include <list>
 #include <mutex>
+
+#include "imgui/imgui.h"
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui/imgui_internal.h"
 
 #include "Config.h"
 #include "fnv.h"
@@ -19,44 +21,78 @@
 #include "SDK/LocalPlayer.h"
 #include "SDK/ModelInfo.h"
 #include "SDK/Sound.h"
+#include "SDK/UtlVector.h"
 #include "SDK/WeaponId.h"
 #include "SDK/WeaponInfo.h"
 
-static D3DMATRIX viewMatrix;
+static Matrix4x4 viewMatrix;
 static LocalPlayerData localPlayerData;
 static std::vector<PlayerData> playerData;
+static std::vector<ObserverData> observerData;
 static std::vector<WeaponData> weaponData;
 static std::vector<EntityData> entityData;
 static std::vector<LootCrateData> lootCrateData;
 static std::list<ProjectileData> projectileData;
+static std::vector<BombData> bombData;
+
+static bool worldToScreen(const Vector& in, ImVec2& out) noexcept
+{
+    const auto& matrix = viewMatrix;
+
+    const auto w = matrix._41 * in.x + matrix._42 * in.y + matrix._43 * in.z + matrix._44;
+    if (w < 0.001f)
+        return false;
+
+    out = ImGui::GetIO().DisplaySize / 2.0f;
+    out.x *= 1.0f + (matrix._11 * in.x + matrix._12 * in.y + matrix._13 * in.z + matrix._14) / w;
+    out.y *= 1.0f - (matrix._21 * in.x + matrix._22 * in.y + matrix._23 * in.z + matrix._24) / w;
+    return true;
+}
 
 void GameData::update() noexcept
 {
+    static int lastFrame;
+    if (lastFrame == memory->globalVars->framecount)
+        return;
+
+    lastFrame = memory->globalVars->framecount;
+
     Lock lock;
 
     playerData.clear();
+    observerData.clear();
     weaponData.clear();
     entityData.clear();
     lootCrateData.clear();
+    bombData.clear();
+
+    localPlayerData.update();
 
     if (!localPlayer)
         return;
 
     viewMatrix = interfaces->engine->worldToScreenMatrix();
-    localPlayerData.update();
+
+#ifdef _WIN32
+    for (int i = 0; i < memory->plantedC4s->size; ++i)
+        bombData.emplace_back((*memory->plantedC4s)[i]);
+#endif
 
     const auto observerTarget = localPlayer->getObserverMode() == ObsMode::InEye ? localPlayer->getObserverTarget() : nullptr;
 
     Entity* entity = nullptr;
-    while (entity = interfaces->clientTools->nextEntity(entity)) {
+    while ((entity = interfaces->clientTools->nextEntity(entity))) {
         if (entity->isDormant())
             continue;
 
         if (entity->isPlayer()) {
-            if (entity == localPlayer.get() || entity == observerTarget || !entity->isAlive())
+            if (entity == localPlayer.get() || entity == observerTarget)
                 continue;
 
-            playerData.emplace_back(entity);
+            if (entity->isAlive())
+                playerData.emplace_back(entity);
+            else if (const auto obs = entity->getObserverTarget())
+                observerData.emplace_back(entity, obs, obs == localPlayer.get());
         } else {
             if (entity->isWeapon()) {
                 if (entity->ownerEntity() == -1)
@@ -94,10 +130,18 @@ void GameData::update() noexcept
                     break;
                 case ClassId::LootCrate:
                     lootCrateData.emplace_back(entity);
+                    break;
+                default:
+                    break;
                 }
             }
         }
     }
+
+    std::sort(playerData.begin(), playerData.end());
+    std::sort(weaponData.begin(), weaponData.end());
+    std::sort(entityData.begin(), entityData.end());
+    std::sort(lootCrateData.begin(), lootCrateData.end());
 
     for (auto it = projectileData.begin(); it != projectileData.end();) {
         if (!interfaces->entityList->getEntityFromHandle(it->handle)) {
@@ -118,7 +162,7 @@ void GameData::clearProjectileList() noexcept
     projectileData.clear();
 }
 
-const _D3DMATRIX& GameData::toScreenMatrix() noexcept
+const Matrix4x4& GameData::toScreenMatrix() noexcept
 {
     return viewMatrix;
 }
@@ -131,6 +175,11 @@ const LocalPlayerData& GameData::local() noexcept
 const std::vector<PlayerData>& GameData::players() noexcept
 {
     return playerData;
+}
+
+const std::vector<ObserverData>& GameData::observers() noexcept
+{
+    return observerData;
 }
 
 const std::vector<WeaponData>& GameData::weapons() noexcept
@@ -162,34 +211,44 @@ void LocalPlayerData::update() noexcept
 
     exists = true;
     alive = localPlayer->isAlive();
-    inBombZone = localPlayer->inBombZone();
 
     if (const auto activeWeapon = localPlayer->getActiveWeapon()) {
         inReload = activeWeapon->isInReload();
         shooting = localPlayer->shotsFired() > 1;
+        noScope = activeWeapon->isSniperRifle() && !localPlayer->isScoped();
         nextWeaponAttack = activeWeapon->nextPrimaryAttack();
     }
+
+    fov = localPlayer->fov() ? localPlayer->fov() : localPlayer->defaultFov();
+    flashDuration = localPlayer->flashDuration();
     aimPunch = localPlayer->getAimPunch();
-    origin = localPlayer->getAbsOrigin();
+
+    const auto obsMode = localPlayer->getObserverMode();
+    if (const auto obs = localPlayer->getObserverTarget(); obs && obsMode != ObsMode::Roaming && obsMode != ObsMode::Deathcam)
+        origin = obs->getAbsOrigin();
+    else
+        origin = localPlayer->getAbsOrigin();
 }
 
 BaseData::BaseData(Entity* entity) noexcept
 {
     distanceToLocal = entity->getAbsOrigin().distTo(localPlayerData.origin);
-
-    if (const auto model = entity->getModel()) {
-        modelMins = model->mins;
-        modelMaxs = model->maxs;
+ 
+    if (entity->isPlayer()) {
+        const auto collideable = entity->getCollideable();
+        obbMins = collideable->obbMins();
+        obbMaxs = collideable->obbMaxs();
+    } else if (const auto model = entity->getModel()) {
+        obbMins = model->mins;
+        obbMaxs = model->maxs;
     }
 
-    obbMins = entity->getCollideable()->obbMins();
-    obbMaxs = entity->getCollideable()->obbMaxs();
     coordinateFrame = entity->toWorldTransform();
 }
 
 EntityData::EntityData(Entity* entity) noexcept : BaseData{ entity }
 {
-    name = [](ClassId classId) -> const char* {
+    name = [](ClassId classId) {
         switch (classId) {
         case ClassId::EconEntity: return "Defuse Kit";
         case ClassId::Chicken: return "Chicken";
@@ -200,17 +259,17 @@ EntityData::EntityData(Entity* entity) noexcept : BaseData{ entity }
         case ClassId::AmmoBox: return "Ammo Box";
         case ClassId::RadarJammer: return "Radar Jammer";
         case ClassId::SnowballPile: return "Snowball Pile";
-        default: return nullptr;
+        default: assert(false); return "unknown";
         }
     }(entity->getClientClass()->classId);
 }
 
 ProjectileData::ProjectileData(Entity* projectile) noexcept : BaseData { projectile }
 {
-    name = [](Entity* projectile) -> const char* {
+    name = [](Entity* projectile) {
         switch (projectile->getClientClass()->classId) {
         case ClassId::BaseCSGrenadeProjectile:
-            if (const auto model = projectile->getModel(); model && std::strstr(model->name, "flashbang"))
+            if (const auto model = projectile->getModel(); model && strstr(model->name, "flashbang"))
                 return "Flashbang";
             else
                 return "HE Grenade";
@@ -221,7 +280,7 @@ ProjectileData::ProjectileData(Entity* projectile) noexcept : BaseData { project
         case ClassId::SensorGrenadeProjectile: return "TA Grenade";
         case ClassId::SmokeGrenadeProjectile: return "Smoke Grenade";
         case ClassId::SnowballProjectile: return "Snowball";
-        default: return nullptr;
+        default: assert(false); return "unknown";
         }
     }(projectile);
 
@@ -229,7 +288,7 @@ ProjectileData::ProjectileData(Entity* projectile) noexcept : BaseData { project
         if (thrower == localPlayer.get())
             thrownByLocalPlayer = true;
         else
-            thrownByEnemy = memory->isOtherEnemy(localPlayer.get(), thrower);
+            thrownByEnemy = thrower->isEnemy();
     }
 
     handle = projectile->handle();
@@ -239,14 +298,14 @@ void ProjectileData::update(Entity* projectile) noexcept
 {
     static_cast<BaseData&>(*this) = { projectile };
 
-    if (const auto pos = projectile->getAbsOrigin(); trajectory.size() < 1 || trajectory[trajectory.size() - 1].second != pos)
+    if (const auto& pos = projectile->getAbsOrigin(); trajectory.size() < 1 || trajectory[trajectory.size() - 1].second != pos)
         trajectory.emplace_back(memory->globalVars->realtime, pos);
 }
 
 PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
 {
     if (localPlayer) {
-        enemy = memory->isOtherEnemy(entity, localPlayer.get());
+        enemy = entity->isEnemy();
         visible = entity->visibleTo(localPlayer.get());
     }
 
@@ -259,8 +318,9 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
 
     audible = isEntityAudible(entity->index());
     spotted = entity->spotted();
+    immune = entity->gunGameImmunity();
     flashDuration = entity->flashDuration();
-    name = entity->getPlayerName(config->normalizePlayerNames);
+    entity->getPlayerName(name);
 
     if (const auto weapon = entity->getActiveWeapon()) {
         audible = audible || isEntityAudible(weapon->index());
@@ -286,7 +346,29 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
         if (!bone || bone->parent == -1 || !(bone->flags & BONE_USED_BY_HITBOX))
             continue;
 
-        bones.emplace_back(boneMatrices[i].origin(), boneMatrices[bone->parent].origin());
+        ImVec2 bonePoint;
+        if (!worldToScreen(boneMatrices[i].origin(), bonePoint))
+            continue;
+
+        ImVec2 parentPoint;
+        if (!worldToScreen(boneMatrices[bone->parent].origin(), parentPoint))
+            continue;
+
+        bones.emplace_back(bonePoint, parentPoint);
+    }
+
+    const auto set = studioModel->getHitboxSet(entity->hitboxSet());
+    if (!set)
+        return;
+
+    const auto headBox = set->getHitbox(Hitbox::Head);
+
+    headMins = headBox->bbMin.transform(boneMatrices[headBox->bone]);
+    headMaxs = headBox->bbMax.transform(boneMatrices[headBox->bone]);
+
+    if (headBox->capsuleRadius > 0.0f) {
+        headMins -= headBox->capsuleRadius;
+        headMaxs += headBox->capsuleRadius;
     }
 }
 
@@ -407,4 +489,16 @@ LootCrateData::LootCrateData(Entity* entity) noexcept : BaseData{ entity }
         default: return nullptr;
         }
     }(model->name);
+}
+
+ObserverData::ObserverData(Entity* entity, Entity* obs, bool targetIsLocalPlayer) noexcept
+{
+    entity->getPlayerName(name);
+    obs->getPlayerName(target);
+    this->targetIsLocalPlayer = targetIsLocalPlayer;
+}
+
+BombData::BombData(Entity* entity) noexcept
+{
+
 }

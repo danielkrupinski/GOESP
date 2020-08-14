@@ -10,6 +10,11 @@ struct Vector {
         return x == v.x && y == v.y && z == v.z;
     }
 
+    constexpr auto operator!=(const Vector& v) const noexcept
+    {
+        return !(*this == v);
+    }
+
     constexpr Vector& operator=(float array[3]) noexcept
     {
         x = array[0];
@@ -26,11 +31,27 @@ struct Vector {
         return *this;
     }
 
+    constexpr Vector& operator+=(float f) noexcept
+    {
+        x += f;
+        y += f;
+        z += f;
+        return *this;
+    }
+
     constexpr Vector& operator-=(const Vector& v) noexcept
     {
         x -= v.x;
         y -= v.y;
         z -= v.z;
+        return *this;
+    }
+
+    constexpr Vector& operator-=(float f) noexcept
+    {
+        x -= f;
+        y -= f;
+        z -= f;
         return *this;
     }
 
@@ -74,7 +95,7 @@ struct Vector {
 
     auto length() const noexcept
     {
-        return std::sqrtf(x * x + y * y + z * z);
+        return std::sqrt(x * x + y * y + z * z);
     }
 
     constexpr auto squareLength() const noexcept

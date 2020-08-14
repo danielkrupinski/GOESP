@@ -1,7 +1,6 @@
 #include "GUI.h"
 
 #include "imgui/imgui.h"
-#include "imgui/imgui_impl_win32.h"
 
 #include "Config.h"
 #include "Hooks.h"
@@ -17,11 +16,13 @@ GUI::GUI() noexcept
     ImGuiStyle& style = ImGui::GetStyle();
     style.ScrollbarSize = 13.0f;
     style.WindowTitleAlign = { 0.5f, 0.5f };
+    style.Colors[ImGuiCol_WindowBg].w = 0.8f;
 
     ImGuiIO& io = ImGui::GetIO();
     io.IniFilename = nullptr;
     io.LogFilename = nullptr;
     io.Fonts->Flags |= ImFontAtlasFlags_NoPowerOfTwoHeight;
+    io.Fonts->AddFontDefault();
 }
 
 void GUI::render() noexcept
@@ -29,7 +30,16 @@ void GUI::render() noexcept
     if (!open)
         return;
 
-    ImGui::Begin("GOESP", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+    ImGui::Begin(
+        "GOESP for "
+#ifdef _WIN32
+        "Windows"
+#elif __linux__
+        "Linux"
+#else
+    #error("Unsupported platform!")
+#endif
+        , nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
 
     if (!ImGui::BeginTabBar("##tabbar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_NoTooltip)) {
         ImGui::End();
@@ -51,14 +61,15 @@ void GUI::render() noexcept
     if (ImGui::BeginTabItem("Misc")) {
         ImGuiCustom::colorPicker("Reload Progress", config->reloadProgress);
         ImGuiCustom::colorPicker("Recoil Crosshair", config->recoilCrosshair);
-        ImGui::Checkbox("Normalize Player Names", &config->normalizePlayerNames);
+        ImGuiCustom::colorPicker("Noscope Crosshair", config->noscopeCrosshair);
         ImGui::Checkbox("Purchase List", &config->purchaseList.enabled);
         ImGui::SameLine();
 
+        ImGui::PushID("Purchase List");
         if (ImGui::Button("..."))
-            ImGui::OpenPopup("##purchaselist");
+            ImGui::OpenPopup("");
 
-        if (ImGui::BeginPopup("##purchaselist")) {
+        if (ImGui::BeginPopup("")) {
             ImGui::SetNextItemWidth(75.0f);
             ImGui::Combo("Mode", &config->purchaseList.mode, "Details\0Summary\0");
             ImGui::Checkbox("Only During Freeze Time", &config->purchaseList.onlyDuringFreezeTime);
@@ -66,11 +77,32 @@ void GUI::render() noexcept
             ImGui::Checkbox("No Title Bar", &config->purchaseList.noTitleBar);
             ImGui::EndPopup();
         }
-        ImGui::Checkbox("Bomb Zone Hint", &config->bombZoneHint.enabled);
+        ImGui::PopID();
+
+        ImGui::PushID("Observer List");
+        ImGui::Checkbox("Observer List", &config->observerList.enabled);
+        ImGui::SameLine();
+
+        if (ImGui::Button("..."))
+            ImGui::OpenPopup("");
+
+        if (ImGui::BeginPopup("")) {
+            ImGui::Checkbox("No Title Bar", &config->observerList.noTitleBar);
+            ImGui::EndPopup();
+        }
+        ImGui::PopID();
+
+        ImGui::Checkbox("Ignore Flashbang", &config->ignoreFlashbang);
+        ImGui::Checkbox("FPS Counter", &config->fpsCounter.enabled);
+
         ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Configs")) {
+#ifdef _WIN32
         ImGui::TextUnformatted("Config is saved as \"config.txt\" inside GOESP directory in Documents");
+#elif __linux__
+        ImGui::TextUnformatted("Config is saved as \"config.txt\" inside ~/GOESP directory");
+#endif
         if (ImGui::Button("Load"))
             config->load();
         if (ImGui::Button("Save"))
@@ -84,12 +116,12 @@ void GUI::render() noexcept
 void GUI::drawESPTab() noexcept
 {
     static std::size_t currentCategory;
-    static std::string currentItem = "All";
+    static auto currentItem = "All";
 
-    constexpr auto getConfigShared = [](std::size_t category, std::string item) noexcept -> Shared& {
+    constexpr auto getConfigShared = [](std::size_t category, const char* item) noexcept -> Shared& {
         switch (category) {
-        case 0: default: return config->allies[item];
-        case 1: return config->enemies[item];
+        case 0: default: return config->enemies[item];
+        case 1: return config->allies[item];
         case 2: return config->weapons[item];
         case 3: return config->projectiles[item];
         case 4: return config->lootCrates[item];
@@ -97,18 +129,18 @@ void GUI::drawESPTab() noexcept
         }
     };
 
-    constexpr auto getConfigPlayer = [](std::size_t category, std::string item) noexcept -> Player& {
+    constexpr auto getConfigPlayer = [](std::size_t category, const char* item) noexcept -> Player& {
         switch (category) {
-        case 0: default: return config->allies[item];
-        case 1: return config->enemies[item];
+        case 0: default: return config->enemies[item];
+        case 1: return config->allies[item];
         }
     };
 
     if (ImGui::ListBoxHeader("##list", { 170.0f, 300.0f })) {
-        constexpr std::array categories{ "Allies", "Enemies", "Weapons", "Projectiles", "Loot Crates", "Other Entities" };
+        constexpr std::array categories{ "Enemies", "Allies", "Weapons", "Projectiles", "Loot Crates", "Other Entities" };
 
         for (std::size_t i = 0; i < categories.size(); ++i) {
-            if (ImGui::Selectable(categories[i], currentCategory == i && currentItem == "All")) {
+            if (ImGui::Selectable(categories[i], currentCategory == i && std::string_view{ currentItem } == "All")) {
                 currentCategory = i;
                 currentItem = "All";
             }
@@ -190,7 +222,7 @@ void GUI::drawESPTab() noexcept
             for (std::size_t j = 0; j < items.size(); ++j) {
                 static bool selectedSubItem;
                 if (!categoryEnabled || getConfigShared(i, items[j]).enabled) {
-                    if (ImGui::Selectable(items[j], currentCategory == i && !selectedSubItem && currentItem == items[j])) {
+                    if (ImGui::Selectable(items[j], currentCategory == i && !selectedSubItem && std::string_view{ currentItem } == items[j])) {
                         currentCategory = i;
                         currentItem = items[j];
                         selectedSubItem = false;
@@ -277,39 +309,40 @@ void GUI::drawESPTab() noexcept
                 const auto itemEnabled = getConfigShared(i, items[j]).enabled;
 
                 for (const auto subItem : subItems) {
-                    if ((categoryEnabled || itemEnabled) && !config->weapons[subItem].enabled)
+                    auto& subItemConfig = config->weapons[subItem];
+                    if ((categoryEnabled || itemEnabled) && !subItemConfig.enabled)
                         continue;
 
-                    if (ImGui::Selectable(subItem, currentCategory == i && selectedSubItem && currentItem == subItem)) {
+                    if (ImGui::Selectable(subItem, currentCategory == i && selectedSubItem && std::string_view{ currentItem } == subItem)) {
                         currentCategory = i;
                         currentItem = subItem;
                         selectedSubItem = true;
                     }
 
                     if (ImGui::BeginDragDropSource()) {
-                        ImGui::SetDragDropPayload("Weapon", &config->weapons[subItem], sizeof(Weapon), ImGuiCond_Once);
+                        ImGui::SetDragDropPayload("Weapon", &subItemConfig, sizeof(Weapon), ImGuiCond_Once);
                         ImGui::EndDragDropSource();
                     }
 
                     if (ImGui::BeginDragDropTarget()) {
                         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Player")) {
                             const auto& data = *(Player*)payload->Data;
-                            config->weapons[subItem] = data;
+                            subItemConfig = data;
                         }
 
                         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Weapon")) {
                             const auto& data = *(Weapon*)payload->Data;
-                            config->weapons[subItem] = data;
+                            subItemConfig = data;
                         }
 
                         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Projectile")) {
                             const auto& data = *(Projectile*)payload->Data;
-                            config->weapons[subItem] = data;
+                            subItemConfig = data;
                         }
 
                         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity")) {
                             const auto& data = *(Shared*)payload->Data;
-                            config->weapons[subItem] = data;
+                            subItemConfig = data;
                         }
                         ImGui::EndDragDropTarget();
                     }
@@ -337,7 +370,7 @@ void GUI::drawESPTab() noexcept
                 if (ImGui::Selectable(config->systemFonts[i].c_str(), isSelected, 0, { 250.0f, 0.0f })) {
                     sharedConfig.font.index = i;
                     sharedConfig.font.name = config->systemFonts[i];
-                    config->scheduleFontLoad(sharedConfig.font.name);
+                    config->scheduleFontLoad(i);
                 }
                 if (isSelected)
                     ImGui::SetItemDefaultFocus();
@@ -347,7 +380,7 @@ void GUI::drawESPTab() noexcept
 
         ImGui::Separator();
 
-        constexpr auto spacing = 220.0f;
+        constexpr auto spacing = 250.0f;
         ImGuiCustom::colorPicker("Snapline", sharedConfig.snapline);
         ImGui::SameLine();
         ImGui::SetNextItemWidth(90.0f);
@@ -365,45 +398,61 @@ void GUI::drawESPTab() noexcept
             ImGui::SetNextItemWidth(95.0f);
             ImGui::Combo("Type", &sharedConfig.box.type, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
             ImGui::SetNextItemWidth(275.0f);
-
             ImGui::SliderFloat3("Scale", sharedConfig.box.scale.data(), 0.0f, 0.50f, "%.2f");
+            ImGuiCustom::colorPicker("Fill", sharedConfig.box.fill);
             ImGui::EndPopup();
         }
 
         ImGui::PopID();
 
         ImGuiCustom::colorPicker("Name", sharedConfig.name);
-        ImGui::SameLine(spacing);
-        ImGuiCustom::colorPicker("Text Background", sharedConfig.textBackground);
-        ImGui::Checkbox("Use Model Bounds", &sharedConfig.useModelBounds);
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(95.0f);
-        ImGui::InputFloat("Text Cull Distance", &sharedConfig.textCullDistance, 0.4f, 0.8f, "%.1fm");
-        sharedConfig.textCullDistance = std::clamp(sharedConfig.textCullDistance, 0.0f, 999.9f);
+        if (currentCategory <= 3)
+            ImGui::SameLine(spacing);
 
         if (currentCategory < 2) {
             auto& playerConfig = getConfigPlayer(currentCategory, currentItem);
 
             ImGuiCustom::colorPicker("Weapon", playerConfig.weapon);
-            ImGui::SameLine(spacing);
             ImGuiCustom::colorPicker("Flash Duration", playerConfig.flashDuration);
-            ImGui::Checkbox("Audible Only", &playerConfig.audibleOnly);
             ImGui::SameLine(spacing);
             ImGuiCustom::colorPicker("Skeleton", playerConfig.skeleton);
+            ImGui::Checkbox("Audible Only", &playerConfig.audibleOnly);
+            ImGui::SameLine(spacing);
             ImGui::Checkbox("Spotted Only", &playerConfig.spottedOnly);
+
+            ImGuiCustom::colorPicker("Head Box", playerConfig.headBox);
+            ImGui::SameLine();
+
+            ImGui::PushID("Head Box");
+
+            if (ImGui::Button("..."))
+                ImGui::OpenPopup("");
+
+            if (ImGui::BeginPopup("")) {
+                ImGui::SetNextItemWidth(95.0f);
+                ImGui::Combo("Type", &playerConfig.headBox.type, "2D\0" "2D corners\0" "3D\0" "3D corners\0");
+                ImGui::SetNextItemWidth(275.0f);
+                ImGui::SliderFloat3("Scale", playerConfig.headBox.scale.data(), 0.0f, 0.50f, "%.2f");
+                ImGuiCustom::colorPicker("Fill", playerConfig.headBox.fill);
+                ImGui::EndPopup();
+            }
+
+            ImGui::PopID();
+
         } else if (currentCategory == 2) {
             auto& weaponConfig = config->weapons[currentItem];
-
-           // if (currentItem != 7)
-                ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
+            ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
         } else if (currentCategory == 3) {
-            ImGui::Checkbox("Trails", &config->projectiles[currentItem].trails.enabled);
-            ImGui::SameLine();
-           
-            if (ImGui::Button("..."))
-                ImGui::OpenPopup("##trails");
+            auto& trails = config->projectiles[currentItem].trails;
 
-            if (ImGui::BeginPopup("##trails")) {
+            ImGui::Checkbox("Trails", &trails.enabled);
+            ImGui::SameLine(spacing + 77.0f);
+            ImGui::PushID("Trails");
+
+            if (ImGui::Button("..."))
+                ImGui::OpenPopup("");
+
+            if (ImGui::BeginPopup("")) {
                 constexpr auto trailPicker = [](const char* name, Trail& trail) noexcept {
                     ImGui::PushID(name);
                     ImGuiCustom::colorPicker(name, trail);
@@ -417,13 +466,166 @@ void GUI::drawESPTab() noexcept
                     ImGui::PopID();
                 };
 
-                trailPicker("Local Player", config->projectiles[currentItem].trails.localPlayer);
-                trailPicker("Allies", config->projectiles[currentItem].trails.allies);
-                trailPicker("Enemies", config->projectiles[currentItem].trails.enemies);
+                trailPicker("Local Player", trails.localPlayer);
+                trailPicker("Allies", trails.allies);
+                trailPicker("Enemies", trails.enemies);
                 ImGui::EndPopup();
             }
+
+            ImGui::PopID();
         }
+
+        ImGui::SetNextItemWidth(95.0f);
+        ImGui::InputFloat("Text Cull Distance", &sharedConfig.textCullDistance, 0.4f, 0.8f, "%.1fm");
+        sharedConfig.textCullDistance = std::clamp(sharedConfig.textCullDistance, 0.0f, 999.9f);
     }
 
     ImGui::EndChild();
+}
+
+// future implementation
+
+bool drawPlayerCategories(const char* (&currentCategory), const char* (&currentItem)) noexcept
+{
+    bool selected = false;
+
+    constexpr auto dragDrop = [](Player& player) {
+        if (ImGui::BeginDragDropSource()) {
+            ImGui::SetDragDropPayload("Player", &player, sizeof(Player), ImGuiCond_Once);
+            ImGui::EndDragDropSource();
+        }
+
+        if (ImGui::BeginDragDropTarget()) {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Player"))
+                player = *(Player*)payload->Data;
+
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Weapon"))
+                player = *(Weapon*)payload->Data;
+
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Projectile"))
+                player = *(Projectile*)payload->Data;
+
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
+                player = *(Shared*)payload->Data;
+
+            ImGui::EndDragDropTarget();
+        }
+    };
+
+    auto category = [&](const char* name, std::unordered_map<std::string, Player>& cfg) {
+        if (ImGui::Selectable(name, std::string_view{ currentCategory } == name && std::string_view{ currentItem } == "All")) {
+            currentCategory = name;
+            currentItem = "All";
+            selected = true;
+        }
+
+        dragDrop(cfg["All"]);
+
+        ImGui::Indent();
+
+        for (const auto item : std::array{ "Visible", "Occluded" }) {
+            if (!cfg["All"].enabled || cfg[item].enabled) {
+                if (ImGui::Selectable(item, std::string_view{ currentCategory } == name && std::string_view{ currentItem } == item)) {
+                    currentCategory = name;
+                    currentItem = item;
+                    selected = true;
+                }
+                dragDrop(cfg[item]);
+            }
+        }
+
+        ImGui::Unindent();
+    };
+
+    category("Allies", config->allies);
+    category("Enemies", config->enemies);
+
+    return selected;
+}
+
+bool drawWeaponCategories(const char* (&currentCategory), const char* (&currentItem)) noexcept
+{
+    bool selected = false;
+
+    constexpr auto dragDrop = [](Weapon& weapon) {
+        if (ImGui::BeginDragDropSource()) {
+            ImGui::SetDragDropPayload("Weapon", &weapon, sizeof(Weapon), ImGuiCond_Once);
+            ImGui::EndDragDropSource();
+        }
+
+        if (ImGui::BeginDragDropTarget()) {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Player"))
+                weapon = *(Player*)payload->Data;
+
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Weapon"))
+                weapon = *(Weapon*)payload->Data;
+
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Projectile"))
+                weapon = *(Projectile*)payload->Data;
+
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
+                weapon = *(Shared*)payload->Data;
+
+            ImGui::EndDragDropTarget();
+        }
+    };
+
+    if (ImGui::Selectable("Weapons", std::string_view{ currentCategory } == "Weapons" && std::string_view{ currentItem } == "All")) {
+        currentCategory = "Weapons";
+        currentItem = "All";
+        selected = true;
+    }
+
+    dragDrop(config->weapons["All"]);
+
+    ImGui::PushID("Weapons");
+    ImGui::Indent();
+
+    constexpr std::array items{ "Pistols", "SMGs", "Rifles", "Sniper Rifles", "Shotguns", "Machineguns", "Grenades", "Melee", "Other" };
+
+    for (std::size_t i = 0; i < items.size(); ++i) {
+        if (!config->weapons["All"].enabled || config->weapons[items[i]].enabled) {
+            if (ImGui::Selectable(items[i], std::string_view{ currentCategory } == "Weapons" && std::string_view{ currentItem } == items[i])) {
+                currentCategory = "Weapons";
+                currentItem = items[i];
+                selected = true;
+            }
+
+            dragDrop(config->weapons[items[i]]);
+        }
+
+        const auto subItems = [](std::size_t item) noexcept -> std::vector<const char*> {
+            switch (item) {
+            case 0: return { "Glock-18", "P2000", "USP-S", "Dual Berettas", "P250", "Tec-9", "Five-SeveN", "CZ75-Auto", "Desert Eagle", "R8 Revolver" };
+            case 1: return { "MAC-10", "MP9", "MP7", "MP5-SD", "UMP-45", "P90", "PP-Bizon" };
+            case 2: return { "Galil AR", "FAMAS", "AK-47", "M4A4", "M4A1-S", "SG 553", "AUG" };
+            case 3: return { "SSG 08", "AWP", "G3SG1", "SCAR-20" };
+            case 4: return { "Nova", "XM1014", "Sawed-Off", "MAG-7" };
+            case 5: return { "M249", "Negev" };
+            case 6: return { "Flashbang", "HE Grenade", "Smoke Grenade", "Molotov", "Decoy Grenade", "Incendiary", "TA Grenade", "Fire Bomb", "Diversion", "Frag Grenade", "Snowball" };
+            case 7: return { "Axe", "Hammer", "Wrench" };
+            case 8: return { "C4", "Healthshot", "Bump Mine", "Zone Repulsor", "Shield" };
+            default: return { };
+            }
+        }(i);
+
+        ImGui::Indent();
+        for (const auto subItem : subItems) {
+            if ((config->weapons["All"].enabled || config->weapons[items[i]].enabled) && !config->weapons[subItem].enabled)
+                continue;
+
+            if (ImGui::Selectable(subItem, std::string_view{ currentCategory } == "Weapons" && std::string_view{ currentItem } == subItem)) {
+                currentCategory = "Weapons";
+                currentItem = subItem;
+                selected = true;
+            }
+
+            dragDrop(config->weapons[subItem]);
+        }
+        ImGui::Unindent();
+    }
+
+    ImGui::Unindent();
+    ImGui::PopID();
+    return selected;
 }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <Windows.h>
 
 class GUI {
 public:
