@@ -68,8 +68,8 @@ Execute the following commands in the main GOESP directory:
 
     mkdir Release
     cd Release
-    cmake -DCMAKE_BUILD_TYPE=Release ..
-    make -j 4
+    cmake -D CMAKE_BUILD_TYPE=Release ..
+    make -j $(nproc --all)
 
 ## FAQ
 
