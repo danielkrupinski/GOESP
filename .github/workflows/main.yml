@@ -1,0 +1,19 @@
+name: Windows
+
+on: [pull_request, push]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    # Setup MSBuild
+    - name: Setup MSBuild.exe
+      uses: warrenbuckley/Setup-MSBuild@v1
+    # Build command
+    - name: MSBuild GOESP
+      working-directory: GOESP
+      run: msbuild GOESP.vcxproj /p:Configuration=Release /p:Platform=Win32 /p:VisualStudioVersion=16.0 /v:m
