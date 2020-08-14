@@ -160,7 +160,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
         static const auto mp_buytime = interfaces->cvar->findVar("mp_buytime");
 
-        if ((!interfaces->engine->isInGame() || freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + (!config->purchaseList.onlyDuringFreezeTime ? mp_buytime->getFloat() : 0.0f) || purchaseDetails.empty() || purchaseTotal.empty()) && !gui->open)
+        if ((!interfaces->engine->isInGame() || (freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + (!config->purchaseList.onlyDuringFreezeTime ? mp_buytime->getFloat() : 0.0f)) || purchaseDetails.empty() || purchaseTotal.empty()) && !gui->open)
             return;
         
         if (config->purchaseList.pos != ImVec2{}) {
