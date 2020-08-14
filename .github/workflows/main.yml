@@ -21,7 +21,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: install
+      run: sudo apt update && sudo apt install libsdl2-dev
     - name: configure
-      run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_C_COMPILER=gcc-9 -D CMAKE_CXX_COMPILER=g++-9 ..
+      run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_C_COMPILER=gcc-10 -D CMAKE_CXX_COMPILER=g++-10 ..
     - name: build
       run: cd Release && make
