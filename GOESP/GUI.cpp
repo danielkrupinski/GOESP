@@ -98,7 +98,11 @@ void GUI::render() noexcept
         ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Configs")) {
+#ifdef _WIN32
         ImGui::TextUnformatted("Config is saved as \"config.txt\" inside GOESP directory in Documents");
+#elif __linux__
+        ImGui::TextUnformatted("Config is saved as \"config.txt\" inside ~/GOESP directory");
+#endif
         if (ImGui::Button("Load"))
             config->load();
         if (ImGui::Button("Save"))
