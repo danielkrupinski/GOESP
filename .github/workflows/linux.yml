@@ -1,20 +1,8 @@
-name: CI
+name: Linux
 
 on: [push, pull_request]
 
 jobs:
-  windows:
-
-    runs-on: windows-latest
-    
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup MSBuild.exe
-      uses: warrenbuckley/Setup-MSBuild@v1
-    - name: MSBuild GOESP
-      working-directory: GOESP
-      run: msbuild GOESP.vcxproj /p:Configuration=Release /p:Platform=Win32 /p:VisualStudioVersion=16.0 /v:m
-  
   ubuntu:
 
     runs-on: ubuntu-latest
