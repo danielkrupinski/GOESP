@@ -73,8 +73,10 @@ Memory::Memory() noexcept
     plantedC4s = *reinterpret_cast<decltype(plantedC4s)*>(findPattern(CLIENT_DLL, "\x48\x8D\x3D????\x49\x8B\x0C\x24") + 3);
     playerResource = relativeToAbsolute<PlayerResource**>(findPattern(CLIENT_DLL, "\x74\x38\x48\x8B\x3D????\x89\xDE") + 5);
 
-    pollEvent = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(RTLD_NEXT, "SDL_PollEvent")) + 3);
-    swapWindow = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(RTLD_NEXT, "SDL_GL_SwapWindow")) + 3);
-    warpMouseInWindow = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(RTLD_NEXT, "SDL_WarpMouseInWindow")) + 3);
+    const auto libSDL = dlopen("libSDL2-2.0.so.0", RTLD_LAZY | RTLD_NOLOAD);
+    pollEvent = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_PollEvent")) + 3);
+    swapWindow = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_GL_SwapWindow")) + 3);
+    warpMouseInWindow = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_WarpMouseInWindow")) + 3);
+    dlclose(libSDL);
 #endif
 }
