@@ -319,6 +319,7 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
     audible = isEntityAudible(entity->index());
     spotted = entity->spotted();
     immune = entity->gunGameImmunity();
+    health = entity->getHealth();
     flashDuration = entity->flashDuration();
     entity->getPlayerName(name);
 
