@@ -95,3 +95,13 @@ bool Entity::isEnemy() noexcept
     }
     return memory->isOtherEnemy(this, localPlayer.get());
 }
+
+bool Entity::isVisible() noexcept
+{
+    if (!localPlayer) {
+        assert(false);
+        return false;
+    }
+
+    return visibleTo(localPlayer.get());
+}
