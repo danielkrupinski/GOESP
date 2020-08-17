@@ -439,6 +439,8 @@ void GUI::drawESPTab() noexcept
 
             ImGui::PopID();
 
+            ImGui::SameLine(spacing);
+            ImGui::Checkbox("Health Bar", &playerConfig.healthBar);
         } else if (currentCategory == 2) {
             auto& weaponConfig = config->weapons[currentItem];
             ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
