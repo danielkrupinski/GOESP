@@ -88,6 +88,7 @@ struct Player : Shared {
     bool spottedOnly = false;
     ColorToggleThickness skeleton;
     Box headBox;
+    bool healthBar = false;
 
     using Shared::operator=;
 };
