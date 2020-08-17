@@ -271,16 +271,40 @@ struct FontPush {
     }
 };
 
+static void drawHealthBar(const ImVec2& pos, float height, int health) noexcept
+{
+    constexpr float width = 3.0f;
+
+    drawList->PushClipRect(pos + ImVec2{ 0.0f, (100 - health) / 100.0f * height }, pos + ImVec2{ width, height });
+
+    const auto green = Helpers::calculateColor(0, 255, 0, 255);
+    const auto yellow = Helpers::calculateColor(255, 255, 0, 255);
+    const auto red = Helpers::calculateColor(255, 0, 0, 255);
+
+    ImVec2 min = pos;
+    ImVec2 max = min + ImVec2{ width, height / 2.0f };
+
+    drawList->AddRectFilledMultiColor(min, max, green, green, yellow, yellow);
+    min.y += height / 2.0f;
+    max.y += height / 2.0f;
+    drawList->AddRectFilledMultiColor(min, max, yellow, yellow, red, red);
+
+    drawList->PopClipRect();
+}
+
 static void renderPlayerBox(const PlayerData& playerData, const Player& config) noexcept
 {
     const BoundingBox bbox{ playerData, config.box.scale };
 
     if (!bbox)
         return;
-    
+
     renderBox(bbox, config.box);
 
     ImVec2 offsetMins{}, offsetMaxs{};
+
+    if (config.healthBar)
+        drawHealthBar(bbox.min - ImVec2{ 4.0f, 0.0f }, (bbox.max.y - bbox.min.y), playerData.health);
 
     FontPush font{ config.font.name, playerData.distanceToLocal };
 
@@ -309,7 +333,6 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
     }
 
     drawSnapline(config.snapline, bbox.min + offsetMins, bbox.max + offsetMaxs);
-
 }
 
 static void renderWeaponBox(const WeaponData& weaponData, const Weapon& config) noexcept
