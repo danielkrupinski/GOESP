@@ -104,7 +104,7 @@ public:
     [[nodiscard]] std::string getPlayerName() noexcept;
     void getPlayerName(char(&out)[128]) noexcept;
     bool isEnemy() noexcept;
-    bool isVisible() noexcept;
+    bool isVisible(const Vector& mins, const Vector& maxs) noexcept;
 
 #ifdef _WIN32
     PROP(hitboxSet, 0x9FC, int)                                                    // CBaseAnimating->m_nHitboxSet
