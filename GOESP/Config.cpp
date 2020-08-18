@@ -250,6 +250,7 @@ static void from_json(const json& j, Player& p)
     read(j, "Spotted Only", p.spottedOnly);
     read<value_t::object>(j, "Skeleton", p.skeleton);
     read<value_t::object>(j, "Head Box", p.headBox);
+    read(j, "Health Bar", p.healthBar);
 }
 
 static void from_json(const json& j, ImVec2& v)
@@ -385,6 +386,7 @@ static void to_json(json& j, const Player& o, const Player& dummy = {})
     WRITE("Spotted Only", spottedOnly)
     to_json(j["Skeleton"], o.skeleton, dummy.skeleton);
     to_json(j["Head Box"], o.headBox, dummy.headBox);
+    WRITE("Health Bar", healthBar)
 }
 
 static void to_json(json& j, const Weapon& o, const Weapon& dummy = {})
