@@ -122,14 +122,14 @@ static void renderBox(const BoundingBox& bbox, const Box& config) noexcept
     switch (config.type) {
     case Box::_2d:
         if (config.fill.enabled)
-            drawList->AddRectFilled(bbox.min, bbox.max, fillColor, config.rounding, ImDrawCornerFlags_All);
+            drawList->AddRectFilled(bbox.min + ImVec2{ 1.0f, 1.0f }, bbox.max - ImVec2{ 1.0f, 1.0f }, fillColor, config.rounding, ImDrawCornerFlags_All);
         else
             drawList->AddRect(bbox.min + ImVec2{ 1.0f, 1.0f }, bbox.max + ImVec2{ 1.0f, 1.0f }, color & IM_COL32_A_MASK, config.rounding, ImDrawCornerFlags_All, config.thickness);
         drawList->AddRect(bbox.min, bbox.max, color, config.rounding, ImDrawCornerFlags_All, config.thickness);
         break;
     case Box::_2dCorners:
         if (config.fill.enabled) {
-            drawList->AddRectFilled(bbox.min, bbox.max, fillColor, config.rounding, ImDrawCornerFlags_All);
+            drawList->AddRectFilled(bbox.min + ImVec2{ 1.0f, 1.0f }, bbox.max - ImVec2{ 1.0f, 1.0f }, fillColor, config.rounding, ImDrawCornerFlags_All);
 
             drawList->AddLine(bbox.min, { bbox.min.x, IM_FLOOR(bbox.min.y * 0.75f + bbox.max.y * 0.25f) }, color, config.thickness);
             drawList->AddLine(bbox.min, { IM_FLOOR(bbox.min.x * 0.75f + bbox.max.x * 0.25f), bbox.min.y }, color, config.thickness);
