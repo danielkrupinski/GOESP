@@ -60,8 +60,6 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
 
 static void drawCrosshair(ImDrawList* drawList, const ImVec2& pos, ImU32 color, float thickness) noexcept
 {
-    drawList->Flags &= ~ImDrawListFlags_AntiAliasedLines;
-
     // dot
     drawList->AddRectFilled(pos - ImVec2{ 1, 1 }, pos + ImVec2{ 2, 2 }, color & IM_COL32_A_MASK);
     drawList->AddRectFilled(pos, pos + ImVec2{ 1, 1 }, color);
@@ -81,8 +79,6 @@ static void drawCrosshair(ImDrawList* drawList, const ImVec2& pos, ImU32 color, 
     // bottom (right with swapped x/y offsets)
     drawList->AddRectFilled(ImVec2{ pos.x - 1, pos.y + 4 }, ImVec2{ pos.x + 2, pos.y + 12 }, color & IM_COL32_A_MASK);
     drawList->AddRectFilled(ImVec2{ pos.x, pos.y + 5 }, ImVec2{ pos.x + 1, pos.y + 11 }, color);
-
-    drawList->Flags |= ImDrawListFlags_AntiAliasedLines;
 }
 
 void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
