@@ -284,10 +284,10 @@ static void drawHealthBar(const ImVec2& pos, float height, int health) noexcept
     ImVec2 min = pos;
     ImVec2 max = min + ImVec2{ width, height / 2.0f };
 
-    drawList->AddRectFilledMultiColor(min, max, green, green, yellow, yellow);
+    drawList->AddRectFilledMultiColor(ImFloor(min), ImFloor(max), green, green, yellow, yellow);
     min.y += height / 2.0f;
     max.y += height / 2.0f;
-    drawList->AddRectFilledMultiColor(min, max, yellow, yellow, red, red);
+    drawList->AddRectFilledMultiColor(ImFloor(min), ImFloor(max), yellow, yellow, red, red);
 
     drawList->PopClipRect();
 }
