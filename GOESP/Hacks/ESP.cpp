@@ -131,29 +131,29 @@ static void renderBox(const BoundingBox& bbox, const Box& config) noexcept
         if (config.fill.enabled) {
             drawList->AddRectFilled(bbox.min, bbox.max, fillColor, config.rounding, ImDrawCornerFlags_All);
 
-            drawList->AddLine(bbox.min, { bbox.min.x, bbox.min.y * 0.75f + bbox.max.y * 0.25f }, color, config.thickness);
-            drawList->AddLine(bbox.min, { bbox.min.x * 0.75f + bbox.max.x * 0.25f, bbox.min.y }, color, config.thickness);
+            drawList->AddLine(bbox.min, { bbox.min.x, IM_FLOOR(bbox.min.y * 0.75f + bbox.max.y * 0.25f) }, color, config.thickness);
+            drawList->AddLine(bbox.min, { IM_FLOOR(bbox.min.x * 0.75f + bbox.max.x * 0.25f), bbox.min.y }, color, config.thickness);
 
-            drawList->AddLine({ bbox.max.x, bbox.min.y }, { bbox.max.x * 0.75f + bbox.min.x * 0.25f, bbox.min.y }, color, config.thickness);
-            drawList->AddLine({ bbox.max.x - 1.0f, bbox.min.y }, { bbox.max.x - 1.0f, bbox.min.y * 0.75f + bbox.max.y * 0.25f }, color, config.thickness);
+            drawList->AddLine({ bbox.max.x, bbox.min.y }, { IM_FLOOR(bbox.max.x * 0.75f + bbox.min.x * 0.25f), bbox.min.y }, color, config.thickness);
+            drawList->AddLine({ bbox.max.x - 1.0f, bbox.min.y }, { bbox.max.x - 1.0f, IM_FLOOR(bbox.min.y * 0.75f + bbox.max.y * 0.25f) }, color, config.thickness);
 
-            drawList->AddLine({ bbox.min.x, bbox.max.y }, { bbox.min.x, bbox.max.y * 0.75f + bbox.min.y * 0.25f }, color, config.thickness);
-            drawList->AddLine({ bbox.min.x, bbox.max.y - 1.0f }, { bbox.min.x * 0.75f + bbox.max.x * 0.25f, bbox.max.y - 1.0f }, color, config.thickness);
+            drawList->AddLine({ bbox.min.x, bbox.max.y }, { bbox.min.x, IM_FLOOR(bbox.max.y * 0.75f + bbox.min.y * 0.25f) }, color, config.thickness);
+            drawList->AddLine({ bbox.min.x, bbox.max.y - 1.0f }, { IM_FLOOR(bbox.min.x * 0.75f + bbox.max.x * 0.25f), bbox.max.y - 1.0f }, color, config.thickness);
 
-            drawList->AddLine(bbox.max - ImVec2{ 0.5f, 1.0f }, { bbox.max.x * 0.75f + bbox.min.x * 0.25f, bbox.max.y - 1.0f }, color, config.thickness);
-            drawList->AddLine(bbox.max - ImVec2{ 1.0f, 0.0f }, { bbox.max.x - 1.0f, bbox.max.y * 0.75f + bbox.min.y * 0.25f }, color, config.thickness);
+            drawList->AddLine(bbox.max - ImVec2{ 0.5f, 1.0f }, { IM_FLOOR(bbox.max.x * 0.75f + bbox.min.x * 0.25f), bbox.max.y - 1.0f }, color, config.thickness);
+            drawList->AddLine(bbox.max - ImVec2{ 1.0f, 0.0f }, { bbox.max.x - 1.0f, IM_FLOOR(bbox.max.y * 0.75f + bbox.min.y * 0.25f) }, color, config.thickness);
         } else {
-            addLineWithShadow(bbox.min, { bbox.min.x, bbox.min.y * 0.75f + bbox.max.y * 0.25f }, color, config.thickness);
-            addLineWithShadow(bbox.min, { bbox.min.x * 0.75f + bbox.max.x * 0.25f, bbox.min.y }, color, config.thickness);
+            addLineWithShadow(bbox.min, { bbox.min.x, IM_FLOOR(bbox.min.y * 0.75f + bbox.max.y * 0.25f) }, color, config.thickness);
+            addLineWithShadow(bbox.min, { IM_FLOOR(bbox.min.x * 0.75f + bbox.max.x * 0.25f), bbox.min.y }, color, config.thickness);
 
-            addLineWithShadow({ bbox.max.x, bbox.min.y }, { bbox.max.x * 0.75f + bbox.min.x * 0.25f, bbox.min.y }, color, config.thickness);
-            addLineWithShadow({ bbox.max.x - 1.0f, bbox.min.y }, { bbox.max.x - 1.0f, bbox.min.y * 0.75f + bbox.max.y * 0.25f }, color, config.thickness);
+            addLineWithShadow({ bbox.max.x, bbox.min.y }, { IM_FLOOR(bbox.max.x * 0.75f + bbox.min.x * 0.25f), bbox.min.y }, color, config.thickness);
+            addLineWithShadow({ bbox.max.x - 1.0f, bbox.min.y }, { bbox.max.x - 1.0f, IM_FLOOR(bbox.min.y * 0.75f + bbox.max.y * 0.25f) }, color, config.thickness);
 
-            addLineWithShadow({ bbox.min.x, bbox.max.y }, { bbox.min.x, bbox.max.y * 0.75f + bbox.min.y * 0.25f }, color, config.thickness);
-            addLineWithShadow({ bbox.min.x, bbox.max.y - 1.0f }, { bbox.min.x * 0.75f + bbox.max.x * 0.25f, bbox.max.y - 1.0f }, color, config.thickness);
+            addLineWithShadow({ bbox.min.x, bbox.max.y }, { bbox.min.x, IM_FLOOR(bbox.max.y * 0.75f + bbox.min.y * 0.25f) }, color, config.thickness);
+            addLineWithShadow({ bbox.min.x, bbox.max.y - 1.0f }, { IM_FLOOR(bbox.min.x * 0.75f + bbox.max.x * 0.25f), bbox.max.y - 1.0f }, color, config.thickness);
 
-            addLineWithShadow(bbox.max - ImVec2{ 0.5f, 1.0f }, { bbox.max.x * 0.75f + bbox.min.x * 0.25f, bbox.max.y - 1.0f }, color, config.thickness);
-            addLineWithShadow(bbox.max - ImVec2{ 1.0f, 0.0f }, { bbox.max.x - 1.0f, bbox.max.y * 0.75f + bbox.min.y * 0.25f }, color, config.thickness);
+            addLineWithShadow(bbox.max - ImVec2{ 0.5f, 1.0f }, { IM_FLOOR(bbox.max.x * 0.75f + bbox.min.x * 0.25f), bbox.max.y - 1.0f }, color, config.thickness);
+            addLineWithShadow(bbox.max - ImVec2{ 1.0f, 0.0f }, { bbox.max.x - 1.0f, IM_FLOOR(bbox.max.y * 0.75f + bbox.min.y * 0.25f) }, color, config.thickness);
         }
         break;
     case Box::_3d:
