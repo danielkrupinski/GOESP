@@ -50,7 +50,7 @@ struct Snapline : ColorToggleThickness {
     int type = Bottom;
 };
 
-struct Box : ColorToggleThicknessRounding {
+struct Box : ColorToggleRounding {
     enum Type {
         _2d = 0,
         _2dCorners,
