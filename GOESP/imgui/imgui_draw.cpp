@@ -1,4 +1,4 @@
-// dear imgui, v1.78 WIP
+// dear imgui, v1.79 WIP
 // (drawing and font code)
 
 /*
@@ -2315,6 +2315,7 @@ void ImFontAtlasBuildSetupFont(ImFontAtlas* atlas, ImFont* font, ImFontConfig* f
         font->ClearOutputData();
         font->FontSize = font_config->SizePixels;
         font->ConfigData = font_config;
+        font->ConfigDataCount = 0;
         font->ContainerAtlas = atlas;
         font->Ascent = ascent;
         font->Descent = descent;
