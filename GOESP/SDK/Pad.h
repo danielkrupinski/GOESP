@@ -4,5 +4,5 @@
 
 #define PAD(size) \
 private: \
-    [[maybe_unused]] std::byte _pad_##size[size]; \
+    std::byte _pad_##size[size]; \
 public:
