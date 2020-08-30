@@ -256,9 +256,9 @@ void Hooks::uninstall() noexcept
 {
 #ifdef _WIN32
 
-    *reinterpret_cast<void**>(memory->reset) = reset;
-    *reinterpret_cast<void**>(memory->present) = present;
-    *reinterpret_cast<void**>(memory->setCursorPos) = setCursorPos;
+    *reinterpret_cast<decltype(reset)*>(memory->reset) = reset;
+    *reinterpret_cast<decltype(present)*>(memory->present) = present;
+    *reinterpret_cast<decltype(setCursorPos)*>(memory->setCursorPos) = setCursorPos;
 
     SetWindowLongPtrW(window, GWLP_WNDPROC, LONG_PTR(wndProc));
 
