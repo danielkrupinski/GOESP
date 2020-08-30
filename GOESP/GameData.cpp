@@ -105,6 +105,7 @@ void GameData::update() noexcept
                             it->exploded = true;
                         break;
                     }
+                    [[fallthrough]];
                 case ClassId::BreachChargeProjectile:
                 case ClassId::BumpMineProjectile:
                 case ClassId::DecoyProjectile:
