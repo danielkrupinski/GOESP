@@ -422,8 +422,8 @@ static bool renderPlayerEsp(const PlayerData& playerData, const Player& playerCo
     if (!playerConfig.enabled)
         return false;
 
-    if (playerConfig.audibleOnly && !playerData.audible && !playerConfig.spottedOnly
-     || playerConfig.spottedOnly && !playerData.spotted && !(playerConfig.audibleOnly && playerData.audible)) // if both "Audible Only" and "Spotted Only" are on treat them as audible OR spotted
+    if ((playerConfig.audibleOnly && !playerData.audible && !playerConfig.spottedOnly)
+     || (playerConfig.spottedOnly && !playerData.spotted && !(playerConfig.audibleOnly && playerData.audible))) // if both "Audible Only" and "Spotted Only" are on treat them as audible OR spotted
         return true;
 
     if (playerData.immune)
