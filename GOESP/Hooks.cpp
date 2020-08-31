@@ -142,15 +142,17 @@ static void swapWindow(SDL_Window* window) noexcept
 
     ImGui::NewFrame();
 
-    ESP::render();
-    Misc::drawReloadProgress(ImGui::GetBackgroundDrawList());
-    Misc::drawRecoilCrosshair(ImGui::GetBackgroundDrawList());
-    Misc::drawNoscopeCrosshair(ImGui::GetBackgroundDrawList());
-    Misc::purchaseList();
-    Misc::drawObserverList();
-    Misc::drawFpsCounter();
+    if (const auto& displaySize = ImGui::GetIO().DisplaySize; displaySize.x > 0.0f && displaySize.y > 0.0f) {
+        ESP::render();
+        Misc::drawReloadProgress(ImGui::GetBackgroundDrawList());
+        Misc::drawRecoilCrosshair(ImGui::GetBackgroundDrawList());
+        Misc::drawNoscopeCrosshair(ImGui::GetBackgroundDrawList());
+        Misc::purchaseList();
+        Misc::drawObserverList();
+        Misc::drawFpsCounter();
 
-    gui->render();
+        gui->render();
+    }
 
     if (ImGui::IsKeyPressed(SDL_SCANCODE_INSERT, false)) {
         gui->open = !gui->open;
