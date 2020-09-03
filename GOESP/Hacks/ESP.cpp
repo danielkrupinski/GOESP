@@ -214,8 +214,8 @@ static ImVec2 renderText(float distance, float cullDistance, const Color& textCf
     const auto verticalOffset = adjustHeight ? textSize.y : 0.0f;
 
     const auto color = Helpers::calculateColor(textCfg);
-    drawList->AddText({ pos.x - horizontalOffset + 1.0f, pos.y - verticalOffset + 1.0f }, color & IM_COL32_A_MASK, text);
-    drawList->AddText({ pos.x - horizontalOffset, pos.y - verticalOffset }, color, text);
+    drawList->AddText(ImFloor(pos - ImVec2(horizontalOffset + 1.0f, verticalOffset + 1.0f)), color & IM_COL32_A_MASK, text);
+    drawList->AddText(ImFloor(pos - ImVec2(horizontalOffset, verticalOffset)), color, text);
 
     return textSize;
 }
