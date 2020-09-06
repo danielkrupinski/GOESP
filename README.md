@@ -35,7 +35,7 @@ Microsoft Visual Studio 2019 (preferably the latest version), platform toolset v
 
 Below are example commands for some distributions to install the required packages:
 ##### Ubuntu
-    sudo apt install cmake gcc g++ libsdl2-dev
+    sudo apt-get install cmake gcc-10 g++-10 libsdl2-dev
 ##### Manjaro
     sudo pacman -S cmake gcc g++ sdl2
 
