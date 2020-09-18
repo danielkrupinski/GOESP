@@ -15,14 +15,6 @@ struct Vector {
         return !(*this == v);
     }
 
-    constexpr Vector& operator=(float array[3]) noexcept
-    {
-        x = array[0];
-        y = array[1];
-        z = array[2];
-        return *this;
-    }
-
     constexpr Vector& operator+=(const Vector& v) noexcept
     {
         x += v.x;
