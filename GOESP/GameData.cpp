@@ -310,7 +310,6 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
 {
     entity->getPlayerName(name);
     userId = entity->getUserId();
-    steamId = entity->getSteamId();
 
     dormant = entity->isDormant();
     if (dormant)
