@@ -108,6 +108,7 @@ struct PlayerData : BaseData {
     bool immune;
     float flashDuration;
     int health;
+    std::uint64_t steamId;
     char name[128];
     std::string activeWeapon;
     std::vector<std::pair<ImVec2, ImVec2>> bones;
