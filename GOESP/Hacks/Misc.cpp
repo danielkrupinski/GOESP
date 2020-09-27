@@ -107,7 +107,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
     static std::mutex mtx;
     std::scoped_lock _{ mtx };
 
-    static std::unordered_map<std::string, std::pair<std::vector<std::string>, int>> purchaseDetails;
+    static std::unordered_map<int, std::pair<std::vector<std::string>, int>> purchaseDetails;
     static std::unordered_map<std::string, int> purchaseTotal;
     static int totalCost;
 
@@ -120,7 +120,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
             if (player && localPlayer && memory->isOtherEnemy(player, localPlayer.get())) {
                 const auto weaponName = event->getString("weapon");
-                auto& purchase = purchaseDetails[player->getPlayerName()];
+                auto& purchase = purchaseDetails[player->getUserId()];
 
                 if (const auto definition = memory->itemSystem()->getItemSchema()->getItemDefinitionByName(weaponName)) {
                     if (const auto weaponInfo = memory->weaponSystem->getWeaponInfo(definition->getWeaponId())) {
@@ -186,15 +186,21 @@ void Misc::purchaseList(GameEvent* event) noexcept
         ImGui::Begin("Purchases", nullptr, windowFlags);
 
         if (config->purchaseList.mode == PurchaseList::Details) {
-            for (const auto& [playerName, purchases] : purchaseDetails) {
+            GameData::Lock lock;
+
+            for (const auto& [userId, purchases] : purchaseDetails) {
                 std::string s = std::accumulate(purchases.first.begin(), purchases.first.end(), std::string{}, [](std::string s, const std::string& piece) { return s += piece + ", "; });
                 if (s.length() >= 2)
                     s.erase(s.length() - 2);
 
+                const char* playerName = "";
+                if (const auto it = std::find_if(GameData::players().cbegin(), GameData::players().cend(), [&userId](const auto& playerData) { return playerData.userId == userId; }); it != GameData::players().cend())
+                    playerName = it->name;
+
                 if (config->purchaseList.showPrices)
-                    ImGui::TextWrapped("%s $%d: %s", playerName.c_str(), purchases.second, s.c_str());
+                    ImGui::TextWrapped("%s $%d: %s", playerName, purchases.second, s.c_str());
                 else
-                    ImGui::TextWrapped("%s: %s", playerName.c_str(), s.c_str());
+                    ImGui::TextWrapped("%s: %s", playerName, s.c_str());
             }
         } else if (config->purchaseList.mode == PurchaseList::Summary) {
             for (const auto& purchase : purchaseTotal)
