@@ -321,6 +321,7 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
     spotted = entity->spotted();
     immune = entity->gunGameImmunity();
     health = entity->getHealth();
+    userId = entity->getUserId();
     steamId = entity->getSteamId();
     flashDuration = entity->flashDuration();
     entity->getPlayerName(name);
