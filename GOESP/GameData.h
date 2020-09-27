@@ -106,6 +106,7 @@ struct PlayerData : BaseData {
     bool audible;
     bool spotted;
     bool immune;
+    bool dormant;
     float flashDuration;
     int health;
     int userId;

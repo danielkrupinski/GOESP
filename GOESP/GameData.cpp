@@ -82,18 +82,21 @@ void GameData::update() noexcept
 
     Entity* entity = nullptr;
     while ((entity = interfaces->clientTools->nextEntity(entity))) {
-        if (entity->isDormant())
-            continue;
-
         if (entity->isPlayer()) {
             if (entity == localPlayer.get() || entity == observerTarget)
                 continue;
 
-            if (entity->isAlive())
+            if (entity->isAlive()) {
                 playerData.emplace_back(entity);
-            else if (const auto obs = entity->getObserverTarget())
-                observerData.emplace_back(entity, obs, obs == localPlayer.get());
+            } else if (!entity->isDormant()) {
+                const auto obs = entity->getObserverTarget();
+                if (obs)
+                    observerData.emplace_back(entity, obs, obs == localPlayer.get());
+            }
         } else {
+            if (entity->isDormant())
+                continue;
+
             if (entity->isWeapon()) {
                 if (entity->ownerEntity() == -1)
                     weaponData.emplace_back(entity);
@@ -320,6 +323,7 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
     audible = isEntityAudible(entity->index());
     spotted = entity->spotted();
     immune = entity->gunGameImmunity();
+    dormant = entity->isDormant();
     health = entity->getHealth();
     userId = entity->getUserId();
     steamId = entity->getSteamId();
