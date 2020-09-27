@@ -89,6 +89,13 @@ std::uint64_t Entity::getSteamId() noexcept
     return -1;
 }
 
+int Entity::getUserId() noexcept
+{
+    if (PlayerInfo playerInfo; interfaces->engine->getPlayerInfo(index(), playerInfo))
+        return playerInfo.userId;
+    return -1;
+}
+
 bool Entity::isEnemy() noexcept
 {
     if (!localPlayer) {
