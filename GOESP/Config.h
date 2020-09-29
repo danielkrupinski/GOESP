@@ -33,7 +33,6 @@ public:
     bool ignoreFlashbang = false;
     OverlayWindow fpsCounter{ "FPS Counter" };
 
-    std::vector<std::string> systemFonts{ "Default" };
 #ifdef __linux__
     std::vector<std::string> systemFontPaths{ "" };
 #endif
@@ -48,9 +47,10 @@ public:
 
     void scheduleFontLoad(std::size_t index) noexcept;
     bool loadScheduledFonts() noexcept;
-
+    const auto& getSystemFonts() noexcept { return systemFonts; }
 private:
     std::vector<std::size_t> scheduledFonts{ 0 };
+    std::vector<std::string> systemFonts{ "Default" };
     std::filesystem::path path;
 };
 

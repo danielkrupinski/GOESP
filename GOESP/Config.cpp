@@ -178,8 +178,8 @@ static void from_json(const json& j, Font& f)
 {
     read<value_t::string>(j, "Name", f.name); 
 
-    if (const auto it = std::find_if(std::cbegin(config->systemFonts), std::cend(config->systemFonts), [&f](const auto& e) { return e == f.name; }); it != std::cend(config->systemFonts)) {
-        f.index = std::distance(std::cbegin(config->systemFonts), it);
+    if (const auto it = std::find_if(config->getSystemFonts().begin(), config->getSystemFonts().end(), [&f](const auto& e) { return e == f.name; }); it != config->getSystemFonts().end()) {
+        f.index = std::distance(config->getSystemFonts().begin(), it);
         config->scheduleFontLoad(f.index);
     } else {
         f.index = 0;
