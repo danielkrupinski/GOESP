@@ -192,9 +192,9 @@ void Misc::purchaseList(GameEvent* event) noexcept
                 std::string s = std::accumulate(purchases.first.begin(), purchases.first.end(), std::string{}, [](std::string s, const std::string& piece) { return s += piece + ", "; });
                 if (s.length() >= 2)
                     s.erase(s.length() - 2);
-
+                
                 const char* playerName = "";
-                if (const auto it = std::find_if(GameData::players().cbegin(), GameData::players().cend(), [&userId](const auto& playerData) { return playerData.userId == userId; }); it != GameData::players().cend())
+                if (const auto it = std::find_if(GameData::players().cbegin(), GameData::players().cend(), [userId = userId](const auto& playerData) { return playerData.userId == userId; }); it != GameData::players().cend())
                     playerName = it->name;
 
                 if (config->purchaseList.showPrices)
