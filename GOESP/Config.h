@@ -33,10 +33,6 @@ public:
     bool ignoreFlashbang = false;
     OverlayWindow fpsCounter{ "FPS Counter" };
 
-#ifdef __linux__
-    std::vector<std::string> systemFontPaths{ "" };
-#endif
-
     struct Font {
         ImFont* tiny;
         ImFont* medium;
@@ -51,6 +47,9 @@ private:
     std::vector<std::size_t> scheduledFonts{ 0 };
     std::vector<std::string> systemFonts{ "Default" };
     std::unordered_map<std::string, Font> fonts;
+#ifdef __linux__
+    std::vector<std::string> systemFontPaths{ "" };
+#endif
     std::filesystem::path path;
 };
 
