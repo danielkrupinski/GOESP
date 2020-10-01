@@ -193,14 +193,12 @@ void Misc::purchaseList(GameEvent* event) noexcept
                 if (s.length() >= 2)
                     s.erase(s.length() - 2);
                 
-                const char* playerName = "";
-                if (const auto it = std::find_if(GameData::players().cbegin(), GameData::players().cend(), [userId = userId](const auto& playerData) { return playerData.userId == userId; }); it != GameData::players().cend())
-                    playerName = it->name;
-
-                if (config->purchaseList.showPrices)
-                    ImGui::TextWrapped("%s $%d: %s", playerName, purchases.second, s.c_str());
-                else
-                    ImGui::TextWrapped("%s: %s", playerName, s.c_str());
+                if (const auto it = std::find_if(GameData::players().cbegin(), GameData::players().cend(), [userId = userId](const auto& playerData) { return playerData.userId == userId; }); it != GameData::players().cend()) {
+                    if (config->purchaseList.showPrices)
+                        ImGui::TextWrapped("%s $%d: %s", it->name, purchases.second, s.c_str());
+                    else
+                        ImGui::TextWrapped("%s: %s", it->name, s.c_str());
+                }
             }
         } else if (config->purchaseList.mode == PurchaseList::Summary) {
             for (const auto& purchase : purchaseTotal)
