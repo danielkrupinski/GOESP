@@ -107,7 +107,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
     static std::mutex mtx;
     std::scoped_lock _{ mtx };
 
-    static std::unordered_map<int, std::pair<std::vector<std::string>, int>> purchaseDetails;
+    static std::unordered_map<int, std::pair<std::vector<std::string>, int>> playerPurchases;
     static std::unordered_map<std::string, int> purchaseTotal;
     static int totalCost;
 
@@ -120,7 +120,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
             if (player && localPlayer && memory->isOtherEnemy(player, localPlayer.get())) {
                 const auto weaponName = event->getString("weapon");
-                auto& purchase = purchaseDetails[player->getUserId()];
+                auto& purchase = playerPurchases[player->getUserId()];
 
                 if (const auto definition = memory->itemSystem()->getItemSchema()->getItemDefinitionByName(weaponName)) {
                     if (const auto weaponInfo = memory->weaponSystem->getWeaponInfo(definition->getWeaponId())) {
@@ -150,7 +150,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
         }
         case fnv::hash("round_start"):
             freezeEnd = 0.0f;
-            purchaseDetails.clear();
+            playerPurchases.clear();
             purchaseTotal.clear();
             totalCost = 0;
             break;
@@ -164,7 +164,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
         static const auto mp_buytime = interfaces->cvar->findVar("mp_buytime");
 
-        if ((!interfaces->engine->isInGame() || (freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + (!config->purchaseList.onlyDuringFreezeTime ? mp_buytime->getFloat() : 0.0f)) || purchaseDetails.empty() || purchaseTotal.empty()) && !gui->open)
+        if ((!interfaces->engine->isInGame() || (freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + (!config->purchaseList.onlyDuringFreezeTime ? mp_buytime->getFloat() : 0.0f)) || playerPurchases.empty() || purchaseTotal.empty()) && !gui->open)
             return;
         
         if (config->purchaseList.pos != ImVec2{}) {
@@ -188,7 +188,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
         if (config->purchaseList.mode == PurchaseList::Details) {
             GameData::Lock lock;
 
-            for (const auto& [userId, purchases] : purchaseDetails) {
+            for (const auto& [userId, purchases] : playerPurchases) {
                 std::string s = std::accumulate(purchases.first.begin(), purchases.first.end(), std::string{}, [](std::string s, const std::string& piece) { return s += piece + ", "; });
                 if (s.length() >= 2)
                     s.erase(s.length() - 2);
