@@ -550,11 +550,7 @@ bool Config::loadScheduledFonts() noexcept
 
     for (const auto fontIndex : scheduledFonts) {
         const auto& fontName = systemFonts[fontIndex];
-#ifdef _WIN32
-        const auto& fontPath = fontName;
-#elif __linux__
-        const auto& fontPath = systemFontPaths[fontIndex];
-#endif
+
         if (fonts.find(fontName) != fonts.cend())
             continue;
 
@@ -573,6 +569,11 @@ bool Config::loadScheduledFonts() noexcept
 
             fonts.emplace(fontName, newFont);
         } else {
+#ifdef _WIN32
+            const auto& fontPath = fontName;
+#elif __linux__
+            const auto& fontPath = systemFontPaths[fontIndex];
+#endif
             const auto [fontData, fontDataSize] = getFontData(fontPath);
             if (fontDataSize == -1)
                 continue;
