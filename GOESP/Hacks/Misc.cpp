@@ -191,7 +191,11 @@ void Misc::purchaseList(GameEvent* event) noexcept
             GameData::Lock lock;
 
             for (const auto& [userId, purchases] : playerPurchases) {
-                std::string s = std::accumulate(purchases.first.begin(), purchases.first.end(), std::string{}, [](std::string s, const std::string& piece) { return s += piece + ", "; });
+                std::string s;
+                s.reserve(std::accumulate(purchases.first.begin(), purchases.first.end(), 0, [](int length, const std::string& str) { return length + str.length() + 2; }));
+                for (const auto& purchasedItem : purchases.first)
+                    s += purchasedItem + ", ";
+
                 if (s.length() >= 2)
                     s.erase(s.length() - 2);
                 
