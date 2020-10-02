@@ -117,35 +117,36 @@ void Misc::purchaseList(GameEvent* event) noexcept
         switch (fnv::hashRuntime(event->getName())) {
         case fnv::hash("item_purchase"): {
             const auto player = interfaces->entityList->getEntity(interfaces->engine->getPlayerForUserId(event->getInt("userid")));
+            if (!player || !localPlayer || !memory->isOtherEnemy(player, localPlayer.get()))
+                break;
 
-            if (player && localPlayer && memory->isOtherEnemy(player, localPlayer.get())) {
-                const auto weaponName = event->getString("weapon");
-                auto& purchase = playerPurchases[player->getUserId()];
+            const auto weaponName = event->getString("weapon");
+            auto& purchase = playerPurchases[player->getUserId()];
 
-                if (const auto definition = memory->itemSystem()->getItemSchema()->getItemDefinitionByName(weaponName)) {
-                    if (const auto weaponInfo = memory->weaponSystem->getWeaponInfo(definition->getWeaponId())) {
-                        purchase.second += weaponInfo->price;
-                        totalCost += weaponInfo->price;
-                    }
+            if (const auto definition = memory->itemSystem()->getItemSchema()->getItemDefinitionByName(weaponName)) {
+                if (const auto weaponInfo = memory->weaponSystem->getWeaponInfo(definition->getWeaponId())) {
+                    purchase.second += weaponInfo->price;
+                    totalCost += weaponInfo->price;
                 }
-
-                std::string weapon = weaponName;
-
-                if (weapon.starts_with("weapon_"))
-                    weapon.erase(0, 7);
-                else if (weapon.starts_with("item_"))
-                    weapon.erase(0, 5);
-
-                if (weapon.starts_with("smoke"))
-                    weapon.erase(5);
-                else if (weapon.starts_with("m4a1_s"))
-                    weapon.erase(6);
-                else if (weapon.starts_with("usp_s"))
-                    weapon.erase(5);
-
-                purchase.first.push_back(weapon);
-                ++purchaseTotal[weapon];
             }
+
+            std::string weapon = weaponName;
+
+            if (weapon.starts_with("weapon_"))
+                weapon.erase(0, 7);
+            else if (weapon.starts_with("item_"))
+                weapon.erase(0, 5);
+
+            if (weapon.starts_with("smoke"))
+                weapon.erase(5);
+            else if (weapon.starts_with("m4a1_s"))
+                weapon.erase(6);
+            else if (weapon.starts_with("usp_s"))
+                weapon.erase(5);
+
+            purchase.first.push_back(weapon);
+            ++purchaseTotal[weapon];
+
             break;
         }
         case fnv::hash("round_start"):
