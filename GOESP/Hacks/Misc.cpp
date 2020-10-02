@@ -107,7 +107,12 @@ void Misc::purchaseList(GameEvent* event) noexcept
     static std::mutex mtx;
     std::scoped_lock _{ mtx };
 
-    static std::unordered_map<int, std::pair<std::vector<std::string>, int>> playerPurchases;
+    struct PlayerPurchases {
+        int totalCost;
+        std::unordered_map<std::string, int> items;
+    };
+
+    static std::unordered_map<int, PlayerPurchases> playerPurchases;
     static std::unordered_map<std::string, int> purchaseTotal;
     static int totalCost;
 
@@ -126,7 +131,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
                 if (const auto weaponInfo = memory->weaponSystem->getWeaponInfo(definition->getWeaponId())) {
                     auto& purchase = playerPurchases[player->getUserId()];
 
-                    purchase.second += weaponInfo->price;
+                    purchase.totalCost += weaponInfo->price;
                     totalCost += weaponInfo->price;
 
                     std::string weapon = weaponName;
@@ -143,7 +148,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
                     else if (weapon.starts_with("usp_s"))
                         weapon.erase(5);
 
-                    purchase.first.push_back(weapon);
+                    ++purchase.items[weapon];
                     ++purchaseTotal[weapon];
                 }
             }
@@ -192,16 +197,19 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
             for (const auto& [userId, purchases] : playerPurchases) {
                 std::string s;
-                s.reserve(std::accumulate(purchases.first.begin(), purchases.first.end(), 0, [](int length, const std::string& str) { return length + str.length() + 2; }));
-                for (const auto& purchasedItem : purchases.first)
-                    s += purchasedItem + ", ";
+                s.reserve(std::accumulate(purchases.items.begin(), purchases.items.end(), 0, [](int length, const auto& p) { return length + p.first.length() + 2; }));
+                for (const auto& purchasedItem : purchases.items) {
+                    if (purchasedItem.second > 1)
+                        s += std::to_string(purchasedItem.second) + " x ";
+                    s += purchasedItem.first + ", ";
+                }
 
                 if (s.length() >= 2)
                     s.erase(s.length() - 2);
                 
                 if (const auto it = std::find_if(GameData::players().cbegin(), GameData::players().cend(), [userId = userId](const auto& playerData) { return playerData.userId == userId; }); it != GameData::players().cend()) {
                     if (config->purchaseList.showPrices)
-                        ImGui::TextWrapped("%s $%d: %s", it->name, purchases.second, s.c_str());
+                        ImGui::TextWrapped("%s $%d: %s", it->name, purchases.totalCost, s.c_str());
                     else
                         ImGui::TextWrapped("%s: %s", it->name, s.c_str());
                 }
