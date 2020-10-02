@@ -121,10 +121,11 @@ void Misc::purchaseList(GameEvent* event) noexcept
                 break;
 
             const auto weaponName = event->getString("weapon");
-            auto& purchase = playerPurchases[player->getUserId()];
 
             if (const auto definition = memory->itemSystem()->getItemSchema()->getItemDefinitionByName(weaponName)) {
                 if (const auto weaponInfo = memory->weaponSystem->getWeaponInfo(definition->getWeaponId())) {
+                    auto& purchase = playerPurchases[player->getUserId()];
+
                     purchase.second += weaponInfo->price;
                     totalCost += weaponInfo->price;
 
