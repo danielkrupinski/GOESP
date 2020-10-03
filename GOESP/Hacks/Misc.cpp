@@ -200,7 +200,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
                 s.reserve(std::accumulate(purchases.items.begin(), purchases.items.end(), 0, [](int length, const auto& p) { return length + p.first.length() + 2; }));
                 for (const auto& purchasedItem : purchases.items) {
                     if (purchasedItem.second > 1)
-                        s += std::to_string(purchasedItem.second) + " x ";
+                        s += std::to_string(purchasedItem.second) + "x ";
                     s += purchasedItem.first + ", ";
                 }
 
@@ -216,7 +216,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
             }
         } else if (config->purchaseList.mode == PurchaseList::Summary) {
             for (const auto& purchase : purchaseTotal)
-                ImGui::TextWrapped("%d x %s", purchase.second, purchase.first.c_str());
+                ImGui::TextWrapped("%dx %s", purchase.second, purchase.first.c_str());
 
             if (config->purchaseList.showPrices && totalCost > 0) {
                 ImGui::Separator();
