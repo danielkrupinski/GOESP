@@ -23,6 +23,7 @@
 #include "../SDK/WeaponInfo.h"
 #include "../SDK/WeaponSystem.h"
 
+#include <numbers>
 #include <numeric>
 #include <unordered_map>
 #include <vector>
@@ -45,8 +46,9 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
             reloadLength = localPlayerData.nextWeaponAttack - memory->globalVars->currenttime;
 
         constexpr int segments = 40;
-        constexpr float min = -IM_PI / 2;
-        const float max = std::clamp(IM_PI * 2 * (0.75f - (localPlayerData.nextWeaponAttack - memory->globalVars->currenttime) / reloadLength), -IM_PI / 2, -IM_PI / 2 + IM_PI * 2);
+        constexpr float pi = std::numbers::pi_v<float>;
+        constexpr float min = -pi / 2;
+        const float max = std::clamp(pi * 2 * (0.75f - (localPlayerData.nextWeaponAttack - memory->globalVars->currenttime) / reloadLength), -pi / 2, -pi / 2 + pi * 2);
 
         drawList->PathArcTo(ImGui::GetIO().DisplaySize / 2.0f + ImVec2{ 1.0f, 1.0f }, 20.0f, min, max, segments);
         const ImU32 color = Helpers::calculateColor(config->reloadProgress);

@@ -1,4 +1,5 @@
 #include <cmath>
+#include <numbers>
 #include <tuple>
 
 #include "imgui/imgui.h"
@@ -12,9 +13,10 @@
 
 static auto rainbowColor(float time, float speed, float alpha) noexcept
 {
+    constexpr float pi = std::numbers::pi_v<float>;
     return std::array{ std::sin(speed * time) * 0.5f + 0.5f,
-                       std::sin(speed * time + 2 * static_cast<float>(M_PI) / 3) * 0.5f + 0.5f,
-                       std::sin(speed * time + 4 * static_cast<float>(M_PI) / 3) * 0.5f + 0.5f,
+                       std::sin(speed * time + 2 * pi / 3) * 0.5f + 0.5f,
+                       std::sin(speed * time + 4 * pi / 3) * 0.5f + 0.5f,
                        alpha };
 }
 
