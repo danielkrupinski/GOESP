@@ -14,4 +14,10 @@ include_directories(/usr/local/include)
 link_directories(/usr/local/lib)
 
 add_library(GOESP SHARED ${SOURCES})
-target_link_libraries(GOESP SDL2 GL)
+
+if (APPLE)
+    target_link_options(GOESP "-framework OpenGL")
+    target_link_libraries(GOESP SDL2)
+else()
+    target_link_libraries(GOESP SDL2 GL)
+endif()
