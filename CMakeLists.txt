@@ -10,5 +10,6 @@ list(APPEND SOURCES "${CMAKE_SOURCE_DIR}/GOESP/imgui/GL/gl3w.c")
 list(REMOVE_ITEM SOURCES "${CMAKE_SOURCE_DIR}/GOESP/imgui/imgui_impl_dx9.cpp") 
 list(REMOVE_ITEM SOURCES "${CMAKE_SOURCE_DIR}/GOESP/imgui/imgui_impl_win32.cpp") 
 
+include_directories(/usr/local/include)
 add_library(GOESP SHARED ${SOURCES})
 target_link_libraries(GOESP SDL2 GL)
