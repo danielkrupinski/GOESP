@@ -9,8 +9,10 @@
 #ifdef _WIN32
 #include <Windows.h>
 #include <Psapi.h>
-#else
+#elif __linux__
 #include <link.h>
+#elif __APPLE__
+#include <mach-o/dyld.h>
 #endif
 
 #include "SDK/Platform.h"
@@ -62,7 +64,7 @@ private:
                 return std::make_pair(moduleInfo.lpBaseOfDll, moduleInfo.SizeOfImage);
         }
         return {};
-#else
+#elif __linux__
         struct ModuleInfo {
             const char* name;
             void* base = nullptr;
@@ -81,7 +83,9 @@ private:
             return 0;
         }, &moduleInfo);
             
-       return std::make_pair(moduleInfo.base, moduleInfo.size);
+        return std::make_pair(moduleInfo.base, moduleInfo.size);
+#elif __APPLE__
+        return {};
 #endif
     }
 
