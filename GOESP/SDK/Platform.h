@@ -26,4 +26,18 @@
 #define VSTDLIB_DLL "libvstdlib_client.so"
 #define TIER0_DLL "libtier0_client.so"
 
+#elif __APPLE__
+
+#define __THISCALL
+#define __FASTCALL
+#define __CDECL
+
+// TODO: fill with the correct filenames for macOS
+#define CLIENT_DLL "client"
+#define ENGINE_DLL "engine"
+#define INPUTSYSTEM_DLL "inputsystem"
+#define LOCALIZE_DLL "localize"
+#define VSTDLIB_DLL "vstdlib"
+#define TIER0_DLL "tier0"
+
 #endif
