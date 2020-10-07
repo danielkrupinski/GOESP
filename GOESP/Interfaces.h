@@ -8,7 +8,7 @@
 
 #ifdef _WIN32
 #include <Windows.h>
-#elif __linux__
+#else
 #include <dlfcn.h>
 #endif
 
