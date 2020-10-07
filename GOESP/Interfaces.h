@@ -36,7 +36,7 @@ private:
         if (const auto createInterface = reinterpret_cast<std::add_pointer_t<void* __CDECL(const char* name, int* returnCode)>>(
 #ifdef _WIN32
             GetProcAddress(GetModuleHandleA(module), "CreateInterface")
-#elif __linux__
+#else
             dlsym(dlopen(module, RTLD_NOLOAD | RTLD_NOW), "CreateInterface")
 #endif
             )) {
