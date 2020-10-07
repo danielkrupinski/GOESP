@@ -1,0 +1,17 @@
+name: macOS
+
+on: [push, pull_request]
+
+jobs:
+  macos-build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: install
+      run: brew install sdl2 gcc
+    - name: configure
+      run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D ..
+    - name: build
+      run: cd Release && make
