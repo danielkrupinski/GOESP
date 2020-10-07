@@ -36,6 +36,8 @@ void GUI::render() noexcept
         "Windows"
 #elif __linux__
         "Linux"
+#elif __APPLE__
+        "macOS"
 #else
     #error("Unsupported platform!")
 #endif
