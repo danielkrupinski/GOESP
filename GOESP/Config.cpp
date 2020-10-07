@@ -571,7 +571,7 @@ bool Config::loadScheduledFonts() noexcept
         } else {
 #ifdef _WIN32
             const auto& fontPath = fontName;
-#elif __linux__
+#else
             const auto& fontPath = systemFontPaths[fontIndex];
 #endif
             const auto [fontData, fontDataSize] = getFontData(fontPath);

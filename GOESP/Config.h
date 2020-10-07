@@ -47,7 +47,7 @@ private:
     std::vector<std::size_t> scheduledFonts{ 0 };
     std::vector<std::string> systemFonts{ "Default" };
     std::unordered_map<std::string, Font> fonts;
-#ifdef __linux__
+#ifndef _WIN32
     std::vector<std::string> systemFontPaths{ "" };
 #endif
     std::filesystem::path path;
