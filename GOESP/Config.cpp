@@ -536,7 +536,7 @@ static auto getFontData(const std::string& fontName) noexcept
         DeleteObject(font);
     }
     return std::make_pair(std::move(data), dataSize);
-#elif __linux__
+#else
     std::size_t dataSize = (std::size_t)-1;
     auto data = (std::byte*)ImFileLoadToMemory(fontName.c_str(), "rb", &dataSize);
     return std::make_pair(std::unique_ptr<std::byte[]>{ data }, dataSize);
