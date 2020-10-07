@@ -12,6 +12,6 @@ jobs:
     - name: install
       run: brew install sdl2 gcc
     - name: configure
-      run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D ..
+      run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release ..
     - name: build
       run: cd Release && make
