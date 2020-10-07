@@ -9,7 +9,7 @@
 #ifdef _WIN32
 #include <Windows.h>
 #include <Psapi.h>
-#elif __linux__
+#else
 #include <link.h>
 #endif
 
@@ -62,7 +62,7 @@ private:
                 return std::make_pair(moduleInfo.lpBaseOfDll, moduleInfo.SizeOfImage);
         }
         return {};
-#elif __linux__
+#else
         struct ModuleInfo {
             const char* name;
             void* base = nullptr;
