@@ -110,7 +110,7 @@ public:
     VIRTUAL_METHOD(int, getModelIndex, 2, (const char* name), (this, name))
 #ifdef _WIN32
     VIRTUAL_METHOD(const StudioHdr*, getStudioModel, 32, (const Model* model), (this, model))
-#elif __linux__
+#else
     VIRTUAL_METHOD(const StudioHdr*, getStudioModel, 31, (const Model* model), (this, model))
 #endif
 };
