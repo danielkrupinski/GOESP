@@ -78,7 +78,7 @@ public:
     VIRTUAL_METHOD(Vector, getAimPunch, 345, (), (this))
     VIRTUAL_METHOD(WeaponType, getWeaponType, 454, (), (this))
     VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, 460, (), (this))
-#elif __linux__
+#else
     VIRTUAL_METHOD(Vector&, getAbsOrigin, 12, (), (this))
     VIRTUAL_METHOD(Team, getTeamNumber, 127, (), (this))
     VIRTUAL_METHOD(int, getHealth, 166, (), (this))
@@ -138,7 +138,7 @@ public:
     PROP(bombTicking, 0x2980, bool)                                                // CPlantedC4->m_bBombTicking
     PROP(bombSite, 0x2984, bool)                                                   // CPlantedC4->m_nBombSite
 
-#elif __linux__
+#else
     PROP(hitboxSet, 0xFA8, int)                                                    // CBaseAnimating->m_nHitboxSet
 
     PROP(weaponId, 0x37b2, WeaponId)                                               // CBaseAttributableItem->m_iItemDefinitionIndex
