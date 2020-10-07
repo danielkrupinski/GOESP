@@ -19,7 +19,7 @@ BOOL APIENTRY DllEntryPoint(HMODULE module, DWORD reason, LPVOID reserved)
     return TRUE;
 }
 
-#elif __linux__
+#else
 
 void __attribute__((constructor)) DllEntryPoint()
 {
