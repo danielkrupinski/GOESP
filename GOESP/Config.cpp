@@ -551,7 +551,7 @@ bool Config::loadScheduledFonts() noexcept
     for (const auto fontIndex : scheduledFonts) {
         const auto& fontName = systemFonts[fontIndex];
 
-        if (fonts.find(fontName) != fonts.cend())
+        if (fonts.contains(fontName))
             continue;
 
         ImFontConfig cfg;
