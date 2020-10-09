@@ -6,6 +6,16 @@
 #define __FASTCALL __fastcall
 #define __CDECL __cdecl
 
+#else
+
+#define __THISCALL
+#define __FASTCALL
+#define __CDECL
+
+#endif
+
+#ifdef _WIN32
+
 #define CLIENT_DLL "client"
 #define ENGINE_DLL "engine"
 #define INPUTSYSTEM_DLL "inputsystem"
@@ -15,10 +25,6 @@
 
 #elif __linux__
 
-#define __THISCALL
-#define __FASTCALL
-#define __CDECL
-
 #define CLIENT_DLL "csgo/bin/linux64/client_client.so"
 #define ENGINE_DLL "engine_client.so"
 #define INPUTSYSTEM_DLL "inputsystem_client.so"
@@ -27,10 +33,6 @@
 #define TIER0_DLL "libtier0_client.so"
 
 #elif __APPLE__
-
-#define __THISCALL
-#define __FASTCALL
-#define __CDECL
 
 #define CLIENT_DLL "csgo/bin/osx64/client.dylib"
 #define ENGINE_DLL "engine.dylib"
