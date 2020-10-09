@@ -32,12 +32,11 @@
 #define __FASTCALL
 #define __CDECL
 
-// TODO: fill with the correct filenames for macOS
-#define CLIENT_DLL "client"
-#define ENGINE_DLL "engine"
-#define INPUTSYSTEM_DLL "inputsystem"
-#define LOCALIZE_DLL "localize"
-#define VSTDLIB_DLL "vstdlib"
-#define TIER0_DLL "tier0"
+#define CLIENT_DLL "csgo/bin/osx64/client.dylib"
+#define ENGINE_DLL "engine.dylib"
+#define INPUTSYSTEM_DLL "inputsystem.dylib"
+#define LOCALIZE_DLL "localize.dylib"
+#define VSTDLIB_DLL "libvstdlib.dylib"
+#define TIER0_DLL "libtier0.dylib"
 
 #endif
