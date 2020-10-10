@@ -43,7 +43,7 @@ Below are example commands for some distributions to install the required packag
 
 #### macOS
 
-    brew install gcc
+    brew install gcc sdl2
 
 -->
 
