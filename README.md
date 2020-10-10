@@ -39,6 +39,14 @@ Below are example commands for some distributions to install the required packag
 ##### Manjaro
     sudo pacman -S cmake gcc g++ sdl2
 
+<!--
+
+#### macOS
+
+    brew install gcc
+
+-->
+
 ### Downloading
 There are two options of downloading the source code:
 
