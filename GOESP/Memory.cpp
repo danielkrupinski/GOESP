@@ -82,5 +82,9 @@ Memory::Memory() noexcept
     const auto channelsTemp = findPattern(ENGINE_DLL, "\x45\x31\xE4\x48\x8D\x1D????\x66\x0F\x1F\x44");
     channels = relativeToAbsolute<Channel*>(channelsTemp + 6);
     activeChannels = relativeToAbsolute<ActiveChannels*>(channelsTemp - 61); 
+
+    const auto libSDL = dlopen("libsdl2-2.0.0.dylib", RTLD_LAZY | RTLD_NOLOAD);
+
+    dlclose(libSDL);
 #endif
 }
