@@ -78,5 +78,9 @@ Memory::Memory() noexcept
     swapWindow = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_GL_SwapWindow")) + 3);
     warpMouseInWindow = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_WarpMouseInWindow")) + 3);
     dlclose(libSDL);
+#elif __APPLE__
+    const auto channelsTemp = findPattern(ENGINE_DLL, "\x45\x31\xE4\x48\x8D\x1D????\x66\x0F\x1F\x44");
+    channels = relativeToAbsolute<Channel*>(channelsTemp + 6);
+    activeChannels = relativeToAbsolute<ActiveChannels*>(channelsTemp - 61); 
 #endif
 }
