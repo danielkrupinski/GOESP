@@ -180,6 +180,12 @@ static void warpMouseInWindow(SDL_Window* window, int x, int y) noexcept
     	hooks->warpMouseInWindow(window, x, y);
 }
 
+#elif __APPLE__
+Hooks::Hooks() noexcept
+{
+    interfaces = std::make_unique<const Interfaces>();
+    memory = std::make_unique<const Memory>();
+}
 #endif
 
 void Hooks::setup() noexcept
