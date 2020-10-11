@@ -50,7 +50,7 @@ public:
     std::uintptr_t reset;
     std::uintptr_t present;
     std::uintptr_t setCursorPos;
-#elif __linux__
+#else
     std::uintptr_t pollEvent;
     std::uintptr_t swapWindow;
     std::uintptr_t warpMouseInWindow;
