@@ -129,7 +129,11 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
             const auto weaponName = event->getString("weapon");
 
+#ifdef __APPLE__
+            if (const auto definition = (*memory->itemSystem)->getItemSchema()->getItemDefinitionByName(weaponName)) {
+#else
             if (const auto definition = memory->itemSystem()->getItemSchema()->getItemDefinitionByName(weaponName)) {
+#endif
                 if (const auto weaponInfo = memory->weaponSystem->getWeaponInfo(definition->getWeaponId())) {
                     auto& purchase = playerPurchases[player->getUserId()];
 
