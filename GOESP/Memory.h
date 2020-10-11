@@ -42,7 +42,11 @@ public:
 
     bool(__THISCALL* isOtherEnemy)(Entity*, Entity*);
     std::add_pointer_t<void __CDECL(const char* msg, ...)> debugMsg;
+#ifdef __APPLE__
+    ItemSystem** itemSystem;
+#else
     std::add_pointer_t<ItemSystem* __CDECL()> itemSystem;
+#endif
     std::add_pointer_t<bool __CDECL(Vector, Vector, short)> lineGoesThroughSmoke;
     const wchar_t*(__THISCALL* getDecoratedPlayerName)(PlayerResource* pr, int index, wchar_t* buffer, int buffsize, int flags);
 

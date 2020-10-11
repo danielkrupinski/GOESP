@@ -84,6 +84,7 @@ Memory::Memory() noexcept
     activeChannels = relativeToAbsolute<ActiveChannels*>(channelsTemp - 61); 
 
     globalVars = *relativeToAbsolute<GlobalVars**>((*reinterpret_cast<std::uintptr_t**>(interfaces->client))[11] + 18);
+    itemSystem = relativeToAbsolute<decltype(itemSystem)>(findPattern(CLIENT_DLL, "\x74\x06\x48\x83\xC7\x08") - 7);
 
     const auto libSDL = dlopen("libsdl2-2.0.0.dylib", RTLD_LAZY | RTLD_NOLOAD);
     pollEvent = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_PollEvent")) + 3);
