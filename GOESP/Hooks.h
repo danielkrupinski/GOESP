@@ -27,6 +27,8 @@ public:
     std::add_pointer_t<int(SDL_Event*)> pollEvent;
     std::add_pointer_t<void(SDL_Window*)> swapWindow;
     std::add_pointer_t<void(SDL_Window*, int x, int y)> warpMouseInWindow;
+#elif __APPLE__
+    Hooks() noexcept;
 #endif
 
     void setup() noexcept;
