@@ -83,11 +83,12 @@ Memory::Memory() noexcept
 
     const auto channelsTemp = findPattern(ENGINE_DLL, "\x45\x31\xE4\x48\x8D\x1D????\x66\x0F\x1F\x44");
     channels = relativeToAbsolute<Channel*>(channelsTemp + 6);
-    activeChannels = relativeToAbsolute<ActiveChannels*>(channelsTemp - 61); 
+    activeChannels = relativeToAbsolute<ActiveChannels*>(channelsTemp - 61);
 
     globalVars = *relativeToAbsolute<GlobalVars**>((*reinterpret_cast<std::uintptr_t**>(interfaces->client))[11] + 18);
     itemSystem = relativeToAbsolute<decltype(itemSystem)>(findPattern(CLIENT_DLL, "\x74\x06\x48\x83\xC7\x08") - 7);
     weaponSystem = *relativeToAbsolute<WeaponSystem**>(findPattern(CLIENT_DLL, "\x74\x1F\x48\x8B\x1D") + 5);
+    localPlayer.init(relativeToAbsolute<Entity**>(findPattern(CLIENT_DLL, "\x74\x10\x48\x63\xC7") + 8));
 
     const auto libSDL = dlopen("libsdl2-2.0.0.dylib", RTLD_LAZY | RTLD_NOLOAD);
     pollEvent = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_PollEvent")) + 3);
