@@ -91,6 +91,7 @@ Memory::Memory() noexcept
     localPlayer.init(relativeToAbsolute<Entity**>(findPattern(CLIENT_DLL, "\x74\x10\x48\x63\xC7") + 8));
 
     isOtherEnemy = relativeToAbsolute<decltype(isOtherEnemy)>(findPattern(CLIENT_DLL, "\xE8????\x34\x01\xEB\x06") + 1);
+    lineGoesThroughSmoke = relativeToAbsolute<decltype(lineGoesThroughSmoke)>(findPattern(CLIENT_DLL, "\xE8????\x84\xC0\x75\x20\x4C\x89\xFF") + 1);
 
     const auto libSDL = dlopen("libsdl2-2.0.0.dylib", RTLD_LAZY | RTLD_NOLOAD);
     pollEvent = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_PollEvent")) + 3);
