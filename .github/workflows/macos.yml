@@ -14,4 +14,4 @@ jobs:
     - name: configure
       run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_C_COMPILER=clang -D CMAKE_CXX_COMPILER=g++-10 ..
     - name: build
-      run: cd Release && make
+      run: cd Release && make -j $(sysctl -n hw.ncpu)
