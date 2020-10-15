@@ -73,10 +73,8 @@ void GameData::update() noexcept
 
     viewMatrix = interfaces->engine->worldToScreenMatrix();
 
-#ifdef _WIN32
     for (int i = 0; i < memory->plantedC4s->size; ++i)
         bombData.emplace_back((*memory->plantedC4s)[i]);
-#endif
 
     const auto observerTarget = localPlayer->getObserverMode() == ObsMode::InEye ? localPlayer->getObserverTarget() : nullptr;
 
