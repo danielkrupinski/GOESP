@@ -37,8 +37,7 @@ struct PlayerInfo {
     bool fakeplayer;
     bool hltv;
     int customfiles[4];
-    unsigned char filesdownloaded;
-    int entityIndex;
+    unsigned char filesDownloaded;
 };
 
 class Engine {
