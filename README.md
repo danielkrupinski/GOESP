@@ -30,7 +30,7 @@ Microsoft Visual Studio 2019 (preferably the latest version), platform toolset v
 
 #### Linux
 - CMake 3.11.0+
-- gcc and g++ 9.3.0+
+- gcc and g++ 10
 - SDL2 library
 
 Below are example commands for some distributions to install the required packages:
