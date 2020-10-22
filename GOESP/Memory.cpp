@@ -14,21 +14,20 @@ static constexpr auto relativeToAbsolute(std::uintptr_t address) noexcept
     return (T)(address + 4 + *reinterpret_cast<std::int32_t*>(address));
 }
 
-enum class Overlay {
-    Steam,
-    Discord
-};
-
-constexpr auto overlay = Overlay::Steam;
-
-static_assert(overlay == Overlay::Steam || overlay == Overlay::Discord, "Invalid overlay selected!");
-
 Memory::Memory() noexcept
 {
     assert(interfaces);
 
 #ifdef _WIN32
     debugMsg = decltype(debugMsg)(GetProcAddress(GetModuleHandleA(TIER0_DLL), "Msg"));
+
+    enum class Overlay {
+        Steam,
+        Discord
+    };
+
+    constexpr auto overlay = Overlay::Steam;
+    static_assert(overlay == Overlay::Steam || overlay == Overlay::Discord, "Invalid overlay selected!");
 
     if (overlay == Overlay::Discord) {
         if (!GetModuleHandleA("discordhook"))
