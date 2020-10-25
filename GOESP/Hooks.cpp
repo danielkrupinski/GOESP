@@ -68,6 +68,7 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     Misc::purchaseList();
     Misc::drawObserverList();
     Misc::drawFpsCounter();
+    Misc::drawOffscreenEnemies(ImGui::GetBackgroundDrawList());
 
     gui->render();
 
@@ -150,6 +151,7 @@ static void swapWindow(SDL_Window* window) noexcept
         Misc::purchaseList();
         Misc::drawObserverList();
         Misc::drawFpsCounter();
+        Misc::drawOffscreenEnemies(ImGui::GetBackgroundDrawList());
 
         gui->render();
     }
