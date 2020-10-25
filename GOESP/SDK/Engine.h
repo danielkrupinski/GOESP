@@ -44,6 +44,7 @@ class Engine {
 public:
     VIRTUAL_METHOD(bool, getPlayerInfo, 8, (int entityIndex, PlayerInfo& playerInfo), (this, entityIndex, std::ref(playerInfo)))
     VIRTUAL_METHOD(int, getPlayerForUserId, 9, (int userId), (this, userId))
+    VIRTUAL_METHOD(void, getViewAngles, 18, (Vector& angles), (this, std::ref(angles)))
     VIRTUAL_METHOD(bool, isInGame, 26, (), (this))
     VIRTUAL_METHOD(bool, cullBox, 34, (const Vector& mins, const Vector& maxs), (this, std::cref(mins), std::cref(maxs)))
     VIRTUAL_METHOD(const Matrix4x4&, worldToScreenMatrix, 37, (), (this))
