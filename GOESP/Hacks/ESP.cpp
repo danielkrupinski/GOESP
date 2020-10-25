@@ -503,7 +503,7 @@ void ESP::render() noexcept
         renderProjectileEsp(projectile, config->projectiles["All"], config->projectiles[projectile.name], projectile.name);
 
     for (const auto& player : GameData::players()) {
-        if (player.dormant || !player.alive)
+        if (player.dormant || !player.alive || !player.inViewFrustum)
             continue;
 
         auto& playerConfig = player.enemy ? config->enemies : config->allies;
