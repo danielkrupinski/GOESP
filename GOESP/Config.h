@@ -32,6 +32,7 @@ public:
     ObserverList observerList;
     bool ignoreFlashbang = false;
     OverlayWindow fpsCounter{ "FPS Counter" };
+    OffscreenEnemies offscreenEnemies;
 
     struct Font {
         ImFont* tiny;
