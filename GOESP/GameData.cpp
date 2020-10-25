@@ -331,8 +331,9 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
     spotted = entity->spotted();
     immune = entity->gunGameImmunity();
     alive = entity->isAlive();
-    health = entity->getHealth();
+    inViewFrustum = interfaces->engine->cullBox(obbMins + origin, obbMaxs + origin);
     flashDuration = entity->flashDuration();
+    health = entity->getHealth();
 
     if (const auto weapon = entity->getActiveWeapon()) {
         audible = audible || isEntityAudible(weapon->index());
