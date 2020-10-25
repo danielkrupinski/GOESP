@@ -331,7 +331,7 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
     spotted = entity->spotted();
     immune = entity->gunGameImmunity();
     alive = entity->isAlive();
-    inViewFrustum = interfaces->engine->cullBox(obbMins + origin, obbMaxs + origin);
+    inViewFrustum = !interfaces->engine->cullBox(obbMins + origin, obbMaxs + origin);
     flashDuration = entity->flashDuration();
     health = entity->getHealth();
 
