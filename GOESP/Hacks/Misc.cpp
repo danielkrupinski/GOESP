@@ -309,3 +309,30 @@ void Misc::drawFpsCounter() noexcept
 
     ImGui::End();
 }
+
+void Misc::drawOffscreenEnemies(ImDrawList* drawList) noexcept
+{
+    if (!config->offscreenEnemies.enabled)
+        return;
+
+    GameData::Lock lock;
+
+    for (auto& player : GameData::players()) {
+        if (player.dormant || !player.alive || !player.enemy || player.inViewFrustum)
+            continue;
+
+        const auto positionDiff = GameData::local().origin - player.origin;
+        const auto yaw = Helpers::deg2rad(interfaces->engine->getViewAngles().y);
+
+        auto x = std::cos(yaw) * positionDiff.y - std::sin(yaw) * positionDiff.x;
+        auto y = std::cos(yaw) * positionDiff.x + std::sin(yaw) * positionDiff.y;
+        const auto len = std::sqrt(x * x + y * y);
+        x /= len;
+        y /= len;
+
+        const auto pos = ImGui::GetIO().DisplaySize / 2 + ImVec2{ x, y } * 200;
+        const auto color = Helpers::calculateColor(config->offscreenEnemies.color);
+        drawList->AddCircleFilled(pos, 11.0f, color & IM_COL32_A_MASK, 40);
+        drawList->AddCircleFilled(pos, 10.0f, color, 40);
+    }
+}
