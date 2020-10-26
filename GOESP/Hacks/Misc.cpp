@@ -317,12 +317,13 @@ void Misc::drawOffscreenEnemies(ImDrawList* drawList) noexcept
 
     GameData::Lock lock;
 
+    const auto yaw = Helpers::deg2rad(interfaces->engine->getViewAngles().y);
+
     for (auto& player : GameData::players()) {
         if (player.dormant || !player.alive || !player.enemy || player.inViewFrustum)
             continue;
 
         const auto positionDiff = GameData::local().origin - player.origin;
-        const auto yaw = Helpers::deg2rad(interfaces->engine->getViewAngles().y);
 
         auto x = std::cos(yaw) * positionDiff.y - std::sin(yaw) * positionDiff.x;
         auto y = std::cos(yaw) * positionDiff.x + std::sin(yaw) * positionDiff.y;
