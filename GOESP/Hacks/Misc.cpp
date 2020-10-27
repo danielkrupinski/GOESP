@@ -337,3 +337,14 @@ void Misc::drawOffscreenEnemies(ImDrawList* drawList) noexcept
         drawList->AddCircleFilled(pos, 10.0f, color, 40);
     }
 }
+
+void Misc::draw(ImDrawList* drawList) noexcept
+{
+    drawReloadProgress(drawList);
+    drawRecoilCrosshair(drawList);
+    purchaseList();
+    drawObserverList();
+    drawNoscopeCrosshair(drawList);
+    drawFpsCounter();
+    drawOffscreenEnemies(drawList);
+}
