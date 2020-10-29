@@ -315,10 +315,11 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
 
     origin = entity->getAbsOrigin();
     inViewFrustum = !interfaces->engine->cullBox(obbMins + origin, obbMaxs + origin);
+    alive = entity->isAlive();
 
     if (localPlayer) {
         enemy = entity->isEnemy();
-        visible = inViewFrustum && entity->visibleTo(localPlayer.get());
+        visible = inViewFrustum && alive && entity->visibleTo(localPlayer.get());
     }
 
     constexpr auto isEntityAudible = [](int entityIndex) noexcept {
@@ -331,7 +332,6 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
     audible = isEntityAudible(entity->index());
     spotted = entity->spotted();
     immune = entity->gunGameImmunity();
-    alive = entity->isAlive();
     flashDuration = entity->flashDuration();
     health = entity->getHealth();
 
