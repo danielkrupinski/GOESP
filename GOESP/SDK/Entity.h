@@ -106,7 +106,6 @@ public:
     std::uint64_t getSteamId() noexcept;
     int getUserId() noexcept;
     bool isEnemy() noexcept;
-    bool isVisible(const Vector& mins, const Vector& maxs) noexcept;
 
 #ifdef _WIN32
     PROP(hitboxSet, 0x9FC, int)                                                    // CBaseAnimating->m_nHitboxSet
