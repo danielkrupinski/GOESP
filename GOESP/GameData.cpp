@@ -341,6 +341,9 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
             activeWeapon = interfaces->localize->findAsUTF8(weaponInfo->name);
     }
 
+    if (!inViewFrustum)
+        return;
+
     const auto model = entity->getModel();
     if (!model)
         return;
