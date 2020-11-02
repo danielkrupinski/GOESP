@@ -39,7 +39,7 @@ void GUI::render() noexcept
 #elif __APPLE__
         "macOS"
 #else
-    #error("Unsupported platform!")
+#error("Unsupported platform!")
 #endif
         , nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
 
@@ -61,42 +61,6 @@ void GUI::render() noexcept
         ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Misc")) {
-        ImGuiCustom::colorPicker("Reload Progress", config->reloadProgress);
-        ImGuiCustom::colorPicker("Recoil Crosshair", config->recoilCrosshair);
-        ImGuiCustom::colorPicker("Noscope Crosshair", config->noscopeCrosshair);
-        ImGui::Checkbox("Purchase List", &config->purchaseList.enabled);
-        ImGui::SameLine();
-
-        ImGui::PushID("Purchase List");
-        if (ImGui::Button("..."))
-            ImGui::OpenPopup("");
-
-        if (ImGui::BeginPopup("")) {
-            ImGui::SetNextItemWidth(75.0f);
-            ImGui::Combo("Mode", &config->purchaseList.mode, "Details\0Summary\0");
-            ImGui::Checkbox("Only During Freeze Time", &config->purchaseList.onlyDuringFreezeTime);
-            ImGui::Checkbox("Show Prices", &config->purchaseList.showPrices);
-            ImGui::Checkbox("No Title Bar", &config->purchaseList.noTitleBar);
-            ImGui::EndPopup();
-        }
-        ImGui::PopID();
-
-        ImGui::PushID("Observer List");
-        ImGui::Checkbox("Observer List", &config->observerList.enabled);
-        ImGui::SameLine();
-
-        if (ImGui::Button("..."))
-            ImGui::OpenPopup("");
-
-        if (ImGui::BeginPopup("")) {
-            ImGui::Checkbox("No Title Bar", &config->observerList.noTitleBar);
-            ImGui::EndPopup();
-        }
-        ImGui::PopID();
-
-        ImGui::Checkbox("Ignore Flashbang", &config->ignoreFlashbang);
-        ImGui::Checkbox("FPS Counter", &config->fpsCounter.enabled);
-        ImGuiCustom::colorPicker("Offscreen Enemies", config->offscreenEnemies.color, &config->offscreenEnemies.enabled);
 
         ImGui::EndTabItem();
     }
@@ -357,7 +321,7 @@ void GUI::drawESPTab() noexcept
             ImGui::PopID();
         }
         ImGui::ListBoxFooter();
-    }
+}
 
     ImGui::SameLine();
 
@@ -486,4 +450,44 @@ void GUI::drawESPTab() noexcept
     }
 
     ImGui::EndChild();
+}
+
+void GUI::drawMiscTab() noexcept
+{
+    ImGuiCustom::colorPicker("Reload Progress", config->reloadProgress);
+    ImGuiCustom::colorPicker("Recoil Crosshair", config->recoilCrosshair);
+    ImGuiCustom::colorPicker("Noscope Crosshair", config->noscopeCrosshair);
+    ImGui::Checkbox("Purchase List", &config->purchaseList.enabled);
+    ImGui::SameLine();
+
+    ImGui::PushID("Purchase List");
+    if (ImGui::Button("..."))
+        ImGui::OpenPopup("");
+
+    if (ImGui::BeginPopup("")) {
+        ImGui::SetNextItemWidth(75.0f);
+        ImGui::Combo("Mode", &config->purchaseList.mode, "Details\0Summary\0");
+        ImGui::Checkbox("Only During Freeze Time", &config->purchaseList.onlyDuringFreezeTime);
+        ImGui::Checkbox("Show Prices", &config->purchaseList.showPrices);
+        ImGui::Checkbox("No Title Bar", &config->purchaseList.noTitleBar);
+        ImGui::EndPopup();
+    }
+    ImGui::PopID();
+
+    ImGui::PushID("Observer List");
+    ImGui::Checkbox("Observer List", &config->observerList.enabled);
+    ImGui::SameLine();
+
+    if (ImGui::Button("..."))
+        ImGui::OpenPopup("");
+
+    if (ImGui::BeginPopup("")) {
+        ImGui::Checkbox("No Title Bar", &config->observerList.noTitleBar);
+        ImGui::EndPopup();
+    }
+    ImGui::PopID();
+
+    ImGui::Checkbox("Ignore Flashbang", &config->ignoreFlashbang);
+    ImGui::Checkbox("FPS Counter", &config->fpsCounter.enabled);
+    ImGuiCustom::colorPicker("Offscreen Enemies", config->offscreenEnemies.color, &config->offscreenEnemies.enabled);
 }
