@@ -35,6 +35,7 @@ static LPDIRECT3DDEVICE9        g_pd3dDevice = NULL;
 static LPDIRECT3DVERTEXBUFFER9  g_pVB = NULL;
 static LPDIRECT3DINDEXBUFFER9   g_pIB = NULL;
 static LPDIRECT3DTEXTURE9       g_FontTexture = NULL;
+static IDirect3DVertexDeclaration9* vertexDeclaration = nullptr;
 static int                      g_VertexBufferSize = 5000, g_IndexBufferSize = 10000;
 
 static void ImGui_ImplDX9_SetupRenderState(ImDrawData* draw_data)
@@ -142,18 +143,7 @@ void ImGui_ImplDX9_RenderDrawData(ImDrawData* draw_data)
     g_pIB->Unlock();
     g_pd3dDevice->SetStreamSource(0, g_pVB, 0, sizeof(ImDrawVert));
     g_pd3dDevice->SetIndices(g_pIB);
-
-    constexpr D3DVERTEXELEMENT9 elements[]{
-        { 0, 0, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-        { 0, 8, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
-        { 0, 16, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0 },
-        D3DDECL_END()
-    };
-
-    IDirect3DVertexDeclaration9* decl;
-    g_pd3dDevice->CreateVertexDeclaration(elements, &decl);
-    g_pd3dDevice->SetVertexDeclaration(decl);
-    decl->Release();
+    g_pd3dDevice->SetVertexDeclaration(vertexDeclaration);
 
     // Setup desired DX state
     ImGui_ImplDX9_SetupRenderState(draw_data);
@@ -243,8 +233,18 @@ bool ImGui_ImplDX9_CreateDeviceObjects()
 {
     if (!g_pd3dDevice)
         return false;
+
+    constexpr D3DVERTEXELEMENT9 elements[]{
+        { 0, 0, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+        { 0, 8, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+        { 0, 16, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0 },
+        D3DDECL_END()
+    };
+    g_pd3dDevice->CreateVertexDeclaration(elements, &vertexDeclaration);
+
     if (!ImGui_ImplDX9_CreateFontsTexture())
         return false;
+
     return true;
 }
 
@@ -255,6 +255,7 @@ void ImGui_ImplDX9_InvalidateDeviceObjects()
     if (g_pVB) { g_pVB->Release(); g_pVB = NULL; }
     if (g_pIB) { g_pIB->Release(); g_pIB = NULL; }
     if (g_FontTexture) { g_FontTexture->Release(); g_FontTexture = NULL; ImGui::GetIO().Fonts->TexID = NULL; } // We copied g_pFontTextureView to io.Fonts->TexID so let's clear that as well.
+    if (vertexDeclaration) { vertexDeclaration->Release(); vertexDeclaration = nullptr; }
 }
 
 void ImGui_ImplDX9_NewFrame()
