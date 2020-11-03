@@ -33,6 +33,8 @@ unsigned int Helpers::calculateColor(Color color) noexcept
 
 unsigned int Helpers::calculateColor(int r, int g, int b, int a) noexcept
 {
+    if (!config->ignoreFlashbang)
+        a -= static_cast<int>(a * GameData::local().flashDuration / 255.0f);
     return IM_COL32(r, g, b, a * alphaFactor);
 }
 
