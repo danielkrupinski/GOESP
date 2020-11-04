@@ -267,7 +267,9 @@ void Misc::drawObserverList() noexcept
         if (!observer.targetIsLocalPlayer)
             continue;
 
-        ImGui::TextWrapped("%s", observer.name);
+        if (const auto it = std::find_if(GameData::players().cbegin(), GameData::players().cend(), [userId = observer.playerUserId](const auto& playerData) { return playerData.userId == userId; }); it != GameData::players().cend()) {
+            ImGui::TextWrapped("%s", it->name);
+        }
     }
 
     ImGui::End();

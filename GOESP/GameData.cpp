@@ -513,6 +513,9 @@ ObserverData::ObserverData(Entity* entity, Entity* obs, bool targetIsLocalPlayer
 {
     entity->getPlayerName(name);
     obs->getPlayerName(target);
+
+    playerUserId = entity->getUserId();
+    targetUserId = obs->getUserId();
     this->targetIsLocalPlayer = targetIsLocalPlayer;
 }
 

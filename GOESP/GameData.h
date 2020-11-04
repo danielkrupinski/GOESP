@@ -138,8 +138,11 @@ struct LootCrateData : BaseData {
 struct ObserverData {
     ObserverData(Entity* entity, Entity* obs, bool targetIsLocalPlayer) noexcept;
 
-    char name[128];
-    char target[128];
+    [[deprecated]] char name[128];
+    [[deprecated]] char target[128];
+
+    int playerUserId;
+    int targetUserId;
     bool targetIsLocalPlayer;
 };
 
