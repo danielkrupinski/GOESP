@@ -59,7 +59,6 @@ void GameData::update() noexcept
 
     Lock lock;
 
-    playerData.clear();
     observerData.clear();
     weaponData.clear();
     entityData.clear();
@@ -84,7 +83,11 @@ void GameData::update() noexcept
             if (entity == localPlayer.get() || entity == observerTarget)
                 continue;
 
-            playerData.emplace_back(entity);
+            if (const auto it = std::find_if(playerData.begin(), playerData.end(), [userId = entity->getUserId()](const auto& playerData) { return playerData.userId == userId; }); it != playerData.end()) {
+                it->update(entity);
+            } else {
+                playerData.emplace_back(entity);
+            }
 
             if (!entity->isDormant() && !entity->isAlive()) {
                 const auto obs = entity->getObserverTarget();
@@ -155,6 +158,13 @@ void GameData::update() noexcept
             }
         }
         ++it;
+    }
+
+    for (auto it = playerData.begin(); it != playerData.end();) {
+        if (interfaces->engine->getPlayerForUserId(it->userId) == 0)
+            it = playerData.erase(it);
+        else
+            ++it;
     }
 }
 
@@ -306,8 +316,15 @@ void ProjectileData::update(Entity* projectile) noexcept
 
 PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
 {
-    entity->getPlayerName(name);
     userId = entity->getUserId();
+    update(entity);
+}
+
+void PlayerData::update(Entity* entity) noexcept
+{
+    static_cast<BaseData&>(*this) = { entity };
+
+    entity->getPlayerName(name);
 
     dormant = entity->isDormant();
     if (dormant)
@@ -356,6 +373,7 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
     if (!entity->setupBones(boneMatrices, MAXSTUDIOBONES, BONE_USED_BY_HITBOX, memory->globalVars->currenttime))
         return;
 
+    bones.clear();
     bones.reserve(20);
 
     for (int i = 0; i < studioModel->numBones; ++i) {

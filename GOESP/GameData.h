@@ -77,7 +77,7 @@ struct BaseData {
 
 struct EntityData final : BaseData {
     EntityData(Entity* entity) noexcept;
-   
+
     const char* name;
 };
 
@@ -100,6 +100,7 @@ struct ProjectileData : BaseData {
 
 struct PlayerData : BaseData {
     PlayerData(Entity* entity) noexcept;
+    void update(Entity* entity) noexcept;
 
     bool enemy = false;
     bool visible = false;
