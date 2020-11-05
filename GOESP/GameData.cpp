@@ -511,8 +511,8 @@ LootCrateData::LootCrateData(Entity* entity) noexcept : BaseData{ entity }
 
 ObserverData::ObserverData(Entity* entity, Entity* obs, bool targetIsLocalPlayer) noexcept
 {
-    entity->getPlayerName(name);
-    obs->getPlayerName(target);
+    //entity->getPlayerName(name);
+    //obs->getPlayerName(target);
 
     playerUserId = entity->getUserId();
     targetUserId = obs->getUserId();
