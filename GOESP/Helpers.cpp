@@ -27,7 +27,7 @@ unsigned int Helpers::calculateColor(Color color) noexcept
     color.color[3] *= alphaFactor;
 
     if (!config->ignoreFlashbang)
-        color.color[3] *= (255.0f - GameData::local().flashDuration) / 255.0f;
+        color.color[3] -= color.color[3] * GameData::local().flashDuration / 255.0f;
     return ImGui::ColorConvertFloat4ToU32(color.rainbow ? rainbowColor(memory->globalVars->realtime, color.rainbowSpeed, color.color[3]) : color.color);
 }
 
