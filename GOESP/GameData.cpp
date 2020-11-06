@@ -325,7 +325,8 @@ void PlayerData::update(Entity* entity) noexcept
 {
     static_cast<BaseData&>(*this) = { entity };
 
-    entity->getPlayerName(name);
+    if (memory->globalVars->framecount % 20 == 0)
+        entity->getPlayerName(name);
 
     dormant = entity->isDormant();
     if (dormant)
