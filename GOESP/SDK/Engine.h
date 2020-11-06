@@ -6,6 +6,7 @@
 #include "Vector.h"
 #include "VirtualMethod.h"
 
+struct SteamAPIContext;
 struct Vector;
 
 struct Matrix4x4 {
@@ -49,6 +50,7 @@ public:
     VIRTUAL_METHOD(bool, isInGame, 26, (), (this))
     VIRTUAL_METHOD(bool, cullBox, 34, (const Vector& mins, const Vector& maxs), (this, std::cref(mins), std::cref(maxs)))
     VIRTUAL_METHOD(const Matrix4x4&, worldToScreenMatrix, 37, (), (this))
+    VIRTUAL_METHOD(SteamAPIContext*, getSteamAPIContext, 185, (), (this))
 
     auto getViewAngles() noexcept
     {
