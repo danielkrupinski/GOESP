@@ -103,7 +103,6 @@ public:
     bool visibleTo(Entity* other) noexcept;
     [[nodiscard]] std::string getPlayerName() noexcept;
     void getPlayerName(char(&out)[128]) noexcept;
-    std::uint64_t getSteamId() noexcept;
     int getUserId() noexcept;
     bool isEnemy() noexcept;
 
