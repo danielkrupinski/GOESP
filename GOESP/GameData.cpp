@@ -161,7 +161,7 @@ void GameData::update() noexcept
     }
 
     for (auto it = playerData.begin(); it != playerData.end();) {
-        if (interfaces->engine->getPlayerForUserId(it->userId) == 0)
+        if (!interfaces->entityList->getEntityFromHandle(it->handle))
             it = playerData.erase(it);
         else
             ++it;
@@ -317,6 +317,7 @@ void ProjectileData::update(Entity* projectile) noexcept
 PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
 {
     userId = entity->getUserId();
+    handle = entity->handle();
     update(entity);
 }
 

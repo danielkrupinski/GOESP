@@ -113,6 +113,7 @@ struct PlayerData : BaseData {
     float flashDuration;
     int health;
     int userId;
+    int handle;
     char name[128];
     std::string activeWeapon;
     Vector origin;
