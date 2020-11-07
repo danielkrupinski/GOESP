@@ -101,6 +101,7 @@ struct ProjectileData : BaseData {
 struct PlayerData : BaseData {
     PlayerData(Entity* entity) noexcept;
     void update(Entity* entity) noexcept;
+    ImTextureID getAvatarTexture() const noexcept;
 
     bool enemy = false;
     bool visible = false;
@@ -110,6 +111,7 @@ struct PlayerData : BaseData {
     bool dormant;
     bool alive;
     bool inViewFrustum;
+    bool hasAvatar;
     float flashDuration;
     int health;
     int userId;
@@ -119,6 +121,9 @@ struct PlayerData : BaseData {
     Vector origin;
     std::vector<std::pair<ImVec2, ImVec2>> bones;
     Vector headMins, headMaxs;
+private:
+    mutable ImTextureID avatarTexture = nullptr;
+    std::uint8_t avatarRGBA[4 * 32 * 32 * sizeof(char)];
 };
 
 struct WeaponData : BaseData {

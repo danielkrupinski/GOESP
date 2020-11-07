@@ -5,6 +5,10 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui/imgui_internal.h"
 
+#ifdef _WIN32
+#include "imgui/imgui_impl_dx9.h"
+#endif
+
 #include "Config.h"
 #include "fnv.h"
 #include "GameData.h"
@@ -21,6 +25,7 @@
 #include "SDK/LocalPlayer.h"
 #include "SDK/ModelInfo.h"
 #include "SDK/Sound.h"
+#include "SDK/Steam.h"
 #include "SDK/UtlVector.h"
 #include "SDK/WeaponId.h"
 #include "SDK/WeaponInfo.h"
@@ -318,6 +323,14 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
 {
     userId = entity->getUserId();
     handle = entity->handle();
+
+    if (std::uint64_t steamID; entity->getSteamID(&steamID)) {
+        const auto avatar = interfaces->engine->getSteamAPIContext()->steamFriends->getSmallFriendAvatar(steamID);
+        hasAvatar = interfaces->engine->getSteamAPIContext()->steamUtils->getImageRGBA(avatar, avatarRGBA, sizeof(avatarRGBA));
+    } else {
+        hasAvatar = false;
+    }
+
     update(entity);
 }
 
@@ -408,6 +421,19 @@ void PlayerData::update(Entity* entity) noexcept
         headMins -= headBox->capsuleRadius;
         headMaxs += headBox->capsuleRadius;
     }
+}
+
+ImTextureID PlayerData::getAvatarTexture() const noexcept
+{
+    assert(hasAvatar);
+
+    if (avatarTexture)
+        return avatarTexture;
+
+#ifdef _WIN32
+    avatarTexture = ImGui_ImplDX9_CreateTextureRGBA(32, 32, avatarRGBA);
+#endif
+    return avatarTexture;
 }
 
 WeaponData::WeaponData(Entity* entity) noexcept : BaseData{ entity }
