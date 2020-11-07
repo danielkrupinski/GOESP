@@ -7,6 +7,8 @@
 
 #ifdef _WIN32
 #include "imgui/imgui_impl_dx9.h"
+#else
+#include "imgui/imgui_impl_opengl3.h"
 #endif
 
 #include "Config.h"
@@ -63,7 +65,6 @@ void GameData::update() noexcept
     lastFrame = memory->globalVars->framecount;
 
     Lock lock;
-
     observerData.clear();
     weaponData.clear();
     entityData.clear();
@@ -437,6 +438,8 @@ ImTextureID PlayerData::getAvatarTexture() const noexcept
 
 #ifdef _WIN32
     avatarTexture = ImGui_ImplDX9_CreateTextureRGBA(32, 32, avatarRGBA);
+#else
+    avatarTexture = reinterpret_cast<ImTextureID>(ImGui_ImplOpenGL3_CreateTextureRGBA(32, 32, avatarRGBA));
 #endif
     return avatarTexture;
 }
