@@ -87,6 +87,7 @@ public:
     VIRTUAL_METHOD(bool, isPlayer, 209, (), (this))
     VIRTUAL_METHOD(bool, isWeapon, 217, (), (this))
     VIRTUAL_METHOD(Entity*, getActiveWeapon, 330, (), (this))
+    VIRTUAL_METHOD(bool, getSteamID, 335, (std::uint64_t* id), (this, id))
     VIRTUAL_METHOD(Vector, getEyePosition, 347, (), (this))
     VIRTUAL_METHOD(ObsMode, getObserverMode, 356, (), (this))
     VIRTUAL_METHOD(Entity*, getObserverTarget, 357, (), (this))
