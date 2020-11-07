@@ -335,8 +335,30 @@ void Misc::drawOffscreenEnemies(ImDrawList* drawList) noexcept
 
         const auto pos = ImGui::GetIO().DisplaySize / 2 + ImVec2{ x, y } * 200;
         const auto color = Helpers::calculateColor(config->offscreenEnemies.color);
+
         drawList->AddCircleFilled(pos, 11.0f, color & IM_COL32_A_MASK, 40);
-        drawList->AddCircleFilled(pos, 10.0f, color, 40);
+
+#ifdef _WIN32
+        if (player.hasAvatar) {
+#else
+        if (false) {
+#endif
+            const auto texture = player.getAvatarTexture();
+
+            const bool pushTextureId = drawList->_TextureIdStack.empty() || texture != drawList->_TextureIdStack.back();
+            if (pushTextureId)
+                drawList->PushTextureID(texture);
+
+            const int vertStartIdx = drawList->VtxBuffer.Size;
+            drawList->AddCircleFilled(pos, 10.0f, IM_COL32_WHITE, 40);
+            const int vertEndIdx = drawList->VtxBuffer.Size;
+            ImGui::ShadeVertsLinearUV(drawList, vertStartIdx, vertEndIdx, pos - ImVec2{ 10, 10 }, pos + ImVec2{ 10, 10 }, { 0, 0 }, { 1, 1 }, true);
+
+            if (pushTextureId)
+                drawList->PopTextureID();
+        } else {
+            drawList->AddCircleFilled(pos, 10.0f, color, 40);
+        }
     }
 }
 
