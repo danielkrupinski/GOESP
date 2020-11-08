@@ -73,8 +73,11 @@ void GameData::update() noexcept
 
     localPlayerData.update();
 
-    if (!localPlayer)
+    if (!localPlayer) {
+        playerData.clear();
+        projectileData.clear();
         return;
+    }
 
     viewMatrix = interfaces->engine->worldToScreenMatrix();
 
