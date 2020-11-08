@@ -283,6 +283,11 @@ IDirect3DTexture9* ImGui_ImplDX9_CreateTextureRGBA(int width, int height, const 
     return texture;
 }
 
+void ImGui_ImplDX9_DetroyTexture(ImTextureID texture)
+{
+    reinterpret_cast<IDirect3DTexture9*>(texture)->Release();
+}
+
 void ImGui_ImplDX9_NewFrame()
 {
     if (!g_FontTexture)
