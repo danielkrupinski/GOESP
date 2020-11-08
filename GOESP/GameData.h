@@ -131,6 +131,7 @@ private:
         ImTextureID texture = nullptr;
     public:
         Texture32x32() = default;
+        ~Texture32x32();
         Texture32x32(const Texture32x32&) = delete;
         Texture32x32& operator=(const Texture32x32&) = delete;
         Texture32x32(Texture32x32&& other) noexcept : texture{ other.texture } { other.texture = nullptr; }

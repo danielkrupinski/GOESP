@@ -565,6 +565,15 @@ BombData::BombData(Entity* entity) noexcept
 
 }
 
+PlayerData::Texture32x32::~Texture32x32()
+{
+    if (texture) {
+#ifdef _WIN32
+        ImGui_ImplDX9_DetroyTexture(texture);
+#endif
+    }
+}
+
 void PlayerData::Texture32x32::init(const std::uint8_t* data) noexcept
 {
 #ifdef _WIN32
