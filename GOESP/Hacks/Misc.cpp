@@ -338,11 +338,7 @@ void Misc::drawOffscreenEnemies(ImDrawList* drawList) noexcept
 
         drawList->AddCircleFilled(pos, 11.0f, color & IM_COL32_A_MASK, 40);
 
-#ifdef _WIN32
         if (player.hasAvatar) {
-#else
-        if (false) {
-#endif
             const auto texture = player.getAvatarTexture();
 
             const bool pushTextureId = drawList->_TextureIdStack.empty() || texture != drawList->_TextureIdStack.back();
