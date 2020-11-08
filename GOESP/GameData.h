@@ -100,6 +100,11 @@ struct ProjectileData : BaseData {
 
 struct PlayerData : BaseData {
     PlayerData(Entity* entity) noexcept;
+    PlayerData(const PlayerData&) = delete;
+    PlayerData& operator=(const PlayerData&) = delete;
+    PlayerData(PlayerData&& other) = default;
+    PlayerData& operator=(PlayerData&& other) = default;
+
     void update(Entity* entity) noexcept;
     ImTextureID getAvatarTexture() const noexcept;
 
@@ -122,7 +127,19 @@ struct PlayerData : BaseData {
     std::vector<std::pair<ImVec2, ImVec2>> bones;
     Vector headMins, headMaxs;
 private:
-    mutable ImTextureID avatarTexture = nullptr;
+    class Texture32x32 {
+        ImTextureID texture = nullptr;
+    public:
+        Texture32x32() = default;
+        Texture32x32(const Texture32x32&) = delete;
+        Texture32x32& operator=(const Texture32x32&) = delete;
+        Texture32x32(Texture32x32&& other) noexcept : texture{ other.texture } { other.texture = nullptr; }
+        Texture32x32& operator=(Texture32x32&& other) noexcept { texture = other.texture; other.texture = nullptr; return *this; }
+
+        void init(const std::uint8_t* data) noexcept;
+        ImTextureID get() noexcept { return texture; }
+    };
+    mutable Texture32x32 avatarTexture;
     std::uint8_t avatarRGBA[4 * 32 * 32 * sizeof(char)];
 };
 

@@ -428,15 +428,10 @@ ImTextureID PlayerData::getAvatarTexture() const noexcept
 {
     assert(hasAvatar);
 
-    if (avatarTexture)
-        return avatarTexture;
+    if (!avatarTexture.get())
+        avatarTexture.init(avatarRGBA);
 
-#ifdef _WIN32
-    avatarTexture = ImGui_ImplDX9_CreateTextureRGBA(32, 32, avatarRGBA);
-#else
-    avatarTexture = reinterpret_cast<ImTextureID>(ImGui_ImplOpenGL3_CreateTextureRGBA(32, 32, avatarRGBA));
-#endif
-    return avatarTexture;
+    return avatarTexture.get();
 }
 
 WeaponData::WeaponData(Entity* entity) noexcept : BaseData{ entity }
@@ -568,4 +563,13 @@ ObserverData::ObserverData(Entity* entity, Entity* obs, bool targetIsLocalPlayer
 BombData::BombData(Entity* entity) noexcept
 {
 
+}
+
+void PlayerData::Texture32x32::init(const std::uint8_t* data) noexcept
+{
+#ifdef _WIN32
+    texture = ImGui_ImplDX9_CreateTextureRGBA(32, 32, data);
+#else
+    texture = reinterpret_cast<ImTextureID>(ImGui_ImplOpenGL3_CreateTextureRGBA(32, 32, data));
+#endif
 }
