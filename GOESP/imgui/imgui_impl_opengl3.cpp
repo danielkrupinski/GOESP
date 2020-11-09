@@ -642,7 +642,7 @@ void    ImGui_ImplOpenGL3_DestroyDeviceObjects()
     ImGui_ImplOpenGL3_DestroyFontsTexture();
 }
 
-ImTextureID ImGui_ImplOpenGL3_CreateTextureRGBA(int width, int height, const unsigned char* data)
+ImTextureID ImGui_CreateTextureRGBA(int width, int height, const unsigned char* data)
 {
     GLint last_texture;
     GLuint texture;
