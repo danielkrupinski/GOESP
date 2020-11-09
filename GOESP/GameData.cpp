@@ -432,7 +432,7 @@ ImTextureID PlayerData::getAvatarTexture() const noexcept
     assert(hasAvatar);
 
     if (!avatarTexture.get())
-        avatarTexture.init(avatarRGBA);
+        avatarTexture.init(32, 32, avatarRGBA);
 
     return avatarTexture.get();
 }
@@ -579,7 +579,7 @@ PlayerData::Texture32x32::~Texture32x32()
     }
 }
 
-void PlayerData::Texture32x32::init(const std::uint8_t* data) noexcept
+void PlayerData::Texture32x32::init(int width, int height, const std::uint8_t* data) noexcept
 {
-    texture = ImGui_CreateTextureRGBA(32, 32, data);
+    texture = ImGui_CreateTextureRGBA(width, height, data);
 }

@@ -137,7 +137,7 @@ private:
         Texture32x32(Texture32x32&& other) noexcept : texture{ other.texture } { other.texture = nullptr; }
         Texture32x32& operator=(Texture32x32&& other) noexcept { texture = other.texture; other.texture = nullptr; return *this; }
 
-        void init(const std::uint8_t* data) noexcept;
+        void init(int width, int height, const std::uint8_t* data) noexcept;
         ImTextureID get() noexcept { return texture; }
     };
     mutable Texture32x32 avatarTexture;
