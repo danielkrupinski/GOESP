@@ -259,6 +259,12 @@ void ImGui_ImplDX9_InvalidateDeviceObjects()
     if (vertexDeclaration) { vertexDeclaration->Release(); vertexDeclaration = nullptr; }
 }
 
+void ImGui_ImplDX9_NewFrame()
+{
+    if (!g_FontTexture)
+        ImGui_ImplDX9_CreateDeviceObjects();
+}
+
 ImTextureID ImGui_CreateTextureRGBA(int width, int height, const unsigned char* data)
 {
     IDirect3DTexture9* texture;
@@ -283,13 +289,7 @@ ImTextureID ImGui_CreateTextureRGBA(int width, int height, const unsigned char* 
     return texture;
 }
 
-void ImGui_ImplDX9_DetroyTexture(ImTextureID texture)
+void ImGui_DetroyTexture(ImTextureID texture)
 {
     reinterpret_cast<IDirect3DTexture9*>(texture)->Release();
-}
-
-void ImGui_ImplDX9_NewFrame()
-{
-    if (!g_FontTexture)
-        ImGui_ImplDX9_CreateDeviceObjects();
 }

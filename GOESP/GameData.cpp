@@ -572,7 +572,7 @@ PlayerData::Texture::~Texture()
 {
     if (texture) {
 #ifdef _WIN32
-        ImGui_ImplDX9_DetroyTexture(texture);
+        ImGui_DetroyTexture(texture);
 #else
         ImGui_ImplOpenGL3_DestroyTexture(texture);
 #endif
