@@ -570,13 +570,8 @@ BombData::BombData(Entity* entity) noexcept
 
 PlayerData::Texture::~Texture()
 {
-    if (texture) {
-#ifdef _WIN32
+    if (texture)
         ImGui_DetroyTexture(texture);
-#else
-        ImGui_ImplOpenGL3_DestroyTexture(texture);
-#endif
-    }
 }
 
 void PlayerData::Texture::init(int width, int height, const std::uint8_t* data) noexcept

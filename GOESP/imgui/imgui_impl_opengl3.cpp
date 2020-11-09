@@ -661,7 +661,7 @@ ImTextureID ImGui_CreateTextureRGBA(int width, int height, const unsigned char* 
     return reinterpret_cast<ImTextureID>(texture);
 }
 
-void ImGui_ImplOpenGL3_DestroyTexture(ImTextureID texture)
+void ImGui_DestroyTexture(ImTextureID texture)
 {
     glDeleteTextures(1, reinterpret_cast<GLuint*>(&texture));
 }

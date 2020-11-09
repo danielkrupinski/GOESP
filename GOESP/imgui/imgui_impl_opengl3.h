@@ -36,8 +36,8 @@ IMGUI_IMPL_API void     ImGui_ImplOpenGL3_DestroyFontsTexture();
 IMGUI_IMPL_API bool     ImGui_ImplOpenGL3_CreateDeviceObjects();
 IMGUI_IMPL_API void     ImGui_ImplOpenGL3_DestroyDeviceObjects();
 
-IMGUI_IMPL_API ImTextureID ImGui_CreateTextureRGBA(int width, int height, const unsigned char* data);
-IMGUI_IMPL_API void ImGui_ImplOpenGL3_DestroyTexture(ImTextureID texture);
+IMGUI_IMPL_API ImTextureID    ImGui_CreateTextureRGBA(int width, int height, const unsigned char* data);
+IMGUI_IMPL_API void           ImGui_DestroyTexture(ImTextureID texture);
 
 // Specific OpenGL ES versions
 //#define IMGUI_IMPL_OPENGL_ES2     // Auto-detected on Emscripten
