@@ -568,7 +568,7 @@ BombData::BombData(Entity* entity) noexcept
 
 }
 
-PlayerData::Texture32x32::~Texture32x32()
+PlayerData::Texture::~Texture()
 {
     if (texture) {
 #ifdef _WIN32
@@ -579,7 +579,7 @@ PlayerData::Texture32x32::~Texture32x32()
     }
 }
 
-void PlayerData::Texture32x32::init(int width, int height, const std::uint8_t* data) noexcept
+void PlayerData::Texture::init(int width, int height, const std::uint8_t* data) noexcept
 {
     texture = ImGui_CreateTextureRGBA(width, height, data);
 }

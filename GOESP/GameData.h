@@ -127,20 +127,20 @@ struct PlayerData : BaseData {
     std::vector<std::pair<ImVec2, ImVec2>> bones;
     Vector headMins, headMaxs;
 private:
-    class Texture32x32 {
+    class Texture {
         ImTextureID texture = nullptr;
     public:
-        Texture32x32() = default;
-        ~Texture32x32();
-        Texture32x32(const Texture32x32&) = delete;
-        Texture32x32& operator=(const Texture32x32&) = delete;
-        Texture32x32(Texture32x32&& other) noexcept : texture{ other.texture } { other.texture = nullptr; }
-        Texture32x32& operator=(Texture32x32&& other) noexcept { texture = other.texture; other.texture = nullptr; return *this; }
+        Texture() = default;
+        ~Texture();
+        Texture(const Texture&) = delete;
+        Texture& operator=(const Texture&) = delete;
+        Texture(Texture&& other) noexcept : texture{ other.texture } { other.texture = nullptr; }
+        Texture& operator=(Texture&& other) noexcept { texture = other.texture; other.texture = nullptr; return *this; }
 
         void init(int width, int height, const std::uint8_t* data) noexcept;
         ImTextureID get() noexcept { return texture; }
     };
-    mutable Texture32x32 avatarTexture;
+    mutable Texture avatarTexture;
     std::uint8_t avatarRGBA[4 * 32 * 32 * sizeof(char)];
 };
 
