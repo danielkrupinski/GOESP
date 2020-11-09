@@ -584,6 +584,6 @@ void PlayerData::Texture32x32::init(const std::uint8_t* data) noexcept
 #ifdef _WIN32
     texture = ImGui_ImplDX9_CreateTextureRGBA(32, 32, data);
 #else
-    texture = reinterpret_cast<ImTextureID>(ImGui_ImplOpenGL3_CreateTextureRGBA(32, 32, data));
+    texture = ImGui_ImplOpenGL3_CreateTextureRGBA(32, 32, data);
 #endif
 }

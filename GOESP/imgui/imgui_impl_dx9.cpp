@@ -259,7 +259,7 @@ void ImGui_ImplDX9_InvalidateDeviceObjects()
     if (vertexDeclaration) { vertexDeclaration->Release(); vertexDeclaration = nullptr; }
 }
 
-IDirect3DTexture9* ImGui_ImplDX9_CreateTextureRGBA(int width, int height, const unsigned char* data)
+ImTextureID ImGui_ImplDX9_CreateTextureRGBA(int width, int height, const unsigned char* data)
 {
     IDirect3DTexture9* texture;
     if (g_pd3dDevice->CreateTexture(width, height, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &texture, nullptr) != D3D_OK)
