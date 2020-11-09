@@ -582,7 +582,7 @@ PlayerData::Texture32x32::~Texture32x32()
 void PlayerData::Texture32x32::init(const std::uint8_t* data) noexcept
 {
 #ifdef _WIN32
-    texture = ImGui_ImplDX9_CreateTextureRGBA(32, 32, data);
+    texture = ImGui_CreateTextureRGBA(32, 32, data);
 #else
     texture = ImGui_ImplOpenGL3_CreateTextureRGBA(32, 32, data);
 #endif
