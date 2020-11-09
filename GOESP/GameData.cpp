@@ -571,7 +571,7 @@ BombData::BombData(Entity* entity) noexcept
 PlayerData::Texture::~Texture()
 {
     if (texture)
-        ImGui_DetroyTexture(texture);
+        ImGui_DestroyTexture(texture);
 }
 
 void PlayerData::Texture::init(int width, int height, const std::uint8_t* data) noexcept

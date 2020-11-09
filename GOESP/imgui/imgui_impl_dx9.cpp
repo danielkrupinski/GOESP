@@ -289,7 +289,7 @@ ImTextureID ImGui_CreateTextureRGBA(int width, int height, const unsigned char* 
     return texture;
 }
 
-void ImGui_DetroyTexture(ImTextureID texture)
+void ImGui_DestroyTexture(ImTextureID texture)
 {
     reinterpret_cast<IDirect3DTexture9*>(texture)->Release();
 }
