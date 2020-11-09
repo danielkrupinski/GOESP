@@ -660,3 +660,8 @@ unsigned int ImGui_ImplOpenGL3_CreateTextureRGBA(int width, int height, const un
 
     return texture;
 }
+
+void ImGui_ImplOpenGL3_DestroyTexture(ImTextureID texture)
+{
+    glDeleteTextures(1, reinterpret_cast<GLuint*>(&texture));
+}
