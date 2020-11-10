@@ -183,6 +183,13 @@ void GameData::clearProjectileList() noexcept
     projectileData.clear();
 }
 
+void GameData::clearTextures() noexcept
+{
+    Lock lock;
+    for (auto& player : playerData)
+        player.clearAvatarTexture();
+}
+
 const Matrix4x4& GameData::toScreenMatrix() noexcept
 {
     return viewMatrix;
