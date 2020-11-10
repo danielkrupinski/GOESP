@@ -578,11 +578,16 @@ BombData::BombData(Entity* entity) noexcept
 
 PlayerData::Texture::~Texture()
 {
-    if (texture)
-        ImGui_DestroyTexture(texture);
+    clear();
 }
 
 void PlayerData::Texture::init(int width, int height, const std::uint8_t* data) noexcept
 {
     texture = ImGui_CreateTextureRGBA(width, height, data);
+}
+
+void PlayerData::Texture::clear() noexcept
+{
+    if (texture)
+        ImGui_DestroyTexture(texture);
 }
