@@ -107,6 +107,7 @@ struct PlayerData : BaseData {
 
     void update(Entity* entity) noexcept;
     ImTextureID getAvatarTexture() const noexcept;
+    void clearAvatarTexture() noexcept { avatarTexture = {}; }
 
     bool enemy = false;
     bool visible = false;
