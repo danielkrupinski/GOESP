@@ -590,4 +590,5 @@ void PlayerData::Texture::clear() noexcept
 {
     if (texture)
         ImGui_DestroyTexture(texture);
+    texture = nullptr;
 }
