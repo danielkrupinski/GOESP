@@ -418,15 +418,7 @@ void PlayerData::update(Entity* entity) noexcept
         if (!bone || bone->parent == -1 || !(bone->flags & BONE_USED_BY_HITBOX))
             continue;
 
-        ImVec2 bonePoint;
-        if (!worldToScreen(boneMatrices[i].origin(), bonePoint))
-            continue;
-
-        ImVec2 parentPoint;
-        if (!worldToScreen(boneMatrices[bone->parent].origin(), parentPoint))
-            continue;
-
-        bones.emplace_back(bonePoint, parentPoint);
+        bones.emplace_back(boneMatrices[i].origin(), boneMatrices[bone->parent].origin());
     }
 
     const auto set = studioModel->getHitboxSet(entity->hitboxSet());

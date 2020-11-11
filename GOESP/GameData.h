@@ -127,7 +127,7 @@ struct PlayerData : BaseData {
     char name[128];
     std::string activeWeapon;
     Vector origin;
-    std::vector<std::pair<ImVec2, ImVec2>> bones;
+    std::vector<std::pair<Vector, Vector>> bones;
     Vector headMins, headMaxs;
 private:
     class Texture {

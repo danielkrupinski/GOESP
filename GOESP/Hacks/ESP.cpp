@@ -409,17 +409,31 @@ static void drawProjectileTrajectory(const Trail& config, const std::vector<std:
     }
 }
 
-static void drawPlayerSkeleton(const ColorToggleThickness& config, const std::vector<std::pair<ImVec2, ImVec2>>& bones) noexcept
+static void drawPlayerSkeleton(const ColorToggleThickness& config, const std::vector<std::pair<Vector, Vector>>& bones) noexcept
 {
     if (!config.enabled)
         return;
 
     const auto color = Helpers::calculateColor(config);
 
-    for (const auto& [bonePoint, parentPoint] : bones)
+    std::vector<std::pair<ImVec2, ImVec2>> points;
+
+    for (const auto& [bone, parent] : bones) {
+        ImVec2 bonePoint;
+        if (!worldToScreen(bone, bonePoint))
+            continue;
+
+        ImVec2 parentPoint;
+        if (!worldToScreen(parent, parentPoint))
+            continue;
+
+        points.emplace_back(bonePoint, parentPoint);
+    }
+
+    for (const auto& [bonePoint, parentPoint] : points)
         drawList->AddLine(bonePoint + ImVec2{ 1.0f, 1.0f }, parentPoint + ImVec2{ 1.0f, 1.0f }, color & IM_COL32_A_MASK, config.thickness);
 
-    for (const auto& [bonePoint, parentPoint] : bones)
+    for (const auto& [bonePoint, parentPoint] : points)
         drawList->AddLine(bonePoint, parentPoint, color, config.thickness);
 }
 
