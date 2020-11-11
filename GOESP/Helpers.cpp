@@ -48,6 +48,12 @@ float Helpers::getAlphaFactor() noexcept
     return alphaFactor;
 }
 
+float Helpers::fadingAlpha(float endTime) noexcept
+{
+    constexpr float fadeTime = 1.75f;
+    return std::clamp(std::max(endTime - memory->globalVars->realtime, 0.0f) / fadeTime, 0.0f, 1.0f);
+}
+
 ImWchar* Helpers::getFontGlyphRanges() noexcept
 {
     static ImVector<ImWchar> ranges;
