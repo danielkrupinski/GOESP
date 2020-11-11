@@ -170,10 +170,15 @@ void GameData::update() noexcept
     }
 
     for (auto it = playerData.begin(); it != playerData.end();) {
-        if (!interfaces->entityList->getEntityFromHandle(it->handle))
-            it = playerData.erase(it);
-        else
-            ++it;
+        if (!interfaces->entityList->getEntityFromHandle(it->handle)) {
+            if (it->fadingEndTime == 0.0f) {
+                it->fadingEndTime = memory->globalVars->realtime + 1.75f;
+            } else if (it->fadingEndTime < memory->globalVars->realtime) {
+                it = playerData.erase(it);
+                continue;
+            }
+        }
+        ++it;
     }
 }
 
@@ -354,9 +359,13 @@ void PlayerData::update(Entity* entity) noexcept
         entity->getPlayerName(name);
 
     dormant = entity->isDormant();
-    if (dormant)
+    if (dormant) {
+        if (fadingEndTime == 0.0f)
+            fadingEndTime = memory->globalVars->realtime + 1.75f;
         return;
+    }
 
+    fadingEndTime = 0.0f;
     origin = entity->getAbsOrigin();
     inViewFrustum = !interfaces->engine->cullBox(obbMins + origin, obbMaxs + origin);
     alive = entity->isAlive();
