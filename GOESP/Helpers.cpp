@@ -43,6 +43,11 @@ void Helpers::setAlphaFactor(float newAlphaFactor) noexcept
     alphaFactor = newAlphaFactor;
 }
 
+float Helpers::getAlphaFactor() noexcept
+{
+    return alphaFactor;
+}
+
 ImWchar* Helpers::getFontGlyphRanges() noexcept
 {
     static ImVector<ImWchar> ranges;
