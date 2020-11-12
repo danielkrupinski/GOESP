@@ -334,7 +334,8 @@ void Misc::drawOffscreenEnemies(ImDrawList* drawList) noexcept
         y /= len;
 
         const auto pos = ImGui::GetIO().DisplaySize / 2 + ImVec2{ x, y } * 200;
-        Helpers::setAlphaFactor(Helpers::fadingAlpha(player.fadingEndTime));
+        if (player.fadingEndTime != 0.0f)
+            Helpers::setAlphaFactor(Helpers::fadingAlpha(player.fadingEndTime));
         const auto color = Helpers::calculateColor(config->offscreenEnemies.color);
         Helpers::setAlphaFactor(1.0f);
 
