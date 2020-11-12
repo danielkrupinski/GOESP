@@ -164,6 +164,7 @@
     <ClInclude Include="Interfaces.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="nlohmann\json.hpp" />
+    <ClInclude Include="Resources\avatar_ct.h" />
     <ClInclude Include="SDK\ClassId.h" />
     <ClInclude Include="SDK\ClientClass.h" />
     <ClInclude Include="SDK\ClientTools.h" />
