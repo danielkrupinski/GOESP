@@ -118,7 +118,7 @@ struct PlayerData : BaseData {
     bool dormant;
     bool alive;
     bool inViewFrustum;
-    bool hasAvatar;
+    bool hasAvatar = false;
     float fadingEndTime = 0.0f;
     float flashDuration;
     int health;

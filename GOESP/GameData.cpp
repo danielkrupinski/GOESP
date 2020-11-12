@@ -11,6 +11,14 @@
 #include "imgui/imgui_impl_opengl3.h"
 #endif
 
+#define STBI_ONLY_PNG
+#define STBI_NO_STDIO
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+#include "Resources/avatar_ct.h"
+#include "Resources/avatar_tt.h"
+
 #include "Config.h"
 #include "fnv.h"
 #include "GameData.h"
@@ -344,8 +352,21 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
         const auto ctx = interfaces->engine->getSteamAPIContext();
         const auto avatar = ctx->steamFriends->getSmallFriendAvatar(steamID);
         hasAvatar = ctx->steamUtils->getImageRGBA(avatar, avatarRGBA, sizeof(avatarRGBA));
-    } else {
-        hasAvatar = false;
+    }
+
+    if (!hasAvatar) {
+        const auto team = entity->getTeamNumber();
+        const auto imageData = team == Team::TT ? avatar_tt : avatar_ct;
+        const auto imageDataLen = team == Team::TT ? sizeof(avatar_tt) : sizeof(avatar_ct);
+
+        int width, height;
+        stbi_set_flip_vertically_on_load_thread(false);
+        if (auto data = stbi_load_from_memory(imageData, imageDataLen, &width, &height, nullptr, STBI_rgb_alpha)) {
+            assert(width == 32 && height == 32);
+            memcpy(avatarRGBA, data, sizeof(avatarRGBA));
+            stbi_image_free(data);
+        }
+        hasAvatar = true;
     }
 
     update(entity);
