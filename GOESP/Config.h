@@ -25,15 +25,6 @@ public:
     std::unordered_map<std::string, Shared> lootCrates;
     std::unordered_map<std::string, Shared> otherEntities;
 
-    ColorToggleThickness reloadProgress{ 5.0f };
-    ColorToggleThickness recoilCrosshair;
-    ColorToggleThickness noscopeCrosshair;
-    PurchaseList purchaseList;
-    ObserverList observerList;
-    bool ignoreFlashbang = false;
-    OverlayWindow fpsCounter{ "FPS Counter" };
-    OffscreenEnemies offscreenEnemies;
-
     struct Font {
         ImFont* tiny;
         ImFont* medium;
