@@ -412,3 +412,21 @@ void Misc::drawGUI() noexcept
     ImGui::Checkbox("FPS Counter", &config->fpsCounter.enabled);
     ImGui::Checkbox("Offscreen Enemies", &config->offscreenEnemies.enabled);
 }
+
+json Misc::toJSON() noexcept
+{
+    json j;
+    to_json(j["Reload Progress"], config->reloadProgress, ColorToggleThickness{ 5.0f });
+
+    if (config->ignoreFlashbang)
+        j["Ignore Flashbang"] = config->ignoreFlashbang;
+
+    j["Recoil Crosshair"] = config->recoilCrosshair;
+    j["Noscope Crosshair"] = config->noscopeCrosshair;
+    j["Purchase List"] = config->purchaseList;
+    j["Observer List"] = config->observerList;
+    j["FPS Counter"] = config->fpsCounter;
+    j["Offscreen Enemies"] = config->offscreenEnemies;
+
+    return j;
+}

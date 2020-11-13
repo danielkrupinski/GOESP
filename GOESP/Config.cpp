@@ -13,6 +13,8 @@
 #include "imgui/imgui_internal.h"
 #include "nlohmann/json.hpp"
 
+#include "Hacks/Misc.h"
+
 #ifdef _WIN32
 int CALLBACK fontCallback(const LOGFONTW* lpelfe, const TEXTMETRICW*, DWORD, LPARAM lParam)
 {
@@ -185,17 +187,7 @@ void Config::save() noexcept
     j["Loot Crates"] = lootCrates;
     j["Other Entities"] = otherEntities;
 
-    to_json(j["Reload Progress"], reloadProgress, ColorToggleThickness{ 5.0f });
-
-    if (ignoreFlashbang)
-        j["Ignore Flashbang"] = ignoreFlashbang;
-
-    j["Recoil Crosshair"] = recoilCrosshair;
-    j["Noscope Crosshair"] = noscopeCrosshair;
-    j["Purchase List"] = purchaseList;
-    j["Observer List"] = observerList;
-    j["FPS Counter"] = fpsCounter;
-    j["Offscreen Enemies"] = offscreenEnemies;
+    j["Misc"] = Misc::toJSON();
 
     removeEmptyObjects(j);
 
