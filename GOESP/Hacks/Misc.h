@@ -13,4 +13,5 @@ namespace Misc
     void drawFpsCounter() noexcept;
     void drawOffscreenEnemies(ImDrawList* drawList) noexcept;
     void draw(ImDrawList* drawList) noexcept;
+    void drawGUI() noexcept;
 }

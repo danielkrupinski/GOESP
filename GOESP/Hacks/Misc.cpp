@@ -23,6 +23,9 @@
 #include "../SDK/WeaponInfo.h"
 #include "../SDK/WeaponSystem.h"
 
+#include "../ImGuiCustom.h"
+#include "../imgui/imgui.h"
+
 #include <numbers>
 #include <numeric>
 #include <unordered_map>
@@ -368,4 +371,44 @@ void Misc::draw(ImDrawList* drawList) noexcept
     drawNoscopeCrosshair(drawList);
     drawFpsCounter();
     drawOffscreenEnemies(drawList);
+}
+
+void Misc::drawGUI() noexcept
+{
+    ImGuiCustom::colorPicker("Reload Progress", config->reloadProgress);
+    ImGuiCustom::colorPicker("Recoil Crosshair", config->recoilCrosshair);
+    ImGuiCustom::colorPicker("Noscope Crosshair", config->noscopeCrosshair);
+    ImGui::Checkbox("Purchase List", &config->purchaseList.enabled);
+    ImGui::SameLine();
+
+    ImGui::PushID("Purchase List");
+    if (ImGui::Button("..."))
+        ImGui::OpenPopup("");
+
+    if (ImGui::BeginPopup("")) {
+        ImGui::SetNextItemWidth(75.0f);
+        ImGui::Combo("Mode", &config->purchaseList.mode, "Details\0Summary\0");
+        ImGui::Checkbox("Only During Freeze Time", &config->purchaseList.onlyDuringFreezeTime);
+        ImGui::Checkbox("Show Prices", &config->purchaseList.showPrices);
+        ImGui::Checkbox("No Title Bar", &config->purchaseList.noTitleBar);
+        ImGui::EndPopup();
+    }
+    ImGui::PopID();
+
+    ImGui::PushID("Observer List");
+    ImGui::Checkbox("Observer List", &config->observerList.enabled);
+    ImGui::SameLine();
+
+    if (ImGui::Button("..."))
+        ImGui::OpenPopup("");
+
+    if (ImGui::BeginPopup("")) {
+        ImGui::Checkbox("No Title Bar", &config->observerList.noTitleBar);
+        ImGui::EndPopup();
+    }
+    ImGui::PopID();
+
+    ImGui::Checkbox("Ignore Flashbang", &config->ignoreFlashbang);
+    ImGui::Checkbox("FPS Counter", &config->fpsCounter.enabled);
+    ImGui::Checkbox("Offscreen Enemies", &config->offscreenEnemies.enabled);
 }
