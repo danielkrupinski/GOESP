@@ -21,6 +21,9 @@
     <Filter Include="Hacks">
       <UniqueIdentifier>{4498ebc5-607e-4528-acbf-cd79761d7f62}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{86a27e42-a2f4-4308-bf2c-0d66a56f5845}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -233,10 +236,10 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resources\avatar_ct.h">
-      <Filter>Header Files</Filter>
+      <Filter>Resources</Filter>
     </ClInclude>
     <ClInclude Include="Resources\avatar_tt.h">
-      <Filter>Header Files</Filter>
+      <Filter>Resources</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
