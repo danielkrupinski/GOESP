@@ -403,33 +403,3 @@ static void from_json(const json& j, ImVec2& v)
     read_number(j, "X", v.x);
     read_number(j, "Y", v.y);
 }
-
-static void from_json(const json& j, PurchaseList& pl)
-{
-    read(j, "Enabled", pl.enabled);
-    read(j, "Only During Freeze Time", pl.onlyDuringFreezeTime);
-    read(j, "Show Prices", pl.showPrices);
-    read(j, "No Title Bar", pl.noTitleBar);
-    read_number(j, "Mode", pl.mode);
-    read<value_t::object>(j, "Pos", pl.pos);
-    read<value_t::object>(j, "Size", pl.size);
-}
-
-static void from_json(const json& j, ObserverList& ol)
-{
-    read(j, "Enabled", ol.enabled);
-    read(j, "No Title Bar", ol.noTitleBar);
-    read<value_t::object>(j, "Pos", ol.pos);
-    read<value_t::object>(j, "Size", ol.size);
-}
-
-static void from_json(const json& j, OverlayWindow& o)
-{
-    read(j, "Enabled", o.enabled);
-    read<value_t::object>(j, "Pos", o.pos);
-}
-
-static void from_json(const json& j, OffscreenEnemies& o)
-{
-    read(j, "Enabled", o.enabled);
-}
