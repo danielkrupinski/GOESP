@@ -289,7 +289,6 @@ static void from_json(const json& j, OverlayWindow& o)
 static void from_json(const json& j, OffscreenEnemies& o)
 {
     read(j, "Enabled", o.enabled);
-    read<value_t::object>(j, "Color", o.color);
 }
 
 void Config::load() noexcept
@@ -467,7 +466,6 @@ static void to_json(json& j, const OverlayWindow& o, const OverlayWindow& dummy 
 static void to_json(json& j, const OffscreenEnemies& o, const OffscreenEnemies& dummy = {})
 {
     WRITE("Enabled", enabled)
-    to_json(j["Color"], o.color, dummy.color);
 }
 
 void removeEmptyObjects(json& j) noexcept
