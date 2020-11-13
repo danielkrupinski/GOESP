@@ -336,7 +336,7 @@ void Misc::drawOffscreenEnemies(ImDrawList* drawList) noexcept
         const auto pos = ImGui::GetIO().DisplaySize / 2 + ImVec2{ x, y } * 200;
         if (player.fadingEndTime != 0.0f)
             Helpers::setAlphaFactor(Helpers::fadingAlpha(player.fadingEndTime));
-        const auto color = Helpers::calculateColor(config->offscreenEnemies.color);
+        const auto color = Helpers::calculateColor(255, 255, 255, 255);
         Helpers::setAlphaFactor(1.0f);
 
         constexpr float avatarRadius = 13.0f;
@@ -350,7 +350,7 @@ void Misc::drawOffscreenEnemies(ImDrawList* drawList) noexcept
             drawList->PushTextureID(texture);
 
         const int vertStartIdx = drawList->VtxBuffer.Size;
-        drawList->AddCircleFilled(pos, avatarRadius, IM_COL32(255, 255, 255, 0) | (color & IM_COL32_A_MASK), 40);
+        drawList->AddCircleFilled(pos, avatarRadius, color, 40);
         const int vertEndIdx = drawList->VtxBuffer.Size;
         ImGui::ShadeVertsLinearUV(drawList, vertStartIdx, vertEndIdx, pos - ImVec2{ avatarRadius, avatarRadius }, pos + ImVec2{ avatarRadius, avatarRadius }, { 0, 0 }, { 1, 1 }, true);
 

@@ -157,5 +157,4 @@ struct OverlayWindow {
 
 struct OffscreenEnemies {
     bool enabled = false;
-    [[deprecated]] Color color{ { 1.0f, 0.26f, 0.21f, 1.0f } };
 };
