@@ -468,3 +468,16 @@ json Misc::toJSON() noexcept
 
     return j;
 }
+
+void Misc::fromJSON(const json& j) noexcept
+{
+    read<value_t::object>(j, "Reload Progress", config->reloadProgress);
+    read<value_t::object>(j, "Recoil Crosshair", config->recoilCrosshair);
+    read<value_t::object>(j, "Noscope Crosshair", config->noscopeCrosshair);
+    read<value_t::object>(j, "Purchase List", config->purchaseList);
+    read<value_t::object>(j, "Observer List", config->observerList);
+    read(j, "Ignore Flashbang", config->ignoreFlashbang);
+    read<value_t::object>(j, "FPS Counter", config->fpsCounter);
+    read<value_t::object>(j, "Offscreen Enemies", config->offscreenEnemies);
+}
+

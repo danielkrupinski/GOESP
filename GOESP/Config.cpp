@@ -153,14 +153,7 @@ void Config::load() noexcept
     read_map(j, "Loot Crates", lootCrates);
     read_map(j, "Other Entities", otherEntities);
 
-    read<value_t::object>(j, "Reload Progress", reloadProgress);
-    read<value_t::object>(j, "Recoil Crosshair", recoilCrosshair);
-    read<value_t::object>(j, "Noscope Crosshair", noscopeCrosshair);
-    read<value_t::object>(j, "Purchase List", purchaseList);
-    read<value_t::object>(j, "Observer List", observerList);
-    read(j, "Ignore Flashbang", ignoreFlashbang);
-    read<value_t::object>(j, "FPS Counter", fpsCounter);
-    read<value_t::object>(j, "Offscreen Enemies", offscreenEnemies);
+    Misc::fromJSON(j["Misc"]);
 }
 
 void removeEmptyObjects(json& j) noexcept

@@ -17,4 +17,5 @@ namespace Misc
     void draw(ImDrawList* drawList) noexcept;
     void drawGUI() noexcept;
     json toJSON() noexcept;
+    void fromJSON(const json& j) noexcept;
 }
