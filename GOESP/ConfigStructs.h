@@ -280,45 +280,6 @@ static void to_json(json& j, const ImVec2& o, const ImVec2& dummy = {})
     WRITE("Y", y)
 }
 
-static void to_json(json& j, const PurchaseList& o, const PurchaseList& dummy = {})
-{
-    WRITE("Enabled", enabled)
-    WRITE("Only During Freeze Time", onlyDuringFreezeTime)
-    WRITE("Show Prices", showPrices)
-    WRITE("No Title Bar", noTitleBar)
-    WRITE("Mode", mode)
-
-    if (const auto window = ImGui::FindWindowByName("Purchases")) {
-        j["Pos"] = window->Pos;
-        j["Size"] = window->SizeFull;
-    }
-}
-
-static void to_json(json& j, const ObserverList& o, const ObserverList& dummy = {})
-{
-    WRITE("Enabled", enabled)
-    WRITE("No Title Bar", noTitleBar)
-
-    if (const auto window = ImGui::FindWindowByName("Observer List")) {
-        j["Pos"] = window->Pos;
-        j["Size"] = window->SizeFull;
-    }
-}
-
-static void to_json(json& j, const OverlayWindow& o, const OverlayWindow& dummy = {})
-{
-    WRITE("Enabled", enabled)
-
-    if (const auto window = ImGui::FindWindowByName(o.name))
-        j["Pos"] = window->Pos;
-}
-
-static void to_json(json& j, const OffscreenEnemies& o, const OffscreenEnemies& dummy = {})
-{
-    WRITE("Enabled", enabled)
-}
-
-
 template <value_t Type, typename T>
 static void read(const json& j, const char* key, T& o) noexcept
 {
