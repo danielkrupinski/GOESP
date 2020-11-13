@@ -356,12 +356,12 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
 
     if (!hasAvatar) {
         const auto team = entity->getTeamNumber();
-        const auto imageData = team == Team::TT ? avatar_tt : avatar_ct;
-        const auto imageDataLen = team == Team::TT ? sizeof(avatar_tt) : sizeof(avatar_ct);
+        const auto imageData = team == Team::TT ? avatar_tt.data() : avatar_ct.data();
+        const auto imageDataLen = team == Team::TT ? avatar_tt.size() : avatar_ct.size();
 
         int width, height;
         stbi_set_flip_vertically_on_load_thread(false);
-        if (auto data = stbi_load_from_memory(imageData, imageDataLen, &width, &height, nullptr, STBI_rgb_alpha)) {
+        if (auto data = stbi_load_from_memory((const stbi_uc*)imageData, imageDataLen, &width, &height, nullptr, STBI_rgb_alpha)) {
             assert(width == 32 && height == 32);
             memcpy(avatarRGBA, data, sizeof(avatarRGBA));
             stbi_image_free(data);
