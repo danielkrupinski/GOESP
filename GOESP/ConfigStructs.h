@@ -124,41 +124,6 @@ struct Projectile : Shared {
     using Shared::operator=;
 };
 
-struct PurchaseList {
-    bool enabled = false;
-    bool onlyDuringFreezeTime = false;
-    bool showPrices = false;
-    bool noTitleBar = false;
-
-    enum Mode {
-        Details = 0,
-        Summary
-    };
-    int mode = Details;
-
-    ImVec2 pos;
-    ImVec2 size{ 200.0f, 200.0f };
-};
-
-struct ObserverList {
-    bool enabled = false;
-    bool noTitleBar = false;
-    ImVec2 pos;
-    ImVec2 size{ 200.0f, 200.0f };
-};
-
-struct OverlayWindow {
-    OverlayWindow() = default;
-    OverlayWindow(const char* windowName) : name{ windowName } {}
-    bool enabled = false;
-    const char* name = "";
-    ImVec2 pos;
-};
-
-struct OffscreenEnemies {
-    bool enabled = false;
-};
-
 #include "imgui/imgui.h"
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui/imgui_internal.h"
