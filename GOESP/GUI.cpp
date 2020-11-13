@@ -489,5 +489,5 @@ void GUI::drawMiscTab() noexcept
 
     ImGui::Checkbox("Ignore Flashbang", &config->ignoreFlashbang);
     ImGui::Checkbox("FPS Counter", &config->fpsCounter.enabled);
-    ImGuiCustom::colorPicker("Offscreen Enemies", config->offscreenEnemies.color, &config->offscreenEnemies.enabled);
+    ImGui::Checkbox("Offscreen Enemies", &config->offscreenEnemies.enabled);
 }
