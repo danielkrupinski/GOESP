@@ -339,28 +339,23 @@ void Misc::drawOffscreenEnemies(ImDrawList* drawList) noexcept
         const auto color = Helpers::calculateColor(config->offscreenEnemies.color);
         Helpers::setAlphaFactor(1.0f);
 
-        if (player.hasAvatar) {
-            constexpr float avatarRadius = 13.0f;
+        constexpr float avatarRadius = 13.0f;
 
-            drawList->AddCircleFilled(pos, avatarRadius + 1, color & IM_COL32_A_MASK, 40);
+        drawList->AddCircleFilled(pos, avatarRadius + 1, color & IM_COL32_A_MASK, 40);
 
-            const auto texture = player.getAvatarTexture();
+        const auto texture = player.getAvatarTexture();
 
-            const bool pushTextureId = drawList->_TextureIdStack.empty() || texture != drawList->_TextureIdStack.back();
-            if (pushTextureId)
-                drawList->PushTextureID(texture);
+        const bool pushTextureId = drawList->_TextureIdStack.empty() || texture != drawList->_TextureIdStack.back();
+        if (pushTextureId)
+            drawList->PushTextureID(texture);
 
-            const int vertStartIdx = drawList->VtxBuffer.Size;
-            drawList->AddCircleFilled(pos, avatarRadius, IM_COL32(255, 255, 255, 0) | (color & IM_COL32_A_MASK), 40);
-            const int vertEndIdx = drawList->VtxBuffer.Size;
-            ImGui::ShadeVertsLinearUV(drawList, vertStartIdx, vertEndIdx, pos - ImVec2{ avatarRadius, avatarRadius }, pos + ImVec2{ avatarRadius, avatarRadius }, { 0, 0 }, { 1, 1 }, true);
+        const int vertStartIdx = drawList->VtxBuffer.Size;
+        drawList->AddCircleFilled(pos, avatarRadius, IM_COL32(255, 255, 255, 0) | (color & IM_COL32_A_MASK), 40);
+        const int vertEndIdx = drawList->VtxBuffer.Size;
+        ImGui::ShadeVertsLinearUV(drawList, vertStartIdx, vertEndIdx, pos - ImVec2{ avatarRadius, avatarRadius }, pos + ImVec2{ avatarRadius, avatarRadius }, { 0, 0 }, { 1, 1 }, true);
 
-            if (pushTextureId)
-                drawList->PopTextureID();
-        } else {
-            drawList->AddCircleFilled(pos, 11.0f, color & IM_COL32_A_MASK, 40);
-            drawList->AddCircleFilled(pos, 10.0f, color, 40);
-        }
+        if (pushTextureId)
+            drawList->PopTextureID();
     }
 }
 

@@ -348,6 +348,7 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
     userId = entity->getUserId();
     handle = entity->handle();
 
+    bool hasAvatar = false;
     if (std::uint64_t steamID; entity->getSteamID(&steamID)) {
         const auto ctx = interfaces->engine->getSteamAPIContext();
         const auto avatar = ctx->steamFriends->getSmallFriendAvatar(steamID);
@@ -366,7 +367,6 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
             memcpy(avatarRGBA, data, sizeof(avatarRGBA));
             stbi_image_free(data);
         }
-        hasAvatar = true;
     }
 
     update(entity);
