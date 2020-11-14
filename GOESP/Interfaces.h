@@ -37,7 +37,7 @@ private:
 #ifdef _WIN32
             GetProcAddress(GetModuleHandleA(moduleName), "CreateInterface")
 #else
-            dlsym(dlopen(module, RTLD_NOLOAD | RTLD_NOW), "CreateInterface")
+            dlsym(dlopen(moduleName, RTLD_NOLOAD | RTLD_NOW), "CreateInterface")
 #endif
             )) {
             if (void* foundInterface = createInterface(name, nullptr))
