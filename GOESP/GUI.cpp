@@ -81,8 +81,3 @@ void GUI::render() noexcept
     ImGui::EndTabBar();
     ImGui::End();
 }
-
-void GUI::drawMiscTab() noexcept
-{
-
-}

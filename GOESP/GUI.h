@@ -8,8 +8,6 @@ public:
     void render() noexcept;
 
     bool open = true;
-private:
-    void drawMiscTab() noexcept;
 };
 
 inline std::unique_ptr<GUI> gui;
