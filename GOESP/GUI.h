@@ -12,6 +12,7 @@ public:
 
 private:
     void loadConfig() const noexcept;
+    void saveConfig() const noexcept;
 
     std::filesystem::path path;
 };

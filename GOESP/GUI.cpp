@@ -92,7 +92,7 @@ void GUI::render() noexcept
         if (ImGui::Button("Load"))
             loadConfig();
         if (ImGui::Button("Save"))
-            config->save();
+            saveConfig();
         ImGui::EndTabItem();
     }
     ImGui::EndTabBar();
@@ -108,4 +108,32 @@ void GUI::loadConfig() const noexcept
         ESP::fromJSON(j["ESP"]);
         Misc::fromJSON(j["Misc"]);
     }
+}
+
+static void removeEmptyObjects(json& j) noexcept
+{
+    for (auto it = j.begin(); it != j.end();) {
+        auto& val = it.value();
+        if (val.is_object())
+            removeEmptyObjects(val);
+        if (val.empty())
+            it = j.erase(it);
+        else
+            ++it;
+    }
+}
+
+void GUI::saveConfig() const noexcept
+{
+    json j;
+
+    j["ESP"] = ESP::toJSON();
+    j["Misc"] = Misc::toJSON();
+
+    removeEmptyObjects(j);
+
+    std::error_code ec; std::filesystem::create_directory(path, ec);
+
+    if (std::ofstream out{ path / "config.txt" }; out.good())
+        out << std::setw(2) << j;
 }
