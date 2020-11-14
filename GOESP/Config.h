@@ -15,7 +15,7 @@ struct ImFont;
 class Config {
 public:
     explicit Config(const char* folderName) noexcept;
-    void load() noexcept;
+    [[deprecated]] void load() noexcept;
     void save() noexcept;
 
     struct Font {
