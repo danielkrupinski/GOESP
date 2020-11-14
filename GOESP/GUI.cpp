@@ -1,15 +1,21 @@
-#include "GUI.h"
+#include <array>
+#include <fstream>
+#include <vector>
+
+#ifdef _WIN32
+#include <ShlObj.h>
+#include <Windows.h>
+#endif
 
 #include "imgui/imgui.h"
+#include "nlohmann/json.hpp"
 
 #include "Config.h"
-#include "Hooks.h"
-#include "ImGuiCustom.h"
+#include "GUI.h"
 #include "Hacks/ESP.h"
 #include "Hacks/Misc.h"
-
-#include <array>
-#include <vector>
+#include "Hooks.h"
+#include "ImGuiCustom.h"
 
 GUI::GUI() noexcept
 {
@@ -25,6 +31,17 @@ GUI::GUI() noexcept
     io.LogFilename = nullptr;
     io.Fonts->Flags |= ImFontAtlasFlags_NoPowerOfTwoHeight;
     io.Fonts->AddFontDefault();
+
+#ifdef _WIN32
+    if (PWSTR pathToDocuments; SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &pathToDocuments))) {
+        path = pathToDocuments;
+        CoTaskMemFree(pathToDocuments);
+    }
+#else
+    if (const char* homeDir = getenv("HOME"))
+        path = homeDir;
+#endif
+    path /= "GOESP";
 }
 
 void GUI::render() noexcept
@@ -73,11 +90,22 @@ void GUI::render() noexcept
         ImGui::TextUnformatted("Config is saved as \"config.txt\" inside ~/GOESP directory");
 #endif
         if (ImGui::Button("Load"))
-            config->load();
+            loadConfig();
         if (ImGui::Button("Save"))
             config->save();
         ImGui::EndTabItem();
     }
     ImGui::EndTabBar();
     ImGui::End();
+}
+
+void GUI::loadConfig() const noexcept
+{
+    json j;
+
+    if (std::ifstream in{ path / "config.txt" }; in.good()) {
+        in >> j;
+        ESP::fromJSON(j["ESP"]);
+        Misc::fromJSON(j["Misc"]);
+    }
 }
