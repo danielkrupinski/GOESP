@@ -113,6 +113,95 @@ static std::vector<ImVec2> convexHull(std::vector<ImVec2> points) noexcept
     return hull;
 }
 
+struct Font {
+    int index = 0; // do not save
+    std::string name = "Default";
+};
+
+struct Snapline : ColorToggleThickness {
+    enum Type {
+        Bottom = 0,
+        Top,
+        Crosshair
+    };
+
+    int type = Bottom;
+};
+
+struct Box : ColorToggleRounding {
+    enum Type {
+        _2d = 0,
+        _2dCorners,
+        _3d,
+        _3dCorners
+    };
+
+    int type = _2d;
+    std::array<float, 3> scale{ 0.25f, 0.25f, 0.25f };
+    ColorToggle fill{ 1.0f, 1.0f, 1.0f, 0.4f };
+};
+
+struct Shared {
+    bool enabled = false;
+    Font font;
+    Snapline snapline;
+    Box box;
+    ColorToggle name;
+    float textCullDistance = 0.0f;
+};
+
+struct Bar : ColorToggleRounding {
+
+};
+
+struct Player : Shared {
+    Player() : Shared{}
+    {
+        box.type = Box::_2dCorners;
+    }
+
+    ColorToggle weapon;
+    ColorToggle flashDuration;
+    bool audibleOnly = false;
+    bool spottedOnly = false;
+    ColorToggleThickness skeleton;
+    Box headBox;
+    bool healthBar = false;
+
+    using Shared::operator=;
+};
+
+struct Weapon : Shared {
+    ColorToggle ammo;
+
+    using Shared::operator=;
+};
+
+struct Trail : ColorToggleThickness {
+    enum Type {
+        Line = 0,
+        Circles,
+        FilledCircles
+    };
+
+    int type = Line;
+    float time = 2.0f;
+};
+
+struct Trails {
+    bool enabled = false;
+
+    Trail localPlayer;
+    Trail allies;
+    Trail enemies;
+};
+
+struct Projectile : Shared {
+    Trails trails;
+
+    using Shared::operator=;
+};
+
 struct {
     std::unordered_map<std::string, Player> allies;
     std::unordered_map<std::string, Player> enemies;
