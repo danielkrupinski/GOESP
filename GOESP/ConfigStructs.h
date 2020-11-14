@@ -331,38 +331,6 @@ static void from_json(const json& j, ColorToggleThicknessRounding& cttr)
     read_number(j, "Thickness", cttr.thickness);
 }
 
-static void from_json(const json& j, Snapline& s)
-{
-    from_json(j, static_cast<ColorToggleThickness&>(s));
-
-    read_number(j, "Type", s.type);
-}
-
-static void from_json(const json& j, Box& b)
-{
-    from_json(j, static_cast<ColorToggleRounding&>(b));
-
-    read_number(j, "Type", b.type);
-    read(j, "Scale", b.scale);
-    read<value_t::object>(j, "Fill", b.fill);
-}
-
-static void from_json(const json& j, Trail& t)
-{
-    from_json(j, static_cast<ColorToggleThickness&>(t));
-
-    read_number(j, "Type", t.type);
-    read_number(j, "Time", t.time);
-}
-
-static void from_json(const json& j, Trails& t)
-{
-    read(j, "Enabled", t.enabled);
-    read<value_t::object>(j, "Local Player", t.localPlayer);
-    read<value_t::object>(j, "Allies", t.allies);
-    read<value_t::object>(j, "Enemies", t.enemies);
-}
-
 static void from_json(const json& j, ImVec2& v)
 {
     read_number(j, "X", v.x);

@@ -937,7 +937,6 @@ static void from_json(const json& j, Shared& s)
     read_number(j, "Text Cull Distance", s.textCullDistance);
 }
 
-
 static void from_json(const json& j, Projectile& p)
 {
     from_json(j, static_cast<Shared&>(p));
@@ -963,6 +962,38 @@ static void from_json(const json& j, Weapon& w)
     from_json(j, static_cast<Shared&>(w));
 
     read<value_t::object>(j, "Ammo", w.ammo);
+}
+
+static void from_json(const json& j, Snapline& s)
+{
+    from_json(j, static_cast<ColorToggleThickness&>(s));
+
+    read_number(j, "Type", s.type);
+}
+
+static void from_json(const json& j, Box& b)
+{
+    from_json(j, static_cast<ColorToggleRounding&>(b));
+
+    read_number(j, "Type", b.type);
+    read(j, "Scale", b.scale);
+    read<value_t::object>(j, "Fill", b.fill);
+}
+
+static void from_json(const json& j, Trail& t)
+{
+    from_json(j, static_cast<ColorToggleThickness&>(t));
+
+    read_number(j, "Type", t.type);
+    read_number(j, "Time", t.time);
+}
+
+static void from_json(const json& j, Trails& t)
+{
+    read(j, "Enabled", t.enabled);
+    read<value_t::object>(j, "Local Player", t.localPlayer);
+    read<value_t::object>(j, "Allies", t.allies);
+    read<value_t::object>(j, "Enemies", t.enemies);
 }
 
 void ESP::fromJSON(const json& j) noexcept
