@@ -18,13 +18,6 @@ public:
     void load() noexcept;
     void save() noexcept;
 
-    std::unordered_map<std::string, Player> allies;
-    std::unordered_map<std::string, Player> enemies;
-    std::unordered_map<std::string, Weapon> weapons;
-    std::unordered_map<std::string, Projectile> projectiles;
-    std::unordered_map<std::string, Shared> lootCrates;
-    std::unordered_map<std::string, Shared> otherEntities;
-
     struct Font {
         ImFont* tiny;
         ImFont* medium;

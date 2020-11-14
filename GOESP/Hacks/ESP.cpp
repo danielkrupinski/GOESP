@@ -113,6 +113,15 @@ static std::vector<ImVec2> convexHull(std::vector<ImVec2> points) noexcept
     return hull;
 }
 
+struct {
+    std::unordered_map<std::string, Player> allies;
+    std::unordered_map<std::string, Player> enemies;
+    std::unordered_map<std::string, Weapon> weapons;
+    std::unordered_map<std::string, Projectile> projectiles;
+    std::unordered_map<std::string, Shared> lootCrates;
+    std::unordered_map<std::string, Shared> otherEntities;
+} espConfig;
+
 static void renderBox(const BoundingBox& bbox, const Box& config) noexcept
 {
     if (!config.enabled)
@@ -466,7 +475,7 @@ static bool renderPlayerEsp(const PlayerData& playerData, const Player& playerCo
 
 static void renderWeaponEsp(const WeaponData& weaponData, const Weapon& parentConfig, const Weapon& itemConfig) noexcept
 {
-    const auto& config = itemConfig.enabled ? itemConfig : (parentConfig.enabled ? parentConfig : ::config->weapons["All"]);
+    const auto& config = itemConfig.enabled ? itemConfig : (parentConfig.enabled ? parentConfig : espConfig.weapons["All"]);
     if (config.enabled) {
         renderWeaponBox(weaponData, config);
     }
@@ -507,24 +516,24 @@ void ESP::render() noexcept
     GameData::Lock lock;
 
     for (const auto& weapon : GameData::weapons())
-        renderWeaponEsp(weapon, config->weapons[weapon.group], config->weapons[weapon.name]);
+        renderWeaponEsp(weapon, espConfig.weapons[weapon.group], espConfig.weapons[weapon.name]);
 
     for (const auto& entity : GameData::entities())
-        renderEntityEsp(entity, config->otherEntities, entity.name);
+        renderEntityEsp(entity, espConfig.otherEntities, entity.name);
 
     for (const auto& lootCrate : GameData::lootCrates()) {
         if (lootCrate.name)
-            renderEntityEsp(lootCrate, config->lootCrates, lootCrate.name);
+            renderEntityEsp(lootCrate, espConfig.lootCrates, lootCrate.name);
     }
 
     for (const auto& projectile : GameData::projectiles())
-        renderProjectileEsp(projectile, config->projectiles["All"], config->projectiles[projectile.name], projectile.name);
+        renderProjectileEsp(projectile, espConfig.projectiles["All"], espConfig.projectiles[projectile.name], projectile.name);
 
     for (const auto& player : GameData::players()) {
         if ((player.dormant && Helpers::fadingAlpha(player.fadingEndTime) == 0.0f) || !player.alive || !player.inViewFrustum)
             continue;
 
-        auto& playerConfig = player.enemy ? config->enemies : config->allies;
+        auto& playerConfig = player.enemy ? espConfig.enemies : espConfig.allies;
 
         if (!renderPlayerEsp(player, playerConfig["All"]))
             renderPlayerEsp(player, playerConfig[player.visible ? "Visible" : "Occluded"]);
@@ -538,19 +547,19 @@ void ESP::drawGUI() noexcept
 
     constexpr auto getConfigShared = [](std::size_t category, const char* item) noexcept -> Shared& {
         switch (category) {
-        case 0: default: return config->enemies[item];
-        case 1: return config->allies[item];
-        case 2: return config->weapons[item];
-        case 3: return config->projectiles[item];
-        case 4: return config->lootCrates[item];
-        case 5: return config->otherEntities[item];
+        case 0: default: return espConfig.enemies[item];
+        case 1: return espConfig.allies[item];
+        case 2: return espConfig.weapons[item];
+        case 3: return espConfig.projectiles[item];
+        case 4: return espConfig.lootCrates[item];
+        case 5: return espConfig.otherEntities[item];
         }
     };
 
     constexpr auto getConfigPlayer = [](std::size_t category, const char* item) noexcept -> Player& {
         switch (category) {
-        case 0: default: return config->enemies[item];
-        case 1: return config->allies[item];
+        case 0: default: return espConfig.enemies[item];
+        case 1: return espConfig.allies[item];
         }
     };
 
@@ -566,8 +575,8 @@ void ESP::drawGUI() noexcept
             if (ImGui::BeginDragDropSource()) {
                 switch (i) {
                 case 0: case 1: ImGui::SetDragDropPayload("Player", &getConfigPlayer(i, "All"), sizeof(Player), ImGuiCond_Once); break;
-                case 2: ImGui::SetDragDropPayload("Weapon", &config->weapons["All"], sizeof(Weapon), ImGuiCond_Once); break;
-                case 3: ImGui::SetDragDropPayload("Projectile", &config->projectiles["All"], sizeof(Projectile), ImGuiCond_Once); break;
+                case 2: ImGui::SetDragDropPayload("Weapon", &espConfig.weapons["All"], sizeof(Weapon), ImGuiCond_Once); break;
+                case 3: ImGui::SetDragDropPayload("Projectile", &espConfig.projectiles["All"], sizeof(Projectile), ImGuiCond_Once); break;
                 default: ImGui::SetDragDropPayload("Entity", &getConfigShared(i, "All"), sizeof(Shared), ImGuiCond_Once); break;
                 }
                 ImGui::EndDragDropSource();
@@ -579,8 +588,8 @@ void ESP::drawGUI() noexcept
 
                     switch (i) {
                     case 0: case 1: getConfigPlayer(i, "All") = data; break;
-                    case 2: config->weapons["All"] = data; break;
-                    case 3: config->projectiles["All"] = data; break;
+                    case 2: espConfig.weapons["All"] = data; break;
+                    case 3: espConfig.projectiles["All"] = data; break;
                     default: getConfigShared(i, "All") = data; break;
                     }
                 }
@@ -590,8 +599,8 @@ void ESP::drawGUI() noexcept
 
                     switch (i) {
                     case 0: case 1: getConfigPlayer(i, "All") = data; break;
-                    case 2: config->weapons["All"] = data; break;
-                    case 3: config->projectiles["All"] = data; break;
+                    case 2: espConfig.weapons["All"] = data; break;
+                    case 3: espConfig.projectiles["All"] = data; break;
                     default: getConfigShared(i, "All") = data; break;
                     }
                 }
@@ -601,8 +610,8 @@ void ESP::drawGUI() noexcept
 
                     switch (i) {
                     case 0: case 1: getConfigPlayer(i, "All") = data; break;
-                    case 2: config->weapons["All"] = data; break;
-                    case 3: config->projectiles["All"] = data; break;
+                    case 2: espConfig.weapons["All"] = data; break;
+                    case 3: espConfig.projectiles["All"] = data; break;
                     default: getConfigShared(i, "All") = data; break;
                     }
                 }
@@ -612,8 +621,8 @@ void ESP::drawGUI() noexcept
 
                     switch (i) {
                     case 0: case 1: getConfigPlayer(i, "All") = data; break;
-                    case 2: config->weapons["All"] = data; break;
-                    case 3: config->projectiles["All"] = data; break;
+                    case 2: espConfig.weapons["All"] = data; break;
+                    case 3: espConfig.projectiles["All"] = data; break;
                     default: getConfigShared(i, "All") = data; break;
                     }
                 }
@@ -649,8 +658,8 @@ void ESP::drawGUI() noexcept
                     if (ImGui::BeginDragDropSource()) {
                         switch (i) {
                         case 0: case 1: ImGui::SetDragDropPayload("Player", &getConfigPlayer(i, items[j]), sizeof(Player), ImGuiCond_Once); break;
-                        case 2: ImGui::SetDragDropPayload("Weapon", &config->weapons[items[j]], sizeof(Weapon), ImGuiCond_Once); break;
-                        case 3: ImGui::SetDragDropPayload("Projectile", &config->projectiles[items[j]], sizeof(Projectile), ImGuiCond_Once); break;
+                        case 2: ImGui::SetDragDropPayload("Weapon", &espConfig.weapons[items[j]], sizeof(Weapon), ImGuiCond_Once); break;
+                        case 3: ImGui::SetDragDropPayload("Projectile", &espConfig.projectiles[items[j]], sizeof(Projectile), ImGuiCond_Once); break;
                         default: ImGui::SetDragDropPayload("Entity", &getConfigShared(i, items[j]), sizeof(Shared), ImGuiCond_Once); break;
                         }
                         ImGui::EndDragDropSource();
@@ -662,8 +671,8 @@ void ESP::drawGUI() noexcept
 
                             switch (i) {
                             case 0: case 1: getConfigPlayer(i, items[j]) = data; break;
-                            case 2: config->weapons[items[j]] = data; break;
-                            case 3: config->projectiles[items[j]] = data; break;
+                            case 2: espConfig.weapons[items[j]] = data; break;
+                            case 3: espConfig.projectiles[items[j]] = data; break;
                             default: getConfigShared(i, items[j]) = data; break;
                             }
                         }
@@ -673,8 +682,8 @@ void ESP::drawGUI() noexcept
 
                             switch (i) {
                             case 0: case 1: getConfigPlayer(i, items[j]) = data; break;
-                            case 2: config->weapons[items[j]] = data; break;
-                            case 3: config->projectiles[items[j]] = data; break;
+                            case 2: espConfig.weapons[items[j]] = data; break;
+                            case 3: espConfig.projectiles[items[j]] = data; break;
                             default: getConfigShared(i, items[j]) = data; break;
                             }
                         }
@@ -684,8 +693,8 @@ void ESP::drawGUI() noexcept
 
                             switch (i) {
                             case 0: case 1: getConfigPlayer(i, items[j]) = data; break;
-                            case 2: config->weapons[items[j]] = data; break;
-                            case 3: config->projectiles[items[j]] = data; break;
+                            case 2: espConfig.weapons[items[j]] = data; break;
+                            case 3: espConfig.projectiles[items[j]] = data; break;
                             default: getConfigShared(i, items[j]) = data; break;
                             }
                         }
@@ -695,8 +704,8 @@ void ESP::drawGUI() noexcept
 
                             switch (i) {
                             case 0: case 1: getConfigPlayer(i, items[j]) = data; break;
-                            case 2: config->weapons[items[j]] = data; break;
-                            case 3: config->projectiles[items[j]] = data; break;
+                            case 2: espConfig.weapons[items[j]] = data; break;
+                            case 3: espConfig.projectiles[items[j]] = data; break;
                             default: getConfigShared(i, items[j]) = data; break;
                             }
                         }
@@ -727,7 +736,7 @@ void ESP::drawGUI() noexcept
                 const auto itemEnabled = getConfigShared(i, items[j]).enabled;
 
                 for (const auto subItem : subItems) {
-                    auto& subItemConfig = config->weapons[subItem];
+                    auto& subItemConfig = espConfig.weapons[subItem];
                     if ((categoryEnabled || itemEnabled) && !subItemConfig.enabled)
                         continue;
 
@@ -860,10 +869,10 @@ void ESP::drawGUI() noexcept
             ImGui::SameLine(spacing);
             ImGui::Checkbox("Health Bar", &playerConfig.healthBar);
         } else if (currentCategory == 2) {
-            auto& weaponConfig = config->weapons[currentItem];
+            auto& weaponConfig = espConfig.weapons[currentItem];
             ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
         } else if (currentCategory == 3) {
-            auto& trails = config->projectiles[currentItem].trails;
+            auto& trails = espConfig.projectiles[currentItem].trails;
 
             ImGui::Checkbox("Trails", &trails.enabled);
             ImGui::SameLine(spacing + 77.0f);
@@ -975,12 +984,12 @@ static void to_json(json& j, const Projectile& o, const Projectile& dummy = {})
 json ESP::toJSON() noexcept
 {
     json j;
-    j["Allies"] = config->allies;
-    j["Enemies"] = config->enemies;
-    j["Weapons"] = config->weapons;
-    j["Projectiles"] = config->projectiles;
-    j["Loot Crates"] = config->lootCrates;
-    j["Other Entities"] = config->otherEntities;
+    j["Allies"] = espConfig.allies;
+    j["Enemies"] = espConfig.enemies;
+    j["Weapons"] = espConfig.weapons;
+    j["Projectiles"] = espConfig.projectiles;
+    j["Loot Crates"] = espConfig.lootCrates;
+    j["Other Entities"] = espConfig.otherEntities;
     return j;
 }
 
@@ -1067,10 +1076,10 @@ static void from_json(const json& j, Trails& t)
 
 void ESP::fromJSON(const json& j) noexcept
 {
-    read_map(j, "Allies", config->allies);
-    read_map(j, "Enemies", config->enemies);
-    read_map(j, "Weapons", config->weapons);
-    read_map(j, "Projectiles", config->projectiles);
-    read_map(j, "Loot Crates", config->lootCrates);
-    read_map(j, "Other Entities", config->otherEntities);
+    read_map(j, "Allies", espConfig.allies);
+    read_map(j, "Enemies", espConfig.enemies);
+    read_map(j, "Weapons", espConfig.weapons);
+    read_map(j, "Projectiles", espConfig.projectiles);
+    read_map(j, "Loot Crates", espConfig.lootCrates);
+    read_map(j, "Other Entities", espConfig.otherEntities);
 }
