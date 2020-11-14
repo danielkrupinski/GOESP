@@ -82,11 +82,6 @@ void GUI::render() noexcept
     ImGui::End();
 }
 
-void GUI::drawESPTab() noexcept
-{
-
-}
-
 void GUI::drawMiscTab() noexcept
 {
 

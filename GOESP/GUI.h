@@ -9,7 +9,6 @@ public:
 
     bool open = true;
 private:
-    void drawESPTab() noexcept;
     void drawMiscTab() noexcept;
 };
 
