@@ -53,12 +53,12 @@ static std::pair<void*, std::size_t> getModuleInformation(const char* name) noex
 #endif
 }
 
-static std::uintptr_t findPattern(const char* module, const char* pattern) noexcept
+static std::uintptr_t findPattern(const char* moduleName, const char* pattern) noexcept
 {
     static auto id = 0;
     ++id;
 
-    const auto [moduleBase, moduleSize] = getModuleInformation(module);
+    const auto [moduleBase, moduleSize] = getModuleInformation(moduleName);
 
     if (moduleBase && moduleSize) {
         auto start = static_cast<const char*>(moduleBase);
