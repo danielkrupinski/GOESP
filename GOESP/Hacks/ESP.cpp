@@ -902,3 +902,15 @@ void ESP::drawGUI() noexcept
 
     ImGui::EndChild();
 }
+
+json ESP::toJSON() noexcept
+{
+    json j;
+    j["Allies"] = config->allies;
+    j["Enemies"] = config->enemies;
+    j["Weapons"] = config->weapons;
+    j["Projectiles"] = config->projectiles;
+    j["Loot Crates"] = config->lootCrates;
+    j["Other Entities"] = config->otherEntities;
+    return j;
+}

@@ -13,6 +13,7 @@
 #include "imgui/imgui_internal.h"
 #include "nlohmann/json.hpp"
 
+#include "Hacks/ESP.h"
 #include "Hacks/Misc.h"
 
 #ifdef _WIN32
@@ -173,13 +174,7 @@ void Config::save() noexcept
 {
     json j;
 
-    j["Allies"] = allies;
-    j["Enemies"] = enemies;
-    j["Weapons"] = weapons;
-    j["Projectiles"] = projectiles;
-    j["Loot Crates"] = lootCrates;
-    j["Other Entities"] = otherEntities;
-
+    j["ESP"] = ESP::toJSON();
     j["Misc"] = Misc::toJSON();
 
     removeEmptyObjects(j);
