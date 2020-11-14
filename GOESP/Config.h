@@ -16,7 +16,7 @@ class Config {
 public:
     explicit Config(const char* folderName) noexcept;
     [[deprecated]] void load() noexcept;
-    void save() noexcept;
+    [[deprecated]] void save() noexcept;
 
     struct Font {
         ImFont* tiny;
