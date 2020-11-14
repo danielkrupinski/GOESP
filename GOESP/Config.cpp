@@ -88,56 +88,6 @@ Config::Config(const char* folderName) noexcept
     std::sort(std::next(systemFonts.begin()), systemFonts.end());
 }
 
-static void from_json(const json& j, Font& f)
-{
-    read<value_t::string>(j, "Name", f.name);
-
-    if (const auto it = std::find_if(config->getSystemFonts().begin(), config->getSystemFonts().end(), [&f](const auto& e) { return e == f.name; }); it != config->getSystemFonts().end()) {
-        f.index = std::distance(config->getSystemFonts().begin(), it);
-        config->scheduleFontLoad(f.index);
-    } else {
-        f.index = 0;
-    }
-}
-
-static void from_json(const json& j, Shared& s)
-{
-    read(j, "Enabled", s.enabled);
-    read<value_t::object>(j, "Font", s.font);
-    read<value_t::object>(j, "Snapline", s.snapline);
-    read<value_t::object>(j, "Box", s.box);
-    read<value_t::object>(j, "Name", s.name);
-    read_number(j, "Text Cull Distance", s.textCullDistance);
-}
-
-
-static void from_json(const json& j, Projectile& p)
-{
-    from_json(j, static_cast<Shared&>(p));
-
-    read<value_t::object>(j, "Trails", p.trails);
-}
-
-static void from_json(const json& j, Player& p)
-{
-    from_json(j, static_cast<Shared&>(p));
-
-    read<value_t::object>(j, "Weapon", p.weapon);
-    read<value_t::object>(j, "Flash Duration", p.flashDuration);
-    read(j, "Audible Only", p.audibleOnly);
-    read(j, "Spotted Only", p.spottedOnly);
-    read<value_t::object>(j, "Skeleton", p.skeleton);
-    read<value_t::object>(j, "Head Box", p.headBox);
-    read(j, "Health Bar", p.healthBar);
-}
-
-static void from_json(const json& j, Weapon& w)
-{
-    from_json(j, static_cast<Shared&>(w));
-
-    read<value_t::object>(j, "Ammo", w.ammo);
-}
-
 void Config::load() noexcept
 {
     json j;
@@ -147,13 +97,7 @@ void Config::load() noexcept
     else
         return;
 
-    read_map(j, "Allies", allies);
-    read_map(j, "Enemies", enemies);
-    read_map(j, "Weapons", weapons);
-    read_map(j, "Projectiles", projectiles);
-    read_map(j, "Loot Crates", lootCrates);
-    read_map(j, "Other Entities", otherEntities);
-
+    ESP::fromJSON(j["ESP"]);
     Misc::fromJSON(j["Misc"]);
 }
 
