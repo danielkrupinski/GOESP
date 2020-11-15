@@ -1246,6 +1246,7 @@ bool ESP::loadScheduledFonts() noexcept
             continue;
 
         ImFontConfig cfg;
+        cfg.RasterizerMultiply = 1.7f;
         FontData newFont;
 
         if (fontName == "Default") {
