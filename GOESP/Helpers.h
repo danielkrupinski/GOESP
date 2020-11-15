@@ -2,6 +2,7 @@
 
 #include <array>
 #include <numbers>
+#include <string>
 #include <vector>
 
 #include "imgui/imgui.h"
@@ -42,4 +43,5 @@ namespace Helpers
     }
 
     bool decodeVFONT(std::vector<char>& buffer) noexcept;
+    std::vector<char> loadBinaryFile(const std::string& path) noexcept;
 }

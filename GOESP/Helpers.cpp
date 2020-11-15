@@ -1,4 +1,5 @@
 #include <cmath>
+#include <fstream>
 #include <numbers>
 #include <tuple>
 
@@ -96,4 +97,17 @@ bool Helpers::decodeVFONT(std::vector<char>& buffer) noexcept
 
     buffer.resize(saltIndex);
     return true;
+}
+
+std::vector<char> Helpers::loadBinaryFile(const std::string& path) noexcept
+{
+    std::vector<char> result;
+    std::ifstream in{ path, std::ios::binary };
+    if (!in)
+        return result;
+    in.seekg(0, in.end);
+    result.resize(static_cast<std::size_t>(in.tellg()));
+    in.seekg(0, in.beg);
+    in.read(result.data(), result.size());
+    return result;
 }
