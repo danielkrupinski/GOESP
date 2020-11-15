@@ -4,7 +4,6 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "../imgui/imgui_internal.h"
 
-#include "../Config.h"
 #include "../fnv.h"
 #include "../GameData.h"
 #include "../GUI.h"

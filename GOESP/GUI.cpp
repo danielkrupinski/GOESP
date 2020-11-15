@@ -10,7 +10,6 @@
 #include "imgui/imgui.h"
 #include "nlohmann/json.hpp"
 
-#include "Config.h"
 #include "GUI.h"
 #include "Hacks/ESP.h"
 #include "Hacks/Misc.h"

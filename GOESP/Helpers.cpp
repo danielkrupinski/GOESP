@@ -4,7 +4,6 @@
 
 #include "imgui/imgui.h"
 
-#include "Config.h"
 #include "ConfigStructs.h"
 #include "GameData.h"
 #include "Helpers.h"

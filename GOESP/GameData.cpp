@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <list>
 #include <mutex>
 
@@ -19,7 +20,6 @@
 #include "Resources/avatar_ct.h"
 #include "Resources/avatar_tt.h"
 
-#include "Config.h"
 #include "fnv.h"
 #include "GameData.h"
 #include "Interfaces.h"

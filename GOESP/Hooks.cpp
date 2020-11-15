@@ -1,6 +1,5 @@
 #include "imgui/imgui.h"
 
-#include "Config.h"
 #include "EventListener.h"
 #include "GameData.h"
 #include "GUI.h"
