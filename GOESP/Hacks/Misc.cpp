@@ -245,6 +245,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
             windowFlags |= ImGuiWindowFlags_NoTitleBar;
 
         ImGui::Begin("Purchases", nullptr, windowFlags);
+        ImGui::PushFont(gui->getUnicodeFont());
 
         if (miscConfig.purchaseList.mode == PurchaseList::Details) {
             GameData::Lock lock;
@@ -277,6 +278,8 @@ void Misc::purchaseList(GameEvent* event) noexcept
                 ImGui::TextWrapped("Total: $%d", totalCost);
             }
         }
+
+        ImGui::PopFont();
         ImGui::End();
     }
 }
