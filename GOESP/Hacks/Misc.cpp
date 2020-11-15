@@ -18,6 +18,7 @@
 #include "../SDK/GameEvent.h"
 #include "../SDK/GlobalVars.h"
 #include "../SDK/ItemSchema.h"
+#include "../SDK/Localize.h"
 #include "../SDK/LocalPlayer.h"
 #include "../SDK/WeaponInfo.h"
 #include "../SDK/WeaponSystem.h"
@@ -188,20 +189,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
                     purchase.totalCost += weaponInfo->price;
                     totalCost += weaponInfo->price;
 
-                    std::string weapon = weaponName;
-
-                    if (weapon.starts_with("weapon_"))
-                        weapon.erase(0, 7);
-                    else if (weapon.starts_with("item_"))
-                        weapon.erase(0, 5);
-
-                    if (weapon.starts_with("smoke"))
-                        weapon.erase(5);
-                    else if (weapon.starts_with("m4a1_s"))
-                        weapon.erase(6);
-                    else if (weapon.starts_with("usp_s"))
-                        weapon.erase(5);
-
+                    const std::string weapon = interfaces->localize->findAsUTF8(definition->getItemBaseName());
                     ++purchase.items[weapon];
                     ++purchaseTotal[weapon];
                 }
