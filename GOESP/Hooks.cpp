@@ -128,7 +128,7 @@ static void swapWindow(SDL_Window* window) noexcept
 {
     static const auto _ = ImGui_ImplSDL2_InitForOpenGL(window, nullptr);
 
-    if (config->loadScheduledFonts()) {
+    if (ESP::loadScheduledFonts()) {
         ImGui_ImplOpenGL3_DestroyDeviceObjects();
     }
 
