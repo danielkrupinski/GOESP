@@ -54,6 +54,7 @@ GUI::GUI() noexcept
     unicodeFont = addFontFromVFONT("csgo/panorama/fonts/notosans-regular.vfont", unicodeFontSize, Helpers::getFontGlyphRanges(), false);
     addFontFromVFONT("csgo/panorama/fonts/notosansthai-regular.vfont", unicodeFontSize, io.Fonts->GetGlyphRangesThai(), true);
     addFontFromVFONT("csgo/panorama/fonts/notosanskr-regular.vfont", unicodeFontSize, io.Fonts->GetGlyphRangesKorean(), true);
+    addFontFromVFONT("csgo/panorama/fonts/notosanssc-regular.vfont", unicodeFontSize, io.Fonts->GetGlyphRangesChineseSimplifiedCommon(), true);
 
 #ifdef _WIN32
     if (PWSTR pathToDocuments; SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &pathToDocuments))) {
