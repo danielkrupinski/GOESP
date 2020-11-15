@@ -1319,7 +1319,7 @@ static int CALLBACK fontCallback(const LOGFONTW* lpelfe, const TEXTMETRICW*, DWO
 
 const std::vector<std::string>& ESP::getSystemFonts() noexcept
 {
-    if (systemFonts.size() <= 1)
+    if (systemFonts.size() > 1)
         return systemFonts;
 
 #ifdef _WIN32
