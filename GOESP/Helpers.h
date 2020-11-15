@@ -2,6 +2,7 @@
 
 #include <array>
 #include <numbers>
+#include <vector>
 
 #include "imgui/imgui.h"
 
@@ -40,4 +41,5 @@ namespace Helpers
         return out;
     }
 
+    bool decodeVFONT(std::vector<char>& buffer) noexcept;
 }
