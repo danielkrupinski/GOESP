@@ -1,4 +1,4 @@
-#include <array>
+﻿#include <array>
 #include <fstream>
 #include <vector>
 
@@ -15,6 +15,25 @@
 #include "Hacks/Misc.h"
 #include "Hooks.h"
 #include "ImGuiCustom.h"
+#include "Helpers.h"
+
+static ImFont* addFontFromVFONT(const std::string& path, float size, const ImWchar* glyphRanges, bool merge) noexcept
+{
+    auto file = Helpers::loadBinaryFile(path);
+    if (!Helpers::decodeVFONT(file))
+        return nullptr;
+    
+    ImFontConfig cfg;
+    cfg.FontData = file.data();
+    cfg.FontDataSize = file.size();
+    cfg.FontDataOwnedByAtlas = false;
+    cfg.MergeMode = merge;
+    cfg.GlyphRanges = glyphRanges;
+    cfg.SizePixels = size;
+    cfg.RasterizerMultiply = 1.2f;
+
+    return ImGui::GetIO().Fonts->AddFont(&cfg);
+}
 
 GUI::GUI() noexcept
 {
@@ -30,6 +49,11 @@ GUI::GUI() noexcept
     io.LogFilename = nullptr;
     io.Fonts->Flags |= ImFontAtlasFlags_NoPowerOfTwoHeight;
     io.Fonts->AddFontDefault();
+
+    constexpr auto unicodeFontSize = 16.0f;
+    unicodeFont = addFontFromVFONT("csgo/panorama/fonts/notosans-regular.vfont", unicodeFontSize, Helpers::getFontGlyphRanges(), false);
+    addFontFromVFONT("csgo/panorama/fonts/notosansthai-regular.vfont", unicodeFontSize, io.Fonts->GetGlyphRangesThai(), true);
+    addFontFromVFONT("csgo/panorama/fonts/notosanskr-regular.vfont", unicodeFontSize, io.Fonts->GetGlyphRangesKorean(), true);
 
 #ifdef _WIN32
     if (PWSTR pathToDocuments; SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &pathToDocuments))) {
@@ -96,6 +120,11 @@ void GUI::render() noexcept
     }
     ImGui::EndTabBar();
     ImGui::End();
+}
+
+ImFont* GUI::getUnicodeFont() const noexcept
+{
+    return unicodeFont;
 }
 
 void GUI::loadConfig() const noexcept
