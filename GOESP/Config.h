@@ -14,7 +14,7 @@ struct ImFont;
 
 class Config {
 public:
-    explicit Config(const char* folderName) noexcept;
+    Config() noexcept;
 
     struct Font {
         ImFont* tiny;

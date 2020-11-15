@@ -49,7 +49,7 @@ int CALLBACK fontCallback(const LOGFONTW* lpelfe, const TEXTMETRICW*, DWORD, LPA
 }
 #endif
 
-Config::Config(const char* folderName) noexcept
+Config::Config() noexcept
 {
 #ifdef _WIN32
     LOGFONTW logfont;
