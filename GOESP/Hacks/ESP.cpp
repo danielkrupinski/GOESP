@@ -1,3 +1,8 @@
+#ifdef _WIN32
+#include <ShlObj.h>
+#include <Windows.h>
+#endif
+
 #define NOMINMAX
 #include "ESP.h"
 
@@ -17,6 +22,12 @@
 #include <limits>
 #include <numbers>
 #include <tuple>
+
+struct FontData {
+    ImFont* tiny;
+    ImFont* medium;
+    ImFont* big;
+};
 
 static bool worldToScreen(const Vector& in, ImVec2& out) noexcept
 {
@@ -47,8 +58,8 @@ public:
 
     BoundingBox(const Vector& mins, const Vector& maxs, const std::array<float, 3>& scale, const Matrix3x4* matrix = nullptr) noexcept
     {
-        min.y = min.x = std::numeric_limits<float>::max();
-        max.y = max.x = -std::numeric_limits<float>::max();
+        min.y = min.x = (std::numeric_limits<float>::max)();
+        max.y = max.x = -(std::numeric_limits<float>::max)();
 
         const auto scaledMins = mins + (maxs - mins) * 2 * (0.25f - scale);
         const auto scaledMaxs = maxs - (maxs - mins) * 2 * (0.25f - scale);
@@ -63,10 +74,10 @@ public:
                 return;
             }
 
-            min.x = std::min(min.x, vertices[i].x);
-            min.y = std::min(min.y, vertices[i].y);
-            max.x = std::max(max.x, vertices[i].x);
-            max.y = std::max(max.y, vertices[i].y);
+            min.x = (std::min)(min.x, vertices[i].x);
+            min.y = (std::min)(min.y, vertices[i].y);
+            max.x = (std::max)(max.x, vertices[i].x);
+            max.y = (std::max)(max.y, vertices[i].y);
         }
         valid = true;
     }
@@ -351,13 +362,20 @@ static void drawSnapline(const Snapline& config, const ImVec2& min, const ImVec2
     drawList->AddLine(p1, p2, Helpers::calculateColor(config), config.thickness);
 }
 
+static std::vector<std::size_t> scheduledFonts{ 0 };
+static std::vector<std::string> systemFonts{ "Default" };
+static std::unordered_map<std::string, FontData> fonts;
+#ifndef _WIN32
+static std::vector<std::string> systemFontPaths{ "" };
+#endif
+
 struct FontPush {
     FontPush(const std::string& name, float distance)
     {
-        if (const auto it = config->getFonts().find(name); it != config->getFonts().end()) {
+        if (const auto it = fonts.find(name); it != fonts.end()) {
             distance *= GameData::local().fov / 90.0f;
 
-            ImGui::PushFont([](const Config::Font& font, float dist) {
+            ImGui::PushFont([](const FontData& font, float dist) {
                 if (dist <= 400.0f)
                     return font.big;
                 if (dist <= 1000.0f)
@@ -420,7 +438,7 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
     }
 
     if (config.flashDuration.enabled && playerData.flashDuration > 0.0f) {
-        const auto radius = std::max(5.0f - playerData.distanceToLocal / 600.0f, 1.0f);
+        const auto radius = (std::max)(5.0f - playerData.distanceToLocal / 600.0f, 1.0f);
         ImVec2 flashDurationPos{ (bbox.min.x + bbox.max.x) / 2, bbox.min.y + offsetMins.y - radius * 1.5f };
 
         const auto color = Helpers::calculateColor(config.flashDuration);
@@ -880,13 +898,14 @@ void ESP::drawGUI() noexcept
         ImGui::Checkbox("Enabled", &sharedConfig.enabled);
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 260.0f);
         ImGui::SetNextItemWidth(220.0f);
-        if (ImGui::BeginCombo("Font", config->getSystemFonts()[sharedConfig.font.index].c_str())) {
-            for (size_t i = 0; i < config->getSystemFonts().size(); i++) {
-                bool isSelected = config->getSystemFonts()[i] == sharedConfig.font.name;
-                if (ImGui::Selectable(config->getSystemFonts()[i].c_str(), isSelected, 0, { 250.0f, 0.0f })) {
+        const auto& fonts = getSystemFonts();
+        if (ImGui::BeginCombo("Font", fonts[sharedConfig.font.index].c_str())) {
+            for (size_t i = 0; i < fonts.size(); i++) {
+                bool isSelected = fonts[i] == sharedConfig.font.name;
+                if (ImGui::Selectable(fonts[i].c_str(), isSelected, 0, { 250.0f, 0.0f })) {
                     sharedConfig.font.index = i;
-                    sharedConfig.font.name = config->getSystemFonts()[i];
-                    config->scheduleFontLoad(i);
+                    sharedConfig.font.name = fonts[i];
+                    ESP::scheduleFontLoad(i);
                 }
                 if (isSelected)
                     ImGui::SetItemDefaultFocus();
@@ -1086,9 +1105,9 @@ static void from_json(const json& j, Font& f)
 {
     read<value_t::string>(j, "Name", f.name);
 
-    if (const auto it = std::find_if(config->getSystemFonts().begin(), config->getSystemFonts().end(), [&f](const auto& e) { return e == f.name; }); it != config->getSystemFonts().end()) {
-        f.index = std::distance(config->getSystemFonts().begin(), it);
-        config->scheduleFontLoad(f.index);
+    if (const auto it = std::find_if(systemFonts.cbegin(), systemFonts.cend(), [&f](const auto& e) { return e == f.name; }); it != systemFonts.cend()) {
+        f.index = std::distance(systemFonts.cbegin(), it);
+        ESP::scheduleFontLoad(f.index);
     } else {
         f.index = 0;
     }
@@ -1171,4 +1190,163 @@ void ESP::fromJSON(const json& j) noexcept
     read_map(j, "Projectiles", espConfig.projectiles);
     read_map(j, "Loot Crates", espConfig.lootCrates);
     read_map(j, "Other Entities", espConfig.otherEntities);
+}
+
+void ESP::scheduleFontLoad(std::size_t index) noexcept
+{
+    scheduledFonts.push_back(index);
+}
+
+static auto getFontData(const std::string& fontName) noexcept
+{
+#ifdef _WIN32
+    HFONT font = CreateFontA(0, 0, 0, 0,
+        FW_NORMAL, FALSE, FALSE, FALSE,
+        ANSI_CHARSET, OUT_DEFAULT_PRECIS,
+        CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+        DEFAULT_PITCH, fontName.c_str());
+
+    std::unique_ptr<std::byte[]> data;
+    DWORD dataSize = GDI_ERROR;
+
+    if (font) {
+        HDC hdc = CreateCompatibleDC(nullptr);
+
+        if (hdc) {
+            SelectObject(hdc, font);
+            dataSize = GetFontData(hdc, 0, 0, nullptr, 0);
+
+            if (dataSize != GDI_ERROR) {
+                data = std::make_unique<std::byte[]>(dataSize);
+                dataSize = GetFontData(hdc, 0, 0, data.get(), dataSize);
+
+                if (dataSize == GDI_ERROR)
+                    data.reset();
+            }
+            DeleteDC(hdc);
+        }
+        DeleteObject(font);
+    }
+    return std::make_pair(std::move(data), dataSize);
+#else
+    std::size_t dataSize = (std::size_t)-1;
+    auto data = (std::byte*)ImFileLoadToMemory(fontName.c_str(), "rb", &dataSize);
+    return std::make_pair(std::unique_ptr<std::byte[]>{ data }, dataSize);
+#endif
+
+}
+
+bool ESP::loadScheduledFonts() noexcept
+{
+    bool result = false;
+
+    for (const auto fontIndex : scheduledFonts) {
+        const auto& fontName = systemFonts[fontIndex];
+
+        if (fonts.contains(fontName))
+            continue;
+
+        ImFontConfig cfg;
+        FontData newFont;
+
+        if (fontName == "Default") {
+            cfg.SizePixels = 13.0f;
+            newFont.big = ImGui::GetIO().Fonts->AddFontDefault(&cfg);
+
+            cfg.SizePixels = 10.0f;
+            newFont.medium = ImGui::GetIO().Fonts->AddFontDefault(&cfg);
+
+            cfg.SizePixels = 8.0f;
+            newFont.tiny = ImGui::GetIO().Fonts->AddFontDefault(&cfg);
+
+            fonts.emplace(fontName, newFont);
+        } else {
+#ifdef _WIN32
+            const auto& fontPath = fontName;
+#else
+            const auto& fontPath = systemFontPaths[fontIndex];
+#endif
+            const auto [fontData, fontDataSize] = getFontData(fontPath);
+            if (fontDataSize == -1)
+                continue;
+
+            cfg.FontDataOwnedByAtlas = false;
+            const auto ranges = Helpers::getFontGlyphRanges();
+
+            newFont.tiny = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, 8.0f, &cfg, ranges);
+            newFont.medium = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, 10.0f, &cfg, ranges);
+            newFont.big = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, 13.0f, &cfg, ranges);
+            fonts.emplace(fontName, newFont);
+        }
+        result = true;
+    }
+    scheduledFonts.clear();
+    return result;
+}
+
+#ifdef _WIN32
+static int CALLBACK fontCallback(const LOGFONTW* lpelfe, const TEXTMETRICW*, DWORD, LPARAM lParam)
+{
+    const wchar_t* const fontName = reinterpret_cast<const ENUMLOGFONTEXW*>(lpelfe)->elfFullName;
+
+    if (fontName[0] == L'@')
+        return TRUE;
+
+    if (HFONT font = CreateFontW(0, 0, 0, 0,
+        FW_NORMAL, FALSE, FALSE, FALSE,
+        ANSI_CHARSET, OUT_DEFAULT_PRECIS,
+        CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+        DEFAULT_PITCH, fontName)) {
+
+        DWORD fontData = GDI_ERROR;
+
+        if (HDC hdc = CreateCompatibleDC(nullptr)) {
+            SelectObject(hdc, font);
+            // Do not use TTC fonts as we only support TTF fonts
+            fontData = GetFontData(hdc, 'fctt', 0, NULL, 0);
+            DeleteDC(hdc);
+        }
+        DeleteObject(font);
+
+        if (fontData == GDI_ERROR) {
+            if (char buff[1024]; WideCharToMultiByte(CP_UTF8, 0, fontName, -1, buff, sizeof(buff), nullptr, nullptr))
+                reinterpret_cast<std::vector<std::string>*>(lParam)->emplace_back(buff);
+        }
+    }
+    return TRUE;
+}
+#endif
+
+const std::vector<std::string>& ESP::getSystemFonts() noexcept
+{
+    if (systemFonts.size() <= 1)
+        return systemFonts;
+
+#ifdef _WIN32
+    LOGFONTW logfont;
+    logfont.lfCharSet = ANSI_CHARSET;
+    logfont.lfPitchAndFamily = DEFAULT_PITCH;
+    logfont.lfFaceName[0] = L'\0';
+
+    EnumFontFamiliesExW(GetDC(nullptr), &logfont, fontCallback, (LPARAM)&systemFonts, 0);
+#elif __linux__
+    if (auto pipe = popen("fc-list :lang=en -f \"%{family[0]} %{style[0]} %{file}\\n\" | grep .ttf", "r")) {
+        char* line = nullptr;
+        std::size_t n = 0;
+        while (getline(&line, &n, pipe) != -1) {
+            auto path = strstr(line, "/");
+            if (path <= line)
+                continue;
+
+            path[-1] = path[strlen(path) - 1] = '\0';
+            systemFonts.emplace_back(line);
+            systemFontPaths.emplace_back(path);
+        }
+        if (line)
+            free(line);
+        pclose(pipe);
+    }
+#endif
+    std::sort(systemFonts.begin() + 1, systemFonts.end());
+    return systemFonts;
 }

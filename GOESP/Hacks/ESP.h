@@ -8,4 +8,7 @@ namespace ESP
     void drawGUI() noexcept;
     json toJSON() noexcept;
     void fromJSON(const json& j) noexcept;
+    void scheduleFontLoad(std::size_t index) noexcept;
+    bool loadScheduledFonts() noexcept;
+    const std::vector<std::string>& getSystemFonts() noexcept;
 }

@@ -55,7 +55,7 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
 {
     [[maybe_unused]] static const auto _ = ImGui_ImplDX9_Init(device);
 
-    if (config->loadScheduledFonts())
+    if (ESP::loadScheduledFonts())
         ImGui_ImplDX9_DestroyFontsTexture();
 
     ImGui_ImplDX9_NewFrame();
