@@ -118,9 +118,6 @@
     <ClInclude Include="SDK\InputSystem.h">
       <Filter>SDK</Filter>
     </ClInclude>
-    <ClInclude Include="Config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ImGuiCustom.h">
       <Filter>Header Files</Filter>
     </ClInclude>
