@@ -52,17 +52,6 @@ int CALLBACK fontCallback(const LOGFONTW* lpelfe, const TEXTMETRICW*, DWORD, LPA
 Config::Config(const char* folderName) noexcept
 {
 #ifdef _WIN32
-    if (PWSTR pathToDocuments; SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &pathToDocuments))) {
-        path = pathToDocuments;
-        CoTaskMemFree(pathToDocuments);
-    }
-#else
-    if (const char* homeDir = getenv("HOME"))
-        path = homeDir;
-#endif
-    path /= folderName;
-    
-#ifdef _WIN32
     LOGFONTW logfont;
     logfont.lfCharSet = ANSI_CHARSET;
     logfont.lfPitchAndFamily = DEFAULT_PITCH;

@@ -33,7 +33,6 @@ private:
 #ifndef _WIN32
     std::vector<std::string> systemFontPaths{ "" };
 #endif
-    std::filesystem::path path;
 };
 
 inline std::unique_ptr<Config> config;
