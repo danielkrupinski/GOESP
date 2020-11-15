@@ -90,19 +90,6 @@ Config::Config(const char* folderName) noexcept
     std::sort(std::next(systemFonts.begin()), systemFonts.end());
 }
 
-void removeEmptyObjects(json& j) noexcept
-{
-    for (auto it = j.begin(); it != j.end();) {
-        auto& val = it.value();
-        if (val.is_object())
-            removeEmptyObjects(val);
-        if (val.empty())
-            it = j.erase(it);
-        else
-            ++it;
-    }
-}
-
 void Config::scheduleFontLoad(std::size_t index) noexcept
 {
     scheduledFonts.push_back(index);
