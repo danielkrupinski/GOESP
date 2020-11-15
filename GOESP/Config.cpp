@@ -90,19 +90,6 @@ Config::Config(const char* folderName) noexcept
     std::sort(std::next(systemFonts.begin()), systemFonts.end());
 }
 
-void Config::load() noexcept
-{
-    json j;
-
-    if (std::ifstream in{ path / "config.txt" }; in.good())
-        in >> j;
-    else
-        return;
-
-    ESP::fromJSON(j["ESP"]);
-    Misc::fromJSON(j["Misc"]);
-}
-
 void removeEmptyObjects(json& j) noexcept
 {
     for (auto it = j.begin(); it != j.end();) {
