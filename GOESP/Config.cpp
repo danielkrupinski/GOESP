@@ -103,21 +103,6 @@ void removeEmptyObjects(json& j) noexcept
     }
 }
 
-void Config::save() noexcept
-{
-    json j;
-
-    j["ESP"] = ESP::toJSON();
-    j["Misc"] = Misc::toJSON();
-
-    removeEmptyObjects(j);
-
-    std::error_code ec; std::filesystem::create_directory(path, ec);
-
-    if (std::ofstream out{ path / "config.txt" }; out.good())
-        out << std::setw(2) << j;
-}
-
 void Config::scheduleFontLoad(std::size_t index) noexcept
 {
     scheduledFonts.push_back(index);
