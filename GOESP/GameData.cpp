@@ -86,7 +86,7 @@ void GameData::update() noexcept
             if (entity == localPlayer.get() || entity == observerTarget)
                 continue;
 
-            if (const auto it = std::find_if(playerData.begin(), playerData.end(), [userId = entity->getUserId()](const auto& playerData) { return playerData.userId == userId; }); it != playerData.end()) {
+            if (const auto it = std::find_if(playerData.begin(), playerData.end(), [handle = entity->handle()](const auto& playerData) { return playerData.handle == handle; }); it != playerData.end()) {
                 it->update(entity);
             } else {
                 playerData.emplace_back(entity);
