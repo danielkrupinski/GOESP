@@ -110,14 +110,14 @@ struct PlayerData : BaseData {
     ImTextureID getAvatarTexture() const noexcept;
     void clearAvatarTexture() noexcept { avatarTexture = {}; }
 
+    bool dormant;
+    bool alive;
+    bool inViewFrustum;
     bool enemy = false;
     bool visible = false;
     bool audible;
     bool spotted;
     bool immune;
-    bool dormant;
-    bool alive;
-    bool inViewFrustum;
     float fadingEndTime = 0.0f;
     float flashDuration;
     int health;
