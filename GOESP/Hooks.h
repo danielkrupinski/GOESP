@@ -14,7 +14,7 @@ union SDL_Event;
 class Hooks {
 public:
 #ifdef _WIN32
-    Hooks(HMODULE module) noexcept;
+    Hooks(HMODULE moduleHandle) noexcept;
 
     std::add_pointer_t<HRESULT D3DAPI(IDirect3DDevice9*, D3DPRESENT_PARAMETERS*)> reset;
     std::add_pointer_t<HRESULT D3DAPI(IDirect3DDevice9*, const RECT*, const RECT*, HWND, const RGNDATA*)> present;
@@ -44,7 +44,7 @@ public:
     constexpr auto getState() noexcept { return state; }
 private:
 #ifdef _WIN32
-    HMODULE module;
+    HMODULE moduleHandle;
     HWND window;
 #endif
     State state = State::NotInstalled;

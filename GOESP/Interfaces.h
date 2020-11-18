@@ -14,8 +14,8 @@
 
 class Interfaces {
 public:
-#define GAME_INTERFACE(type, name, module, version) \
-class type* name = reinterpret_cast<type*>(find(module, version));
+#define GAME_INTERFACE(type, name, moduleName, version) \
+class type* name = reinterpret_cast<type*>(find(moduleName, version));
 
     GAME_INTERFACE(Client, client, CLIENT_DLL, "VClient018")
     GAME_INTERFACE(ClientTools, clientTools, CLIENT_DLL, "VCLIENTTOOLS001")

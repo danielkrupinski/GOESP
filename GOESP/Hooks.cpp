@@ -96,9 +96,9 @@ static BOOL WINAPI setCursorPos(int X, int Y) noexcept
     return hooks->setCursorPos(X, Y);
 }
 
-Hooks::Hooks(HMODULE module) noexcept
+Hooks::Hooks(HMODULE moduleHandle) noexcept
 {
-    this->module = module;
+    this->moduleHandle = moduleHandle;
 
     _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
     _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
@@ -229,7 +229,7 @@ void Hooks::install() noexcept
 
 #ifdef _WIN32
 
-extern "C" BOOL WINAPI _CRT_INIT(HMODULE module, DWORD reason, LPVOID reserved);
+extern "C" BOOL WINAPI _CRT_INIT(HMODULE moduleHandle, DWORD reason, LPVOID reserved);
 
 static DWORD WINAPI waitOnUnload(HMODULE hModule) noexcept
 {
@@ -258,7 +258,7 @@ void Hooks::uninstall() noexcept
 
     SetWindowLongPtrW(window, GWLP_WNDPROC, LONG_PTR(wndProc));
 
-    if (HANDLE thread = CreateThread(nullptr, 0, LPTHREAD_START_ROUTINE(waitOnUnload), module, 0, nullptr))
+    if (HANDLE thread = CreateThread(nullptr, 0, LPTHREAD_START_ROUTINE(waitOnUnload), moduleHandle, 0, nullptr))
         CloseHandle(thread);
 
 #elif __linux__
