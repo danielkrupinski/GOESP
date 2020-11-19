@@ -6,11 +6,12 @@ jobs:
   build:
 
     runs-on: windows-latest
-    
+
+    env:
+      MSBUILD_PATH: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\
+
     steps:
     - uses: actions/checkout@v2
-    - name: Setup MSBuild.exe
-      uses: warrenbuckley/Setup-MSBuild@v1
-    - name: MSBuild GOESP
-      working-directory: GOESP
-      run: msbuild GOESP.vcxproj /p:Configuration=Release /p:Platform=Win32 /p:VisualStudioVersion=16.0 /v:m
+    - name: Build
+      shell: cmd
+      run: "%MSBUILD_PATH%\MSBuild.exe" GOESP/GOESP.vcxproj /p:Platform=Win32 /p:Configuration=Release
