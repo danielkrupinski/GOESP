@@ -76,7 +76,8 @@ ImWchar* Helpers::getFontGlyphRangesChinese() noexcept
     if (ranges.empty()) {
         ImFontGlyphRangesBuilder builder;
         builder.AddRanges(ImGui::GetIO().Fonts->GetGlyphRangesChineseSimplifiedCommon());
-        builder.AddChar(0x739B); builder.AddChar(0x5C14); builder.AddChar(0x6D1B);
+        builder.AddChar(0x739B); builder.AddChar(0x5C14); builder.AddChar(0x6D1B); builder.AddChar(0x97E6);
+        builder.AddChar(0x76d4); builder.AddChar(0x64BC); builder.AddChar(0x9975);
         builder.BuildRanges(&ranges);
     }
     return ranges.Data;
