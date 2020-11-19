@@ -14,4 +14,4 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build
       shell: cmd
-      run: "%MSBUILD_PATH%\\MSBuild.exe" GOESP/GOESP.vcxproj /p:Platform=Win32 /p:Configuration=Release
+      run: '"%MSBUILD_PATH%\MSBuild.exe" GOESP/GOESP.vcxproj /p:Platform=Win32 /p:Configuration=Release'
