@@ -70,6 +70,18 @@ ImWchar* Helpers::getFontGlyphRanges() noexcept
     return ranges.Data;
 }
 
+ImWchar* Helpers::getFontGlyphRangesChinese() noexcept
+{
+    static ImVector<ImWchar> ranges;
+    if (ranges.empty()) {
+        ImFontGlyphRangesBuilder builder;
+        builder.AddRanges(ImGui::GetIO().Fonts->GetGlyphRangesChineseSimplifiedCommon());
+        builder.AddChar(0x739B); builder.AddChar(0x5C14); builder.AddChar(0x6D1B);
+        builder.BuildRanges(&ranges);
+    }
+    return ranges.Data;
+}
+
 bool Helpers::decodeVFONT(std::vector<char>& buffer) noexcept
 {
     constexpr std::string_view tag = "VFONT1";
