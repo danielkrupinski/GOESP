@@ -360,8 +360,6 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
 
 void PlayerData::update(Entity* entity) noexcept
 {
-    static_cast<BaseData&>(*this) = { entity };
-
     if (memory->globalVars->framecount % 20 == 0)
         entity->getPlayerName(name);
 
@@ -373,6 +371,7 @@ void PlayerData::update(Entity* entity) noexcept
     }
 
     fadingEndTime = 0.0f;
+    static_cast<BaseData&>(*this) = { entity };
     origin = entity->getAbsOrigin();
     inViewFrustum = !interfaces->engine->cullBox(obbMins + origin, obbMaxs + origin);
     alive = entity->isAlive();
