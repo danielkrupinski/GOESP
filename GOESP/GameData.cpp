@@ -444,8 +444,6 @@ void PlayerData::update(Entity* entity) noexcept
 
 ImTextureID PlayerData::getAvatarTexture() const noexcept
 {
-    assert(hasAvatar);
-
     if (!avatarTexture.get())
         avatarTexture.init(32, 32, avatarRGBA);
 
