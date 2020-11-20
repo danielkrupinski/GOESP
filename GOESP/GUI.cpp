@@ -150,7 +150,10 @@ void GUI::handleToggle() noexcept
         if (!gui->open)
             interfaces->inputSystem->resetInputState();
 
-        toggleAnimationEnd = memory->globalVars->realtime + animationLength();
+        if (toggleAnimationEnd > memory->globalVars->realtime)
+            toggleAnimationEnd = memory->globalVars->realtime + (memory->globalVars->realtime - toggleAnimationEnd + animationLength());
+        else
+            toggleAnimationEnd = memory->globalVars->realtime + animationLength();
     }
     ImGui::GetIO().MouseDrawCursor = gui->open;
 }
