@@ -213,7 +213,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
         static const auto mp_buytime = interfaces->cvar->findVar("mp_buytime");
 
-        if ((!interfaces->engine->isInGame() || (freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + (!miscConfig.purchaseList.onlyDuringFreezeTime ? mp_buytime->getFloat() : 0.0f)) || playerPurchases.empty() || purchaseTotal.empty()) && !gui->open)
+        if ((!interfaces->engine->isInGame() || (freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + (!miscConfig.purchaseList.onlyDuringFreezeTime ? mp_buytime->getFloat() : 0.0f)) || playerPurchases.empty() || purchaseTotal.empty()) && !gui->isOpen())
             return;
         
         if (miscConfig.purchaseList.pos != ImVec2{}) {
@@ -227,7 +227,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
         }
 
         ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
-        if (!gui->open)
+        if (!gui->isOpen())
             windowFlags |= ImGuiWindowFlags_NoInputs;
         if (miscConfig.purchaseList.noTitleBar)
             windowFlags |= ImGuiWindowFlags_NoTitleBar;
@@ -281,7 +281,7 @@ void Misc::drawObserverList() noexcept
 
     const auto& observers = GameData::observers();
 
-    if (std::none_of(observers.begin(), observers.end(), [](const auto& obs) { return obs.targetIsLocalPlayer; }) && !gui->open)
+    if (std::none_of(observers.begin(), observers.end(), [](const auto& obs) { return obs.targetIsLocalPlayer; }) && !gui->isOpen())
         return;
 
     if (miscConfig.observerList.pos != ImVec2{}) {
@@ -295,7 +295,7 @@ void Misc::drawObserverList() noexcept
     }
 
     ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
-    if (!gui->open)
+    if (!gui->isOpen())
         windowFlags |= ImGuiWindowFlags_NoInputs;
     if (miscConfig.observerList.noTitleBar)
         windowFlags |= ImGuiWindowFlags_NoTitleBar;
@@ -337,7 +337,7 @@ void Misc::drawFpsCounter() noexcept
         return;
 
     ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize;
-    if (!gui->open)
+    if (!gui->isOpen())
         windowFlags |= ImGuiWindowFlags_NoInputs;
 
     ImGui::SetNextWindowBgAlpha(0.35f);

@@ -37,7 +37,7 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 
         LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
         ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
-        interfaces->inputSystem->enableInput(!gui->open);
+        interfaces->inputSystem->enableInput(!gui->isOpen());
     }
 
     return CallWindowProcW(hooks->wndProc, window, msg, wParam, lParam);
@@ -80,7 +80,7 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
 
 static BOOL WINAPI setCursorPos(int X, int Y) noexcept
 {
-    if (gui->open) {
+    if (gui->isOpen()) {
         POINT p;
         GetCursorPos(&p);
         X = p.x;
@@ -153,7 +153,7 @@ Hooks::Hooks() noexcept
 
 static void warpMouseInWindow(SDL_Window* window, int x, int y) noexcept
 {
-    if (!gui->open)
+    if (!gui->isOpen())
     	hooks->warpMouseInWindow(window, x, y);
 }
 

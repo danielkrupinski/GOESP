@@ -11,17 +11,16 @@ public:
     void render() noexcept;
     ImFont* getUnicodeFont() const noexcept;
     void handleToggle() noexcept;
-
-    bool open = true;
-
+    bool isOpen() const noexcept { return open; }
 private:
     void loadConfig() const noexcept;
     void saveConfig() const noexcept;
 
     inline constexpr float animationLength() { return 0.5f; }
     float toggleAnimationEnd = 0.0f;
-    std::filesystem::path path;
+    bool open = true;
     ImFont* unicodeFont;
+    std::filesystem::path path;
 };
 
 inline std::unique_ptr<GUI> gui;
