@@ -18,6 +18,8 @@ private:
     void loadConfig() const noexcept;
     void saveConfig() const noexcept;
 
+    inline constexpr float animationLength() { return 0.5f; }
+    float toggleAnimationEnd = 0.0f;
     std::filesystem::path path;
     ImFont* unicodeFont;
 };

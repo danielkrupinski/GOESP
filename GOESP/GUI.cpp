@@ -15,11 +15,13 @@
 #include "GUI.h"
 #include "Hacks/ESP.h"
 #include "Hacks/Misc.h"
+#include "Helpers.h"
 #include "Hooks.h"
 #include "ImGuiCustom.h"
 #include "Interfaces.h"
-#include "Helpers.h"
+#include "Memory.h"
 
+#include "SDK/GlobalVars.h"
 #include "SDK/InputSystem.h"
 
 static ImFont* addFontFromVFONT(const std::string& path, float size, const ImWchar* glyphRanges, bool merge) noexcept
@@ -75,8 +77,10 @@ GUI::GUI() noexcept
 
 void GUI::render() noexcept
 {
-    if (!open)
-        return;
+    if (toggleAnimationEnd == 0.0f) // first time fade in
+        toggleAnimationEnd = memory->globalVars->realtime + animationLength() * 2.0f;
+
+    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, std::clamp(open ? (1.0f - (toggleAnimationEnd - memory->globalVars->realtime) / animationLength()) : (toggleAnimationEnd - memory->globalVars->realtime) / animationLength(), 0.0f, 1.0f));
 
     ImGui::Begin(
         "GOESP for "
@@ -89,10 +93,11 @@ void GUI::render() noexcept
 #else
 #error("Unsupported platform!")
 #endif
-        , nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+        , nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse | (!open && toggleAnimationEnd > memory->globalVars->realtime ? ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoMove : 0));
 
     if (!ImGui::BeginTabBar("##tabbar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_NoTooltip)) {
         ImGui::End();
+        ImGui::PopStyleVar();
         return;
     }
 
@@ -126,6 +131,7 @@ void GUI::render() noexcept
     }
     ImGui::EndTabBar();
     ImGui::End();
+    ImGui::PopStyleVar();
 }
 
 ImFont* GUI::getUnicodeFont() const noexcept
@@ -143,6 +149,8 @@ void GUI::handleToggle() noexcept
         gui->open = !gui->open;
         if (!gui->open)
             interfaces->inputSystem->resetInputState();
+
+        toggleAnimationEnd = memory->globalVars->realtime + animationLength();
     }
     ImGui::GetIO().MouseDrawCursor = gui->open;
 }
