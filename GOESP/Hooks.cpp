@@ -65,13 +65,7 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     Misc::draw(ImGui::GetBackgroundDrawList());
 
     gui->render();
-
-    if (ImGui::IsKeyPressed(VK_INSERT, false)) {
-        gui->open = !gui->open;
-        if (!gui->open)
-            interfaces->inputSystem->resetInputState();
-    }
-    ImGui::GetIO().MouseDrawCursor = gui->open;
+    gui->handleToggle();
 
     ImGui::EndFrame();
     ImGui::Render();
@@ -141,14 +135,8 @@ static void swapWindow(SDL_Window* window) noexcept
         ESP::render();
         Misc::draw(ImGui::GetBackgroundDrawList());
         gui->render();
+        gui->handleToggle();
     }
-
-    if (ImGui::IsKeyPressed(SDL_SCANCODE_INSERT, false)) {
-        gui->open = !gui->open;
-        if (!gui->open)
-            interfaces->inputSystem->resetInputState();
-    }
-    ImGui::GetIO().MouseDrawCursor = gui->open;
 
     ImGui::EndFrame();
     ImGui::Render();

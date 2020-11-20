@@ -10,6 +10,7 @@ public:
     GUI() noexcept;
     void render() noexcept;
     ImFont* getUnicodeFont() const noexcept;
+    void handleToggle() noexcept;
 
     bool open = true;
 

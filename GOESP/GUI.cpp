@@ -5,6 +5,8 @@
 #ifdef _WIN32
 #include <ShlObj.h>
 #include <Windows.h>
+#else
+#include <SDL2/SDL.h>
 #endif
 
 #include "imgui/imgui.h"
@@ -15,7 +17,10 @@
 #include "Hacks/Misc.h"
 #include "Hooks.h"
 #include "ImGuiCustom.h"
+#include "Interfaces.h"
 #include "Helpers.h"
+
+#include "SDK/InputSystem.h"
 
 static ImFont* addFontFromVFONT(const std::string& path, float size, const ImWchar* glyphRanges, bool merge) noexcept
 {
@@ -126,6 +131,20 @@ void GUI::render() noexcept
 ImFont* GUI::getUnicodeFont() const noexcept
 {
     return unicodeFont;
+}
+
+void GUI::handleToggle() noexcept
+{
+#ifdef _WIN32
+    if (ImGui::IsKeyPressed(VK_INSERT, false)) {
+#else
+    if (ImGui::IsKeyPressed(SDL_SCANCODE_INSERT, false)) {
+#endif
+        gui->open = !gui->open;
+        if (!gui->open)
+            interfaces->inputSystem->resetInputState();
+    }
+    ImGui::GetIO().MouseDrawCursor = gui->open;
 }
 
 void GUI::loadConfig() const noexcept
