@@ -28,7 +28,7 @@ struct FontData {
     ImFont* big;
 };
 
-static bool worldToScreen(const Vector& in, ImVec2& out) noexcept
+static bool worldToScreen(const Vector& in, ImVec2& out, bool floor = false) noexcept
 {
     const auto& matrix = GameData::toScreenMatrix();
 
@@ -39,7 +39,8 @@ static bool worldToScreen(const Vector& in, ImVec2& out) noexcept
     out = ImGui::GetIO().DisplaySize / 2.0f;
     out.x *= 1.0f + (matrix._11 * in.x + matrix._12 * in.y + matrix._13 * in.z + matrix._14) / w;
     out.y *= 1.0f - (matrix._21 * in.x + matrix._22 * in.y + matrix._23 * in.z + matrix._24) / w;
-    out = ImFloor(out);
+    if (floor)
+        out = ImFloor(out);
     return true;
 }
 
@@ -68,7 +69,7 @@ public:
                                 i & 2 ? scaledMaxs.y : scaledMins.y,
                                 i & 4 ? scaledMaxs.z : scaledMins.z };
 
-            if (!worldToScreen(matrix ? point.transform(*matrix) : point, vertices[i])) {
+            if (!worldToScreen(matrix ? point.transform(*matrix) : point, vertices[i], true)) {
                 valid = false;
                 return;
             }
