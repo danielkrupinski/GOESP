@@ -81,7 +81,7 @@ ImWchar* Helpers::getFontGlyphRangesChinese() noexcept
         builder.AddChar(0x96FB); builder.AddChar(0x7DAD); builder.AddChar(0x5F48); builder.AddChar(0x723E);
         builder.AddChar(0x85A9); builder.AddChar(0x8A98); builder.AddChar(0x990C); builder.AddChar(0x51F1);
         builder.AddChar(0x9727); builder.AddChar(0x9583); builder.AddChar(0x7159); builder.AddChar(0x6771);
-        builder.AddChar(0x6C40);
+        builder.AddChar(0x6C40); builder.AddChar(0x594E); builder.AddChar(0x9CA8);
         builder.BuildRanges(&ranges);
     }
     return ranges.Data;
