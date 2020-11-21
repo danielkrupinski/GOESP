@@ -301,6 +301,7 @@ void Misc::drawObserverList() noexcept
         windowFlags |= ImGuiWindowFlags_NoTitleBar;
 
     ImGui::Begin("Observer List", nullptr, windowFlags);
+    ImGui::PushFont(gui->getUnicodeFont());
 
     for (const auto& observer : observers) {
         if (!observer.targetIsLocalPlayer)
@@ -311,6 +312,7 @@ void Misc::drawObserverList() noexcept
         }
     }
 
+    ImGui::PopFont();
     ImGui::End();
 }
 
