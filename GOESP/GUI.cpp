@@ -77,10 +77,9 @@ GUI::GUI() noexcept
 
 void GUI::render() noexcept
 {
-    if (toggleAnimationEnd == 0.0f) // first time fade in
-        toggleAnimationEnd = memory->globalVars->realtime + animationLength() * 2.0f;
+    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, std::clamp(open ? toggleAnimationEnd: 1.0f - toggleAnimationEnd, 0.0f, 1.0f));
 
-    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, std::clamp(open ? (1.0f - (toggleAnimationEnd - memory->globalVars->realtime) / animationLength()) : (toggleAnimationEnd - memory->globalVars->realtime) / animationLength(), 0.0f, 1.0f));
+    toggleAnimationEnd += ImGui::GetIO().DeltaTime / animationLength();
 
     ImGui::Begin(
         "GOESP for "
@@ -150,10 +149,10 @@ void GUI::handleToggle() noexcept
         if (!gui->open)
             interfaces->inputSystem->resetInputState();
 
-        if (toggleAnimationEnd > memory->globalVars->realtime)
-            toggleAnimationEnd = memory->globalVars->realtime + (memory->globalVars->realtime - toggleAnimationEnd + animationLength());
+        if (toggleAnimationEnd > 0.0f && toggleAnimationEnd < 1.0f)
+            toggleAnimationEnd = 1.0f - toggleAnimationEnd;
         else
-            toggleAnimationEnd = memory->globalVars->realtime + animationLength();
+            toggleAnimationEnd = 0.0f;
     }
     ImGui::GetIO().MouseDrawCursor = gui->open;
 }
