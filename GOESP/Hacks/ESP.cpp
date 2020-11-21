@@ -93,9 +93,10 @@ public:
 
 static ImDrawList* drawList;
 
-static void addLineWithShadow(const ImVec2& p1, const ImVec2& p2, ImU32 col) noexcept
+static void addLine(const ImVec2& p1, const ImVec2& p2, ImU32 col, bool shadow) noexcept
 {
-    drawList->AddLine(p1 + ImVec2{ 1.0f, 1.0f }, p2 + ImVec2{ 1.0f, 1.0f }, col & IM_COL32_A_MASK);
+    if (shadow)
+        drawList->AddLine(p1 + ImVec2{ 1.0f, 1.0f }, p2 + ImVec2{ 1.0f, 1.0f }, col & IM_COL32_A_MASK);
     drawList->AddLine(p1, p2, col);
 }
 
@@ -254,17 +255,17 @@ static void renderBox(const BoundingBox& bbox, const Box& config) noexcept
             drawList->AddLine(bbox.max - ImVec2{ 0.5f, 1.0f }, { IM_FLOOR(bbox.max.x * 0.75f + bbox.min.x * 0.25f), bbox.max.y - 1.0f }, color);
             drawList->AddLine(bbox.max - ImVec2{ 1.0f, 0.0f }, { bbox.max.x - 1.0f, IM_FLOOR(bbox.max.y * 0.75f + bbox.min.y * 0.25f) }, color);
         } else {
-            addLineWithShadow(bbox.min, { bbox.min.x, IM_FLOOR(bbox.min.y * 0.75f + bbox.max.y * 0.25f) }, color);
-            addLineWithShadow(bbox.min, { IM_FLOOR(bbox.min.x * 0.75f + bbox.max.x * 0.25f), bbox.min.y }, color);
+            addLine(bbox.min, { bbox.min.x, IM_FLOOR(bbox.min.y * 0.75f + bbox.max.y * 0.25f) }, color, true);
+            addLine(bbox.min, { IM_FLOOR(bbox.min.x * 0.75f + bbox.max.x * 0.25f), bbox.min.y }, color, true);
 
-            addLineWithShadow({ bbox.max.x, bbox.min.y }, { IM_FLOOR(bbox.max.x * 0.75f + bbox.min.x * 0.25f), bbox.min.y }, color);
-            addLineWithShadow({ bbox.max.x - 1.0f, bbox.min.y }, { bbox.max.x - 1.0f, IM_FLOOR(bbox.min.y * 0.75f + bbox.max.y * 0.25f) }, color);
+            addLine({ bbox.max.x, bbox.min.y }, { IM_FLOOR(bbox.max.x * 0.75f + bbox.min.x * 0.25f), bbox.min.y }, color, true);
+            addLine({ bbox.max.x - 1.0f, bbox.min.y }, { bbox.max.x - 1.0f, IM_FLOOR(bbox.min.y * 0.75f + bbox.max.y * 0.25f) }, color, true);
 
-            addLineWithShadow({ bbox.min.x, bbox.max.y }, { bbox.min.x, IM_FLOOR(bbox.max.y * 0.75f + bbox.min.y * 0.25f) }, color);
-            addLineWithShadow({ bbox.min.x, bbox.max.y - 1.0f }, { IM_FLOOR(bbox.min.x * 0.75f + bbox.max.x * 0.25f), bbox.max.y - 1.0f }, color);
+            addLine({ bbox.min.x, bbox.max.y }, { bbox.min.x, IM_FLOOR(bbox.max.y * 0.75f + bbox.min.y * 0.25f) }, color, true);
+            addLine({ bbox.min.x, bbox.max.y - 1.0f }, { IM_FLOOR(bbox.min.x * 0.75f + bbox.max.x * 0.25f), bbox.max.y - 1.0f }, color, true);
 
-            addLineWithShadow(bbox.max - ImVec2{ 0.5f, 1.0f }, { IM_FLOOR(bbox.max.x * 0.75f + bbox.min.x * 0.25f), bbox.max.y - 1.0f }, color);
-            addLineWithShadow(bbox.max - ImVec2{ 1.0f, 0.0f }, { bbox.max.x - 1.0f, IM_FLOOR(bbox.max.y * 0.75f + bbox.min.y * 0.25f) }, color);
+            addLine(bbox.max - ImVec2{ 0.5f, 1.0f }, { IM_FLOOR(bbox.max.x * 0.75f + bbox.min.x * 0.25f), bbox.max.y - 1.0f }, color, true);
+            addLine(bbox.max - ImVec2{ 1.0f, 0.0f }, { bbox.max.x - 1.0f, IM_FLOOR(bbox.max.y * 0.75f + bbox.min.y * 0.25f) }, color, true);
         }
         break;
     case Box::_3d:
