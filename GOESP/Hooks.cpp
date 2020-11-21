@@ -111,7 +111,7 @@ static int pollEvent(SDL_Event* event) noexcept
 
     if (hooks->getState() == Hooks::State::Installed) {
         GameData::update();
-        if (result && ImGui_ImplSDL2_ProcessEvent(event) && gui->open)
+        if (result && ImGui_ImplSDL2_ProcessEvent(event) && gui->isOpen())
             event->type = 0;
     }
 
