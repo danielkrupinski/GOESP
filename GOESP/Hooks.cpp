@@ -208,8 +208,10 @@ void Hooks::install() noexcept
     swapWindow = *reinterpret_cast<decltype(swapWindow)*>(memory->swapWindow);
     *reinterpret_cast<decltype(::swapWindow)**>(memory->swapWindow) = ::swapWindow;
 
+    /*
     warpMouseInWindow = *reinterpret_cast<decltype(warpMouseInWindow)*>(memory->warpMouseInWindow);
     *reinterpret_cast<decltype(::warpMouseInWindow)**>(memory->warpMouseInWindow) = ::warpMouseInWindow;
+    */
 #endif
 
     state = State::Installed;
@@ -253,7 +255,7 @@ void Hooks::uninstall() noexcept
 
     *reinterpret_cast<decltype(pollEvent)*>(memory->pollEvent) = pollEvent;
     *reinterpret_cast<decltype(swapWindow)*>(memory->swapWindow) = swapWindow;
-    *reinterpret_cast<decltype(warpMouseInWindow)*>(memory->warpMouseInWindow) = warpMouseInWindow;
+    // *reinterpret_cast<decltype(warpMouseInWindow)*>(memory->warpMouseInWindow) = warpMouseInWindow;
 
 #endif
 }
