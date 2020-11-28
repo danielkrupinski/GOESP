@@ -23,33 +23,17 @@ enum class WeaponType {
 };
 
 struct WeaponInfo {
-#ifdef _WIN32
-    PAD(20)
-#else
-    PAD(32)
-#endif
+    PAD(IS_WIN32() ? 20 : 32)
     int maxClip;
-#ifdef _WIN32
-    PAD(112)
-#else
-    PAD(204)
-#endif
+    PAD(IS_WIN32() ? 112 : 204)
     const char* name;
-#ifdef _WIN32
-    PAD(60)
-#else
-    PAD(72)
-#endif
+    PAD(IS_WIN32() ? 60 : 72)
     WeaponType type;
     PAD(4)
     int price;
     PAD(24)
     bool fullAuto;
-#ifdef _WIN32
-    PAD(3)
-#else
-    PAD(7)
-#endif
+    PAD(IS_WIN32() ? 3 : 7)
     int damage;
     float armorRatio;
     int bullets;
