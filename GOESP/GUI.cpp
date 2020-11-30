@@ -140,11 +140,7 @@ ImFont* GUI::getUnicodeFont() const noexcept
 
 void GUI::handleToggle() noexcept
 {
-#ifdef _WIN32
-    if (ImGui::IsKeyPressed(VK_INSERT, false)) {
-#else
-    if (ImGui::IsKeyPressed(SDL_SCANCODE_INSERT, false)) {
-#endif
+    if (ImGui::IsKeyPressed(ImGui::GetIO().KeyMap[ImGuiKey_Insert], false)) {
         gui->open = !gui->open;
         if (!gui->open)
             interfaces->inputSystem->resetInputState();
