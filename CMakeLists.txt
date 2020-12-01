@@ -15,6 +15,8 @@ link_directories(/usr/local/lib)
 
 add_library(GOESP SHARED ${SOURCES})
 
+target_link_options(GOESP PRIVATE LINKER:--no-undefined)
+
 if (APPLE)
     target_link_options(GOESP INTERFACE "-framework OpenGL")
     target_link_libraries(GOESP SDL2)
