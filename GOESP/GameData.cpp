@@ -356,6 +356,7 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
     }
 
     name[0] = '\0';
+    money = entity->money();
     update(entity);
 }
 
