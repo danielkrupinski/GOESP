@@ -121,12 +121,14 @@ void GUI::render() noexcept
             loadConfig();
         if (ImGui::Button("Save"))
             saveConfig();
-        if (ImGui::Button("Open config directory"))
+        if (ImGui::Button("Open config directory")) {
+            createConfigDir();
 #ifdef _WIN32
             int ret = std::system(("start " + path.string()).c_str());
 #else
             int ret = std::system(("xdg-open " + path.string()).c_str());
 #endif
+        }
         ImGui::EndTabItem();
     }
     ImGui::EndTabBar();
