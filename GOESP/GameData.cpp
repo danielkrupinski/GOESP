@@ -371,6 +371,7 @@ void PlayerData::update(Entity* entity) noexcept
         return;
     }
 
+    money = entity->money();
     fadingEndTime = 0.0f;
     static_cast<BaseData&>(*this) = { entity };
     origin = entity->getAbsOrigin();
