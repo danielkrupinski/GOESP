@@ -187,8 +187,12 @@ void GUI::saveConfig() const noexcept
 
     removeEmptyObjects(j);
 
-    std::error_code ec; std::filesystem::create_directory(path, ec);
-
+    createConfigDir();
     if (std::ofstream out{ path / "config.txt" }; out.good())
         out << std::setw(2) << j;
+}
+
+void GUI::createConfigDir() const noexcept
+{
+    std::error_code ec; std::filesystem::create_directory(path, ec);
 }
