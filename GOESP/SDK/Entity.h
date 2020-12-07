@@ -131,7 +131,8 @@ public:
     PROP(gunGameImmunity, 0x3944, bool)                                            // CCSPlayer->m_bGunGameImmunity
     PROP(flashDuration, 0xA41C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
     PROP(shotsFired, 0xA390, int)                                                  // CCSPlayer->m_iShotsFired
-        
+    PROP(money, 0xB364, int)                                                       // CCSPlayer->m_iAccount
+
     PROP(thrower, 0x29A0, int)                                                     // CBaseGrenade->m_hThrower
     PROP(grenadeExploded, 0x29E8, bool)
 
@@ -162,6 +163,7 @@ public:
     PROP(gunGameImmunity, 0x4244, bool)                                            // CCSPlayer->m_bGunGameImmunity
     PROP(flashDuration, 0xAD4C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
     PROP(shotsFired, 0xACC0, int)                                                  // CCSPlayer->m_iShotsFired
+    PROP(money, 0xBCA8, int)                                                       // CCSPlayer->m_iAccount
 
     PROP(thrower, 0x3040, int)                                                     // CBaseGrenade->m_hThrower
 
