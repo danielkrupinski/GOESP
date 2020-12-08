@@ -66,6 +66,14 @@ struct OffscreenEnemies {
     bool enabled = false;
 };
 
+struct PlayerList {
+    bool enabled = false;
+    bool money = true;
+    
+    ImVec2 pos;
+    ImVec2 size{ 200.0f, 200.0f };
+};
+
 struct {
     ColorToggleThickness reloadProgress{ 5.0f };
     ColorToggleThickness recoilCrosshair;
@@ -75,6 +83,7 @@ struct {
     bool ignoreFlashbang = false;
     OverlayWindow fpsCounter{ "FPS Counter" };
     OffscreenEnemies offscreenEnemies;
+    PlayerList playerList;
 } miscConfig;
 
 void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
@@ -249,7 +258,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
                 if (s.length() >= 2)
                     s.erase(s.length() - 2);
-                
+
                 if (const auto it = std::find_if(GameData::players().cbegin(), GameData::players().cend(), [userId = userId](const auto& playerData) { return playerData.userId == userId; }); it != GameData::players().cend()) {
                     if (miscConfig.purchaseList.showPrices)
                         ImGui::TextWrapped("%s $%d: %s", it->name, purchases.totalCost, s.c_str());
@@ -410,6 +419,7 @@ void Misc::draw(ImDrawList* drawList) noexcept
     drawNoscopeCrosshair(drawList);
     drawFpsCounter();
     drawOffscreenEnemies(drawList);
+    drawPlayerList();
 }
 
 void Misc::drawGUI() noexcept
@@ -450,11 +460,80 @@ void Misc::drawGUI() noexcept
     ImGui::Checkbox("Ignore Flashbang", &miscConfig.ignoreFlashbang);
     ImGui::Checkbox("FPS Counter", &miscConfig.fpsCounter.enabled);
     ImGui::Checkbox("Offscreen Enemies", &miscConfig.offscreenEnemies.enabled);
+
+    ImGui::PushID("Player List");
+    ImGui::Checkbox("Player List", &miscConfig.playerList.enabled);
+    ImGui::SameLine();
+
+    if (ImGui::Button("..."))
+        ImGui::OpenPopup("");
+
+    if (ImGui::BeginPopup("")) {
+        ImGui::Checkbox("Money", &miscConfig.playerList.money);
+        ImGui::EndPopup();
+    }
+    ImGui::PopID();
 }
 
 bool Misc::ignoresFlashbang() noexcept
 {
     return miscConfig.ignoreFlashbang;
+}
+
+void Misc::drawPlayerList() noexcept
+{
+    if (!miscConfig.playerList.enabled)
+        return;
+
+    if (miscConfig.playerList.pos != ImVec2{}) {
+        ImGui::SetNextWindowPos(miscConfig.playerList.pos);
+        miscConfig.playerList.pos = {};
+    }
+
+    if (miscConfig.playerList.size != ImVec2{}) {
+        ImGui::SetNextWindowSize(ImClamp(miscConfig.playerList.size, {}, ImGui::GetIO().DisplaySize));
+        miscConfig.playerList.size = {};
+    }
+
+    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
+    if (!gui->isOpen())
+        windowFlags |= ImGuiWindowFlags_NoInputs;
+
+    if (ImGui::Begin("Player List", nullptr, windowFlags)) {
+        if (ImGui::BeginTable("", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable | ImGuiTableFlags_Hideable)) {
+            ImGui::PushFont(gui->getUnicodeFont());
+
+            ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide | ImGuiTableColumnFlags_WidthFixed, 100.0f);
+            ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthStretch);
+            ImGui::TableSetColumnIsEnabled(1, !miscConfig.playerList.money);
+
+            ImGui::TableHeadersRow();
+
+            {
+                GameData::Lock lock;
+
+                std::vector<std::reference_wrapper<const PlayerData>> playersOrdered{ GameData::players().begin(), GameData::players().end() };
+                std::sort(playersOrdered.begin(), playersOrdered.end(), [](const auto& a, const auto& b) { return a.get().handle < b.get().handle; });
+
+                for (const auto& player : playersOrdered) {
+                    ImGui::TableNextRow();
+                    ImGui::TableNextColumn();
+                    ImGui::TextWrapped("%s", player.get().name);
+                   
+                    if (ImGui::TableNextColumn()) {
+                        ImGui::PushStyleColor(ImGuiCol_Text, { 0.0f, 1.0f, 0.0f, 1.0f });
+                        ImGui::Text("$%d", player.get().money);
+                        ImGui::PopStyleColor();
+                    }
+                }
+            }
+
+            ImGui::PopFont();
+            ImGui::EndTable();
+        }
+
+    }
+    ImGui::End();
 }
 
 static void to_json(json& j, const PurchaseList& o, const PurchaseList& dummy = {})
@@ -495,6 +574,17 @@ static void to_json(json& j, const OffscreenEnemies& o, const OffscreenEnemies& 
     WRITE("Enabled", enabled)
 }
 
+static void to_json(json& j, const PlayerList& o, const PlayerList& dummy = {})
+{
+    WRITE("Enabled", enabled)
+    WRITE("Money", money)
+
+    if (const auto window = ImGui::FindWindowByName("Player List")) {
+        j["Pos"] = window->Pos;
+        j["Size"] = window->SizeFull;
+    }
+}
+
 json Misc::toJSON() noexcept
 {
     json j;
@@ -509,6 +599,7 @@ json Misc::toJSON() noexcept
     j["Observer List"] = miscConfig.observerList;
     j["FPS Counter"] = miscConfig.fpsCounter;
     j["Offscreen Enemies"] = miscConfig.offscreenEnemies;
+    j["Player List"] = miscConfig.playerList;
 
     return j;
 }
@@ -543,6 +634,14 @@ static void from_json(const json& j, OffscreenEnemies& o)
     read(j, "Enabled", o.enabled);
 }
 
+static void from_json(const json& j, PlayerList& o)
+{
+    read(j, "Enabled", o.enabled);
+    read(j, "Money", o.money);
+    read<value_t::object>(j, "Pos", o.pos);
+    read<value_t::object>(j, "Size", o.size);
+}
+
 void Misc::fromJSON(const json& j) noexcept
 {
     read<value_t::object>(j, "Reload Progress", miscConfig.reloadProgress);
@@ -553,4 +652,5 @@ void Misc::fromJSON(const json& j) noexcept
     read(j, "Ignore Flashbang", miscConfig.ignoreFlashbang);
     read<value_t::object>(j, "FPS Counter", miscConfig.fpsCounter);
     read<value_t::object>(j, "Offscreen Enemies", miscConfig.offscreenEnemies);
+    read<value_t::object>(j, "Player List", miscConfig.playerList);
 }
