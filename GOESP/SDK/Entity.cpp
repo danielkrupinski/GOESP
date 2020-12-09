@@ -104,3 +104,10 @@ bool Entity::isEnemy() noexcept
     }
     return memory->isOtherEnemy(this, localPlayer.get());
 }
+
+std::uint64_t Entity::getSteamID() noexcept
+{
+    if (PlayerInfo playerInfo; interfaces->engine->getPlayerInfo(index(), playerInfo))
+        return playerInfo.xuid;
+    return 0;
+}

@@ -335,7 +335,7 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
     handle = entity->handle();
 
     bool hasAvatar = false;
-    if (std::uint64_t steamID; entity->getSteamID(&steamID)) {
+    if (std::uint64_t steamID = entity->getSteamID()) {
         const auto ctx = interfaces->engine->getSteamAPIContext();
         const auto avatar = ctx->steamFriends->getSmallFriendAvatar(steamID);
         hasAvatar = ctx->steamUtils->getImageRGBA(avatar, avatarRGBA, sizeof(avatarRGBA));
