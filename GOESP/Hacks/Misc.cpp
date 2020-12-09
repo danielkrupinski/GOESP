@@ -506,6 +506,7 @@ void Misc::drawPlayerList() noexcept
             ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch | ImGuiTableColumnFlags_NoHide);
             ImGui::TableSetupColumn("Steam ID", ImGuiTableColumnFlags_WidthAutoResize);
             ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthAutoResize);
+            ImGui::TableSetupScrollFreeze(0, 1);
             ImGui::TableSetColumnIsEnabled(1, !miscConfig.playerList.steamID);
             ImGui::TableSetColumnIsEnabled(2, !miscConfig.playerList.money);
             
