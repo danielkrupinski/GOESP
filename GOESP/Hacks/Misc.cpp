@@ -68,10 +68,11 @@ struct OffscreenEnemies {
 
 struct PlayerList {
     bool enabled = false;
+    bool steamID = false;
     bool money = true;
     
     ImVec2 pos;
-    ImVec2 size{ 200.0f, 200.0f };
+    ImVec2 size{ 250.0f, 200.0f };
 };
 
 struct {
@@ -469,6 +470,7 @@ void Misc::drawGUI() noexcept
         ImGui::OpenPopup("");
 
     if (ImGui::BeginPopup("")) {
+        ImGui::Checkbox("Steam ID", &miscConfig.playerList.steamID);
         ImGui::Checkbox("Money", &miscConfig.playerList.money);
         ImGui::EndPopup();
     }
@@ -500,13 +502,13 @@ void Misc::drawPlayerList() noexcept
         windowFlags |= ImGuiWindowFlags_NoInputs;
 
     if (ImGui::Begin("Player List", nullptr, windowFlags)) {
-        if (ImGui::BeginTable("", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable | ImGuiTableFlags_Hideable)) {
-            ImGui::PushFont(gui->getUnicodeFont());
-
-            ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide | ImGuiTableColumnFlags_WidthFixed, 100.0f);
-            ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthStretch);
-            ImGui::TableSetColumnIsEnabled(1, !miscConfig.playerList.money);
-
+        if (ImGui::BeginTable("", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_Hideable)) {
+            ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch | ImGuiTableColumnFlags_NoHide);
+            ImGui::TableSetupColumn("Steam ID", ImGuiTableColumnFlags_WidthAutoResize);
+            ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthAutoResize);
+            ImGui::TableSetColumnIsEnabled(1, !miscConfig.playerList.steamID);
+            ImGui::TableSetColumnIsEnabled(2, !miscConfig.playerList.money);
+            
             ImGui::TableHeadersRow();
 
             {
@@ -515,20 +517,40 @@ void Misc::drawPlayerList() noexcept
                 std::vector<std::reference_wrapper<const PlayerData>> playersOrdered{ GameData::players().begin(), GameData::players().end() };
                 std::sort(playersOrdered.begin(), playersOrdered.end(), [](const auto& a, const auto& b) { return a.get().handle < b.get().handle; });
 
+                ImGui::PushFont(gui->getUnicodeFont());
+
                 for (const auto& player : playersOrdered) {
                     ImGui::TableNextRow();
                     ImGui::TableNextColumn();
                     ImGui::TextWrapped("%s", player.get().name);
-                   
+
+                    ImGui::TableNextColumn();
+
+                    if (player.get().steamID) {
+                        const auto steamIdString = std::to_string(player.get().steamID);
+
+                        ImGui::TextUnformatted(steamIdString.c_str());
+                        ImGui::PushID(ImGui::TableGetRowIndex());
+
+                        if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right))
+                            ImGui::OpenPopup("");
+
+                        if (ImGui::BeginPopup("")) {
+                            if (ImGui::Selectable("Copy"))
+                                ImGui::SetClipboardText(steamIdString.c_str());
+                            ImGui::EndPopup();
+                        }
+                    }
+
                     if (ImGui::TableNextColumn()) {
                         ImGui::PushStyleColor(ImGuiCol_Text, { 0.0f, 1.0f, 0.0f, 1.0f });
                         ImGui::Text("$%d", player.get().money);
                         ImGui::PopStyleColor();
                     }
+                    ImGui::PopID();
                 }
+                ImGui::PopFont();
             }
-
-            ImGui::PopFont();
             ImGui::EndTable();
         }
 
