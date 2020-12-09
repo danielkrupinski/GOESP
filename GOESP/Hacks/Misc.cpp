@@ -542,11 +542,9 @@ void Misc::drawPlayerList() noexcept
                         }
                     }
 
-                    if (ImGui::TableNextColumn()) {
-                        ImGui::PushStyleColor(ImGuiCol_Text, { 0.0f, 1.0f, 0.0f, 1.0f });
-                        ImGui::Text("$%d", player.get().money);
-                        ImGui::PopStyleColor();
-                    }
+                    if (ImGui::TableNextColumn())
+                        ImGui::TextColored({ 0.0f, 1.0f, 0.0f, 1.0f }, "$%d", player.get().money);
+
                     ImGui::PopID();
                 }
                 ImGui::PopFont();
