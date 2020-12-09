@@ -540,12 +540,12 @@ void Misc::drawPlayerList() noexcept
                                 ImGui::SetClipboardText(steamIdString.c_str());
                             ImGui::EndPopup();
                         }
+
+                        ImGui::PopID();
                     }
 
                     if (ImGui::TableNextColumn())
                         ImGui::TextColored({ 0.0f, 1.0f, 0.0f, 1.0f }, "$%d", player.get().money);
-
-                    ImGui::PopID();
                 }
                 ImGui::PopFont();
             }
