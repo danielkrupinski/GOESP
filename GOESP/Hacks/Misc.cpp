@@ -502,7 +502,7 @@ void Misc::drawPlayerList() noexcept
         windowFlags |= ImGuiWindowFlags_NoInputs;
 
     if (ImGui::Begin("Player List", nullptr, windowFlags)) {
-        if (ImGui::BeginTable("", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_Hideable)) {
+        if (ImGui::BeginTable("", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_Hideable | ImGuiTableFlags_ScrollY)) {
             ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch | ImGuiTableColumnFlags_NoHide);
             ImGui::TableSetupColumn("Steam ID", ImGuiTableColumnFlags_WidthAutoResize);
             ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthAutoResize);
