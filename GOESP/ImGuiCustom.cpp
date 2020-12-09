@@ -80,3 +80,17 @@ void ImGuiCustom::colorPicker(const char* name, ColorToggleThicknessRounding& co
 {
     colorPopup(name, colorConfig.color, &colorConfig.rainbow, &colorConfig.rainbowSpeed, &colorConfig.enabled, &colorConfig.thickness, &colorConfig.rounding);
 }
+
+bool ImGui::smallButtonFullWidth(const char* label, bool disabled) noexcept
+{
+    ImGuiContext& g = *GImGui;
+    float backup_padding_y = g.Style.FramePadding.y;
+    g.Style.FramePadding.y = 0.0f;
+    if (disabled)
+        PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+    bool pressed = ButtonEx(label, ImVec2(-1, 0), ImGuiButtonFlags_AlignTextBaseLine | (disabled ? ImGuiButtonFlags_Disabled : 0));
+    if (disabled)
+        PopStyleVar();
+    g.Style.FramePadding.y = backup_padding_y;
+    return pressed;
+}

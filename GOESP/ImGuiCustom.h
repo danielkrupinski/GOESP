@@ -17,3 +17,8 @@ namespace ImGuiCustom
     void colorPicker(const char* name, ColorToggleThickness& colorConfig) noexcept;
     void colorPicker(const char* name, ColorToggleThicknessRounding& colorConfig) noexcept;
 }
+
+namespace ImGui
+{
+    bool smallButtonFullWidth(const char* label, bool disabled = false) noexcept;
+}
