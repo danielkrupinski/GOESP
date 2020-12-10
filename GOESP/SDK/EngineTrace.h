@@ -8,14 +8,11 @@
 
 struct Ray {
     Ray(const Vector& src, const Vector& dest) : start(src), delta(dest - src) { isSwept = delta.x || delta.y || delta.z; }
-    Vector start{ };
-    float pad = 0.0f;
-    Vector delta{ };
-#ifdef _WIN32
-    std::byte pad2[40]{ };
-#elif __linux__
-    std::byte pad2[44]{ };
-#endif
+    alignas(16) Vector start;
+    alignas(16) Vector delta;
+    alignas(16) Vector startOffset{};
+    alignas(16) Vector extents{};
+    const Matrix3x4* worldAxisTransform = nullptr;
     bool isRay = true;
     bool isSwept = false;
 };
