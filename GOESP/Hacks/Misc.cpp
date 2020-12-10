@@ -522,6 +522,8 @@ void Misc::drawPlayerList() noexcept
 
                 for (const auto& player : playersOrdered) {
                     ImGui::TableNextRow();
+                    ImGui::PushID(ImGui::TableGetRowIndex());
+
                     ImGui::TableNextColumn();
                     ImGui::TextWrapped("%s", player.get().name);
 
@@ -532,6 +534,8 @@ void Misc::drawPlayerList() noexcept
 
                     if (ImGui::TableNextColumn())
                         ImGui::TextColored({ 0.0f, 1.0f, 0.0f, 1.0f }, "$%d", player.get().money);
+
+                    ImGui::PopID();
                 }
                 ImGui::PopFont();
             }
