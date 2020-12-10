@@ -130,6 +130,7 @@ struct PlayerData : BaseData {
     Vector origin;
     std::vector<std::pair<Vector, Vector>> bones;
     Vector headMins, headMaxs;
+    std::string lastPlaceName;
 private:
     class Texture {
         ImTextureID texture = nullptr;

@@ -358,6 +358,7 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
 
     name[0] = '\0';
     money = entity->money();
+    lastPlaceName = interfaces->localize->findAsUTF8(entity->lastPlaceName());
     update(entity);
 }
 
@@ -374,7 +375,8 @@ void PlayerData::update(Entity* entity) noexcept
     }
 
     money = entity->money();
-    fadingEndTime = 0.0f;
+    lastPlaceName = interfaces->localize->findAsUTF8(entity->lastPlaceName());
+    fadingEndTime = 0.0f;   
     static_cast<BaseData&>(*this) = { entity };
     origin = entity->getAbsOrigin();
     inViewFrustum = !interfaces->engine->cullBox(obbMins + origin, obbMaxs + origin);
