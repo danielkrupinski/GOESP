@@ -64,36 +64,20 @@ public:
     VIRTUAL_METHOD_V(int&, handle, 2, (), (this))
     VIRTUAL_METHOD_V(Collideable*, getCollideable, 3, (), (this))
 
-#ifdef _WIN32
-    VIRTUAL_METHOD(Vector&, getAbsOrigin, 10, (), (this))
-    VIRTUAL_METHOD(Team, getTeamNumber, 87, (), (this))
-    VIRTUAL_METHOD(int, getHealth, 121, (), (this))
-    VIRTUAL_METHOD(bool, isAlive, 155, (), (this))
-    VIRTUAL_METHOD(bool, isPlayer, 157, (), (this))
-    VIRTUAL_METHOD(bool, isWeapon, 165, (), (this))
-    VIRTUAL_METHOD(Entity*, getActiveWeapon, 267, (), (this))
-    VIRTUAL_METHOD(Vector, getEyePosition, 284, (), (this))
-    VIRTUAL_METHOD(ObsMode, getObserverMode, 293, (), (this))
-    VIRTUAL_METHOD(Entity*, getObserverTarget, 294, (), (this))
-    VIRTUAL_METHOD(Vector, getAimPunch, 345, (), (this))
-    VIRTUAL_METHOD(WeaponType, getWeaponType, 454, (), (this))
-    VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, 460, (), (this))
-#else
-    VIRTUAL_METHOD(Vector&, getAbsOrigin, 12, (), (this))
-    VIRTUAL_METHOD(Team, getTeamNumber, 127, (), (this))
-    VIRTUAL_METHOD(int, getHealth, 166, (), (this))
-    VIRTUAL_METHOD(bool, isAlive, 207, (), (this))
-    VIRTUAL_METHOD(bool, isPlayer, 209, (), (this))
-    VIRTUAL_METHOD(bool, isWeapon, 217, (), (this))
-    VIRTUAL_METHOD(Entity*, getActiveWeapon, 330, (), (this))
-    VIRTUAL_METHOD(Vector, getEyePosition, 347, (), (this))
-    VIRTUAL_METHOD(ObsMode, getObserverMode, 356, (), (this))
-    VIRTUAL_METHOD(Entity*, getObserverTarget, 357, (), (this))
-    VIRTUAL_METHOD(Vector, getAimPunch, 408, (), (this))
-    VIRTUAL_METHOD(WeaponType, getWeaponType, 522, (), (this))
-    VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, 528, (), (this))
-#endif
-        
+    VIRTUAL_METHOD(Vector&, getAbsOrigin, WIN32_UNIX(10, 12), (), (this))
+    VIRTUAL_METHOD(Team, getTeamNumber, WIN32_UNIX(87, 127), (), (this))
+    VIRTUAL_METHOD(int, getHealth, WIN32_UNIX(121, 166), (), (this))
+    VIRTUAL_METHOD(bool, isAlive, WIN32_UNIX(155, 207), (), (this))
+    VIRTUAL_METHOD(bool, isPlayer, WIN32_UNIX(157, 209), (), (this))
+    VIRTUAL_METHOD(bool, isWeapon, WIN32_UNIX(165, 217), (), (this))
+    VIRTUAL_METHOD(Entity*, getActiveWeapon, WIN32_UNIX(267, 330), (), (this))
+    VIRTUAL_METHOD(Vector, getEyePosition, WIN32_UNIX(284, 347), (), (this))
+    VIRTUAL_METHOD(ObsMode, getObserverMode, WIN32_UNIX(293, 356), (), (this))
+    VIRTUAL_METHOD(Entity*, getObserverTarget, WIN32_UNIX(294, 357), (), (this))
+    VIRTUAL_METHOD(Vector, getAimPunch, WIN32_UNIX(345, 408), (), (this))
+    VIRTUAL_METHOD(WeaponType, getWeaponType, WIN32_UNIX(454, 522), (), (this))
+    VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, WIN32_UNIX(460, 528), (), (this))
+
     auto isSniperRifle() noexcept
     {
         return getWeaponType() == WeaponType::SniperRifle;
