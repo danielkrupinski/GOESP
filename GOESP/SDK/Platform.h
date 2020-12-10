@@ -45,6 +45,8 @@
 
 #ifdef _WIN32
 #define IS_WIN32() true
+#define WIN32_UNIX(win32, unix) win32
 #else
 #define IS_WIN32() false
+#define WIN32_UNIX(win32, unix) win32
 #endif
