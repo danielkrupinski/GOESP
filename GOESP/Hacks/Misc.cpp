@@ -527,23 +527,8 @@ void Misc::drawPlayerList() noexcept
 
                     ImGui::TableNextColumn();
 
-                    if (player.get().steamID) {
-                        const auto steamIdString = std::to_string(player.get().steamID);
-
-                        ImGui::TextUnformatted(steamIdString.c_str());
-                        ImGui::PushID(ImGui::TableGetRowIndex());
-
-                        if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right))
-                            ImGui::OpenPopup("");
-
-                        if (ImGui::BeginPopup("")) {
-                            if (ImGui::Selectable("Copy"))
-                                ImGui::SetClipboardText(steamIdString.c_str());
-                            ImGui::EndPopup();
-                        }
-
-                        ImGui::PopID();
-                    }
+                    if (ImGui::smallButtonFullWidth("Copy", player.get().steamID == 0))
+                        ImGui::SetClipboardText(std::to_string(player.get().steamID).c_str());
 
                     if (ImGui::TableNextColumn())
                         ImGui::TextColored({ 0.0f, 1.0f, 0.0f, 1.0f }, "$%d", player.get().money);
