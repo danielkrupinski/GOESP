@@ -70,6 +70,7 @@ struct PlayerList {
     bool enabled = false;
     bool steamID = false;
     bool money = true;
+    bool lastPlace = false;
     
     ImVec2 pos;
     ImVec2 size{ 250.0f, 200.0f };
@@ -472,6 +473,7 @@ void Misc::drawGUI() noexcept
     if (ImGui::BeginPopup("")) {
         ImGui::Checkbox("Steam ID", &miscConfig.playerList.steamID);
         ImGui::Checkbox("Money", &miscConfig.playerList.money);
+        ImGui::Checkbox("Last Place", &miscConfig.playerList.lastPlace);
         ImGui::EndPopup();
     }
     ImGui::PopID();
@@ -502,13 +504,15 @@ void Misc::drawPlayerList() noexcept
         windowFlags |= ImGuiWindowFlags_NoInputs;
 
     if (ImGui::Begin("Player List", nullptr, windowFlags)) {
-        if (ImGui::beginTable("", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_Hideable | ImGuiTableFlags_ScrollY)) {
+        if (ImGui::beginTable("", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_Hideable | ImGuiTableFlags_ScrollY)) {
             ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch | ImGuiTableColumnFlags_NoHide);
             ImGui::TableSetupColumn("Steam ID", ImGuiTableColumnFlags_WidthAutoResize);
             ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthAutoResize);
+            ImGui::TableSetupColumn("Last Place", ImGuiTableColumnFlags_WidthAutoResize);
             ImGui::TableSetupScrollFreeze(0, 1);
             ImGui::TableSetColumnIsEnabled(1, !miscConfig.playerList.steamID);
             ImGui::TableSetColumnIsEnabled(2, !miscConfig.playerList.money);
+            ImGui::TableSetColumnIsEnabled(3, !miscConfig.playerList.lastPlace);
             
             ImGui::TableHeadersRow();
 
@@ -534,6 +538,9 @@ void Misc::drawPlayerList() noexcept
 
                     if (ImGui::TableNextColumn())
                         ImGui::TextColored({ 0.0f, 1.0f, 0.0f, 1.0f }, "$%d", player.get().money);
+
+                    if (ImGui::TableNextColumn())
+                        ImGui::TextUnformatted(player.get().lastPlaceName.c_str());
 
                     ImGui::PopID();
                 }
@@ -589,6 +596,7 @@ static void to_json(json& j, const PlayerList& o, const PlayerList& dummy = {})
     WRITE("Enabled", enabled)
     WRITE("Money", money)
     WRITE("Steam ID", steamID)
+    WRITE("Last Place", lastPlace)
 
     if (const auto window = ImGui::FindWindowByName("Player List")) {
         j["Pos"] = window->Pos;
@@ -650,6 +658,7 @@ static void from_json(const json& j, PlayerList& o)
     read(j, "Enabled", o.enabled);
     read(j, "Money", o.money);
     read(j, "Steam ID", o.steamID);
+    read(j, "Last Place", o.lastPlace);
     read<value_t::object>(j, "Pos", o.pos);
     read<value_t::object>(j, "Size", o.size);
 }
