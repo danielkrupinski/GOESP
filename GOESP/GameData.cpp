@@ -359,6 +359,7 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
     entity->getPlayerName(name);
     money = entity->money();
     lastPlaceName = interfaces->localize->findAsUTF8(entity->lastPlaceName());
+    alive = entity->isAlive();
     update(entity);
 }
 
