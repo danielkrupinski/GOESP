@@ -588,6 +588,7 @@ static void to_json(json& j, const PlayerList& o, const PlayerList& dummy = {})
 {
     WRITE("Enabled", enabled)
     WRITE("Money", money)
+    WRITE("Steam ID", steamID)
 
     if (const auto window = ImGui::FindWindowByName("Player List")) {
         j["Pos"] = window->Pos;
@@ -648,6 +649,7 @@ static void from_json(const json& j, PlayerList& o)
 {
     read(j, "Enabled", o.enabled);
     read(j, "Money", o.money);
+    read(j, "Steam ID", o.steamID);
     read<value_t::object>(j, "Pos", o.pos);
     read<value_t::object>(j, "Size", o.size);
 }
