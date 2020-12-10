@@ -543,8 +543,12 @@ void Misc::drawPlayerList() noexcept
                     if (ImGui::TableNextColumn())
                         ImGui::TextColored({ 0.0f, 1.0f, 0.0f, 1.0f }, "$%d", player.get().money);
 
-                    if (ImGui::TableNextColumn())
-                        ImGui::Text("%d HP", player.get().health);
+                    if (ImGui::TableNextColumn()) {
+                        if (!player.get().alive)
+                            ImGui::TextColored({ 1.0f, 0.0f, 0.0f, 1.0f }, "%s", "DEAD");
+                        else
+                            ImGui::Text("%d HP", player.get().health);
+                    }
 
                     if (ImGui::TableNextColumn())
                         ImGui::TextUnformatted(player.get().lastPlaceName.c_str());
