@@ -11,6 +11,6 @@ class PlayerResource {
 public:
     auto getIPlayerResource() noexcept
     {
-        return reinterpret_cast<IPlayerResource*>(uintptr_t(this) + 0x9D8);
+        return reinterpret_cast<IPlayerResource*>(uintptr_t(this) + WIN32_UNIX(0x9D8, 0xF68));
     }
 };
