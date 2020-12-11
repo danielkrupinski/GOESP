@@ -12,7 +12,7 @@ struct Ray {
     alignas(16) Vector delta;
     alignas(16) Vector startOffset{};
     alignas(16) Vector extents{};
-    const Matrix3x4* worldAxisTransform = nullptr;
+    alignas(16) const Matrix3x4* worldAxisTransform = nullptr;
     bool isRay = true;
     bool isSwept = false;
 };
