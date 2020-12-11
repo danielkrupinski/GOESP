@@ -34,6 +34,7 @@
 #include "SDK/Localize.h"
 #include "SDK/LocalPlayer.h"
 #include "SDK/ModelInfo.h"
+#include "SDK/PlayerResource.h"
 #include "SDK/Sound.h"
 #include "SDK/Steam.h"
 #include "SDK/UtlVector.h"
@@ -359,7 +360,6 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
     entity->getPlayerName(name);
     money = entity->money();
     lastPlaceName = interfaces->localize->findAsUTF8(entity->lastPlaceName());
-    alive = entity->isAlive();
     update(entity);
 }
 
@@ -372,6 +372,11 @@ void PlayerData::update(Entity* entity) noexcept
     if (dormant) {
         if (fadingEndTime == 0.0f)
             fadingEndTime = memory->globalVars->realtime + 1.75f;
+        
+        if (const auto pr = *memory->playerResource) {
+            alive = pr->getIPlayerResource()->isAlive(entity->index());
+            health = pr->getIPlayerResource()->getPlayerHealth(entity->index());
+        }
         return;
     }
 
