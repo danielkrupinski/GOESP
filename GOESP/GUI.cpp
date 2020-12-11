@@ -77,9 +77,7 @@ GUI::GUI() noexcept
 
 void GUI::render() noexcept
 {
-    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, std::clamp(open ? toggleAnimationEnd: 1.0f - toggleAnimationEnd, 0.0f, 1.0f));
-
-    toggleAnimationEnd += ImGui::GetIO().DeltaTime / animationLength();
+    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, std::clamp(open ? toggleAnimationEnd : 1.0f - toggleAnimationEnd, 0.0f, 1.0f));
 
     ImGui::Begin(
         "GOESP for "
@@ -92,7 +90,12 @@ void GUI::render() noexcept
 #else
 #error("Unsupported platform!")
 #endif
-        , nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse | (!open && toggleAnimationEnd > memory->globalVars->realtime ? ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoMove : 0));
+        , nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+
+    if (open && toggleAnimationEnd < 1.0f)
+        ImGui::SetWindowFocus();
+
+    toggleAnimationEnd += ImGui::GetIO().DeltaTime / animationLength();
 
     if (!ImGui::BeginTabBar("##tabbar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_NoTooltip)) {
         ImGui::End();
