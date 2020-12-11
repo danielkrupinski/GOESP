@@ -2,6 +2,7 @@
 #include "ImGuiCustom.h"
 
 #include "imgui/imgui.h"
+#include "imgui/imgui_internal.h"
 
 void ImGuiCustom::colorPopup(const char* name, std::array<float, 4>& color, bool* rainbow, float* rainbowSpeed, bool* enable, float* thickness, float* rounding) noexcept
 {
@@ -376,4 +377,26 @@ bool ImGui::beginTableEx(const char* name, ImGuiID id, int columns_count, ImGuiT
     TableBeginApplyRequests(table);
 
     return true;
+}
+
+void ImGui::textEllipsisInTableCell(const char* text) noexcept
+{
+    ImGuiContext& g = *GImGui;
+    ImGuiWindow* window = g.CurrentWindow;
+
+    ImGuiTable* table = g.CurrentTable;
+    IM_ASSERT(table != NULL && "Need to call textEllipsisInTableCell() after BeginTable()!");
+    IM_ASSERT(table->CurrentColumn != -1);
+
+    const char* textEnd = FindRenderedTextEnd(text);
+    ImVec2 textSize = CalcTextSize(text, textEnd, true);
+    ImVec2 textPos = window->DC.CursorPos;
+    float textHeight = ImMax(textSize.y, table->RowMinHeight - table->CellPaddingY * 2.0f);
+
+    float ellipsisMax = TableGetCellBgRect(table, table->CurrentColumn).Max.x;
+    RenderTextEllipsis(window->DrawList, textPos, ImVec2(ellipsisMax, textPos.y + textHeight + g.Style.FramePadding.y), ellipsisMax, ellipsisMax, text, textEnd, &textSize);
+
+    ImRect bb(textPos, textPos + textSize);
+    ItemSize(textSize, 0.0f);
+    ItemAdd(bb, 0);
 }
