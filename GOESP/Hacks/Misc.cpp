@@ -505,6 +505,10 @@ void Misc::drawPlayerList() noexcept
     if (!gui->isOpen())
         windowFlags |= ImGuiWindowFlags_NoInputs;
 
+    GameData::Lock lock;
+    if (GameData::players().empty() && !gui->isOpen())
+        return;
+
     if (ImGui::Begin("Player List", nullptr, windowFlags)) {
         if (ImGui::beginTable("", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_Hideable | ImGuiTableFlags_ScrollY)) {
             ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch | ImGuiTableColumnFlags_NoHide);
@@ -520,46 +524,42 @@ void Misc::drawPlayerList() noexcept
             
             ImGui::TableHeadersRow();
 
-            {
-                GameData::Lock lock;
+            std::vector<std::reference_wrapper<const PlayerData>> playersOrdered{ GameData::players().begin(), GameData::players().end() };
+            std::sort(playersOrdered.begin(), playersOrdered.end(), [](const auto& a, const auto& b) { return a.get().handle < b.get().handle; });
 
-                std::vector<std::reference_wrapper<const PlayerData>> playersOrdered{ GameData::players().begin(), GameData::players().end() };
-                std::sort(playersOrdered.begin(), playersOrdered.end(), [](const auto& a, const auto& b) { return a.get().handle < b.get().handle; });
+            ImGui::PushFont(gui->getUnicodeFont());
 
-                ImGui::PushFont(gui->getUnicodeFont());
+            for (const auto& player : playersOrdered) {
+                ImGui::TableNextRow();
+                ImGui::PushID(ImGui::TableGetRowIndex());
 
-                for (const auto& player : playersOrdered) {
-                    ImGui::TableNextRow();
-                    ImGui::PushID(ImGui::TableGetRowIndex());
+                ImGui::TableNextColumn();
+                ImGui::TextWrapped("%s", player.get().name);
 
-                    ImGui::TableNextColumn();
-                    ImGui::TextWrapped("%s", player.get().name);
+                ImGui::TableNextColumn();
 
-                    ImGui::TableNextColumn();
+                if (ImGui::smallButtonFullWidth("Copy", player.get().steamID == 0))
+                    ImGui::SetClipboardText(std::to_string(player.get().steamID).c_str());
 
-                    if (ImGui::smallButtonFullWidth("Copy", player.get().steamID == 0))
-                        ImGui::SetClipboardText(std::to_string(player.get().steamID).c_str());
+                if (ImGui::TableNextColumn())
+                    ImGui::TextColored({ 0.0f, 1.0f, 0.0f, 1.0f }, "$%d", player.get().money);
 
-                    if (ImGui::TableNextColumn())
-                        ImGui::TextColored({ 0.0f, 1.0f, 0.0f, 1.0f }, "$%d", player.get().money);
-
-                    if (ImGui::TableNextColumn()) {
-                        if (!player.get().alive)
-                            ImGui::TextColored({ 1.0f, 0.0f, 0.0f, 1.0f }, "%s", "DEAD");
-                        else
-                            ImGui::Text("%d HP", player.get().health);
-                    }
-
-                    if (ImGui::TableNextColumn())
-                        ImGui::TextUnformatted(player.get().lastPlaceName.c_str());
-
-                    ImGui::PopID();
+                if (ImGui::TableNextColumn()) {
+                    if (!player.get().alive)
+                        ImGui::TextColored({ 1.0f, 0.0f, 0.0f, 1.0f }, "%s", "DEAD");
+                    else
+                        ImGui::Text("%d HP", player.get().health);
                 }
-                ImGui::PopFont();
+
+                if (ImGui::TableNextColumn())
+                    ImGui::TextUnformatted(player.get().lastPlaceName.c_str());
+
+                ImGui::PopID();
             }
+
+            ImGui::PopFont();
             ImGui::EndTable();
         }
-
     }
     ImGui::End();
 }
