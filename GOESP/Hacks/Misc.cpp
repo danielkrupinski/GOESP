@@ -511,7 +511,7 @@ void Misc::drawPlayerList() noexcept
 
     if (ImGui::Begin("Player List", nullptr, windowFlags)) {
         if (ImGui::beginTable("", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_Hideable | ImGuiTableFlags_ScrollY)) {
-            ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch | ImGuiTableColumnFlags_NoHide);
+            ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoHide, 150.0f);
             ImGui::TableSetupColumn("Steam ID", ImGuiTableColumnFlags_WidthAutoResize);
             ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthAutoResize);
             ImGui::TableSetupColumn("Health", ImGuiTableColumnFlags_WidthAutoResize);
@@ -534,7 +534,7 @@ void Misc::drawPlayerList() noexcept
                 ImGui::PushID(ImGui::TableGetRowIndex());
 
                 ImGui::TableNextColumn();
-                ImGui::TextWrapped("%s", player.get().name);
+                ImGui::textEllipsisInTableCell(player.get().name);
 
                 ImGui::TableNextColumn();
 
