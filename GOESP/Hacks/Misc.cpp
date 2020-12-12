@@ -74,7 +74,7 @@ struct PlayerList {
     bool lastPlace = false;
     
     ImVec2 pos;
-    ImVec2 size{ 250.0f, 200.0f };
+    ImVec2 size{ 270.0f, 200.0f };
 };
 
 struct {
