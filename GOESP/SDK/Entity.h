@@ -89,6 +89,7 @@ public:
     void getPlayerName(char(&out)[128]) noexcept;
     int getUserId() noexcept;
     bool isEnemy() noexcept;
+    bool isGOTV() noexcept;
     std::uint64_t getSteamID() noexcept;
 
 #ifdef _WIN32
