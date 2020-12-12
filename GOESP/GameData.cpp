@@ -84,7 +84,7 @@ void GameData::update() noexcept
     Entity* entity = nullptr;
     while ((entity = interfaces->clientTools->nextEntity(entity))) {
         if (entity->isPlayer()) {
-            if (entity == localPlayer.get() || entity == observerTarget)
+            if (entity == localPlayer.get() || entity == observerTarget || entity->isGOTV())
                 continue;
 
             if (const auto it = std::find_if(playerData.begin(), playerData.end(), [handle = entity->handle()](const auto& playerData) { return playerData.handle == handle; }); it != playerData.end()) {
