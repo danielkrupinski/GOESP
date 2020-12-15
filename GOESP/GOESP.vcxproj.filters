@@ -241,5 +241,8 @@
     <ClInclude Include="Resources\skillgroups.h">
       <Filter>Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\Resource.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
