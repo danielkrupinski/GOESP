@@ -88,3 +88,19 @@ inline constexpr auto skillgroup5 = Helpers::decodeBase85(
 "m6CHtA1`1S#2BpAk9S^XOvq,L8-Z&f_xD;4hFJV#(wJ/e;t:UbE=FL1Yg.C]g1e+tf=t_93r6gJQh>L3LN8OVfnOj)_=MZ&eWn2Bb;+B_0lcdr5n90&ac?RtA3$/f1,$d^hF6`a(.dfO"
 "jQ6(iL<Bv0IMmt3?*h%HpkMJ9['JJ]FCeM9u<r:8M6I1.KF>)Sfmu06U6[OZkN[(P.:JEfDLMZ(4ux%%&-VSC#6`drd7A_b0?L)+x:];6VNJ,_:N@OJ<,_'^;Dme.T]@fLULG`.mQDxj"
 "7/@c6LSZKOr5n1--rKQRkq[OuUt,MKTI]PD_>suMS,)##]Kg99QaYG8[W'##");
+
+// File: 'skillgroup6.png' (1299 bytes)
+// Exported using binary_to_compressed_c.cpp
+inline constexpr auto skillgroup6 = Helpers::decodeBase85(
+"=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.%.>>#-.s*>3?ms8f+9DS#2+,R3e`T9gi*,RqrefQwU^DSa+^%T%v@JQ.R;997IQES)lgDSpg$/[g]LxU2E`A6L_dqWk-bG7@?/7X"
+"`SHUW2I2BTLAHUW.)=#7*(HZ89&S6:S@$1<+<DvTB3J?UnCFldCh^+ffqB4Y=l,aS0W(ILQ&av7Uw;.=_q;.=]%Pn:IM=n:E/s995?QW8mBf],]IU=;5Lx]6;H7qC[UHvI_H_DIDkxF>"
+"&k&,X&;)129@6UWB0/_T#di.QcC4GH,rZ0313vvK[$LDI6D?PEj$?<B20Pc>;@k=.s+DJ[85kcRuB_(@J%Ic4qVZJfk>^cS*fK)S6dovKE@YI5VwtD^+foOY0kbuCO;MD?FA8dgE#B:O"
+"FbERN?I<RN6Qs]AIoW#AEis>ACk#;/[&Y>-Ldt1e1hX%`-W>wUMf$UMiIY^c#Jv&_Hd&d]_'v:l:K>Eh7OTtaU?e17D.>=#n?T?Hi8setAPpotYG'h[T+H9tq:ZE^,/N(`-:.E^tD3%u"
+"1QFpm/[J$UH/bbII:uJarK(##2jLt8[d=Tf55cBR-@iban8?XTvN`^&*4c[#:]cKe[ZRDIvoD%<:THxb^8PtKlAnD1meLFp8J03A<?63kT0*hR?3dG/=8FV0;u?3O[3'2?VItMO28?7W"
+"Dk5XTSn_VMZ/&(63ru<#5w'JV_@S_77JC=utFFZ+(0SXn<gU3puVIV6D@XjY8J$$28f2SS`$xn^&EsEc.Qqkdo*noOY*`Iqwp5(,LosG@-7KlD=wqM23bE/^rJuu`u#g(NIAvO)N:gak"
+"$D1xV*>=1vl3;(N.*Cd38I]F]fo&M8F$rP/YmrSA$_>/%a%'9ZhL:G0d14a^^Y^?oj@NR)[NNtAp;x1Um8M&G_3Wih;1Y.q0uqj_r[rxih%X>=Orru9Q(UkRxQqE7v'/.2(;[K_e)7$&"
+"uYa@%ig%nTQKD*PN/w7'n=j6DE%3$2ue)G9jgWWT=5(8eH2m'ZI(C(qeN=x?;fN']d1LrbfD?<Mq61E#F-k18ug1miCcb#rMrWj_==c$QR1a9J*&5698-U+`sG1V@Vbo.8'^&&YMvSBs"
+"tqxiHGpKrDIhjV<*po-'+I;nnknvCp)E@gBhE&q/KMWV,ZDv7dH.VNt?8@i@B`$'L&hZoFd&qiHU<?vHj6tf&3uS;m;T/b.kA#8(vJ6OC@lw74El]N,FV;bTqqMh0b1pm5k8BrM[>iLf"
+"A]iDtpq,S+o[q[[E0Ft_0bXV1qLuRZVf5tq)/Sa2%flKNw/RE#kx)uK1^a>_9'uEa=6Sh_x:*tpYV1q^ew]FH%8D>WNTrLT3)LeiuXcj?Kx19+GBkoU?>jR?.IY+k&IUS;5Dko?=jDEO"
+"uT/+HSln_Z:+)G>MGlvfE)_2_1I>M^VVWf4Ge@x(._,J05[(%*M9lRT+'(^.r^>B6$*Kw(8#F;WYwx>%/Qod0Ab$d#63V]dRlpT`l?E/q2(llAC&pf>7cbwIh#Q@YmXU*YgmF(^gJSg."
+"n%$i6p*-pI3g?'NFoh;X11jdl8#kjAX<ujs%U5PmsD6<u%D[^'n];7nC.O)v)Oc$$lOq)#mb:J:T%f#[HVq0#");
