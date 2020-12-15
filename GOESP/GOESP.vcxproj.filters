@@ -238,5 +238,8 @@
     <ClInclude Include="Resources\avatar_tt.h">
       <Filter>Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\skillgroups.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
