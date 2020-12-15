@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../Helpers.h"
 
 // File: 'avatar_tt.png' (1758 bytes)
