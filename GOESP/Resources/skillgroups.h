@@ -72,3 +72,19 @@ inline constexpr auto skillgroup4 = Helpers::decodeBase85(
 "'p;q#6L@FHWB@`o+)kDQN[%L4C7dW=R8KH)pf,(I^osV3<6DW?*-scVN57wG7vX[$(Qi@[1L8[a*`Z.Advj&9Qx6^8,[6V%=XxFHn,cu7q9j=OFF1WLRfOJ&]IW9L6H6dIFE40NJ=6[+"
 "Ndu;R#S[5RBZjJu6a*j#bCr-G7'*^uT/cU`+R^x3dq'F1,Q#`SF8ClmXPT<ehpdr`9<_O]UeVRn?SG4S#OFV0Do$QrKPaV;bOZw`2x_BncWde0gK(%aM]wPs?Rk'v#_g+k1#iL2S####"
 "Ub90<d$bsAP$###");
+
+// File: 'skillgroup5.png' (1278 bytes)
+// Exported using binary_to_compressed_c.cpp
+inline constexpr auto skillgroup5 = Helpers::decodeBase85(
+"=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.%.>>#'.s*>c`lLPL<^4OgFgDSh>.JQeS7/Q`#vLPqLB)S$W-tMk?@?Ul,`.Q@]E:Niq1BTDN=wU]>1xULeRn:p7%JQ+(6ES:ZvOd"
+"`:vAT8U/XOK7gA@1R=GH84L-R_Z#lO0-]ZUj7ErW@VffQ5e`T9Qukn:F)jT9/kp;8=^m<8:;+R:):b>7a_6l;Q,h],(@$1<TY8u8R-Af=n<jI=f)0>SbX,^@q$NRX/NP_Kc4]>-q=+wU"
+"4%1b6/s[6:J[Lk1S^JCTbqRqMs5s>Khc[D6aoGc4L&0f3N1qcICAqkE`UPWB9uI(d&V;B_+]fOYq#`-HAr`.GsZ[6Df'*$/Z3FMe<KD7cvFnuVH$W^Tj,`.QrW#4F)QbnDJ6Lv-l`%H5"
+"KH.12+7Y31rKHWNJm*E^,n1rls04@`Sjwf[90ef[:XpbfoE?lY6G9)S8/4fH3os4nMi&=kS9tj[U.GGRje,uNo$###]2]1<)*dFgp^UjdvM/EgQi0Mev:da^lq/G^pTJi(;,=Vb[]J3P"
+"jn>6Zb>uu#i;$w7.Pw/4wHj+,D3(Ll7C$^%=W*Jmt-Z:`1][?`Z6$ou?toqY:FcKkTJpA72Y<-hGLZGRJm/U,;07Bp9N&iF?b&jWkq^hZ1rPRNah-Q)/L*$7;gQ)L73WW-2)1MMN#De2"
+"a?DoN&Q5/,-H6#>X#+I-OYbsk-a1%N9/D0[hjd$LZ^pcT=gehkxo@$e`''Ellvs=1d$NHf/<qua-bCG<#h/Q03<oxr.E$?A&:nfNn7mk@(#;b)FZX^RHY_#>PUN:eIZh0*i)UtR2u[(8"
+"*olQ]kE>KE9^<:PKiW-/f)Pa<8M=GusP2LHB.6D<(HoW1S*&0fsd&RN*nuR]%i*+Sa88Lavax[J`bAO2mKdQj&CMcBvq2DR'Nv,OKa0(f_V&>mUA'^M&'58UPuigA@levCv/t=GcGo4W"
+"UlH:AhUQ#Lu2LvMf>u*n4[j=`D/lR=XNHpNYh=N0m'qQ%CI=iGf7X+klN_+4C2%mY24[d@-MlT+q1fC:vj]3AhGt_V3m89t4<AjU@hpRuw<3:O?B_oDaK)ERZJ=CD>nx::Vx(^SmlLp/"
+"8+>%m4K#'#8@rh44>[0So0OWA'@eW=e((;fvI>_Gl'MRk)&6>WO-ZF`hxFdc7WD]EfgF]4+/?EoAIlA_r^=*^k.?#n2R6]Q[#*K,u*J_-5u'ptItWHje+BL=k5b:]t-ho]P5IUR*f.4v"
+"m6CHtA1`1S#2BpAk9S^XOvq,L8-Z&f_xD;4hFJV#(wJ/e;t:UbE=FL1Yg.C]g1e+tf=t_93r6gJQh>L3LN8OVfnOj)_=MZ&eWn2Bb;+B_0lcdr5n90&ac?RtA3$/f1,$d^hF6`a(.dfO"
+"jQ6(iL<Bv0IMmt3?*h%HpkMJ9['JJ]FCeM9u<r:8M6I1.KF>)Sfmu06U6[OZkN[(P.:JEfDLMZ(4ux%%&-VSC#6`drd7A_b0?L)+x:];6VNJ,_:N@OJ<,_'^;Dme.T]@fLULG`.mQDxj"
+"7/@c6LSZKOr5n1--rKQRkq[OuUt,MKTI]PD_>suMS,)##]Kg99QaYG8[W'##");
