@@ -1,11 +1,10 @@
 #pragma once
 
-#include "../Helpers.h"
+#include "Resource.h"
 
 // File: 'avatar_ct.png' (957 bytes)
 // Exported using binary_to_compressed_c.cpp
-
-inline constexpr auto avatar_ct = Helpers::decodeBase85(
+inline constexpr auto avatar_ct = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=CD4;-CD4;-.,###AYPRO?%###6/s*>][t4:201b,LT3&5W.Sr860c*,LV0/PW8f79+r0BHM%N#64>ld=_BVfFqbZf<ZUE_?@r;-J>jWUL02R'?[YE%.J-ic3"
 "gF0>`*bkX:+1R)>Tr$b>Y%pX/cY,?6eht=UGH`j4O)sL;=s=H=l0h$RhD_lXjQDCS_Eo]BGVvDH//W_IA]$s:-uqc=:9&K<mvRqTxA8XK0EqEH%)#MOCLmtU4I&TWuv%x8r<r4Xd=p*]"
 "fMcCKm)BMEgVLNYZ.2$9_vvk:R,GpQa5YY#I=$w76(p`Cq8JVj$SPj`a#&'C[:H8PaPG:vR@7Lj$m%J]+)muC;lKYum>Lu-E#vp/&&K))AMca#4i6ZCv&;'>e8_;JUvmZ]<`F,#b2mou"

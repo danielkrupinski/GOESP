@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../Helpers.h"
+#include "Resource.h"
 
 // File: 'skillgroup0.png' (570 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup0 = Helpers::decodeBase85(
+inline constexpr auto skillgroup0 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.$%###*/s*>v,h`Ih$h_@4E5G>SE7qC)3#g=Yx-JG2,mhFd/^KFe%]A@vID.GAD.*?,?Pc>VQR6D5+CPD<Fik;'m-&@I^ODHe,h+>"
 ";^v]JgMo_>(9Pc>8KQAJMv9&I`N=.=u&5G>_8iu5^lGc4<nq02XlSK+s:aWB^)J6:B'aw8Z9d31fXa>A;w4F5gq*^6W;gF478USDwNwe)Cee]6D^3i2wCgk;#L+#-.('u.vpJD?''Gc>"
 "4>Kg<3&/n&s&7bG7$###Z2]1<@ebDI%;_DI(p,jo;S-jo-p,jo@A?No8.OqmYLpEKO4El];2*=#u9%K:vv8]I'Y.Nn$HTL)'ZA=RfSH?,'8;h6Y,p-L>Yp+=(BmgN[PQV<__a>TOuEw5"
@@ -14,7 +14,7 @@ inline constexpr auto skillgroup0 = Helpers::decodeBase85(
 
 // File: 'skillgroup1.png' (1126 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup1 = Helpers::decodeBase85(
+inline constexpr auto skillgroup1 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.%.>>#@-s*>16ds8i.')Sx44,R$i,aS8RmaSucr.Qa5%JQZAUXV6M+,Rq1kcR]@4LZ$cA4Y,vWcR0[xN5a?xIQ[gc(56guMYT$*BT"
 "/(Q&TAPq37>(61<Fv.q9Y;L&I5#3,R6$A?U#5GSYj=>/fA`oOY(AfjPJxP<Lud`T9`C(S:VXZL<[@$1<I/NX8F(hk;lWS+>VloU9^aXc>`.Uk;:cPd=ZS8q9l&Gc>nh:8:e#()?E-HW8"
 "H1TZAZba`5o4n]@Z?7qCtpl>7<E7qCM'RmDd(2f3h0X>72u9i`U7NL2YBf],D*jBTSP0?Kn;WT/+1^SX7jvLPCF<RNqueYmXFTXk0?('iHQ1a_S,kG]/C1MZ=8.xLg$#,HGIFld^m55O"
@@ -29,7 +29,7 @@ inline constexpr auto skillgroup1 = Helpers::decodeBase85(
 
 // File: 'skillgroup2.png' (1193 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup2 = Helpers::decodeBase85(
+inline constexpr auto skillgroup2 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.%.>>#k-s*>b]lLPv%8NPbDr.QQ3pkO%&jmO]8i.Qa>.JQi`@/Qm/I#7&bTv7>KtsVMBJ?U$,bcRi3<oWg7aRXb]dqWuY)HOPK,lO"
 "q[gDS,IYPYqCaRXHn7?U)pH/@qOu3;u?o+HP6*xRl>;iPdECiZ$,)aT?WQ4dA+Y1Z8`GsXHo4,Rrx3,RNfOe:HD]6:Q.Uk;P(CO;L>8q9Yemh<H(6h<C$l>7d/c(?QP/u84?QW8w'=#7"
 ".B2990k9Z7[E/f=GoW^@SXa`5gT4#-+3gJ=+s?&@)#2D5%Z6J@4QYc>E6ds89X/sA+-x9We4snX6rC=LuMa#Kdg)^Jr,xqC-ImZUb<#lO-GG[Kd9lcH6&QLF*d-R2GqKa^6OLiZ=r`iF"
@@ -44,7 +44,7 @@ inline constexpr auto skillgroup2 = Helpers::decodeBase85(
 
 // File: 'skillgroup3.png' (1148 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup3 = Helpers::decodeBase85(
+inline constexpr auto skillgroup3 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.%.>>#X-s*>cf1iPiJ;mOk@B)S(i,aSt*`YU#*hOO:m'XVp:euV6;AJQsC9)SxIb,Rf&Z1P@)_9W@tM'T%)o+RID6UW,J]NPbDr.Q"
 "Q+WRXMgbfd>q@aS]IS4Y.'twI-1LZA[A4wUOTS_Takk1ZoCA4Y#;%vq.F7,RHG-1<G+H-=Y`]6:`3aI=[CL4;Ddvs8Ir0O;MF2e=P^-<8'UKv7Cmm*898+R:_w;.=TwU1Q/]8#-Kbe]6"
 "b5)g4BKBD?ns&f3l^%T5gkw]6e8l(?B8YA_F';MZISPWBS<$=W;cOGR+3a#KL'kOj.-p)hse.?UM1*QEv/4RDOcj>AcN4T1fsf],&0IL2r(rEHeg@n0]#(Z-<t%Mcq%-E^rj,:b179(/"
@@ -59,7 +59,7 @@ inline constexpr auto skillgroup3 = Helpers::decodeBase85(
 
 // File: 'skillgroup4.png' (1241 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup4 = Helpers::decodeBase85(
+inline constexpr auto skillgroup4 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.%.>>#*.s*>j7%JQ*]bgQhD`.Qvh,aS5e7QUBti#Utl<GR6Z;'9Ov=4Y&KIfQ=<C_6jZ=JQig$/[I@,oO.QTtV,>tcR%np)8(k^v7"
 "h4i.QruR/Q:#?UWQj'XVmw0WiGfOiP*R;99Q7-L<W@EGH_u&?A<7(LQ+hI?Um@FldCh^+f^x%:W4l>&TFlT0<R,h],qCxQ:<PKK<Mv)t8L%:O;C(md=x#,G>qE/f=A^H[7>fBO;0L0Z7"
 "svFc>Lqx]6#cj>An.XkDOu`1Z30ef[KMf3U*qc`5X]Gc4:PZ98ADMv-[b&d]g@8^gf7AUWY8q9WIqErMpEccHZWZJfe+He]51T4Y3D9)S%jsBJaK_DI9,ZLFURpZAhR2:b0>&oX2]oNP"
@@ -75,7 +75,7 @@ inline constexpr auto skillgroup4 = Helpers::decodeBase85(
 
 // File: 'skillgroup5.png' (1278 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup5 = Helpers::decodeBase85(
+inline constexpr auto skillgroup5 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.%.>>#'.s*>c`lLPL<^4OgFgDSh>.JQeS7/Q`#vLPqLB)S$W-tMk?@?Ul,`.Q@]E:Niq1BTDN=wU]>1xULeRn:p7%JQ+(6ES:ZvOd"
 "`:vAT8U/XOK7gA@1R=GH84L-R_Z#lO0-]ZUj7ErW@VffQ5e`T9Qukn:F)jT9/kp;8=^m<8:;+R:):b>7a_6l;Q,h],(@$1<TY8u8R-Af=n<jI=f)0>SbX,^@q$NRX/NP_Kc4]>-q=+wU"
 "4%1b6/s[6:J[Lk1S^JCTbqRqMs5s>Khc[D6aoGc4L&0f3N1qcICAqkE`UPWB9uI(d&V;B_+]fOYq#`-HAr`.GsZ[6Df'*$/Z3FMe<KD7cvFnuVH$W^Tj,`.QrW#4F)QbnDJ6Lv-l`%H5"
@@ -91,7 +91,7 @@ inline constexpr auto skillgroup5 = Helpers::decodeBase85(
 
 // File: 'skillgroup6.png' (1299 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup6 = Helpers::decodeBase85(
+inline constexpr auto skillgroup6 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.%.>>#-.s*>3?ms8f+9DS#2+,R3e`T9gi*,RqrefQwU^DSa+^%T%v@JQ.R;997IQES)lgDSpg$/[g]LxU2E`A6L_dqWk-bG7@?/7X"
 "`SHUW2I2BTLAHUW.)=#7*(HZ89&S6:S@$1<+<DvTB3J?UnCFldCh^+ffqB4Y=l,aS0W(ILQ&av7Uw;.=_q;.=]%Pn:IM=n:E/s995?QW8mBf],]IU=;5Lx]6;H7qC[UHvI_H_DIDkxF>"
 "&k&,X&;)129@6UWB0/_T#di.QcC4GH,rZ0313vvK[$LDI6D?PEj$?<B20Pc>;@k=.s+DJ[85kcRuB_(@J%Ic4qVZJfk>^cS*fK)S6dovKE@YI5VwtD^+foOY0kbuCO;MD?FA8dgE#B:O"
@@ -107,7 +107,7 @@ inline constexpr auto skillgroup6 = Helpers::decodeBase85(
 
 // File: 'skillgroup7.png' (1801 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup7 = Helpers::decodeBase85(
+inline constexpr auto skillgroup7 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.&7YY#e/s*>d/_@@Vc68;+E>(?uvX-Q;qgq;-k<I=^>UaHw;&^AIg,c>k9pa]_[ijOI3U+H`&fVL3fs:NZ<%<BgZ/0F7G5mN(&63E"
 "HVxwT$-4::LijxT:cLYUiKN2<1;n]@_[)3Oq'tZV&%g0ZJkerL*@G/>:$4I=VE/KFn?ZvD*bdsBRfPMO>A*gQ>2(qC%nC$_UpAYSn1I6X#lp*]251WC]lI]@QST5NIoK'<aB5U85]rsJ"
 "vl3T3l,q98BnpNM%2t540.hI<Oo@9K.22S2eJ`n9^>=FPBu2w0;e/X7A3Z0Nh?R<07j;1;*+-jDd>N15(HUt7l<vfEhD3P48[vF=&/6%Rhp(v1TgYq8BOkQL3;dV1Jv64:[^0]?qmEX0"
@@ -128,7 +128,7 @@ inline constexpr auto skillgroup7 = Helpers::decodeBase85(
 
 // File: 'skillgroup8.png' (1788 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup8 = Helpers::decodeBase85(
+inline constexpr auto skillgroup8 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.&7YY#h/s*>q=]rB0nu=Ks<pFHmOLpCR)>-GiPd(?\?\?s4XDmeVLetgx@S2XSM+eqPP&<+9CfKJgF.Q/^A/Z%s8?>LJZaP6=M>ND`I"
 "sD:/Z=)kSMQJxxJ$B(jYCD'9M):BFHx'*NE?>5$BKZQ&J)vm^IIt2IITA%+R7XaSWK(>nFJVq0FQHMYK+fY6=.cee[Y3JvKUm[cB?d7ZKkuJvA?sdn7+^W+=_npNMO3U34#mDR97;mvI"
 "12H;1P>nk:;v,?I/,QV1TlJ.<P+xpK)a^u0O`A.<`NDhN:J6?0:#WL;$]KMDhERw/$L4U8kn^MDF+w?0oY]d3AIv[R2/6v0P]&i;VOMF=ej1;2>L*[6CKb@?F`_'/YPk:W-``WJ&q0sp"
@@ -148,7 +148,7 @@ inline constexpr auto skillgroup8 = Helpers::decodeBase85(
 
 // File: 'skillgroup9.png' (1800 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup9 = Helpers::decodeBase85(
+inline constexpr auto skillgroup9 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.&7YY#e/s*>E_Wd[:ADL=UWeQD-AwBI,2GMOM0(fGa`xrBJSDg@0+fFH[$6AJ<5GZBe+8A@eaaNEQ6x>LHO(vA?+XCIVSm/@u%61F"
 ".O>'^s&CZCDtZ;V]f23O]Ce^UT-w]T7@I;VL-r9CND+wK)Jav@iU05D$9_eQ>>`JP[xLET'ao%_ivt8M9*KB]Wt[WLfJjYA?WHn7f1.X7mT`GFQhSX1Dqj<7ScBCQnDI83u741;<p#?I"
 "6lel3p,Ut7k3ZJE3i*M4&gmq8BnpNMQE6k4'Tqt7_t.YS0sYR2dADR9kFklCbWcu1B4VB5LYdY@$j'WTwLt69tktPC2ZZp1QK^t7fLJsAg?hGPH_('JoE]W:pWNT1tCqB5bY'BHq#?bd"
@@ -169,7 +169,7 @@ inline constexpr auto skillgroup9 = Helpers::decodeBase85(
 
 // File: 'skillgroup10.png' (1813 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup10 = Helpers::decodeBase85(
+inline constexpr auto skillgroup10 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.&7YY#e/s*>gMd=Ah+Wg@u#&qCd6RQD1wZMQr7/c>(tK@@sa<Q;'KuC?OkvMEZG-xLZh5#AbZWNEAUjqDJ?HAJuld>@ojD0O^nrpM"
 "+^^PNt=g(JY&0qC'&;IGxLV<T$mQI=.h#AJGpFHG2hv8CDFx+HD?X(?xe9>USP2NOho+@Kd,XTCkN'*RXB1VUo#r+H--k3EDSlZB'6Wdq.A@2;0#$v08F*[6jd.dF:Y2W1Ftj<7r)oDG"
 "t]_K4x5:X7SGMrArm*x/qDW,30j#Y@88U^/'qBR9i.+5Ck2(K457hI<ZhT3MLxt:0P1j7/j5Z8/dnc'.L3?j1[.Ca7W3G:2XHt<7f36jDu2EEQiM9xKWl@n9%)FT3_h;'5`#AdFeW7:T"
@@ -190,7 +190,7 @@ inline constexpr auto skillgroup10 = Helpers::decodeBase85(
 
 // File: 'skillgroup11.png' (1793 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup11 = Helpers::decodeBase85(
+inline constexpr auto skillgroup11 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.&7YY#_/s*>@Oa)]&-03<Ct$qCRd4MY1sSBA6rVIGBQ.@_i`Z/@89K+>p_N_I=H`YK^sWTCwvtHQ6G7e>MelsB?gQ]@De]3FeKY(I"
 "*_sjEWQ&fIF3n8C/lr*>PEn%RN,CTW-hI@_$^U)?,?OQXQJU5D+7pM=ZaeQD7+>XKH#W'JL[PYAjK33E-l5:<HEwQD2x&%Jh/ouBYFKvAd076DC8S-:tF.X7k<vfE2&$v0#N<g2e:mvI"
 ",s>V1QsCR9+*oDGdg+N3vx.4:?SVWJOL681[O(G=lQ9x?-J[L4j0j^5R745CuP%<29(.$6Mrg_QatU?/mxka4-9b[?oZw<0<&WL;If%tJM,&C[7BCB53*?kMT3i?0(Aca4>2m:ASF1Z/"
@@ -211,7 +211,7 @@ inline constexpr auto skillgroup11 = Helpers::decodeBase85(
 
 // File: 'skillgroup12.png' (1823 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup12 = Helpers::decodeBase85(
+inline constexpr auto skillgroup12 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.&7YY#h/s*>weboCohXaB1stNE$TQ^IH<i=B_`V%@hqijOaX_xKfwgx@=e1uKP;j8<X5)(SK7J,GXYm/@_3DpCX)<>ADC#[AgtpVB"
 "GLH7Wp*R0?hA0OEcl2)]F&cHGbN:)ILM6(RvPh$CqRox@xWqv_hPT4EgrFsL_5BUaxvhK>6?K+>K6x,GGIRw4?tDc=)/6%R7c753lAm692v,?Ii,rr2amp98P,o*P_)315&91X7PGXbP"
 ")ZTu0U1>f<J8mvIf'Is041[?6viOEG4vgu0;qJX7N(CF@d^H05[,V79iGE8F'3EaQCaD7/lG721SZ^rV-RTrb;bX>Mk(=3XC&VVWC52VAQHf_H=2%=7ur0'HaE/m2^cht-d@M)5;u7*o"
@@ -232,7 +232,7 @@ inline constexpr auto skillgroup12 = Helpers::decodeBase85(
 
 // File: 'skillgroup13.png' (1808 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup13 = Helpers::decodeBase85(
+inline constexpr auto skillgroup13 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.&7YY#_/s*>8?WjE_]8T<`CTYUJcQ2Ew]Ld>fK;TC^xcMOg#+rC5%S+HL)o[_5N4u9&f=sB)kTER1O$6D<XZ;V%_ew_k$t9;7FR0P"
 "@l7KPsnhN>k.o%TdX5b]c3VSFsIox@[xg5NhK2N4$Y)@6oR3CI$&f_9/nfeQMc23O0qYn<DgU(S[d$bHERJNFsXbYAQXVob^,+)C6q5&Jw3RQD5e+X5i_n98%EX&H6ow14ngOw6lpI)G"
 "1VIl3*f'i;D;mvI<o%T2Z#v69b]`rA_tHs0VXq(>4o%YSSE$O40cF1;sIv[RkH@[/,?QO:9v,?I;M282;7R?6XCOPCBrvZ0dQ$j1OSF)7NmQ3mI)T2ef:&%Cka`xRuu#e)AQ8=J;`e*c"
@@ -253,7 +253,7 @@ inline constexpr auto skillgroup13 = Helpers::decodeBase85(
 
 // File: 'skillgroup14.png' (1471 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup14 = Helpers::decodeBase85(
+inline constexpr auto skillgroup14 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.&7YY#<-s*>JdNDAk#A0XmK4YV^e_+@$Q4hXgn`[Ug6%,@7GIVTcem?U4re<DbMc0OYP>uL)WZ3=,QTDQ4)baStvaDAMXb<TLJXES"
 "AhXXD'GESU11xoNwKu/H?@GiWmQFuVM3hUEE?-TSRqe=VH#*O=b,3S`9Jv$`P%s?CId92c+0%nO0o$+A@2iZs0-epNtptY-br)9/Ym4#-;O)D+:=hf)<dKv-#Q.L(mWfj0Uh6c*@@r%6"
 "fMu^,8.hF*bhfQ0x[ZK3?\?IL2Qic(5)]ww-I-s%,)N3.3YQKq%YM[h(YQ,n&gs^U%2`nQ0dLw8%br,g3=$Vk1IJ#G4+hF?@Ye1O18D9OE&BCXJ`ek>7`#&p0pHmpLK<`'JFD,Y9&r1'H"
@@ -271,7 +271,7 @@ inline constexpr auto skillgroup14 = Helpers::decodeBase85(
 
 // File: 'skillgroup15.png' (1489 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup15 = Helpers::decodeBase85(
+inline constexpr auto skillgroup15 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.&7YY#9-s*>[oP^BHwUJX4DmUMwx(?Cf6$qU6h,jP6.A[Cf;TnM6AbESfQ[G@a$UTUwr>:MH[-c@;lE8URo'FS:c#$B+8%vSC>O*S"
 "kss`A`Wr/XT/JHR_K3)Ag,FdYI+9&6_1]-?x)F,Pj^p+>Ae_+@*2M#SkQ&]U/M;$COIEcZ$NQ8X0,_EAAuY?rgO_mYBbDi5L;mo/l139/dlds.^%&Q0q=<9/WptY-Prw.2b<*D+5FvC+"
 "pDTe*aNmh20I(O1c:Jm0xhJ60eY?W.AX?,*7-f],&/FI)fDVk'BS###ir&f3NnwW$wNWQd'FL#N<d.v^(3q;WdHv2>/'nY%aYu5n:Z%dU%,u*dNYJ6Yx>A0?E`AYJ7h7&U&BLq;,,xQL"
@@ -289,7 +289,7 @@ inline constexpr auto skillgroup15 = Helpers::decodeBase85(
 
 // File: 'skillgroup16.png' (1804 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup16 = Helpers::decodeBase85(
+inline constexpr auto skillgroup16 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.&7YY#e/s*>IaNDA7v5aQ2a[HR(Y[WDD[liWg0fXV0B#^B(@gCRFGO*SwuCZCS36UUGd`gQt%m#C))hEZH@o4O(t96<FY;BRs[RSN"
 "Iw2`A:YR;TBv@-RM(>.?E+fvS)LTmOduoU9_m7l12S>oN7)Nk=C5$*QrCVrMLO(J?P9QUU?HDgQrsf]BtLdFZ:5E5Yp3FuM0Y`Z]p]AhQw+&QP)kQ6Vic`TXULIbiEiWtV1EMv-pqoQ0"
 "Tl.C#*x/O1p-96&Ti%m0Uh6c*?9]],+oWX.%Rx8%pr&f3pOsT/UBs%,9XD`+u.xh(iPr0(tM3.3L=pp&YSBD5kptY--4dC+uPDk'.fc(5+SXL`541W$0I1.@V2^S'r@@NoHRq>NCRN6W"
@@ -310,7 +310,7 @@ inline constexpr auto skillgroup16 = Helpers::decodeBase85(
 
 // File: 'skillgroup17.png' (1838 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup17 = Helpers::decodeBase85(
+inline constexpr auto skillgroup17 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.'@uu#j,s*>(wkXDSi)P`_.3VMV+pPG<`.?S.k5NPIpHVE)q.NNdn&2PJ.G.?Nrr#Sw.&mYeK_:E>BM]S0CblOaas%Bs#t(QpwjlO"
 "oss`Au/K`Q,QRHRYbr@Lm/IV_6:X.=Dx&:/FJ?*Q?pf6:a;63=xAg`QKupBTjKnc@:s5&Rs$X5O%]nsDm1BX_$TW0Q@A34=[mFpaLSaTXULIbiEiWtVNtRL2P[D`+2x<x-b.WT/=%-c*"
 "aG:?-;(C+*s)@L2D0/&,-MOI)xSmm=BB7l10X1O1G=Z(+r@*X.O9s%,=ic(5v/%/V%sv(5UM5c4[a,q]<G86Yr8=H@2b2mMZii`5.V/q/Q/h*<>O*a>v5mx@1L?CZcK3@K5^qv-?kM39"
@@ -331,7 +331,7 @@ inline constexpr auto skillgroup17 = Helpers::decodeBase85(
 
 // File: 'skillgroup18.png' (1799 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto skillgroup18 = Helpers::decodeBase85(
+inline constexpr auto skillgroup18 = Resource::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.&7YY#X/s*>>D<8F,+9CRDAF*S^<*DA1+Xp_fTH/QUL_F@.lW8UZ$SxUT9]XC)WK)QrRIoNT3e(AOb#QVJprgQYj0rD,d5&R;mIHR"
 "$,2?Ck.%W^;H:;W6Ib'aBhFvQ*:IqCQ0wCACh^tTGAOES1DSiGbU4<TJr^bSvJ9aAVe&D[v9s%USt'#N);%s^JeK6O/c]Q0L.65/F7C+*#H*.3s7Rw-rQ$12kY?W.VKT6&b(te)kQ1O1"
 "qeu?,0SOI)#aWI37te=-3A]h(kdUk1`)pa+jBFT%nr6rjUQED_$g_(>jjg<7K/K+4Hv:lM-B+I?#4ZlMjq3pN.B/g<D.IU0K05*IIr:V:f<fvIL1LXB-4)E4Z$Q31fMUv-Umf&,h58<<"
