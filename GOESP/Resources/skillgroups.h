@@ -2,9 +2,18 @@
 
 #include "../Helpers.h"
 
+// File: 'skillgroup0.png' (570 bytes)
+// Exported using binary_to_compressed_c.cpp
+inline constexpr auto skillgroup0 = Helpers::decodeBase85(
+"=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.$%###*/s*>v,h`Ih$h_@4E5G>SE7qC)3#g=Yx-JG2,mhFd/^KFe%]A@vID.GAD.*?,?Pc>VQR6D5+CPD<Fik;'m-&@I^ODHe,h+>"
+";^v]JgMo_>(9Pc>8KQAJMv9&I`N=.=u&5G>_8iu5^lGc4<nq02XlSK+s:aWB^)J6:B'aw8Z9d31fXa>A;w4F5gq*^6W;gF478USDwNwe)Cee]6D^3i2wCgk;#L+#-.('u.vpJD?''Gc>"
+"4>Kg<3&/n&s&7bG7$###Z2]1<@ebDI%;_DI(p,jo;S-jo-p,jo@A?No8.OqmYLpEKO4El];2*=#u9%K:vv8]I'Y.Nn$HTL)'ZA=RfSH?,'8;h6Y,p-L>Yp+=(BmgN[PQV<__a>TOuEw5"
+"`r]QUUj^vsxgw6W;I7'iL]&5S5[_b6bt`5KRnRN#J_?a*%nT-]at-;4m#@c3,B>_B&hpE?YnqqF(^9Tt9FOYMg@S.:W?3eWl?\?nMcw.X$'RvT?j64w0W.,xE_,l_Rp9bIrh>4b.o-dw."
+"Os@a<dL@g23>E`qD.p5)=[3)`K[K+5:U&&`33SwLg]?u8^t(TLugfihBH'Iro>?:U@xu2)Ck(O7B-kPq0oWb<%Rx,9,@$(oWc>]9&oeB+^oBTL9n>gLcut4fDWKHposX(h&GDTWE0&##"
+"]Kg99QaYG8[W'##");
+
 // File: 'skillgroup1.png' (1126 bytes)
 // Exported using binary_to_compressed_c.cpp
-
 inline constexpr auto skillgroup1 = Helpers::decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.%.>>#@-s*>16ds8i.')Sx44,R$i,aS8RmaSucr.Qa5%JQZAUXV6M+,Rq1kcR]@4LZ$cA4Y,vWcR0[xN5a?xIQ[gc(56guMYT$*BT"
 "/(Q&TAPq37>(61<Fv.q9Y;L&I5#3,R6$A?U#5GSYj=>/fA`oOY(AfjPJxP<Lud`T9`C(S:VXZL<[@$1<I/NX8F(hk;lWS+>VloU9^aXc>`.Uk;:cPd=ZS8q9l&Gc>nh:8:e#()?E-HW8"
