@@ -108,7 +108,9 @@ struct PlayerData : BaseData {
 
     void update(Entity* entity) noexcept;
     ImTextureID getAvatarTexture() const noexcept;
+    ImTextureID getRankTexture() const noexcept;
     void clearAvatarTexture() noexcept { avatarTexture = {}; }
+    void clearRankTexture() noexcept { rankTexture = {}; }
 
     bool dormant;
     bool alive;
@@ -148,6 +150,9 @@ private:
     };
     mutable Texture avatarTexture;
     std::uint8_t avatarRGBA[4 * 32 * 32 * sizeof(char)];
+
+    mutable Texture rankTexture;
+    std::uint8_t rankRGBA[4 * 49 * 20 * sizeof(char)];
 };
 
 struct WeaponData : BaseData {

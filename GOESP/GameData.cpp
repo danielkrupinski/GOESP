@@ -19,6 +19,7 @@
 
 #include "Resources/avatar_ct.h"
 #include "Resources/avatar_tt.h"
+#include "Resources/skillgroups.h"
 
 #include "fnv.h"
 #include "GameData.h"
@@ -186,8 +187,10 @@ void GameData::clearProjectileList() noexcept
 void GameData::clearTextures() noexcept
 {
     Lock lock;
-    for (auto& player : playerData)
+    for (auto& player : playerData) {
         player.clearAvatarTexture();
+        player.clearRankTexture();
+    }
 }
 
 const Matrix4x4& GameData::toScreenMatrix() noexcept
@@ -330,10 +333,49 @@ void ProjectileData::update(Entity* projectile) noexcept
         trajectory.emplace_back(memory->globalVars->realtime, pos);
 }
 
+static auto getSkillgroupImage(int skillgroup) noexcept
+{
+    switch (skillgroup) {
+    default:
+    case 0: return std::make_pair(skillgroup0.data(), skillgroup0.size());
+    case 1: return std::make_pair(skillgroup1.data(), skillgroup1.size());
+    case 2: return std::make_pair(skillgroup2.data(), skillgroup2.size());
+    case 3: return std::make_pair(skillgroup3.data(), skillgroup3.size());
+    case 4: return std::make_pair(skillgroup4.data(), skillgroup4.size());
+    case 5: return std::make_pair(skillgroup5.data(), skillgroup5.size());
+    case 6: return std::make_pair(skillgroup6.data(), skillgroup6.size());
+    case 7: return std::make_pair(skillgroup7.data(), skillgroup7.size());
+    case 8: return std::make_pair(skillgroup8.data(), skillgroup8.size());
+    case 9: return std::make_pair(skillgroup9.data(), skillgroup9.size());
+    case 10: return std::make_pair(skillgroup10.data(), skillgroup10.size());
+    case 11: return std::make_pair(skillgroup11.data(), skillgroup11.size());
+    case 12: return std::make_pair(skillgroup12.data(), skillgroup12.size());
+    case 13: return std::make_pair(skillgroup13.data(), skillgroup13.size());
+    case 14: return std::make_pair(skillgroup14.data(), skillgroup14.size());
+    case 15: return std::make_pair(skillgroup15.data(), skillgroup15.size());
+    case 16: return std::make_pair(skillgroup16.data(), skillgroup16.size());
+    case 17: return std::make_pair(skillgroup17.data(), skillgroup17.size());
+    case 18: return std::make_pair(skillgroup18.data(), skillgroup18.size());
+    }
+}
+
 PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
 {
     userId = entity->getUserId();
     handle = entity->handle();
+    
+    if (*memory->playerResource) {
+        const auto [imageData, imageDataLen] = getSkillgroupImage((*memory->playerResource)->competitiveRanking()[entity->index()]);
+
+        int width, height;
+        stbi_set_flip_vertically_on_load_thread(false);
+        
+        if (const auto data = stbi_load_from_memory((const stbi_uc*)imageData, imageDataLen, &width, &height, nullptr, STBI_rgb_alpha)) {
+            assert(width == 49 && height == 20);
+            memcpy(rankRGBA, data, sizeof(rankRGBA));
+            stbi_image_free(data);
+        }
+    }
 
     bool hasAvatar = false;
     steamID = entity->getSteamID();
@@ -460,6 +502,14 @@ ImTextureID PlayerData::getAvatarTexture() const noexcept
         avatarTexture.init(32, 32, avatarRGBA);
 
     return avatarTexture.get();
+}
+
+ImTextureID PlayerData::getRankTexture() const noexcept
+{
+    if (!rankTexture.get())
+        rankTexture.init(49, 20, rankRGBA);
+
+    return rankTexture.get();
 }
 
 WeaponData::WeaponData(Entity* entity) noexcept : BaseData{ entity }
