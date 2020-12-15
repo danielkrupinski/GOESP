@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Entity.h"
 #include "VirtualMethod.h"
 
 class IPlayerResource {
@@ -15,4 +16,6 @@ public:
     {
         return reinterpret_cast<IPlayerResource*>(uintptr_t(this) + WIN32_UNIX(0x9D8, 0xF68));
     }
+
+    PROP(competitiveRanking, WIN32_UNIX(0x1A84, 0x211C), int[65])
 };
