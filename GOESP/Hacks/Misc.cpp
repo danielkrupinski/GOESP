@@ -69,6 +69,7 @@ struct OffscreenEnemies {
 struct PlayerList {
     bool enabled = false;
     bool steamID = false;
+    bool rank = false;
     bool money = true;
     bool health = true;
     bool lastPlace = false;
@@ -473,6 +474,7 @@ void Misc::drawGUI() noexcept
 
     if (ImGui::BeginPopup("")) {
         ImGui::Checkbox("Steam ID", &miscConfig.playerList.steamID);
+        ImGui::Checkbox("Rank", &miscConfig.playerList.rank);
         ImGui::Checkbox("Money", &miscConfig.playerList.money);
         ImGui::Checkbox("Health", &miscConfig.playerList.health);
         ImGui::Checkbox("Last Place", &miscConfig.playerList.lastPlace);
@@ -510,17 +512,19 @@ void Misc::drawPlayerList() noexcept
         return;
 
     if (ImGui::Begin("Player List", nullptr, windowFlags)) {
-        if (ImGui::beginTable("", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_Hideable | ImGuiTableFlags_ScrollY)) {
+        if (ImGui::beginTable("", 6, ImGuiTableFlags_Borders | ImGuiTableFlags_Hideable | ImGuiTableFlags_ScrollY)) {
             ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoHide, 150.0f);
             ImGui::TableSetupColumn("Steam ID", ImGuiTableColumnFlags_WidthAutoResize);
+            ImGui::TableSetupColumn("Rank", ImGuiTableColumnFlags_WidthAutoResize);
             ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthAutoResize);
             ImGui::TableSetupColumn("Health", ImGuiTableColumnFlags_WidthAutoResize);
             ImGui::TableSetupColumn("Last Place", ImGuiTableColumnFlags_WidthAutoResize);
             ImGui::TableSetupScrollFreeze(0, 1);
             ImGui::TableSetColumnIsEnabled(1, !miscConfig.playerList.steamID);
-            ImGui::TableSetColumnIsEnabled(2, !miscConfig.playerList.money);
-            ImGui::TableSetColumnIsEnabled(3, !miscConfig.playerList.health);
-            ImGui::TableSetColumnIsEnabled(4, !miscConfig.playerList.lastPlace);
+            ImGui::TableSetColumnIsEnabled(2, !miscConfig.playerList.rank);
+            ImGui::TableSetColumnIsEnabled(3, !miscConfig.playerList.money);
+            ImGui::TableSetColumnIsEnabled(4, !miscConfig.playerList.health);
+            ImGui::TableSetColumnIsEnabled(5, !miscConfig.playerList.lastPlace);
             
             ImGui::TableHeadersRow();
 
@@ -536,10 +540,11 @@ void Misc::drawPlayerList() noexcept
                 ImGui::TableNextColumn();
                 ImGui::textEllipsisInTableCell(player.get().name);
 
-                ImGui::TableNextColumn();
-
-                if (ImGui::smallButtonFullWidth("Copy", player.get().steamID == 0))
+                if (ImGui::TableNextColumn() && ImGui::smallButtonFullWidth("Copy", player.get().steamID == 0))
                     ImGui::SetClipboardText(std::to_string(player.get().steamID).c_str());
+
+                if (ImGui::TableNextColumn())
+                    ImGui::Image(player.get().getRankTexture(), { 2.45f /* -> proportion 49x20px */ * ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight() });
 
                 if (ImGui::TableNextColumn())
                     ImGui::TextColored({ 0.0f, 1.0f, 0.0f, 1.0f }, "$%d", player.get().money);
@@ -606,6 +611,7 @@ static void to_json(json& j, const PlayerList& o, const PlayerList& dummy = {})
 {
     WRITE("Enabled", enabled)
     WRITE("Steam ID", steamID)
+    WRITE("Rank", rank)
     WRITE("Money", money)
     WRITE("Health", health)
     WRITE("Last Place", lastPlace)
@@ -669,6 +675,7 @@ static void from_json(const json& j, PlayerList& o)
 {
     read(j, "Enabled", o.enabled);
     read(j, "Steam ID", o.steamID);
+    read(j, "Rank", o.rank);
     read(j, "Money", o.money);
     read(j, "Health", o.health);
     read(j, "Last Place", o.lastPlace);
