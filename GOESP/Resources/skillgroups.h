@@ -26,3 +26,18 @@ inline constexpr auto skillgroup1 = Helpers::decodeBase85(
 "v1cQ(ejKhU]6n$,l[4m8WK1r^-TTScf'B^Z>;eteT`Dx5Dhe%cJdg,O[';NueR4Xf2;f3I>e*xAKc%I>ssem4Dwkr'x&?b#8S[wQJctssNU:Q[1M]MeDPR->q&P=EaQ]%+&]6OP/XYUJ"
 "wB71n+'[]D7dj2BHpPce#fRwS.U?MrN$Pv`,:#v%x9ihU8m2R-J%q$QMDPL2TFG)FF90bO/_9bSHs5kf-E5En_,V;qk)u9G7eig_ns<4MAl_SlSKH3ow-:SaBC`BS+AAfri,)##]Kg99"
 "QaYG8[W'##");
+
+// File: 'skillgroup2.png' (1193 bytes)
+// Exported using binary_to_compressed_c.cpp
+inline constexpr auto skillgroup2 = Helpers::decodeBase85(
+"=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.%.>>#k-s*>b]lLPv%8NPbDr.QQ3pkO%&jmO]8i.Qa>.JQi`@/Qm/I#7&bTv7>KtsVMBJ?U$,bcRi3<oWg7aRXb]dqWuY)HOPK,lO"
+"q[gDS,IYPYqCaRXHn7?U)pH/@qOu3;u?o+HP6*xRl>;iPdECiZ$,)aT?WQ4dA+Y1Z8`GsXHo4,Rrx3,RNfOe:HD]6:Q.Uk;P(CO;L>8q9Yemh<H(6h<C$l>7d/c(?QP/u84?QW8w'=#7"
+".B2990k9Z7[E/f=GoW^@SXa`5gT4#-+3gJ=+s?&@)#2D5%Z6J@4QYc>E6ds89X/sA+-x9We4snX6rC=LuMa#Kdg)^Jr,xqC-ImZUb<#lO-GG[Kd9lcH6&QLF*d-R2GqKa^6OLiZ=r`iF"
+"Ej?MeS0ef[(7DUc(PBJQRw&f3vUa9/oi7Eh=wGUb#T9gRmPi.Q%.mAT^Lex6W^?;#qQp?H2P`Fcw&dQc$I+<a(+=CsTpNg[SWwf[,nLA`#e)9Oh%Rnn-T5E^Z$a^TwG#0,4La>*R7YY#"
+"r=$w7WPRm6s79+U3$B#GA-IAnB<J;./0aq<U?C,kTA'4H?2g%6d9XDmb2rgG><&WkXTbVq)36XSH)W&$Y=O3ii1Qv[KP(BBiQj_mA9IimW-`dZO=$.ZjDa/]5Xu%CU9#04@4(<h1M(Tr"
+"<hhrCQu]]K+4j<cw%.j:$&*61RGo8:LPMjt[l:j$rZK=$+(Fg%]=?,j2Y@`cx]IsS9Nc?M+s_n`:_oaPK./C-0MZ`bD]$JbG$wM-kAR&DR'Li9Fw(If1L=.INjME4v&lS67%6whwUEvl"
+"AJ?bc/4)>`-MIS]&Ldsj,V&s9__=R.OqeDkI/g5Z4JDcG#ovjgfWn6->#rZ^86l-:K7x7tOoBFr&IUlILbKOL0Y.U,Nv94Q/KH9(7rWHiSwiUU+_&IAHSf@O*W0JqYW;Qm7/'wX@[#,$"
+"522'M9$HFm>l*$V8RX9%@mIx]Q*=d7c'be:&a8E%dHZ$n[PCZV@PMKDYts2`s?2sgd]^`De5HR9)<Xs[$2V=F#5dhk?JB?.=bD(YaoQPYa)^#s(r]OWEA*A?%R]ne>x?[`mF8Nkt.a34"
+"/#lF+54rLjQX67(ZH7g@R]>WcO.ewOQ-A?F]6AK<7da)c$/#8FVkh.EHCVa5tDOOc_.M3Nh8=PU9D$$n[;#RWAR8u:4c22B1P+Y(M_k.'mk0ld$l<97An^=<Yr%XLUT#4[>_PbN;kYm@"
+"AGH$s&Dx;E`W@lmx[8=t[lxl;S$C0Wbc@QW'K7%S'-X.h6to5.Mx-o>9a[RDb5nO'p]mMcL%_/A$4p@O)XxJ/&?f=&OnYm<R[->)g9meRCfsha;6%M8^XP#E(OFiE4xV;#)KkBoTIC:O"
+"m4`FUa[bQ-BB<0QtUx?jd2N^PpTg,5ZKZ_qGe8+q.i+U)`3v&CF.c`='-4'Y]:4Dn?2A4in4@DJO$###Ub90<d$bsAP$###");
