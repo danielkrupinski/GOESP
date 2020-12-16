@@ -110,7 +110,6 @@ struct PlayerData : BaseData {
     ImTextureID getAvatarTexture() const noexcept;
     ImTextureID getRankTexture() const noexcept;
     void clearAvatarTexture() noexcept { avatarTexture = {}; }
-    void clearRankTexture() noexcept { rankTexture = {}; }
 
     bool dormant;
     bool alive;
@@ -133,7 +132,7 @@ struct PlayerData : BaseData {
     std::vector<std::pair<Vector, Vector>> bones;
     Vector headMins, headMaxs;
     std::string lastPlaceName;
-private:
+
     class Texture {
         ImTextureID texture = nullptr;
     public:
@@ -148,11 +147,11 @@ private:
         void clear() noexcept;
         ImTextureID get() noexcept { return texture; }
     };
+private:
+    int skillgroup;
+
     mutable Texture avatarTexture;
     std::uint8_t avatarRGBA[4 * 32 * 32 * sizeof(char)];
-
-    mutable Texture rankTexture;
-    std::uint8_t rankRGBA[4 * 49 * 20 * sizeof(char)];
 };
 
 struct WeaponData : BaseData {
