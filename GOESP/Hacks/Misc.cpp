@@ -529,7 +529,13 @@ void Misc::drawPlayerList() noexcept
             ImGui::TableHeadersRow();
 
             std::vector<std::reference_wrapper<const PlayerData>> playersOrdered{ GameData::players().begin(), GameData::players().end() };
-            std::sort(playersOrdered.begin(), playersOrdered.end(), [](const auto& a, const auto& b) { return a.get().handle < b.get().handle; });
+            std::sort(playersOrdered.begin(), playersOrdered.end(), [](const auto& a, const auto& b) {
+                // enemies first
+                if (a.get().enemy != b.get().enemy)
+                    return a.get().enemy && !b.get().enemy;
+
+                return a.get().handle < b.get().handle;
+            });
 
             ImGui::PushFont(gui->getUnicodeFont());
 
