@@ -479,38 +479,28 @@ struct SkillgroupImage {
 
     ImTextureID getTexture() const noexcept
     {
-        if (!rgba) {
-            rgba = std::make_unique<std::uint8_t[]>(4 * width * height);
-
-            int w, h;
+        if (!texture.get()) {
+            int width, height;
             stbi_set_flip_vertically_on_load_thread(false);
 
-            if (const auto data = stbi_load_from_memory((const stbi_uc*)pngData, pngDataSize, &w, &h, nullptr, STBI_rgb_alpha)) {
-                assert(width == w && height == h);
-                memcpy(rgba.get(), data, 4 * width * height);
+            if (const auto data = stbi_load_from_memory((const stbi_uc*)pngData, pngDataSize, &width, &height, nullptr, STBI_rgb_alpha)) {
+                texture.init(width, height, data);
                 stbi_image_free(data);
             } else {
                 assert(false);
             }
         }
 
-        if (!texture.get())
-            texture.init(width, height, rgba.get());
-
         return texture.get();
     }
 
     void clearTexture() const noexcept { texture.clear(); }
-
-    static constexpr auto width = 49;
-    static constexpr auto height = 20;
 
 private:
     const char* pngData;
     std::size_t pngDataSize;
 
     mutable PlayerData::Texture texture;
-    mutable std::unique_ptr<std::uint8_t[]> rgba;
 };
 
 static const auto skillgroupImages = std::array<SkillgroupImage, 19>({
