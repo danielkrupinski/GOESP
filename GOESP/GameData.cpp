@@ -185,12 +185,14 @@ void GameData::clearProjectileList() noexcept
 }
 
 static void clearSkillgroupTextures() noexcept;
+static void clearAvatarTextures() noexcept;
 
 void GameData::clearTextures() noexcept
 {
     Lock lock;
 
     clearSkillgroupTextures();
+    clearAvatarTextures();
     for (auto& player : playerData)
         player.clearAvatarTexture();
 }
@@ -343,7 +345,6 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
     if (*memory->playerResource)
         skillgroup = (*memory->playerResource)->competitiveRanking()[entity->index()];
 
-    bool hasAvatar = false;
     steamID = entity->getSteamID();
     if (steamID) {
         const auto ctx = interfaces->engine->getSteamAPIContext();
@@ -351,22 +352,9 @@ PlayerData::PlayerData(Entity* entity) noexcept : BaseData{ entity }
         hasAvatar = ctx->steamUtils->getImageRGBA(avatar, avatarRGBA, sizeof(avatarRGBA));
     }
 
-    if (!hasAvatar) {
-        const auto team = entity->getTeamNumber();
-        const auto imageData = team == Team::TT ? avatar_tt.data() : avatar_ct.data();
-        const auto imageDataLen = team == Team::TT ? avatar_tt.size() : avatar_ct.size();
-
-        int width, height;
-        stbi_set_flip_vertically_on_load_thread(false);
-        if (auto data = stbi_load_from_memory((const stbi_uc*)imageData, imageDataLen, &width, &height, nullptr, STBI_rgb_alpha)) {
-            assert(width == 32 && height == 32);
-            memcpy(avatarRGBA, data, sizeof(avatarRGBA));
-            stbi_image_free(data);
-        }
-    }
-
     entity->getPlayerName(name);
     money = entity->money();
+    team = entity->getTeamNumber();
     lastPlaceName = interfaces->localize->findAsUTF8(entity->lastPlaceName());
     update(entity);
 }
@@ -392,6 +380,7 @@ void PlayerData::update(Entity* entity) noexcept
     }
 
     money = entity->money();
+    team = entity->getTeamNumber();
     lastPlaceName = interfaces->localize->findAsUTF8(entity->lastPlaceName());
     fadingEndTime = 0.0f;   
     static_cast<BaseData&>(*this) = { entity };
@@ -465,14 +454,6 @@ void PlayerData::update(Entity* entity) noexcept
     }
 }
 
-ImTextureID PlayerData::getAvatarTexture() const noexcept
-{
-    if (!avatarTexture.get())
-        avatarTexture.init(32, 32, avatarRGBA);
-
-    return avatarTexture.get();
-}
-
 struct SkillgroupImage {
     template <std::size_t N>
     SkillgroupImage(const std::array<char, N>& png) noexcept : pngData{ png.data() }, pngDataSize{ png.size() } {}
@@ -506,6 +487,26 @@ private:
 static const auto skillgroupImages = std::array<SkillgroupImage, 19>({
 skillgroup0, skillgroup1, skillgroup2, skillgroup3, skillgroup4, skillgroup5, skillgroup6, skillgroup7, skillgroup8, skillgroup9,
 skillgroup10, skillgroup11, skillgroup12, skillgroup13, skillgroup14, skillgroup15, skillgroup16, skillgroup17, skillgroup18 });
+
+static const SkillgroupImage avatarTT{ avatar_tt };
+static const SkillgroupImage avatarCT{ avatar_ct };
+
+ImTextureID PlayerData::getAvatarTexture() const noexcept
+{
+    if (!hasAvatar)
+        return team == Team::TT ? avatarTT.getTexture() : avatarCT.getTexture();
+
+    if (!avatarTexture.get())
+        avatarTexture.init(32, 32, avatarRGBA);
+
+    return avatarTexture.get();
+}
+
+static void clearAvatarTextures() noexcept
+{
+    avatarTT.clearTexture();
+    avatarCT.clearTexture();
+}
 
 static void clearSkillgroupTextures() noexcept
 {

@@ -8,6 +8,7 @@
 
 #include "imgui/imgui.h"
 
+#include "SDK/Entity.h"
 #include "SDK/Vector.h"
 
 struct LocalPlayerData;
@@ -119,12 +120,14 @@ struct PlayerData : BaseData {
     bool audible;
     bool spotted;
     bool immune;
+    bool hasAvatar = false;
     float fadingEndTime = 0.0f;
     float flashDuration;
     int health;
     int userId;
     int handle;
     int money;
+    Team team;
     std::uint64_t steamID;
     char name[128];
     std::string activeWeapon;
