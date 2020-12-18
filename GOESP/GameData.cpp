@@ -485,11 +485,12 @@ private:
 };
 
 static const auto skillgroupImages = std::array<SkillgroupImage, 19>({
-skillgroup0, skillgroup1, skillgroup2, skillgroup3, skillgroup4, skillgroup5, skillgroup6, skillgroup7, skillgroup8, skillgroup9,
-skillgroup10, skillgroup11, skillgroup12, skillgroup13, skillgroup14, skillgroup15, skillgroup16, skillgroup17, skillgroup18 });
+Resource::skillgroup0, Resource::skillgroup1, Resource::skillgroup2, Resource::skillgroup3, Resource::skillgroup4, Resource::skillgroup5, Resource::skillgroup6, Resource::skillgroup7,
+Resource::skillgroup8, Resource::skillgroup9, Resource::skillgroup10, Resource::skillgroup11, Resource::skillgroup12, Resource::skillgroup13, Resource::skillgroup14, Resource::skillgroup15,
+Resource::skillgroup16, Resource::skillgroup17, Resource::skillgroup18 });
 
-static const SkillgroupImage avatarTT{ avatar_tt };
-static const SkillgroupImage avatarCT{ avatar_ct };
+static const SkillgroupImage avatarTT{ Resource::avatar_tt };
+static const SkillgroupImage avatarCT{ Resource::avatar_ct };
 
 ImTextureID PlayerData::getAvatarTexture() const noexcept
 {

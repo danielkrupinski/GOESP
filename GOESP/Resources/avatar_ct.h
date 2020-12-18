@@ -2,9 +2,12 @@
 
 #include "Resource.h"
 
+namespace Resource
+{
+
 // File: 'avatar_ct.png' (957 bytes)
 // Exported using binary_to_compressed_c.cpp
-inline constexpr auto avatar_ct = Resource::decodeBase85(
+inline constexpr auto avatar_ct = decodeBase85(
 "=pxq9_8v7&0C/2'K(HH=CD4;-CD4;-.,###AYPRO?%###6/s*>][t4:201b,LT3&5W.Sr860c*,LV0/PW8f79+r0BHM%N#64>ld=_BVfFqbZf<ZUE_?@r;-J>jWUL02R'?[YE%.J-ic3"
 "gF0>`*bkX:+1R)>Tr$b>Y%pX/cY,?6eht=UGH`j4O)sL;=s=H=l0h$RhD_lXjQDCS_Eo]BGVvDH//W_IA]$s:-uqc=:9&K<mvRqTxA8XK0EqEH%)#MOCLmtU4I&TWuv%x8r<r4Xd=p*]"
 "fMcCKm)BMEgVLNYZ.2$9_vvk:R,GpQa5YY#I=$w76(p`Cq8JVj$SPj`a#&'C[:H8PaPG:vR@7Lj$m%J]+)muC;lKYum>Lu-E#vp/&&K))AMca#4i6ZCv&;'>e8_;JUvmZ]<`F,#b2mou"
@@ -14,3 +17,5 @@ inline constexpr auto avatar_ct = Resource::decodeBase85(
 "l(')(98au8j'O4h`@4.*?&5UQcr5>k+bF]lPSG[_L2M-JGT]@P9jrLrljmWga8-iolx4lZ%o8$kxHpj5:eoB`+ki?*'e)0$9CX:@'w$/#Hen7t7;G:F49@:(#%to0qHsIUQjin@bAZS6"
 "KEUmEN6c8(VcRl_5i/<V=>)P&)(`pP64cDg`bZek8?IM,XW0LQ=n^UC`h#Duk[9qLaWB,:]tQKlJ4,[jQIaw:HL-NqKc$.ZRe#'kE$a8l4t^w#55L9RC3tan#m7YYg:&/9j/0M,S:vxa"
 "oVY5LcuWEt]'=KK=ClX,nqrZ`e:XkH=[[cRYPjeA=8B=WPw:Da0fIT9rcw85e%###Ub90<d$bsAP$###");
+
+}
