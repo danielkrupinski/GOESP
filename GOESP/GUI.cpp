@@ -161,12 +161,11 @@ void GUI::handleToggle() noexcept
 
 void GUI::loadConfig() const noexcept
 {
-    json j;
-
     if (std::ifstream in{ path / "config.txt" }; in.good()) {
-        in >> j;
-        ESP::fromJSON(j["ESP"]);
-        Misc::fromJSON(j["Misc"]);
+        if (json j = json::parse(in, nullptr, false); !j.is_discarded()) {
+            ESP::fromJSON(j["ESP"]);
+            Misc::fromJSON(j["Misc"]);
+        }
     }
 }
 
