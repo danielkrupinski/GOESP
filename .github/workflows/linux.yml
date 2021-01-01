@@ -25,6 +25,6 @@ jobs:
     - name: install
       run: sudo apt-get update && sudo apt-get install -y libsdl2-dev clang
     - name: configure
-      run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_C_COMPILER=clang -D CMAKE_CXX_COMPILER=clang ..
+      run: mkdir Release && cd Release && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_C_COMPILER=clang -D CMAKE_CXX_COMPILER=clang++ ..
     - name: build
       run: cd Release && make -j $(nproc --all)
