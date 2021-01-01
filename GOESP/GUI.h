@@ -17,7 +17,7 @@ private:
     void saveConfig() const noexcept;
     void createConfigDir() const noexcept;
 
-    inline constexpr float animationLength() { return 0.5f; }
+    inline constexpr float animationLength() { return 0.35f; }
     float toggleAnimationEnd = 0.0f;
     bool open = true;
     ImFont* unicodeFont;
