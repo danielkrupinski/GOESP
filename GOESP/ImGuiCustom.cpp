@@ -106,12 +106,8 @@ static const float TABLE_BORDER_SIZE = 1.0f;
 inline ImGuiTableFlags TableFixFlags(ImGuiTableFlags flags, ImGuiWindow* outer_window)
 {
     // Adjust flags: set default sizing policy
-    if ((flags & (ImGuiTableFlags_ColumnsWidthStretch | ImGuiTableFlags_ColumnsWidthFixed)) == 0)
-        flags |= (flags & ImGuiTableFlags_ScrollX) ? ImGuiTableFlags_ColumnsWidthFixed : ImGuiTableFlags_ColumnsWidthStretch;
-
-    // Adjust flags: MultiSortable automatically enable Sortable
-    if (flags & ImGuiTableFlags_MultiSortable)
-        flags |= ImGuiTableFlags_Sortable;
+    if ((flags & (ImGuiTableFlags_SizingPolicyStretch | ImGuiTableFlags_SizingPolicyFixed)) == 0)
+        flags |= ((flags & ImGuiTableFlags_ScrollX) || (outer_window->Flags & ImGuiWindowFlags_AlwaysAutoResize)) ? ImGuiTableFlags_SizingPolicyFixed : ImGuiTableFlags_SizingPolicyStretch;
 
     // Adjust flags: disable Resizable when using SameWidths (done above enforcing BordersInnerV)
     if (flags & ImGuiTableFlags_SameWidths)
@@ -145,6 +141,7 @@ inline ImGuiTableFlags TableFixFlags(ImGuiTableFlags flags, ImGuiWindow* outer_w
     return flags;
 }
 
+// added: child_flags |= (g.CurrentWindow->Flags & ImGuiWindowFlags_NoInputs);
 bool ImGui::beginTableEx(const char* name, ImGuiID id, int columns_count, ImGuiTableFlags flags, const ImVec2& outer_size, float inner_width) noexcept
 {
     ImGuiContext& g = *GImGui;
@@ -188,8 +185,7 @@ bool ImGui::beginTableEx(const char* name, ImGuiID id, int columns_count, ImGuiT
     table->ColumnsCount = columns_count;
     table->IsLayoutLocked = false;
     table->InnerWidth = inner_width;
-    table->OuterRect = outer_rect;
-    table->WorkRect = outer_rect;
+    table->IsOuterRectAutoFitX = (outer_size.x == 0.0f) && (use_child_window == false);
 
     // When not using a child window, WorkRect.Max will grow as we append contents.
     if (use_child_window)
@@ -213,11 +209,17 @@ bool ImGui::beginTableEx(const char* name, ImGuiID id, int columns_count, ImGuiT
         // Create scrolling region (without border and zero window padding)
         ImGuiWindowFlags child_flags = (flags & ImGuiTableFlags_ScrollX) ? ImGuiWindowFlags_HorizontalScrollbar : ImGuiWindowFlags_None;
         child_flags |= (g.CurrentWindow->Flags & ImGuiWindowFlags_NoInputs);
-        BeginChildEx(name, instance_id, table->OuterRect.GetSize(), false, child_flags);
+        BeginChildEx(name, instance_id, outer_rect.GetSize(), false, child_flags);
         table->InnerWindow = g.CurrentWindow;
         table->WorkRect = table->InnerWindow->WorkRect;
         table->OuterRect = table->InnerWindow->Rect();
+        table->InnerRect = table->InnerWindow->InnerRect;
         IM_ASSERT(table->InnerWindow->WindowPadding.x == 0.0f && table->InnerWindow->WindowPadding.y == 0.0f && table->InnerWindow->WindowBorderSize == 0.0f);
+    } else
+    {
+        // For non-scrolling tables, WorkRect == OuterRect == InnerRect.
+        // But at this point we do NOT have a correct value for .Max.y (unless a height has been explicitly passed in). It will only be updated in EndTable().
+        table->WorkRect = table->OuterRect = table->InnerRect = outer_rect;
     }
 
     // Push a standardized ID for both child-using and not-child-using tables
@@ -236,7 +238,6 @@ bool ImGui::beginTableEx(const char* name, ImGuiID id, int columns_count, ImGuiT
     table->HostBackupCursorMaxPos = inner_window->DC.CursorMaxPos;
     table->HostBackupItemWidth = outer_window->DC.ItemWidth;
     table->HostBackupItemWidthStackSize = outer_window->DC.ItemWidthStack.Size;
-    inner_window->ParentWorkRect = table->WorkRect;
     inner_window->DC.PrevLineSize = inner_window->DC.CurrLineSize = ImVec2(0.0f, 0.0f);
 
     // Padding and Spacing
@@ -249,9 +250,8 @@ bool ImGui::beginTableEx(const char* name, ImGuiID id, int columns_count, ImGuiT
     const float inner_spacing_for_border = (flags & ImGuiTableFlags_BordersInnerV) ? TABLE_BORDER_SIZE : 0.0f;
     const float inner_spacing_explicit = (pad_inner_x && (flags & ImGuiTableFlags_BordersInnerV) == 0) ? g.Style.CellPadding.x : 0.0f;
     const float inner_padding_explicit = (pad_inner_x && (flags & ImGuiTableFlags_BordersInnerV) != 0) ? g.Style.CellPadding.x : 0.0f;
-    const float inner_spacing = inner_spacing_for_border + inner_spacing_explicit;
-    table->CellSpacingX1 = ImCeil(inner_spacing * 0.5f);
-    table->CellSpacingX2 = inner_spacing - table->CellSpacingX1;
+    table->CellSpacingX1 = inner_spacing_explicit + inner_spacing_for_border;
+    table->CellSpacingX2 = inner_spacing_explicit;
     table->CellPaddingX = inner_padding_explicit;
     table->CellPaddingY = g.Style.CellPadding.y;
 
@@ -268,26 +268,16 @@ bool ImGui::beginTableEx(const char* name, ImGuiID id, int columns_count, ImGuiT
     table->InnerClipRect.ClipWithFull(table->HostClipRect);
     table->InnerClipRect.Max.y = (flags & ImGuiTableFlags_NoHostExtendY) ? ImMin(table->InnerClipRect.Max.y, inner_window->WorkRect.Max.y) : inner_window->ClipRect.Max.y;
 
-    // Initial draw cmd starts with a BgClipRect that matches the one of its host, to facilitate merge draw commands by default.
-    // This is because all our cell highlight are manually clipped with BgClipRect
-    // Larger at first, if/after unfreezing will become same as tight
-    table->BgClipRect = table->InnerClipRect;
-    table->BgClipRectForDrawCmd = table->HostClipRect;
-    IM_ASSERT(table->BgClipRect.Min.y <= table->BgClipRect.Max.y);
-
     table->RowPosY1 = table->RowPosY2 = table->WorkRect.Min.y; // This is needed somehow
     table->RowTextBaseline = 0.0f; // This will be cleared again by TableBeginRow()
     table->FreezeRowsRequest = table->FreezeRowsCount = 0; // This will be setup by TableSetupScrollFreeze(), if any
     table->FreezeColumnsRequest = table->FreezeColumnsCount = 0;
     table->IsUnfrozen = true;
     table->DeclColumnsCount = 0;
-    table->RightMostEnabledColumn = -1;
 
     // Using opaque colors facilitate overlapping elements of the grid
     table->BorderColorStrong = GetColorU32(ImGuiCol_TableBorderStrong);
     table->BorderColorLight = GetColorU32(ImGuiCol_TableBorderLight);
-    table->BorderX1 = table->InnerClipRect.Min.x;// +((table->Flags & ImGuiTableFlags_BordersOuter) ? 0.0f : -1.0f);
-    table->BorderX2 = table->InnerClipRect.Max.x;// +((table->Flags & ImGuiTableFlags_BordersOuter) ? 0.0f : +1.0f);
 
     // Make table current
     const int table_idx = g.Tables.GetIndex(table);
@@ -322,9 +312,14 @@ bool ImGui::beginTableEx(const char* name, ImGuiID id, int columns_count, ImGuiT
         TableResetSettings(table);
     if (table->IsInitializing)
     {
-        // Initialize for new settings
+        // Initialize
         table->SettingsOffset = -1;
         table->IsSortSpecsDirty = true;
+        table->InstanceInteracted = -1;
+        table->ContextPopupColumn = -1;
+        table->ReorderColumn = table->ResizedColumn = table->LastResizedColumn = -1;
+        table->AutoFitSingleStretchColumn = -1;
+        table->HoveredColumnBody = table->HoveredColumnBorder = -1;
         for (int n = 0; n < columns_count; n++)
         {
             ImGuiTableColumn* column = &table->Columns[n];
@@ -362,16 +357,9 @@ bool ImGui::beginTableEx(const char* name, ImGuiID id, int columns_count, ImGuiT
     inner_window->SkipItems = true;
 
     // Clear names
-    // FIXME-TABLES: probably could be done differently...
+    // At this point the ->NameOffset field of each column will be invalid until TableUpdateLayout() or the first call to TableSetupColumn()
     if (table->ColumnsNames.Buf.Size > 0)
-    {
         table->ColumnsNames.Buf.resize(0);
-        for (int column_n = 0; column_n < table->ColumnsCount; column_n++)
-        {
-            ImGuiTableColumn* column = &table->Columns[column_n];
-            column->NameOffset = -1;
-        }
-    }
 
     // Apply queued resizing/reordering/hiding requests
     TableBeginApplyRequests(table);
@@ -399,4 +387,15 @@ void ImGui::textEllipsisInTableCell(const char* text) noexcept
     ImRect bb(textPos, textPos + textSize);
     ItemSize(textSize, 0.0f);
     ItemAdd(bb, 0);
+}
+
+void ImGui::TableSetColumnIsEnabled(int column_n, bool hidden)
+{
+    ImGuiContext& g = *GImGui;
+    ImGuiTable* table = g.CurrentTable;
+    IM_ASSERT(table != NULL && table->IsLayoutLocked == false);
+    if (column_n < 0)
+        column_n = table->CurrentColumn;
+    IM_ASSERT(column_n >= 0 && column_n < table->ColumnsCount);
+    table->Columns[column_n].IsEnabledNextFrame = !hidden;
 }

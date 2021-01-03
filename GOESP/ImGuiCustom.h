@@ -26,4 +26,5 @@ namespace ImGui
     bool beginTable(const char* str_id, int columns_count, ImGuiTableFlags flags = 0, const ImVec2& outer_size = ImVec2(0, 0), float inner_width = 0.0f) noexcept;
     bool beginTableEx(const char* name, ImGuiID id, int columns_count, ImGuiTableFlags flags = 0, const ImVec2& outer_size = ImVec2(0, 0), float inner_width = 0.0f) noexcept;
     void textEllipsisInTableCell(const char* text) noexcept;
+    void TableSetColumnIsEnabled(int column_n, bool hidden);
 }

@@ -514,11 +514,11 @@ void Misc::drawPlayerList() noexcept
     if (ImGui::Begin("Player List", nullptr, windowFlags)) {
         if (ImGui::beginTable("", 6, ImGuiTableFlags_Borders | ImGuiTableFlags_Hideable | ImGuiTableFlags_ScrollY)) {
             ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoHide, 150.0f);
-            ImGui::TableSetupColumn("Steam ID", ImGuiTableColumnFlags_WidthAutoResize);
-            ImGui::TableSetupColumn("Rank", ImGuiTableColumnFlags_WidthAutoResize);
-            ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthAutoResize);
-            ImGui::TableSetupColumn("Health", ImGuiTableColumnFlags_WidthAutoResize);
-            ImGui::TableSetupColumn("Last Place", ImGuiTableColumnFlags_WidthAutoResize);
+            ImGui::TableSetupColumn("Steam ID", ImGuiTableColumnFlags_WidthAuto);
+            ImGui::TableSetupColumn("Rank", ImGuiTableColumnFlags_WidthAuto);
+            ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthAuto);
+            ImGui::TableSetupColumn("Health", ImGuiTableColumnFlags_WidthAuto);
+            ImGui::TableSetupColumn("Last Place", ImGuiTableColumnFlags_WidthAuto);
             ImGui::TableSetupScrollFreeze(0, 1);
             ImGui::TableSetColumnIsEnabled(1, !miscConfig.playerList.steamID);
             ImGui::TableSetColumnIsEnabled(2, !miscConfig.playerList.rank);
