@@ -55,9 +55,14 @@ GUI::GUI() noexcept
     io.IniFilename = nullptr;
     io.LogFilename = nullptr;
     io.Fonts->Flags |= ImFontAtlasFlags_NoPowerOfTwoHeight;
-    io.Fonts->AddFontDefault();
-
+    
     constexpr auto unicodeFontSize = 16.0f;
+    if (!addFontFromVFONT("csgo/panorama/fonts/notosans-regular.vfont", unicodeFontSize, Helpers::getFontGlyphRanges(), false))
+        io.Fonts->AddFontDefault();
+    addFontFromVFONT("csgo/panorama/fonts/notosansthai-regular.vfont", unicodeFontSize, io.Fonts->GetGlyphRangesThai(), true);
+    addFontFromVFONT("csgo/panorama/fonts/notosanskr-regular.vfont", unicodeFontSize, io.Fonts->GetGlyphRangesKorean(), true);
+    addFontFromVFONT("csgo/panorama/fonts/notosanssc-regular.vfont", unicodeFontSize, Helpers::getFontGlyphRangesChinese(), true);
+    
     unicodeFont = addFontFromVFONT("csgo/panorama/fonts/notosans-bold.vfont", unicodeFontSize, Helpers::getFontGlyphRanges(), false);
     addFontFromVFONT("csgo/panorama/fonts/notosansthai-bold.vfont", unicodeFontSize, io.Fonts->GetGlyphRangesThai(), true);
     addFontFromVFONT("csgo/panorama/fonts/notosanskr-bold.vfont", unicodeFontSize, io.Fonts->GetGlyphRangesKorean(), true);
