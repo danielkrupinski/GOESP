@@ -364,8 +364,11 @@ void PlayerData::update(Entity* entity) noexcept
     if (memory->globalVars->framecount % 20 == 0)
         entity->getPlayerName(name);
 
-    if (*memory->playerResource)
-        skillgroup = (*memory->playerResource)->competitiveRanking()[entity->index()];
+    if (*memory->playerResource) {
+        const auto idx = entity->index();
+        skillgroup = (*memory->playerResource)->competitiveRanking()[idx];
+        armor = (*memory->playerResource)->armor()[idx];
+    }
 
     dormant = entity->isDormant();
     if (dormant) {

@@ -124,6 +124,7 @@ struct PlayerData : BaseData {
     float fadingEndTime = 0.0f;
     float flashDuration;
     int health;
+    int armor;
     int userId;
     int handle;
     int money;
