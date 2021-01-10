@@ -165,11 +165,11 @@ void GameData::update() noexcept
         ++it;
     }
     
-    for (auto it = playerData.begin(); it != playerData.end(); ++it) {
-        if (!interfaces->entityList->getEntityFromHandle(it->handle) && it->fadingEndTime == 0.0f) {
-            it->fadingEndTime = memory->globalVars->realtime + 1.75f;
+    std::for_each(playerData.begin(), playerData.end(), [](auto& player) {
+        if (!interfaces->entityList->getEntityFromHandle(player.handle) && player.fadingEndTime == 0.0f) {
+            player.fadingEndTime = memory->globalVars->realtime + 1.75f;
         }
-    }
+    });
 
     for (auto it = playerData.begin(); it != playerData.end();) {
         if (!interfaces->entityList->getEntityFromHandle(it->handle)) {
