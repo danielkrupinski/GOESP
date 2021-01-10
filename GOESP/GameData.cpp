@@ -164,12 +164,16 @@ void GameData::update() noexcept
         }
         ++it;
     }
+    
+    for (auto it = playerData.begin(); it != playerData.end(); ++it) {
+        if (!interfaces->entityList->getEntityFromHandle(it->handle) && it->fadingEndTime == 0.0f) {
+            it->fadingEndTime = memory->globalVars->realtime + 1.75f;
+        }
+    }
 
     for (auto it = playerData.begin(); it != playerData.end();) {
         if (!interfaces->entityList->getEntityFromHandle(it->handle)) {
-            if (it->fadingEndTime == 0.0f) {
-                it->fadingEndTime = memory->globalVars->realtime + 1.75f;
-            } else if (it->fadingEndTime < memory->globalVars->realtime) {
+            if (it->fadingEndTime < memory->globalVars->realtime) {
                 it = playerData.erase(it);
                 continue;
             }
