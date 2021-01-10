@@ -166,20 +166,11 @@ void GameData::update() noexcept
     }
     
     std::for_each(playerData.begin(), playerData.end(), [](auto& player) {
-        if (!interfaces->entityList->getEntityFromHandle(player.handle) && player.fadingEndTime == 0.0f) {
+        if (interfaces->entityList->getEntityFromHandle(player.handle) == nullptr && player.fadingEndTime == 0.0f)
             player.fadingEndTime = memory->globalVars->realtime + 1.75f;
-        }
     });
 
-    for (auto it = playerData.begin(); it != playerData.end();) {
-        if (!interfaces->entityList->getEntityFromHandle(it->handle)) {
-            if (it->fadingEndTime < memory->globalVars->realtime) {
-                it = playerData.erase(it);
-                continue;
-            }
-        }
-        ++it;
-    }
+    std::erase_if(playerData, [](const auto& player) { return interfaces->entityList->getEntityFromHandle(player.handle) == nullptr && player.fadingEndTime < memory->globalVars->realtime; });
 }
 
 void GameData::clearProjectileList() noexcept
