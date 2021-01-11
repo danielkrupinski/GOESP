@@ -159,7 +159,7 @@ void GameData::update() noexcept
     });
 
     std::erase_if(projectileData, [](const auto& projectile) { return interfaces->entityList->getEntityFromHandle(projectile.handle) == nullptr
-        && (projectile.trajectory.size() < 1 || projectile.trajectory[projectile.trajectory.size() - 1].first + 60.0f < memory->globalVars->realtime); });
+        && (projectile.trajectory.empty() || projectile.trajectory.back().first + 60.0f < memory->globalVars->realtime); });
 
     std::for_each(playerData.begin(), playerData.end(), [](auto& player) {
         if (interfaces->entityList->getEntityFromHandle(player.handle) == nullptr && player.fadingEndTime == 0.0f)
@@ -324,7 +324,7 @@ void ProjectileData::update(Entity* projectile) noexcept
 {
     static_cast<BaseData&>(*this) = { projectile };
 
-    if (const auto& pos = projectile->getAbsOrigin(); trajectory.size() < 1 || trajectory[trajectory.size() - 1].second != pos)
+    if (const auto& pos = projectile->getAbsOrigin(); trajectory.empty() || trajectory.back().second != pos)
         trajectory.emplace_back(memory->globalVars->realtime, pos);
 }
 
