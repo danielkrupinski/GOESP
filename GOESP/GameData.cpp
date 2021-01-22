@@ -51,6 +51,7 @@ static std::vector<EntityData> entityData;
 static std::vector<LootCrateData> lootCrateData;
 static std::list<ProjectileData> projectileData;
 static std::vector<BombData> bombData;
+static std::vector<InfernoData> infernoData;
 
 void GameData::update() noexcept
 {
@@ -66,6 +67,7 @@ void GameData::update() noexcept
     entityData.clear();
     lootCrateData.clear();
     bombData.clear();
+    infernoData.clear();
 
     localPlayerData.update();
 
@@ -140,6 +142,9 @@ void GameData::update() noexcept
                     break;
                 case ClassId::LootCrate:
                     lootCrateData.emplace_back(entity);
+                    break;
+                case ClassId::Inferno:
+                    infernoData.emplace_back(entity);
                     break;
                 default:
                     break;
@@ -226,6 +231,11 @@ const std::vector<LootCrateData>& GameData::lootCrates() noexcept
 const std::list<ProjectileData>& GameData::projectiles() noexcept
 {
     return projectileData;
+}
+
+const std::vector<InfernoData>& GameData::infernos() noexcept
+{
+    return infernoData;
 }
 
 void LocalPlayerData::update() noexcept
@@ -660,4 +670,13 @@ void PlayerData::Texture::clear() noexcept
     if (texture)
         ImGui_DestroyTexture(texture);
     texture = nullptr;
+}
+
+InfernoData::InfernoData(Entity* inferno) noexcept
+{
+    const auto& origin = inferno->getAbsOrigin();
+
+    points.reserve(inferno->fireCount());
+    for (int i = 0; i < inferno->fireCount(); ++i)
+        points.emplace_back(inferno->fireXDelta()[i] + origin.x, inferno->fireYDelta()[i] + origin.y, inferno->fireZDelta()[i] + origin.z);
 }

@@ -19,6 +19,7 @@ struct WeaponData;
 struct EntityData;
 struct LootCrateData;
 struct ProjectileData;
+struct InfernoData;
 
 struct Matrix4x4;
 
@@ -45,6 +46,7 @@ namespace GameData
     const std::vector<EntityData>& entities() noexcept;
     const std::vector<LootCrateData>& lootCrates() noexcept;
     const std::list<ProjectileData>& projectiles() noexcept;
+    const std::vector<InfernoData>& infernos() noexcept;
 }
 
 struct LocalPlayerData {
@@ -188,4 +190,10 @@ struct BombData {
     int bombsite;
     float blowTime;
     float defuseCountDown;
+};
+
+struct InfernoData {
+    InfernoData(Entity* inferno) noexcept;
+
+    std::vector<Vector> points;
 };
