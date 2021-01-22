@@ -209,7 +209,6 @@ void ImGui_ImplDX9_Shutdown()
     ImGui_ImplDX9_InvalidateDeviceObjects();
     if (g_pd3dDevice) { g_pd3dDevice->Release(); g_pd3dDevice = NULL; }
 }
-#include "../Memory.h"
 
 static bool ImGui_ImplDX9_CreateFontsTexture()
 {
@@ -218,7 +217,7 @@ static bool ImGui_ImplDX9_CreateFontsTexture()
     unsigned char* pixels;
     int width, height;
     io.Fonts->GetTexDataAsAlpha8(&pixels, &width, &height);
-    memory->debugMsg("W: %d H: %d\n", width, height);
+
     // Upload texture to graphics system
     g_FontTexture = NULL;
     if (g_pd3dDevice->CreateTexture(width, height, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8, D3DPOOL_DEFAULT, &g_FontTexture, NULL) < 0)
