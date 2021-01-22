@@ -126,6 +126,7 @@ public:
 
     PROP(fireXDelta, 0x9E4, int[100])                                              // CInferno->m_fireXDelta
     PROP(fireYDelta, 0xB74, int[100])                                              // CInferno->m_fireYDelta
+    PROP(fireZDelta, 0xD04, int[100])                                              // CInferno->m_fireZDelta
 
 #else
     PROP(hitboxSet, 0xFA8, int)                                                    // CBaseAnimating->m_nHitboxSet
@@ -158,6 +159,7 @@ public:
 
     PROP(fireXDelta, 0xF80, int[100])                                              // CInferno->m_fireXDelta
     PROP(fireYDelta, 0x1110, int[100])                                             // CInferno->m_fireYDelta
+    PROP(fireZDelta, 0x12A0, int[100])                                             // CInferno->m_fireZDelta
 
     // TODO: update this
     // PROP(grenadeExploded, 0x29E8, bool)
