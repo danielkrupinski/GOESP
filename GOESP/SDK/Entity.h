@@ -125,6 +125,7 @@ public:
     PROP(bombSite, 0x2984, bool)                                                   // CPlantedC4->m_nBombSite
 
     PROP(fireXDelta, 0x9E4, int[100])                                              // CInferno->m_fireXDelta
+    PROP(fireYDelta, 0xB74, int[100])                                              // CInferno->m_fireYDelta
 
 #else
     PROP(hitboxSet, 0xFA8, int)                                                    // CBaseAnimating->m_nHitboxSet
@@ -156,6 +157,7 @@ public:
     PROP(thrower, 0x3040, int)                                                     // CBaseGrenade->m_hThrower
 
     PROP(fireXDelta, 0xF80, int[100])                                              // CInferno->m_fireXDelta
+    PROP(fireYDelta, 0x1110, int[100])                                             // CInferno->m_fireYDelta
 
     // TODO: update this
     // PROP(grenadeExploded, 0x29E8, bool)
