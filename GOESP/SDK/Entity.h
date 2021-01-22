@@ -127,6 +127,7 @@ public:
     PROP(fireXDelta, 0x9E4, int[100])                                              // CInferno->m_fireXDelta
     PROP(fireYDelta, 0xB74, int[100])                                              // CInferno->m_fireYDelta
     PROP(fireZDelta, 0xD04, int[100])                                              // CInferno->m_fireZDelta
+    PROP(fireIsBurning, 0xE94, bool[100])                                          // CInferno->m_bFireIsBurning
     PROP(fireCount, 0x13A8, int)                                                   // CInferno->m_fireCount
 
 #else
@@ -161,6 +162,7 @@ public:
     PROP(fireXDelta, 0xF80, int[100])                                              // CInferno->m_fireXDelta
     PROP(fireYDelta, 0x1110, int[100])                                             // CInferno->m_fireYDelta
     PROP(fireZDelta, 0x12A0, int[100])                                             // CInferno->m_fireZDelta
+    PROP(fireIsBurning, 0x1430, int[100])                                          // CInferno->m_bFireIsBurning
     PROP(fireCount, 0x1944, int)                                                   // CInferno->m_fireCount
 
     // TODO: update this
