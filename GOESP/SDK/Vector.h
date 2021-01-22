@@ -5,6 +5,9 @@
 class Matrix3x4;
 
 struct Vector {
+    Vector() = default;
+    constexpr Vector(float x, float y, float z) noexcept : x{ x }, y{ y }, z{ z } {}
+
     constexpr auto operator==(const Vector& v) const noexcept
     {
         return x == v.x && y == v.y && z == v.z;
