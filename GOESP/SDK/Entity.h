@@ -124,6 +124,8 @@ public:
     PROP(bombTicking, 0x2980, bool)                                                // CPlantedC4->m_bBombTicking
     PROP(bombSite, 0x2984, bool)                                                   // CPlantedC4->m_nBombSite
 
+    PROP(fireXDelta, 0x9E4, int[100])                                              // CInferno->m_fireXDelta
+
 #else
     PROP(hitboxSet, 0xFA8, int)                                                    // CBaseAnimating->m_nHitboxSet
 
@@ -152,6 +154,8 @@ public:
     PROP(money, 0xBCA8, int)                                                       // CCSPlayer->m_iAccount
 
     PROP(thrower, 0x3040, int)                                                     // CBaseGrenade->m_hThrower
+
+    PROP(fireXDelta, 0xF80, int[100])                                              // CInferno->m_fireXDelta
 
     // TODO: update this
     // PROP(grenadeExploded, 0x29E8, bool)
