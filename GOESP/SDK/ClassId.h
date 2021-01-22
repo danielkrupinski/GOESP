@@ -14,6 +14,7 @@ enum class ClassId {
     Dronegun,
     EconEntity = 53,
     Hostage = 97,
+    Inferno = 100,
     Healthshot = 104,
     Cash,
     Knife = 107,
