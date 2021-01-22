@@ -18,6 +18,8 @@ namespace Misc
     void drawGUI() noexcept;
     bool ignoresFlashbang() noexcept;
     void drawPlayerList() noexcept;
+    void drawMolotovRadii(ImDrawList* drawList) noexcept;
+
     json toJSON() noexcept;
     void fromJSON(const json& j) noexcept;
 }
