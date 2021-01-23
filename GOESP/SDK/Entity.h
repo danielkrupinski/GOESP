@@ -71,12 +71,29 @@ public:
     VIRTUAL_METHOD(bool, isPlayer, WIN32_UNIX(157, 209), (), (this))
     VIRTUAL_METHOD(bool, isWeapon, WIN32_UNIX(165, 217), (), (this))
     VIRTUAL_METHOD(Entity*, getActiveWeapon, WIN32_UNIX(267, 330), (), (this))
-    VIRTUAL_METHOD(Vector, getEyePosition, WIN32_UNIX(284, 347), (), (this))
     VIRTUAL_METHOD(ObsMode, getObserverMode, WIN32_UNIX(293, 356), (), (this))
     VIRTUAL_METHOD(Entity*, getObserverTarget, WIN32_UNIX(294, 357), (), (this))
-    VIRTUAL_METHOD(Vector, getAimPunch, WIN32_UNIX(345, 408), (), (this))
     VIRTUAL_METHOD(WeaponType, getWeaponType, WIN32_UNIX(454, 522), (), (this))
     VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, WIN32_UNIX(460, 528), (), (this))
+
+#if IS_WIN32()
+    auto getEyePosition() noexcept
+    {
+        Vector v;
+        VirtualMethod::call<void, 284>(this, std::ref(v));
+        return v;
+    }
+
+    auto getAimPunch() noexcept
+    {
+        Vector v;
+        VirtualMethod::call<void, 345>(this, std::ref(v));
+        return v;
+    }
+#else
+    VIRTUAL_METHOD(Vector, getEyePosition, 347, (), (this))
+    VIRTUAL_METHOD(Vector, getAimPunch, 408, (), (this))
+#endif
 
     auto isSniperRifle() noexcept
     {
