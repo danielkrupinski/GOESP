@@ -51,6 +51,8 @@ enum class Team {
     CT
 };
 
+class CSPlayer;
+
 class Entity {
 public:
     VIRTUAL_METHOD(ClientClass*, getClientClass, 2, (), (this + sizeof(uintptr_t) * 2))
@@ -70,44 +72,21 @@ public:
     VIRTUAL_METHOD(bool, isAlive, WIN32_UNIX(155, 207), (), (this))
     VIRTUAL_METHOD(bool, isPlayer, WIN32_UNIX(157, 209), (), (this))
     VIRTUAL_METHOD(bool, isWeapon, WIN32_UNIX(165, 217), (), (this))
-    VIRTUAL_METHOD(Entity*, getActiveWeapon, WIN32_UNIX(267, 330), (), (this))
-    VIRTUAL_METHOD(ObsMode, getObserverMode, WIN32_UNIX(293, 356), (), (this))
-    VIRTUAL_METHOD(Entity*, getObserverTarget, WIN32_UNIX(294, 357), (), (this))
+  
     VIRTUAL_METHOD(WeaponType, getWeaponType, WIN32_UNIX(454, 522), (), (this))
     VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, WIN32_UNIX(460, 528), (), (this))
 
-#if IS_WIN32()
-    auto getEyePosition() noexcept
+    static CSPlayer* asPlayer(Entity* entity) noexcept
     {
-        Vector v;
-        VirtualMethod::call<void, 284>(this, std::ref(v));
-        return v;
+        if (entity && entity->isPlayer())
+            return reinterpret_cast<CSPlayer*>(entity);
+        return nullptr;
     }
-
-    auto getAimPunch() noexcept
-    {
-        Vector v;
-        VirtualMethod::call<void, 345>(this, std::ref(v));
-        return v;
-    }
-#else
-    VIRTUAL_METHOD(Vector, getEyePosition, 347, (), (this))
-    VIRTUAL_METHOD(Vector, getAimPunch, 408, (), (this))
-#endif
 
     auto isSniperRifle() noexcept
     {
         return getWeaponType() == WeaponType::SniperRifle;
     }
-
-    bool canSee(Entity* other, const Vector& pos) noexcept;
-    bool visibleTo(Entity* other) noexcept;
-    [[nodiscard]] std::string getPlayerName() noexcept;
-    void getPlayerName(char(&out)[128]) noexcept;
-    int getUserId() noexcept;
-    bool isEnemy() noexcept;
-    bool isGOTV() noexcept;
-    std::uint64_t getSteamID() noexcept;
 
     PROP(hitboxSet, WIN32_UNIX(0x9FC, 0xFA8), int)                                 // CBaseAnimating->m_nHitboxSet
 
@@ -154,4 +133,40 @@ public:
         return false;
     }
 #endif
+};
+
+class CSPlayer : public Entity {
+public:
+    VIRTUAL_METHOD(Entity*, getActiveWeapon, WIN32_UNIX(267, 330), (), (this))
+    VIRTUAL_METHOD(ObsMode, getObserverMode, WIN32_UNIX(293, 356), (), (this))
+    VIRTUAL_METHOD(Entity*, getObserverTarget, WIN32_UNIX(294, 357), (), (this))
+
+
+#if IS_WIN32()
+    auto getEyePosition() noexcept
+    {
+        Vector v;
+        VirtualMethod::call<void, 284>(this, std::ref(v));
+        return v;
+    }
+
+    auto getAimPunch() noexcept
+    {
+        Vector v;
+        VirtualMethod::call<void, 345>(this, std::ref(v));
+        return v;
+    }
+#else
+    VIRTUAL_METHOD(Vector, getEyePosition, 347, (), (this))
+    VIRTUAL_METHOD(Vector, getAimPunch, 408, (), (this))
+#endif
+
+    bool canSee(Entity* other, const Vector& pos) noexcept;
+    bool visibleTo(CSPlayer* other) noexcept;
+    [[nodiscard]] std::string getPlayerName() noexcept;
+    void getPlayerName(char(&out)[128]) noexcept;
+    int getUserId() noexcept;
+    bool isEnemy() noexcept;
+    bool isGOTV() noexcept;
+    std::uint64_t getSteamID() noexcept;
 };

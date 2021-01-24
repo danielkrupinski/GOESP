@@ -187,7 +187,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
     if (event) {
         switch (fnv::hashRuntime(event->getName())) {
         case fnv::hash("item_purchase"): {
-            const auto player = interfaces->entityList->getEntity(interfaces->engine->getPlayerForUserId(event->getInt("userid")));
+            const auto player = Entity::asPlayer(interfaces->entityList->getEntity(interfaces->engine->getPlayerForUserId(event->getInt("userid"))));
             if (!player || !localPlayer || !memory->isOtherEnemy(player, localPlayer.get()))
                 break;
 

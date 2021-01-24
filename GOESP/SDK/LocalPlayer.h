@@ -2,11 +2,11 @@
 
 #include <cassert>
 
-class Entity;
+class CSPlayer;
 
 class LocalPlayer {
 public:
-    void init(Entity** entity) noexcept
+    void init(CSPlayer** entity) noexcept
     {
         assert(!localEntity);
         localEntity = entity;
@@ -30,7 +30,7 @@ public:
         return *localEntity;
     }
 private:
-    Entity** localEntity = nullptr;
+    CSPlayer** localEntity = nullptr;
 };
 
 inline LocalPlayer localPlayer;

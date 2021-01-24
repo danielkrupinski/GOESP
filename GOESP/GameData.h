@@ -103,13 +103,13 @@ struct ProjectileData : BaseData {
 };
 
 struct PlayerData : BaseData {
-    PlayerData(Entity* entity) noexcept;
+    PlayerData(CSPlayer* entity) noexcept;
     PlayerData(const PlayerData&) = delete;
     PlayerData& operator=(const PlayerData&) = delete;
     PlayerData(PlayerData&& other) = default;
     PlayerData& operator=(PlayerData&& other) = default;
 
-    void update(Entity* entity) noexcept;
+    void update(CSPlayer* entity) noexcept;
     ImTextureID getAvatarTexture() const noexcept;
     ImTextureID getRankTexture() const noexcept;
     void clearAvatarTexture() noexcept { avatarTexture = {}; }
@@ -177,7 +177,7 @@ struct LootCrateData : BaseData {
 };
 
 struct ObserverData {
-    ObserverData(Entity* entity, Entity* obs, bool targetIsLocalPlayer) noexcept;
+    ObserverData(CSPlayer* entity, CSPlayer* obs, bool targetIsLocalPlayer) noexcept;
 
     int playerUserId;
     int targetUserId;
