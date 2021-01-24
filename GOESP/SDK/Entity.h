@@ -101,18 +101,7 @@ public:
         
     PROP(ownerEntity, WIN32_UNIX(0x14C, 0x184), int)                               // CBaseEntity->m_hOwnerEntity
     PROP(spotted, WIN32_UNIX(0x93D, 0xECD), bool)                                  // CBaseEntity->m_bSpotted
-    
-    PROP(fov, WIN32_UNIX(0x31E4, 0x39A8), int)                                     // CBasePlayer->m_iFOV
-    PROP(fovStart, WIN32_UNIX(0x31E8, 0x39AC), int)                                // CBasePlayer->m_iFOVStart
-    PROP(defaultFov, WIN32_UNIX(0x332C, 0x3B14), int)                              // CBasePlayer->m_iDefaultFOV
-    PROP(lastPlaceName, WIN32_UNIX(0x35B4, 0x3DF0), char[18])                      // CBasePlayer->m_szLastPlaceName
-        
-    PROP(isScoped, WIN32_UNIX(0x3928, 0x4228), bool)                               // CCSPlayer->m_bIsScoped
-    PROP(gunGameImmunity, WIN32_UNIX(0x3944, 0x4244), bool)                        // CCSPlayer->m_bGunGameImmunity
-    PROP(flashDuration, WIN32_UNIX(0xA41C, 0xAD4C) - 0x8, float)                   // CCSPlayer->m_flFlashMaxAlpha - 0x8
-    PROP(shotsFired, WIN32_UNIX(0xA390, 0xACC0), int)                              // CCSPlayer->m_iShotsFired
-    PROP(money, WIN32_UNIX(0xB364, 0xBCA8), int)                                   // CCSPlayer->m_iAccount
-
+ 
     PROP(thrower, WIN32_UNIX(0x29A0, 0x3040), int)                                 // CBaseGrenade->m_hThrower
 
     PROP(fireXDelta, WIN32_UNIX(0x9E4, 0xF80), int[100])                           // CInferno->m_fireXDelta
@@ -128,7 +117,7 @@ public:
     PROP(bombSite, 0x2984, bool)                                                   // CPlantedC4->m_nBombSite
 
 #else
-        bool grenadeExploded()
+    bool grenadeExploded()
     {
         return false;
     }
@@ -169,4 +158,15 @@ public:
     bool isEnemy() noexcept;
     bool isGOTV() noexcept;
     std::uint64_t getSteamID() noexcept;
+
+    PROP(fov, WIN32_UNIX(0x31E4, 0x39A8), int)                                     // CBasePlayer->m_iFOV
+    PROP(fovStart, WIN32_UNIX(0x31E8, 0x39AC), int)                                // CBasePlayer->m_iFOVStart
+    PROP(defaultFov, WIN32_UNIX(0x332C, 0x3B14), int)                              // CBasePlayer->m_iDefaultFOV
+    PROP(lastPlaceName, WIN32_UNIX(0x35B4, 0x3DF0), char[18])                      // CBasePlayer->m_szLastPlaceName
+
+    PROP(isScoped, WIN32_UNIX(0x3928, 0x4228), bool)                               // CCSPlayer->m_bIsScoped
+    PROP(gunGameImmunity, WIN32_UNIX(0x3944, 0x4244), bool)                        // CCSPlayer->m_bGunGameImmunity
+    PROP(flashDuration, WIN32_UNIX(0xA41C, 0xAD4C) - 0x8, float)                   // CCSPlayer->m_flFlashMaxAlpha - 0x8
+    PROP(shotsFired, WIN32_UNIX(0xA390, 0xACC0), int)                              // CCSPlayer->m_iShotsFired
+    PROP(money, WIN32_UNIX(0xB364, 0xBCA8), int)                                   // CCSPlayer->m_iAccount
 };
