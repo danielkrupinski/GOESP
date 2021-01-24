@@ -109,86 +109,49 @@ public:
     bool isGOTV() noexcept;
     std::uint64_t getSteamID() noexcept;
 
-#ifdef _WIN32
-    PROP(hitboxSet, 0x9FC, int)                                                    // CBaseAnimating->m_nHitboxSet
+    PROP(hitboxSet, WIN32_UNIX(0x9FC, 0xFA8), int)                                 // CBaseAnimating->m_nHitboxSet
 
-    PROP(weaponId, 0x2FAA, WeaponId)                                               // CBaseAttributableItem->m_iItemDefinitionIndex
+    PROP(weaponId, WIN32_UNIX(0x2FAA, 0x37B2), WeaponId)                           // CBaseAttributableItem->m_iItemDefinitionIndex
 
-    PROP(clip, 0x3264, int)                                                        // CBaseCombatWeapon->m_iClip1
-    PROP(isInReload, 0x32A5, bool)                                                 // CBaseCombatWeapon->m_bInReload (client-side only)
-    PROP(reserveAmmoCount, 0x326C, int)                                            // CBaseCombatWeapon->m_iPrimaryReserveAmmoCount
-    PROP(nextPrimaryAttack, 0x3238, float)                                         // CBaseCombatWeapon->m_flNextPrimaryAttack
+    PROP(clip, WIN32_UNIX(0x3264, 0x3AE4), int)                                    // CBaseCombatWeapon->m_iClip1
+    PROP(isInReload, WIN32_UNIX(0x32A5, 0x3B29), bool)                             // CBaseCombatWeapon->m_bInReload (client-side only)
+    PROP(reserveAmmoCount, WIN32_UNIX(0x326C, 0x3AEC), int)                        // CBaseCombatWeapon->m_iPrimaryReserveAmmoCount
+    PROP(nextPrimaryAttack, WIN32_UNIX(0x3238, 0x3AB8), float)                     // CBaseCombatWeapon->m_flNextPrimaryAttack
 
-    PROP(prevOwner, 0x3384, int)                                                   // CWeaponCSBase->m_hPrevOwner
+    PROP(prevOwner, WIN32_UNIX(0x3384, 0x3C1C), int)                               // CWeaponCSBase->m_hPrevOwner
         
-    PROP(ownerEntity, 0x14C, int)                                                  // CBaseEntity->m_hOwnerEntity
-    PROP(spotted, 0x93D, bool)                                                     // CBaseEntity->m_bSpotted
+    PROP(ownerEntity, WIN32_UNIX(0x14C, 0x184), int)                               // CBaseEntity->m_hOwnerEntity
+    PROP(spotted, WIN32_UNIX(0x93D, 0xECD), bool)                                  // CBaseEntity->m_bSpotted
     
-    PROP(fov, 0x31E4, int)                                                         // CBasePlayer->m_iFOV
-    PROP(fovStart, 0x31E8, int)                                                    // CBasePlayer->m_iFOVStart
-    PROP(defaultFov, 0x332C, int)                                                  // CBasePlayer->m_iDefaultFOV
-    PROP(lastPlaceName, 0x35B4, char[18])                                          // CBasePlayer->m_szLastPlaceName
+    PROP(fov, WIN32_UNIX(0x31E4, 0x39A8), int)                                     // CBasePlayer->m_iFOV
+    PROP(fovStart, WIN32_UNIX(0x31E8, 0x39AC), int)                                // CBasePlayer->m_iFOVStart
+    PROP(defaultFov, WIN32_UNIX(0x332C, 0x3B14), int)                              // CBasePlayer->m_iDefaultFOV
+    PROP(lastPlaceName, WIN32_UNIX(0x35B4, 0x3DF0), char[18])                      // CBasePlayer->m_szLastPlaceName
         
-    PROP(isScoped, 0x3928, bool)                                                   // CCSPlayer->m_bIsScoped
-    PROP(gunGameImmunity, 0x3944, bool)                                            // CCSPlayer->m_bGunGameImmunity
-    PROP(flashDuration, 0xA41C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
-    PROP(shotsFired, 0xA390, int)                                                  // CCSPlayer->m_iShotsFired
-    PROP(money, 0xB364, int)                                                       // CCSPlayer->m_iAccount
+    PROP(isScoped, WIN32_UNIX(0x3928, 0x4228), bool)                               // CCSPlayer->m_bIsScoped
+    PROP(gunGameImmunity, WIN32_UNIX(0x3944, 0x4244), bool)                        // CCSPlayer->m_bGunGameImmunity
+    PROP(flashDuration, WIN32_UNIX(0xA41C, 0xAD4C) - 0x8, float)                   // CCSPlayer->m_flFlashMaxAlpha - 0x8
+    PROP(shotsFired, WIN32_UNIX(0xA390, 0xACC0), int)                              // CCSPlayer->m_iShotsFired
+    PROP(money, WIN32_UNIX(0xB364, 0xBCA8), int)                                   // CCSPlayer->m_iAccount
 
-    PROP(thrower, 0x29A0, int)                                                     // CBaseGrenade->m_hThrower
+    PROP(thrower, WIN32_UNIX(0x29A0, 0x3040), int)                                 // CBaseGrenade->m_hThrower
+
+    PROP(fireXDelta, WIN32_UNIX(0x9E4, 0xF80), int[100])                           // CInferno->m_fireXDelta
+    PROP(fireYDelta, WIN32_UNIX(0xB74, 0x1110), int[100])                          // CInferno->m_fireYDelta
+    PROP(fireZDelta, WIN32_UNIX(0xD04, 0x12A0), int[100])                          // CInferno->m_fireZDelta
+    PROP(fireIsBurning, WIN32_UNIX(0xE94, 0x1430), bool[100])                      // CInferno->m_bFireIsBurning
+    PROP(fireCount, WIN32_UNIX(0x13A8, 0x1944), int)                               // CInferno->m_fireCount
+
+#ifdef _WIN32
     PROP(grenadeExploded, 0x29E8, bool)
 
     PROP(bombTicking, 0x2980, bool)                                                // CPlantedC4->m_bBombTicking
     PROP(bombSite, 0x2984, bool)                                                   // CPlantedC4->m_nBombSite
 
-    PROP(fireXDelta, 0x9E4, int[100])                                              // CInferno->m_fireXDelta
-    PROP(fireYDelta, 0xB74, int[100])                                              // CInferno->m_fireYDelta
-    PROP(fireZDelta, 0xD04, int[100])                                              // CInferno->m_fireZDelta
-    PROP(fireIsBurning, 0xE94, bool[100])                                          // CInferno->m_bFireIsBurning
-    PROP(fireCount, 0x13A8, int)                                                   // CInferno->m_fireCount
-
 #else
-    PROP(hitboxSet, 0xFA8, int)                                                    // CBaseAnimating->m_nHitboxSet
-
-    PROP(weaponId, 0x37b2, WeaponId)                                               // CBaseAttributableItem->m_iItemDefinitionIndex
-
-    PROP(clip, 0x3AE4, int)                                                        // CBaseCombatWeapon->m_iClip1
-    PROP(isInReload, 0x3B29, bool)                                                 // CBaseCombatWeapon->m_bInReload (client-side only)
-
-    PROP(reserveAmmoCount, 0x3AEC, int)                                            // CBaseCombatWeapon->m_iPrimaryReserveAmmoCount
-    PROP(nextPrimaryAttack, 0x3AB8, float)                                         // CBaseCombatWeapon->m_flNextPrimaryAttack
-
-    PROP(prevOwner, 0x3C1C, int)                                                   // CWeaponCSBase->m_hPrevOwner
-
-    PROP(ownerEntity, 0x184, int)                                                  // CBaseEntity->m_hOwnerEntity
-    PROP(spotted, 0xECD, bool)                                                     // CBaseEntity->m_bSpotted
-
-    PROP(fov, 0x39A8, int)                                                         // CBasePlayer->m_iFOV
-    PROP(fovStart, 0x39AC, int)                                                    // CBasePlayer->m_iFOVStart
-    PROP(defaultFov, 0x3B14, int)                                                  // CBasePlayer->m_iDefaultFOV
-    PROP(lastPlaceName, 0x3DF0, char[18])                                          // CBasePlayer->m_szLastPlaceName
-
-    PROP(isScoped, 0x4228, bool)                                                   // CCSPlayer->m_bIsScoped
-    PROP(gunGameImmunity, 0x4244, bool)                                            // CCSPlayer->m_bGunGameImmunity
-    PROP(flashDuration, 0xAD4C - 0x8, float)                                       // CCSPlayer->m_flFlashMaxAlpha - 0x8
-    PROP(shotsFired, 0xACC0, int)                                                  // CCSPlayer->m_iShotsFired
-    PROP(money, 0xBCA8, int)                                                       // CCSPlayer->m_iAccount
-
-    PROP(thrower, 0x3040, int)                                                     // CBaseGrenade->m_hThrower
-
-    PROP(fireXDelta, 0xF80, int[100])                                              // CInferno->m_fireXDelta
-    PROP(fireYDelta, 0x1110, int[100])                                             // CInferno->m_fireYDelta
-    PROP(fireZDelta, 0x12A0, int[100])                                             // CInferno->m_fireZDelta
-    PROP(fireIsBurning, 0x1430, int[100])                                          // CInferno->m_bFireIsBurning
-    PROP(fireCount, 0x1944, int)                                                   // CInferno->m_fireCount
-
-    // TODO: update this
-    // PROP(grenadeExploded, 0x29E8, bool)
-    bool grenadeExploded()
+        bool grenadeExploded()
     {
         return false;
     }
-
 #endif
 };
-
