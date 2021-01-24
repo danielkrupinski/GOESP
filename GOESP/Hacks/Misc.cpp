@@ -625,6 +625,7 @@ void Misc::drawMolotovRadii(ImDrawList* drawList) noexcept
     for (const auto& molotov : GameData::infernos()) {
         for (const auto& pos : molotov.points) {
             std::vector<ImVec2> screenPoints;
+            screenPoints.reserve(flameCircumference.size());
 
             for (const auto& point : flameCircumference) {
                 if (ImVec2 screenPos; worldToScreen(pos + point, screenPos))
