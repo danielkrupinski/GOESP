@@ -611,16 +611,23 @@ void Misc::drawMolotovRadii(ImDrawList* drawList) noexcept
 
     GameData::Lock lock;
 
+    static const auto flameCircumference = []{
+        std::array<Vector, 360> points;
+        for (std::size_t i = 0; i < points.size(); ++i) {
+            constexpr auto flameRadius = 60.0f; // https://github.com/perilouswithadollarsign/cstrike15_src/blob/f82112a2388b841d72cb62ca48ab1846dfcc11c8/game/server/cstrike15/Effects/inferno.cpp#L889
+            points[i] = Vector{ flameRadius * std::cos(Helpers::deg2rad(i * (360.0f / points.size()))),
+                                flameRadius * std::sin(Helpers::deg2rad(i * (360.0f / points.size()))),
+                                0.0f };
+        }
+        return points;
+    }();
+
     for (const auto& molotov : GameData::infernos()) {
         for (const auto& pos : molotov.points) {
             std::vector<ImVec2> screenPoints;
 
-            // TODO: optimize, reduce segments
-            for (int i = 0; i < 360; ++i) {
-                constexpr auto infernoFireWidth = 60.0f;
-                Vector vec{ infernoFireWidth * std::cos(Helpers::deg2rad(float(i))), infernoFireWidth * std::sin(Helpers::deg2rad(float(i))), 0.0f };
-
-                if (ImVec2 screenPos; worldToScreen(pos + vec, screenPos))
+            for (const auto& point : flameCircumference) {
+                if (ImVec2 screenPos; worldToScreen(pos + point, screenPos))
                     screenPoints.push_back(screenPos);
             }
 
