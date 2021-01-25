@@ -28,21 +28,6 @@ struct FontData {
     ImFont* big;
 };
 
-static bool worldToScreen(const Vector& in, ImVec2& out, bool floor = false) noexcept
-{
-    const auto& matrix = GameData::toScreenMatrix();
-
-    const auto w = matrix._41 * in.x + matrix._42 * in.y + matrix._43 * in.z + matrix._44;
-    if (w < 0.001f)
-        return false;
-
-    out = ImGui::GetIO().DisplaySize / 2.0f;
-    out.x *= 1.0f + (matrix._11 * in.x + matrix._12 * in.y + matrix._13 * in.z + matrix._14) / w;
-    out.y *= 1.0f - (matrix._21 * in.x + matrix._22 * in.y + matrix._23 * in.z + matrix._24) / w;
-    if (floor)
-        out = ImFloor(out);
-    return true;
-}
 
 static constexpr auto operator-(float sub, const std::array<float, 3>& a) noexcept
 {
@@ -69,7 +54,7 @@ public:
                                 i & 2 ? scaledMaxs.y : scaledMins.y,
                                 i & 4 ? scaledMaxs.z : scaledMins.z };
 
-            if (!worldToScreen(matrix ? point.transform(*matrix) : point, vertices[i], true)) {
+            if (!GameData::worldToScreen(matrix ? point.transform(*matrix) : point, vertices[i], true)) {
                 valid = false;
                 return;
             }
@@ -500,7 +485,7 @@ static void drawProjectileTrajectory(const Trail& config, const std::vector<std:
     const auto color = Helpers::calculateColor(config);
 
     for (const auto& [time, point] : trajectory) {
-        if (ImVec2 pos; time + config.time >= memory->globalVars->realtime && worldToScreen(point, pos)) {
+        if (ImVec2 pos; time + config.time >= memory->globalVars->realtime && GameData::worldToScreen(point, pos)) {
             if (config.type == Trail::Line) {
                 points.push_back(pos);
                 shadowPoints.push_back(pos + ImVec2{ 1.0f, 1.0f });
@@ -529,11 +514,11 @@ static void drawPlayerSkeleton(const ColorToggleThickness& config, const std::ve
 
     for (const auto& [bone, parent] : bones) {
         ImVec2 bonePoint;
-        if (!worldToScreen(bone, bonePoint))
+        if (!GameData::worldToScreen(bone, bonePoint))
             continue;
 
         ImVec2 parentPoint;
-        if (!worldToScreen(parent, parentPoint))
+        if (!GameData::worldToScreen(parent, parentPoint))
             continue;
 
         points.emplace_back(bonePoint, parentPoint);
