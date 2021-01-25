@@ -693,6 +693,8 @@ InfernoData::InfernoData(Entity* inferno) noexcept
     const auto& origin = inferno->getAbsOrigin();
 
     points.reserve(inferno->fireCount());
-    for (int i = 0; i < inferno->fireCount(); ++i)
-        points.emplace_back(inferno->fireXDelta()[i] + origin.x, inferno->fireYDelta()[i] + origin.y, inferno->fireZDelta()[i] + origin.z);
+    for (int i = 0; i < inferno->fireCount(); ++i) {
+        if (inferno->fireIsBurning()[i])
+            points.emplace_back(inferno->fireXDelta()[i] + origin.x, inferno->fireYDelta()[i] + origin.y, inferno->fireZDelta()[i] + origin.z);
+    }
 }
