@@ -511,6 +511,7 @@ static void drawPlayerSkeleton(const ColorToggleThickness& config, const std::ve
     const auto color = Helpers::calculateColor(config);
 
     std::vector<std::pair<ImVec2, ImVec2>> points;
+    points.reserve(bones.size());
 
     for (const auto& [bone, parent] : bones) {
         ImVec2 bonePoint;
