@@ -608,15 +608,15 @@ void Misc::drawMolotovRadii(ImDrawList* drawList) noexcept
 
     for (const auto& molotov : GameData::infernos()) {
         for (const auto& pos : molotov.points) {
-            std::vector<ImVec2> screenPoints;
-            screenPoints.reserve(flameCircumference.size());
+            std::array<ImVec2, flameCircumference.size()> screenPoints;
+            std::size_t count = 0;
 
             for (const auto& point : flameCircumference) {
-                if (ImVec2 screenPos; GameData::worldToScreen(pos + point, screenPos))
-                    screenPoints.push_back(screenPos);
+                if (GameData::worldToScreen(pos + point, screenPoints[count]))
+                    ++count;
             }
 
-            drawList->AddConvexPolyFilled(screenPoints.data(), screenPoints.size(), color);
+            drawList->AddConvexPolyFilled(screenPoints.data(), count, color);
         }
     }
 }
