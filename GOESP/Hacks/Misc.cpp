@@ -89,7 +89,7 @@ struct {
     OverlayWindow fpsCounter{ "FPS Counter" };
     OffscreenEnemies offscreenEnemies;
     PlayerList playerList;
-    ColorToggle molotovRadius{ 1.0f, 0.27f, 0.0f, 0.3f };
+    ColorToggle molotovHull{ 1.0f, 0.27f, 0.0f, 0.3f };
 } miscConfig;
 
 void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
@@ -426,7 +426,7 @@ void Misc::draw(ImDrawList* drawList) noexcept
     drawFpsCounter();
     drawOffscreenEnemies(drawList);
     drawPlayerList();
-    drawMolotovRadii(drawList);
+    drawMolotovHull(drawList);
 }
 
 void Misc::drawGUI() noexcept
@@ -486,7 +486,7 @@ void Misc::drawGUI() noexcept
     }
     ImGui::PopID();
 
-    ImGuiCustom::colorPicker("Molotov Radius", miscConfig.molotovRadius);
+    ImGuiCustom::colorPicker("Molotov Hull", miscConfig.molotovHull);
 }
 
 bool Misc::ignoresFlashbang() noexcept
@@ -586,12 +586,12 @@ void Misc::drawPlayerList() noexcept
     ImGui::End();
 }
 
-void Misc::drawMolotovRadii(ImDrawList* drawList) noexcept
+void Misc::drawMolotovHull(ImDrawList* drawList) noexcept
 {
-    if (!miscConfig.molotovRadius.enabled)
+    if (!miscConfig.molotovHull.enabled)
         return;
 
-    const auto color = Helpers::calculateColor(miscConfig.molotovRadius);
+    const auto color = Helpers::calculateColor(miscConfig.molotovHull);
 
     GameData::Lock lock;
 
@@ -690,7 +690,7 @@ json Misc::toJSON() noexcept
     j["FPS Counter"] = miscConfig.fpsCounter;
     j["Offscreen Enemies"] = miscConfig.offscreenEnemies;
     j["Player List"] = miscConfig.playerList;
-    j["Molotov Radius"] = miscConfig.molotovRadius;
+    j["Molotov Hull"] = miscConfig.molotovHull;
 
     return j;
 }
@@ -749,5 +749,5 @@ void Misc::fromJSON(const json& j) noexcept
     read<value_t::object>(j, "FPS Counter", miscConfig.fpsCounter);
     read<value_t::object>(j, "Offscreen Enemies", miscConfig.offscreenEnemies);
     read<value_t::object>(j, "Player List", miscConfig.playerList);
-    read<value_t::object>(j, "Molotov Radius", miscConfig.molotovRadius);
+    read<value_t::object>(j, "Molotov Hull", miscConfig.molotovHull);
 }
