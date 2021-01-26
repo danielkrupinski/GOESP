@@ -481,6 +481,10 @@ static void drawProjectileTrajectory(const Trail& config, const std::vector<std:
         return;
 
     std::vector<ImVec2> points, shadowPoints;
+    if (config.type == Trail::Line) {
+        points.reserve(trajectory.size());
+        shadowPoints.reserve(trajectory.size());
+    }
 
     const auto color = Helpers::calculateColor(config);
 
@@ -617,7 +621,7 @@ void ESP::render() noexcept
     for (const auto& player : GameData::players()) {
         if ((player.dormant && Helpers::fadingAlpha(player.fadingEndTime) == 0.0f) || !player.alive || !player.inViewFrustum)
             continue;
-
+            
         auto& playerConfig = player.enemy ? espConfig.enemies : espConfig.allies;
 
         if (!renderPlayerEsp(player, playerConfig["All"]))
