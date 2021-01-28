@@ -8,6 +8,7 @@
 
 #include "SDK/Platform.h"
 
+class CSPlayer;
 class Entity;
 class ItemSystem;
 class PlayerResource;
@@ -31,7 +32,7 @@ public:
     UtlVector<Entity*>* plantedC4s;
     PlayerResource** playerResource;
 
-    bool(__THISCALL* isOtherEnemy)(Entity*, Entity*);
+    bool(__THISCALL* isOtherEnemy)(CSPlayer*, CSPlayer*);
     std::add_pointer_t<void __CDECL(const char* msg, ...)> debugMsg;
 #ifdef __APPLE__
     ItemSystem** itemSystem;
