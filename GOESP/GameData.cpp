@@ -517,6 +517,10 @@ Resource::skillgroup0, Resource::skillgroup1, Resource::skillgroup2, Resource::s
 Resource::skillgroup8, Resource::skillgroup9, Resource::skillgroup10, Resource::skillgroup11, Resource::skillgroup12, Resource::skillgroup13, Resource::skillgroup14, Resource::skillgroup15,
 Resource::skillgroup16, Resource::skillgroup17, Resource::skillgroup18 });
 
+static const auto dangerZoneImages = std::array<SkillgroupImage, 16>({
+Resource::dangerzone0, Resource::dangerzone1, Resource::dangerzone2, Resource::dangerzone3, Resource::dangerzone4, Resource::dangerzone5, Resource::dangerzone6, Resource::dangerzone7,
+Resource::dangerzone8, Resource::dangerzone9, Resource::dangerzone10, Resource::dangerzone11, Resource::dangerzone12, Resource::dangerzone13, Resource::dangerzone14, Resource::dangerzone15 });
+
 static const SkillgroupImage avatarTT{ Resource::avatar_tt };
 static const SkillgroupImage avatarCT{ Resource::avatar_ct };
 
@@ -541,11 +545,16 @@ static void clearSkillgroupTextures() noexcept
 {
     for (const auto& img : skillgroupImages)
         img.clearTexture();
+    for (const auto& img : dangerZoneImages)
+        img.clearTexture();
 }
 
 ImTextureID PlayerData::getRankTexture() const noexcept
 {
-    return skillgroupImages[std::size_t(skillgroup) < skillgroupImages.size() ? skillgroup : 0].getTexture();
+    if (gameModeName == "survival")
+        return dangerZoneImages[std::size_t(skillgroup) < dangerZoneImages.size() ? skillgroup : 0].getTexture();
+    else
+        return skillgroupImages[std::size_t(skillgroup) < skillgroupImages.size() ? skillgroup : 0].getTexture();
 }
 
 WeaponData::WeaponData(Entity* entity) noexcept : BaseData{ entity }
