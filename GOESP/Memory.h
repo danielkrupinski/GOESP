@@ -42,6 +42,15 @@ public:
     std::add_pointer_t<bool __CDECL(Vector, Vector, short)> lineGoesThroughSmoke;
     const wchar_t*(__THISCALL* getDecoratedPlayerName)(PlayerResource* pr, int index, wchar_t* buffer, int buffsize, int flags);
 
+    const char* getGameModeName(bool skirmish) const noexcept
+    {
+#ifdef _WIN32
+        return reinterpret_cast<const char*(__stdcall*)(bool)>(getGameModeNameFn)(skirmish);
+#else
+        return reinterpret_cast<const char*(*)(void*, bool)>(getGameModeNameFn)(nullptr, skirmish);
+#endif
+    }
+
 #ifdef _WIN32
     std::uintptr_t reset;
     std::uintptr_t present;
@@ -51,6 +60,9 @@ public:
     std::uintptr_t swapWindow;
     std::uintptr_t warpMouseInWindow;
 #endif
+
+private:
+    std::uintptr_t getGameModeNameFn;
 };
 
 inline std::unique_ptr<const Memory> memory;
