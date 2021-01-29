@@ -3,7 +3,7 @@ project(GOESP)
 
 set(CMAKE_C_FLAGS_RELEASE "-O3 -march=core2 -mtune=native -fvisibility=hidden -flto -fno-exceptions -DNDEBUG")
 
-if (CMAKE_C_FLAGS_RELEASE STREQUAL "GNU")
+if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
 endif()
 
