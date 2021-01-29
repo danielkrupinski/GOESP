@@ -52,6 +52,7 @@ static std::vector<LootCrateData> lootCrateData;
 static std::list<ProjectileData> projectileData;
 static std::vector<BombData> bombData;
 static std::vector<InfernoData> infernoData;
+static std::string gameModeName;
 
 void GameData::update() noexcept
 {
@@ -74,9 +75,11 @@ void GameData::update() noexcept
     if (!localPlayer) {
         playerData.clear();
         projectileData.clear();
+        gameModeName.clear();
         return;
     }
 
+    gameModeName = memory->getGameModeName(false);
     viewMatrix = interfaces->engine->worldToScreenMatrix();
 
     for (int i = 0; i < memory->plantedC4s->size; ++i)
@@ -252,6 +255,11 @@ const std::list<ProjectileData>& GameData::projectiles() noexcept
 const std::vector<InfernoData>& GameData::infernos() noexcept
 {
     return infernoData;
+}
+
+const std::string& GameData::gameMode() noexcept
+{
+    return gameModeName;
 }
 
 void LocalPlayerData::update() noexcept
