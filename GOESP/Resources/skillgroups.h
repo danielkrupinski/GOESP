@@ -396,4 +396,22 @@ inline constexpr auto dangerzone2 = decodeBase85(
 "&bxd/q<NKW.oZU:Xb7^l[Z/IYhou`%P_4#hL%kN?l*,wLQvlX'SFP(H2Zl[bTB2-sB(`G#o1Veldf]K)bPqu)Twu*B,KA^dI@17TJugB%m.;ZXo%]RVAWgf8>xMI@aNE<@xv0O^hggR5"
 "jw`R#]C5Ro6JSMn#####D2&u8LsapL");
 
+// File: 'dangerzone3.png' (1475 bytes)
+// Exported using binary_to_compressed_c.cpp
+inline constexpr auto dangerzone3 = decodeBase85(
+"=pxq9_8v7&0C/2'K(HH=T3Xc27-CG).,###))Qs.&7YY#%/s*>i####Lv?%7Wo$X7*c[]6l:mG4>?7l1,:P31r9@81qG&l1KGpF4LV:%6,bDUWh3=I)j93P2t>ak1'cA60WV#,4:[GR0"
+"X^FGHQ$Aa0R#E/<>3:v-$_3p1m#*41QAL`?'pQn2FLG6DUAo;L/<8-P<k$9/k@13YwLNo2Ea$<8r[IA6bEcE,^nB022]9k;'0V5:[w#n0TtF]T8QQw70pnm:RQo0P%6nU2E=P2EN70v7"
+"s;IeHYEbe=kv=LP7.'Q<;wfeQ3x<-Q48e/@9;eA@iYo-FPlt61V9Qj1h>hrKfq?S1w<OU8*QHf[l8*h5n4,+=kOA<Agakb5^'7cGcn=YJHLX.5hQse=>n5W8vJ9.*AU6(+I?FldJAGa."
+"hc+@?o]?^?UHO#2%u%=7NkG3'W=`'/T9C&_gLqQC.Z,n2'p=*4HK`0(K1)-4ln?taqBGqbY0Z8OYGh5Xi(JOY^o2:N53`%Jbp?8LeKY63-C%)>L_8]Ia6:j4`,%o9Q(av@WiWA7q5xD4"
+"#ev.<OL/H+/bPu`o?:ncn*+_U8*%f[O>>a^t:V&Ud/c8Wbo%4Y-Wl'BB3s-F%A%KPf=4`JO;UgF]ELVK9PKWC:2tL;ewkTBxe9S:PMJ6:f_'l:Z<X'6R$)g2ltx79@Ro),+rjP03w7'5"
+"<eGr/oP:V.u[0K2FQ=#-8Q.c=Q-#>JX$>Q3bW,:8c5j0E4v>R2.MhB5etaLe$EpI/K@8c]^O*w`l>:_1=u1=@bdQSL3-=Z^vte;a+wcqbg(UL['N15Xv'hI[au$#V1draRkY9:Vh8MB9"
+"hrI5Cj^.vK'v&sCx;N-<5AleFC<M%8<A7x@G1-mD`Oj'@H`*#Ama$RC'/.*?\?Vv;7Su(e='?-%7_g.h28UCk12CaGulXu.:67je=*M;tsI.Ow`FL/LpnVih%cZZ$tT6nAajYK=uTCj0p"
+":o7__m.mcuaE_'s<JZjoKP*@jOno?`t8c[UYV]MGce]A6H5<O'WNE,X?qV]FFrc)>iM-'g-vdx@&RMo$54l<69s6Q%%Z^DI2bGDI:r/=kteVIBV9_DI6fJ?jrYE:5L@2AsO]%Q`fskc4"
+"J]]^'9cT>Smn.ZF)&5;$%UV<1=e:Lm)+e5X9=v[ac$2^tERYqC.MnF+4T9A_B+h:EjrdG]uD1$T@K27^C8#w1W?[lAVO#9AcCoCoU:R;jn3PmtxlG*-X[h>BlU_XYjP0l1n6vtu#K8$S"
+"xAe>X;&A?#uOa&[BmxOYGii9*;37IJtiEw#8gd]CU.7BDo6%d0Cj9a1$l/6u0_cK(2PnkWocGqd`dTD-GOh2vdC#uO^@@0Jj<+F%:L9rIFOfGgWWYgF5+?B=#F+Z#oF5G4jKg8r)wr]E"
+"@XwafM89fO#:LYCDa86p;9N(:,[[A5H8aZ.79hwi'Um2kp:]dq%7V*(mpN^grgo)h7Y<.3s8HE8ZGMRL'q..W-(s6&r^ppa9$^Xf`.LAPZbmq9Fx1d>&W6gs:W#oo_KUS`glY8.Q<h(T"
+"jqMSRP8^UQM1+tPF4kke.3cOS.6`%6He5C+iHG(JVjM2f6Kf(=lo[]m3cta.OTYW'g(6<oXjlN[Q%(>=rwYJaB'@p`B6l-I.&<JnB]DDC.RREo%Mi:mm:m7mnk'Hkj`a8VV>7G&$Bd#R"
+"DN7%Pws:O*TLQT*dH%8+vrk63cR=mn,,Xq2&Au3=,ThIEaLs2HMP5c7G1?b%eG[%hK4/nUF20`'f,4I[mU<.3FB4ujT//2C#0oU&;<vh2Od.53k&['U>]aK:kDWIin'DAca6De'/_d9N"
+"RiQu)M_^5#mb:J:T%f#[HVq0#");
+
 }
