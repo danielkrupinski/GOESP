@@ -33,8 +33,8 @@ Cross-platform streamproof ESP hack for CS:GO. Currently supports Windows and Li
 Microsoft Visual Studio 2019 (preferably the latest version), platform toolset v142 and Windows 10 SDK are required in order to compile GOESP. If you don't have ones, you can download VS [here](https://visualstudio.microsoft.com/) (Tools and Windows SDK are installed during Visual Studio Setup).
 
 #### Linux
--   CMake 3.11.0+
--   gcc and g++ 10
+-   CMake 3.13.0+
+-   gcc and g++ 10 **or** clang 10+
 -   SDL2 library
 
 Below are example commands for some distributions to install the required packages:
