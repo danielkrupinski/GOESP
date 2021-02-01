@@ -197,11 +197,6 @@ void GameData::clearTextures() noexcept
         player.clearAvatarTexture();
 }
 
-const Matrix4x4& GameData::toScreenMatrix() noexcept
-{
-    return viewMatrix;
-}
-
 bool GameData::worldToScreen(const Vector& in, ImVec2& out, bool floor) noexcept
 {
     const auto& matrix = viewMatrix;
