@@ -170,3 +170,8 @@ public:
     PROP(shotsFired, WIN32_UNIX(0xA390, 0xACC0), int)                              // CCSPlayer->m_iShotsFired
     PROP(money, WIN32_UNIX(0xB364, 0xBCA8), int)                                   // CCSPlayer->m_iAccount
 };
+
+class PlantedC4 : public Entity {
+public:
+    
+};
