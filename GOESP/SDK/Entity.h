@@ -110,12 +110,10 @@ public:
     PROP(fireIsBurning, WIN32_UNIX(0xE94, 0x1430), bool[100])                      // CInferno->m_bFireIsBurning
     PROP(fireCount, WIN32_UNIX(0x13A8, 0x1944), int)                               // CInferno->m_fireCount
 
+    PROP(mapHasBombTarget, WIN32_UNIX(0x71, 0x89), bool)                           // CCSGameRulesProxy->m_bMapHasBombTarget
+
 #ifdef _WIN32
     PROP(grenadeExploded, 0x29E8, bool)
-
-    PROP(bombTicking, 0x2980, bool)                                                // CPlantedC4->m_bBombTicking
-    PROP(bombSite, 0x2984, bool)                                                   // CPlantedC4->m_nBombSite
-
 #else
     bool grenadeExploded()
     {
