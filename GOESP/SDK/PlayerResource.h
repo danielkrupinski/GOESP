@@ -20,6 +20,7 @@ public:
     }
 
     PROP(bombsiteCenterA, WIN32_UNIX(0x1664, 0x1CFC), Vector)
+    PROP(bombsiteCenterB, WIN32_UNIX(0x1670, 0x1D08), Vector)
     PROP(armor, WIN32_UNIX(0x187C, 0x1F14), int[65])
     PROP(competitiveRanking, WIN32_UNIX(0x1A84, 0x211C), int[65])
     PROP(competitiveWins, WIN32_UNIX(0x1B88, 0x2220), int[65])
