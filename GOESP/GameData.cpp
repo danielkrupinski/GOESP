@@ -275,6 +275,7 @@ void LocalPlayerData::update() noexcept
 
     exists = true;
     alive = localPlayer->isAlive();
+    handle = localPlayer->handle();
 
     if (const auto activeWeapon = localPlayer->getActiveWeapon()) {
         inReload = activeWeapon->isInReload();

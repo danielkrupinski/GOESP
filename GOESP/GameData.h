@@ -63,6 +63,7 @@ struct LocalPlayerData {
     bool noScope = false;
     float nextWeaponAttack = 0.0f;
     int fov;
+    int handle;
     float flashDuration;
     Vector aimPunch;
     Vector origin;
