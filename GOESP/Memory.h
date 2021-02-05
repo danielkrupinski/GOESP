@@ -31,6 +31,7 @@ public:
     Channel* channels;
     UtlVector<Entity*>* plantedC4s;
     PlayerResource** playerResource;
+    Entity** gameRules;
 
     bool(__THISCALL* isOtherEnemy)(CSPlayer*, CSPlayer*);
     std::add_pointer_t<void __CDECL(const char* msg, ...)> debugMsg;
