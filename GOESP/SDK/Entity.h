@@ -179,4 +179,5 @@ public:
     PROP(timerLength, WIN32_UNIX(0x2994, 0x302C), float)                           // CPlantedC4->m_flTimerLength
     PROP(defuseLength, WIN32_UNIX(0x29A8, 0x3040), float)                          // CPlantedC4->m_flDefuseLength
     PROP(defuseCountDown, WIN32_UNIX(0x29AC, 0x3044), float)                       // CPlantedC4->m_flDefuseCountDown
+    PROP(bombDefuser, WIN32_UNIX(0x29B4, 0x304C), int)                             // CPlantedC4->m_hBombDefuser
 };
