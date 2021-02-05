@@ -21,6 +21,7 @@ namespace ImGuiCustom
 namespace ImGui
 {
     bool smallButtonFullWidth(const char* label, bool disabled = false) noexcept;
+    void textUnformattedCentered(const char* text) noexcept;
 
     // table that inherits ImGuiWindowFlags_NoInputs from parent window for its scrolling region
     bool beginTable(const char* str_id, int columns_count, ImGuiTableFlags flags = 0, const ImVec2& outer_size = ImVec2(0, 0), float inner_width = 0.0f) noexcept;

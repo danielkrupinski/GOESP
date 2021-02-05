@@ -96,6 +96,12 @@ bool ImGui::smallButtonFullWidth(const char* label, bool disabled) noexcept
     return pressed;
 }
 
+void ImGui::textUnformattedCentered(const char* text) noexcept
+{
+    ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(text).x) / 2.0f);
+    ImGui::TextUnformatted(text);
+}
+
 bool ImGui::beginTable(const char* str_id, int columns_count, ImGuiTableFlags flags, const ImVec2& outer_size, float inner_width) noexcept
 {
     ImGuiID id = GetID(str_id);
