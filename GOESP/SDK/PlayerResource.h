@@ -3,6 +3,8 @@
 #include "Entity.h"
 #include "VirtualMethod.h"
 
+struct Vector;
+
 class IPlayerResource {
 public:
     VIRTUAL_METHOD_V(bool, isAlive, 5, (int index), (this, index))
@@ -17,7 +19,8 @@ public:
         return reinterpret_cast<IPlayerResource*>(uintptr_t(this) + WIN32_UNIX(0x9D8, 0xF68));
     }
 
+    PROP(bombsiteCenterA, WIN32_UNIX(0x1664, 0x1CFC), Vector)
+    PROP(armor, WIN32_UNIX(0x187C, 0x1F14), int[65])
     PROP(competitiveRanking, WIN32_UNIX(0x1A84, 0x211C), int[65])
     PROP(competitiveWins, WIN32_UNIX(0x1B88, 0x2220), int[65])
-    PROP(armor, WIN32_UNIX(0x187C, 0x1F14), int[65])
 };
