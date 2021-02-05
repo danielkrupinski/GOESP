@@ -1,3 +1,9 @@
+#include <numbers>
+#include <numeric>
+#include <sstream>
+#include <unordered_map>
+#include <vector>
+
 #include "Misc.h"
 
 #include "../imgui/imgui.h"
@@ -25,11 +31,6 @@
 
 #include "../ImGuiCustom.h"
 #include "../imgui/imgui.h"
-
-#include <numbers>
-#include <numeric>
-#include <unordered_map>
-#include <vector>
 
 struct PurchaseList {
     bool enabled = false;
@@ -90,6 +91,7 @@ struct {
     OffscreenEnemies offscreenEnemies;
     PlayerList playerList;
     ColorToggle molotovHull{ 1.0f, 0.27f, 0.0f, 0.3f };
+    ColorToggle bombTimer{ 1.0f, 0.55f, 0.0f, 1.0f };
 } miscConfig;
 
 void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
@@ -416,6 +418,68 @@ void Misc::drawOffscreenEnemies(ImDrawList* drawList) noexcept
     }
 }
 
+static void drawBombTimer() noexcept
+{
+    if (!miscConfig.bombTimer.enabled)
+        return;
+
+    GameData::Lock lock;
+
+    const auto& plantedC4 = GameData::plantedC4();
+    if (plantedC4.blowTime == 0.0f && !gui->isOpen())
+        return;
+
+    if (!gui->isOpen()) {
+        ImGui::SetNextWindowBgAlpha(0.3f);
+    }
+
+    static float windowWidth = 200.0f;
+    ImGui::SetNextWindowPos({ (ImGui::GetIO().DisplaySize.x - 200.0f) / 2.0f, 60.0f }, ImGuiCond_Once);
+    ImGui::SetNextWindowSize({ windowWidth, 0 }, ImGuiCond_Once);
+
+    if (!gui->isOpen())
+        ImGui::SetNextWindowSize({ windowWidth, 0 });
+
+    ImGui::SetNextWindowSizeConstraints({ 0, -1 }, { FLT_MAX, -1 });
+    ImGui::Begin("Bomb Timer", nullptr, ImGuiWindowFlags_NoTitleBar | (gui->isOpen() ? 0 : ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoDecoration));
+
+    std::ostringstream ss; ss << "Bomb on " << (!plantedC4.bombsite ? 'A' : 'B') << " : " << std::fixed << std::showpoint << std::setprecision(3) << (std::max)(plantedC4.blowTime - memory->globalVars->currenttime, 0.0f) << " s";
+
+    ImGui::textUnformattedCentered(ss.str().c_str());
+
+    ImGui::PushStyleColor(ImGuiCol_PlotHistogram, Helpers::calculateColor(miscConfig.bombTimer));
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.2f, 0.2f, 0.2f, 1.0f });
+    ImGui::progressBarFullWidth((plantedC4.blowTime - memory->globalVars->currenttime) / plantedC4.timerLength, 5.0f);
+
+    if (plantedC4.defuserHandle != -1) {
+        const bool canDefuse = plantedC4.blowTime >= plantedC4.defuseCountDown;
+
+        if (plantedC4.defuserHandle == GameData::local().handle) {
+            if (canDefuse) {
+                ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+                ImGui::textUnformattedCentered("You can defuse!");
+            } else {
+                ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
+                ImGui::textUnformattedCentered("You can not defuse!");
+            }
+            ImGui::PopStyleColor();
+        } else if (const auto defusingPlayer = GameData::playerByHandle(plantedC4.defuserHandle)) {
+            std::ostringstream ss; ss << defusingPlayer->name << " is defusing: " << std::fixed << std::showpoint << std::setprecision(3) << (std::max)(plantedC4.defuseCountDown - memory->globalVars->currenttime, 0.0f) << " s";
+
+            ImGui::textUnformattedCentered(ss.str().c_str());
+
+            ImGui::PushStyleColor(ImGuiCol_PlotHistogram, canDefuse ? IM_COL32(0, 255, 0, 255) : IM_COL32(255, 0, 0, 255));
+            ImGui::progressBarFullWidth((plantedC4.defuseCountDown - memory->globalVars->currenttime) / plantedC4.defuseLength, 5.0f);
+            ImGui::PopStyleColor();
+        }
+    }
+
+    windowWidth = ImGui::GetCurrentWindow()->SizeFull.x;
+
+    ImGui::PopStyleColor(2);
+    ImGui::End();
+}
+
 void Misc::draw(ImDrawList* drawList) noexcept
 {
     drawReloadProgress(drawList);
@@ -427,6 +491,7 @@ void Misc::draw(ImDrawList* drawList) noexcept
     drawOffscreenEnemies(drawList);
     drawPlayerList();
     drawMolotovHull(drawList);
+    drawBombTimer();
 }
 
 void Misc::drawGUI() noexcept
@@ -487,6 +552,7 @@ void Misc::drawGUI() noexcept
     ImGui::PopID();
 
     ImGuiCustom::colorPicker("Molotov Hull", miscConfig.molotovHull);
+    ImGuiCustom::colorPicker("Bomb Timer", miscConfig.bombTimer);
 }
 
 bool Misc::ignoresFlashbang() noexcept
@@ -678,19 +744,21 @@ static void to_json(json& j, const PlayerList& o, const PlayerList& dummy = {})
 json Misc::toJSON() noexcept
 {
     json j;
-    to_json(j["Reload Progress"], miscConfig.reloadProgress, ColorToggleThickness{ 5.0f });
 
-    if (miscConfig.ignoreFlashbang)
-        j["Ignore Flashbang"] = miscConfig.ignoreFlashbang;
+    const auto& o = miscConfig;
+    const decltype(miscConfig) dummy;
 
-    j["Recoil Crosshair"] = miscConfig.recoilCrosshair;
-    j["Noscope Crosshair"] = miscConfig.noscopeCrosshair;
-    j["Purchase List"] = miscConfig.purchaseList;
-    j["Observer List"] = miscConfig.observerList;
-    j["FPS Counter"] = miscConfig.fpsCounter;
-    j["Offscreen Enemies"] = miscConfig.offscreenEnemies;
-    j["Player List"] = miscConfig.playerList;
-    j["Molotov Hull"] = miscConfig.molotovHull;
+    WRITE_OBJ("Reload Progress", reloadProgress);
+    WRITE("Ignore Flashbang", ignoreFlashbang);
+    WRITE_OBJ("Recoil Crosshair", recoilCrosshair);
+    WRITE_OBJ("Noscope Crosshair", noscopeCrosshair);
+    WRITE_OBJ("Purchase List", purchaseList);
+    WRITE_OBJ("Observer List", observerList);
+    WRITE_OBJ("FPS Counter", fpsCounter);
+    WRITE_OBJ("Offscreen Enemies", offscreenEnemies);
+    WRITE_OBJ("Player List", playerList);
+    WRITE_OBJ("Molotov Hull", molotovHull);
+    WRITE_OBJ("Bomb Timer", bombTimer);
 
     return j;
 }
@@ -750,4 +818,5 @@ void Misc::fromJSON(const json& j) noexcept
     read<value_t::object>(j, "Offscreen Enemies", miscConfig.offscreenEnemies);
     read<value_t::object>(j, "Player List", miscConfig.playerList);
     read<value_t::object>(j, "Molotov Hull", miscConfig.molotovHull);
+    read<value_t::object>(j, "Bomb Timer", miscConfig.bombTimer);
 }

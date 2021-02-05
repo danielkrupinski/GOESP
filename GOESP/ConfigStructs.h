@@ -51,6 +51,8 @@ using value_t = json::value_t;
 if (!(o.valueName == dummy.valueName)) \
     j[name] = o.valueName;
 
+#define WRITE_OBJ(name, valueName) to_json(j[name], o.valueName, dummy.valueName)
+
 static void to_json(json& j, const Color& o, const Color& dummy = {})
 {
     WRITE("Color", color)
