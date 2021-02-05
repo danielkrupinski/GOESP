@@ -11,6 +11,7 @@
 class CSPlayer;
 class Entity;
 class ItemSystem;
+class PlantedC4;
 class PlayerResource;
 class WeaponSystem;
 template <typename T>
@@ -29,7 +30,7 @@ public:
     WeaponSystem* weaponSystem;
     ActiveChannels* activeChannels;
     Channel* channels;
-    UtlVector<Entity*>* plantedC4s;
+    UtlVector<PlantedC4*>* plantedC4s;
     PlayerResource** playerResource;
     Entity** gameRules;
 
