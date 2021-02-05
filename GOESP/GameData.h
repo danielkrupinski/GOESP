@@ -20,6 +20,7 @@ struct EntityData;
 struct LootCrateData;
 struct ProjectileData;
 struct InfernoData;
+struct BombData;
 
 struct Matrix4x4;
 
@@ -47,6 +48,7 @@ namespace GameData
     const std::vector<LootCrateData>& lootCrates() noexcept;
     const std::list<ProjectileData>& projectiles() noexcept;
     const std::vector<InfernoData>& infernos() noexcept;
+    const BombData& plantedC4() noexcept;
     const std::string& gameMode() noexcept;
 }
 

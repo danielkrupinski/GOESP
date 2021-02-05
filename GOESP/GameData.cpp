@@ -250,6 +250,11 @@ const std::vector<InfernoData>& GameData::infernos() noexcept
     return infernoData;
 }
 
+const BombData& GameData::plantedC4() noexcept
+{
+    return bombData;
+}
+
 const std::string& GameData::gameMode() noexcept
 {
     return gameModeName;
