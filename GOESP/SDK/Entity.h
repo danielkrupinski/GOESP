@@ -173,5 +173,5 @@ public:
 
 class PlantedC4 : public Entity {
 public:
-    
+    PROP(blowTime, WIN32_UNIX(0x2990, 0x3028), float)                              // CPlantedC4->m_flC4Blow
 };
