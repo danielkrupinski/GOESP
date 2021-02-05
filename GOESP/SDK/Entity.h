@@ -173,6 +173,7 @@ public:
 
 class PlantedC4 : public Entity {
 public:
+    PROP(bombSite, WIN32_UNIX(0x2984, 0x301C), int)                                // CPlantedC4->m_nBombSite
     PROP(blowTime, WIN32_UNIX(0x2990, 0x3028), float)                              // CPlantedC4->m_flC4Blow
     PROP(timerLength, WIN32_UNIX(0x2994, 0x302C), float)                           // CPlantedC4->m_flTimerLength
 };
