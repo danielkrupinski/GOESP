@@ -220,6 +220,12 @@ const std::vector<PlayerData>& GameData::players() noexcept
     return playerData;
 }
 
+const PlayerData* GameData::playerByHandle(int handle) noexcept
+{
+    const auto it = std::ranges::find(std::as_const(playerData), handle, &PlayerData::handle);
+    return it != playerData.cend() ? &(*it) : nullptr;
+}
+
 const std::vector<ObserverData>& GameData::observers() noexcept
 {
     return observerData;
