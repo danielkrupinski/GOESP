@@ -186,11 +186,14 @@ struct ObserverData {
 };
 
 struct BombData {
-    BombData(Entity* entity) noexcept;
+    void update() noexcept;
 
-    int bombsite;
     float blowTime;
+    float timerLength;
+    int defuserHandle;
     float defuseCountDown;
+    float defuseLength;
+    int bombsite;
 };
 
 struct InfernoData {

@@ -51,8 +51,8 @@ static std::vector<WeaponData> weaponData;
 static std::vector<EntityData> entityData;
 static std::vector<LootCrateData> lootCrateData;
 static std::list<ProjectileData> projectileData;
-static std::vector<BombData> bombData;
 static std::vector<InfernoData> infernoData;
+static BombData bombData;
 static std::string gameModeName;
 
 void GameData::update() noexcept
@@ -68,10 +68,10 @@ void GameData::update() noexcept
     weaponData.clear();
     entityData.clear();
     lootCrateData.clear();
-    bombData.clear();
     infernoData.clear();
 
     localPlayerData.update();
+    bombData.update();
 
     if (!localPlayer) {
         playerData.clear();
@@ -82,9 +82,6 @@ void GameData::update() noexcept
 
     gameModeName = memory->getGameModeName(false);
     viewMatrix = interfaces->engine->worldToScreenMatrix();
-
-    for (int i = 0; i < memory->plantedC4s->size; ++i)
-        bombData.emplace_back((*memory->plantedC4s)[i]);
 
     const auto observerTarget = localPlayer->getObserverMode() == ObsMode::InEye ? localPlayer->getObserverTarget() : nullptr;
 
@@ -679,11 +676,6 @@ ObserverData::ObserverData(CSPlayer* entity, CSPlayer* obs, bool targetIsLocalPl
     this->targetIsLocalPlayer = targetIsLocalPlayer;
 }
 
-BombData::BombData(Entity* entity) noexcept
-{
-
-}
-
 PlayerData::Texture::~Texture()
 {
     clear();
@@ -710,4 +702,26 @@ InfernoData::InfernoData(Entity* inferno) noexcept
         if (inferno->fireIsBurning()[i])
             points.emplace_back(inferno->fireXDelta()[i] + origin.x, inferno->fireYDelta()[i] + origin.y, inferno->fireZDelta()[i] + origin.z);
     }
+}
+
+void BombData::update() noexcept
+{
+    if (memory->plantedC4s->size > 0 && (!*memory->gameRules || (*memory->gameRules)->mapHasBombTarget())) {
+        if (const auto bomb = (*memory->plantedC4s)[0]; bomb && bomb->ticking()) {
+            blowTime = bomb->blowTime();
+            timerLength = bomb->timerLength();
+            defuserHandle = bomb->bombDefuser();
+            if (defuserHandle != -1) {
+                defuseCountDown = bomb->defuseCountDown();
+                defuseLength = bomb->defuseLength();
+            }
+
+            if (*memory->playerResource) {
+                const auto& bombOrigin = bomb->getAbsOrigin();
+                bombsite = bombOrigin.distTo((*memory->playerResource)->bombsiteCenterA()) > bombOrigin.distTo((*memory->playerResource)->bombsiteCenterB());
+            }
+            return;
+        }
+    }
+    blowTime = 0.0f;
 }
