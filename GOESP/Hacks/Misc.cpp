@@ -267,7 +267,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
                 if (s.length() >= 2)
                     s.erase(s.length() - 2);
 
-                if (const auto it = std::find_if(GameData::players().cbegin(), GameData::players().cend(), [userId = userId](const auto& playerData) { return playerData.userId == userId; }); it != GameData::players().cend()) {
+                if (const auto it = std::ranges::find(GameData::players(), userId, &PlayerData::userId); it != GameData::players().cend()) {
                     if (miscConfig.purchaseList.showPrices)
                         ImGui::TextWrapped("%s $%d: %s", it->name, purchases.totalCost, s.c_str());
                     else
@@ -298,7 +298,7 @@ void Misc::drawObserverList() noexcept
 
     const auto& observers = GameData::observers();
 
-    if (std::none_of(observers.begin(), observers.end(), [](const auto& obs) { return obs.targetIsLocalPlayer; }) && !gui->isOpen())
+    if (std::ranges::none_of(observers, [](const auto& obs) { return obs.targetIsLocalPlayer; }) && !gui->isOpen())
         return;
 
     if (miscConfig.observerList.pos != ImVec2{}) {
@@ -324,7 +324,7 @@ void Misc::drawObserverList() noexcept
         if (!observer.targetIsLocalPlayer)
             continue;
 
-        if (const auto it = std::find_if(GameData::players().cbegin(), GameData::players().cend(), [userId = observer.playerUserId](const auto& playerData) { return playerData.userId == userId; }); it != GameData::players().cend()) {
+        if (const auto it = std::ranges::find(GameData::players(), observer.playerUserId, &PlayerData::userId); it != GameData::players().cend()) {
             ImGui::TextWrapped("%s", it->name);
         }
     }
@@ -603,7 +603,7 @@ void Misc::drawPlayerList() noexcept
             ImGui::TableHeadersRow();
 
             std::vector<std::reference_wrapper<const PlayerData>> playersOrdered{ GameData::players().begin(), GameData::players().end() };
-            std::sort(playersOrdered.begin(), playersOrdered.end(), [](const auto& a, const auto& b) {
+            std::ranges::sort(playersOrdered, [](const auto& a, const auto& b) {
                 // enemies first
                 if (a.get().enemy != b.get().enemy)
                     return a.get().enemy && !b.get().enemy;

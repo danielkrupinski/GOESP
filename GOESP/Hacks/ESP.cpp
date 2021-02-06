@@ -1097,7 +1097,7 @@ static void from_json(const json& j, Font& f)
 {
     read<value_t::string>(j, "Name", f.name);
 
-    if (const auto it = std::find_if(systemFonts.cbegin(), systemFonts.cend(), [&f](const auto& e) { return e == f.name; }); it != systemFonts.cend()) {
+    if (const auto it = std::ranges::find(std::as_const(systemFonts), f.name); it != systemFonts.cend()) {
         f.index = std::distance(systemFonts.cbegin(), it);
         ESP::scheduleFontLoad(f.index);
     } else {

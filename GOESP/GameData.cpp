@@ -91,7 +91,7 @@ void GameData::update() noexcept
             if (player == localPlayer.get() || player == observerTarget || player->isGOTV())
                 continue;
 
-            if (const auto it = std::find_if(playerData.begin(), playerData.end(), [handle = player->handle()](const auto& playerData) { return playerData.handle == handle; }); it != playerData.end()) {
+            if (const auto it = std::ranges::find(playerData, player->handle(), &PlayerData::handle); it != playerData.end()) {
                 it->update(player);
             } else {
                 playerData.emplace_back(player);
@@ -113,7 +113,7 @@ void GameData::update() noexcept
                 switch (entity->getClientClass()->classId) {
                 case ClassId::BaseCSGrenadeProjectile:
                     if (entity->grenadeExploded()) {
-                        if (const auto it = std::find(projectileData.begin(), projectileData.end(), entity->handle()); it != projectileData.end())
+                        if (const auto it = std::ranges::find(projectileData, entity->handle(), &ProjectileData::handle); it != projectileData.end())
                             it->exploded = true;
                         break;
                     }
@@ -125,7 +125,7 @@ void GameData::update() noexcept
                 case ClassId::SensorGrenadeProjectile:
                 case ClassId::SmokeGrenadeProjectile:
                 case ClassId::SnowballProjectile:
-                    if (const auto it = std::find(projectileData.begin(), projectileData.end(), entity->handle()); it != projectileData.end())
+                    if (const auto it = std::ranges::find(projectileData, entity->handle(), &ProjectileData::handle); it != projectileData.end())
                         it->update(entity);
                     else
                         projectileData.emplace_back(entity);
@@ -159,7 +159,7 @@ void GameData::update() noexcept
     std::sort(entityData.begin(), entityData.end());
     std::sort(lootCrateData.begin(), lootCrateData.end());
 
-    std::for_each(projectileData.begin(), projectileData.end(), [](auto& projectile) {
+    std::ranges::for_each(projectileData, [](auto& projectile) {
         if (interfaces->entityList->getEntityFromHandle(projectile.handle) == nullptr)
             projectile.exploded = true;
     });
@@ -167,7 +167,7 @@ void GameData::update() noexcept
     std::erase_if(projectileData, [](const auto& projectile) { return interfaces->entityList->getEntityFromHandle(projectile.handle) == nullptr
         && (projectile.trajectory.empty() || projectile.trajectory.back().first + 60.0f < memory->globalVars->realtime); });
 
-    std::for_each(playerData.begin(), playerData.end(), [](auto& player) {
+    std::ranges::for_each(playerData, [](auto& player) {
         if (interfaces->entityList->getEntityFromHandle(player.handle) == nullptr && player.fadingEndTime == 0.0f)
             player.fadingEndTime = memory->globalVars->realtime + 1.75f;
     });
