@@ -52,6 +52,7 @@ static std::vector<EntityData> entityData;
 static std::vector<LootCrateData> lootCrateData;
 static std::list<ProjectileData> projectileData;
 static std::vector<InfernoData> infernoData;
+static std::vector<Vector> smokeGrenades;
 static BombData bombData;
 static std::string gameModeName;
 
@@ -69,6 +70,7 @@ void GameData::update() noexcept
     entityData.clear();
     lootCrateData.clear();
     infernoData.clear();
+    smokeGrenades.clear();
 
     localPlayerData.update();
     bombData.update();
@@ -78,6 +80,11 @@ void GameData::update() noexcept
         projectileData.clear();
         gameModeName.clear();
         return;
+    }
+
+    for (int i = 0; i < memory->smokeHandles->size; ++i) {
+        if (const auto smoke = interfaces->entityList->getEntityFromHandle(memory->smokeHandles->memory[i]))
+            smokeGrenades.push_back(smoke->getAbsOrigin() + Vector{ 0.0f, 0.0f, 60.0f });
     }
 
     gameModeName = memory->getGameModeName(false);
@@ -254,6 +261,11 @@ const std::list<ProjectileData>& GameData::projectiles() noexcept
 const std::vector<InfernoData>& GameData::infernos() noexcept
 {
     return infernoData;
+}
+
+const std::vector<Vector>& GameData::smokes() noexcept
+{
+    return smokeGrenades;
 }
 
 const BombData& GameData::plantedC4() noexcept
