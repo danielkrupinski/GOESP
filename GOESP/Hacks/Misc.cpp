@@ -92,6 +92,7 @@ struct {
     PlayerList playerList;
     ColorToggle molotovHull{ 1.0f, 0.27f, 0.0f, 0.3f };
     ColorToggle bombTimer{ 1.0f, 0.55f, 0.0f, 1.0f };
+    ColorToggle smokeHull{ 0.0f, 0.81f, 1.0f, 0.60f };
 } miscConfig;
 
 void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
@@ -480,22 +481,13 @@ static void drawBombTimer() noexcept
     ImGui::End();
 }
 
-void Misc::draw(ImDrawList* drawList) noexcept
-{
-    drawReloadProgress(drawList);
-    drawRecoilCrosshair(drawList);
-    purchaseList();
-    drawObserverList();
-    drawNoscopeCrosshair(drawList);
-    drawFpsCounter();
-    drawOffscreenEnemies(drawList);
-    drawPlayerList();
-    drawMolotovHull(drawList);
-    drawBombTimer();
-}
-
 void Misc::drawGUI() noexcept
 {
+    if (!ImGui::BeginTable("table", 2))
+        return;
+
+    ImGui::TableNextColumn();
+
     ImGuiCustom::colorPicker("Reload Progress", miscConfig.reloadProgress);
     ImGuiCustom::colorPicker("Recoil Crosshair", miscConfig.recoilCrosshair);
     ImGuiCustom::colorPicker("Noscope Crosshair", miscConfig.noscopeCrosshair);
@@ -553,6 +545,12 @@ void Misc::drawGUI() noexcept
 
     ImGuiCustom::colorPicker("Molotov Hull", miscConfig.molotovHull);
     ImGuiCustom::colorPicker("Bomb Timer", miscConfig.bombTimer);
+
+    ImGui::TableNextColumn();
+
+    ImGuiCustom::colorPicker("Smoke Hull", miscConfig.smokeHull);
+
+    ImGui::EndTable();
 }
 
 bool Misc::ignoresFlashbang() noexcept
@@ -687,6 +685,52 @@ void Misc::drawMolotovHull(ImDrawList* drawList) noexcept
     }
 }
 
+static void drawSmokeHull(ImDrawList* drawList) noexcept
+{
+    if (!miscConfig.smokeHull.enabled)
+        return;
+
+    const auto color = Helpers::calculateColor(miscConfig.smokeHull);
+
+    static const auto spheroidPoints = [] {
+        std::array<Vector, 2000> points;
+
+        constexpr auto goldenAngle = static_cast<float>(2.399963229728653);
+        constexpr auto radius = 140.0f;
+
+        for (std::size_t i = 1; i <= points.size(); ++i) {
+            const auto latitude = std::asin(2.0f * i / (points.size() + 1) - 1.0f);
+            const auto longitude = goldenAngle * i;
+
+            points[i - 1] = Vector{ std::cos(longitude) * std::cos(latitude) * radius,  std::sin(longitude) * std::cos(latitude) * radius,  std::sin(latitude) * radius * 0.7f };
+        }
+        return points;
+    }();
+
+    GameData::Lock lock;
+    for (const auto& smokePos : GameData::smokes()) {
+        for (const auto& point : spheroidPoints) {
+            if (ImVec2 screenPos; GameData::worldToScreen(smokePos + point, screenPos))
+                drawList->AddCircleFilled(screenPos, 1.0f, color);
+        }
+    }
+}
+
+void Misc::draw(ImDrawList* drawList) noexcept
+{
+    drawReloadProgress(drawList);
+    drawRecoilCrosshair(drawList);
+    purchaseList();
+    drawObserverList();
+    drawNoscopeCrosshair(drawList);
+    drawFpsCounter();
+    drawOffscreenEnemies(drawList);
+    drawPlayerList();
+    drawMolotovHull(drawList);
+    drawBombTimer();
+    drawSmokeHull(drawList);
+}
+
 static void to_json(json& j, const PurchaseList& o, const PurchaseList& dummy = {})
 {
     WRITE("Enabled", enabled)
@@ -759,6 +803,7 @@ json Misc::toJSON() noexcept
     WRITE_OBJ("Player List", playerList);
     WRITE_OBJ("Molotov Hull", molotovHull);
     WRITE_OBJ("Bomb Timer", bombTimer);
+    WRITE_OBJ("Smoke Hull", smokeHull);
 
     return j;
 }
@@ -819,4 +864,5 @@ void Misc::fromJSON(const json& j) noexcept
     read<value_t::object>(j, "Player List", miscConfig.playerList);
     read<value_t::object>(j, "Molotov Hull", miscConfig.molotovHull);
     read<value_t::object>(j, "Bomb Timer", miscConfig.bombTimer);
+    read<value_t::object>(j, "Smoke Hull", miscConfig.smokeHull);
 }
