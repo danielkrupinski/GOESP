@@ -4,19 +4,6 @@
 #include <unordered_map>
 #include <vector>
 
-#if !defined(alloca)
-#if defined(__GLIBC__) || defined(__sun) || defined(__APPLE__) || defined(__NEWLIB__)
-#include <alloca.h>     // alloca (glibc uses <alloca.h>. Note that Cygwin may have _WIN32 defined, so the order matters here)
-#elif defined(_WIN32)
-#include <malloc.h>     // alloca
-#if !defined(alloca)
-#define alloca _alloca  // for clang with MS Codegen
-#endif
-#else
-#include <stdlib.h>     // alloca
-#endif
-#endif
-
 #include "Misc.h"
 
 #include "../imgui/imgui.h"
@@ -731,8 +718,7 @@ static auto generateAntialiasedDot() noexcept
     }
 
     // Compute normals
-    // TODO: Get rid of alloca
-    ImVec2* temp_normals = (ImVec2*)alloca(segments * sizeof(ImVec2)); //-V630
+    std::array<ImVec2, segments> temp_normals;
     for (int i0 = segments - 1, i1 = 0; i1 < segments; i0 = i1++) {
         const ImVec2& p0 = circleSegments[i0];
         const ImVec2& p1 = circleSegments[i1];
