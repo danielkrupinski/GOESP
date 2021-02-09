@@ -789,11 +789,11 @@ static void drawSmokeHull(ImDrawList* drawList) noexcept
                 const ImU32 colors[2]{ color, color & ~IM_COL32_A_MASK };
                 const auto uv = ImGui::GetDrawListSharedData()->TexUvWhitePixel;
                 for (std::size_t i = 0; i < vertices.size(); ++i) {
-                    drawList->_VtxWritePtr[0].pos = vertices[i] + screenPos;
-                    drawList->_VtxWritePtr[0].uv = uv;
-                    drawList->_VtxWritePtr[0].col = colors[i & 1];
-                    ++drawList->_VtxWritePtr;
+                    drawList->_VtxWritePtr[i].pos = vertices[i] + screenPos;
+                    drawList->_VtxWritePtr[i].uv = uv;
+                    drawList->_VtxWritePtr[i].col = colors[i & 1];
                 }
+                drawList->_VtxWritePtr += vertices.size();
 
                 std::memcpy(drawList->_IdxWritePtr, indices.data(), indices.size() * sizeof(ImDrawIdx));
 
