@@ -26,9 +26,9 @@
 #include "imgui/imgui_impl_opengl3.h"
 #endif
 
+#ifdef _WIN32
 LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-#ifdef _WIN32
 static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
     if (hooks->getState() == Hooks::State::NotInstalled)
