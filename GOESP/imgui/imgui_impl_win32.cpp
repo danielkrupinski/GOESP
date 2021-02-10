@@ -12,7 +12,7 @@
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
-#include <windows.h>
+#include <Windows.h>
 #include <tchar.h>
 
 // Using XInput library for gamepad (with recent Windows SDK this may leads to executables which won't run on Windows 7)

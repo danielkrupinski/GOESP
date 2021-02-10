@@ -574,11 +574,8 @@ ImTextureID PlayerData::getRankTexture() const noexcept
         return skillgroupImages[std::size_t(skillgroup) < skillgroupImages.size() ? skillgroup : 0].getTexture();
 }
 
-WeaponData::WeaponData(Entity* entity) noexcept : BaseData{ entity }
+WeaponData::WeaponData(Entity* entity) noexcept : BaseData{ entity }, clip{ entity->clip() }, reserveAmmo{ entity->reserveAmmoCount() }
 {
-    clip = entity->clip();
-    reserveAmmo = entity->reserveAmmoCount();
-
     if (const auto weaponInfo = entity->getWeaponInfo()) {
         group = [](WeaponType type, WeaponId weaponId) {
             switch (type) {

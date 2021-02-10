@@ -26,6 +26,8 @@
 #include "imgui/imgui_impl_opengl3.h"
 #endif
 
+LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 #ifdef _WIN32
 static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
@@ -35,7 +37,6 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
     if (hooks->getState() == Hooks::State::Installed) {
         GameData::update();
 
-        LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
         ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
         interfaces->inputSystem->enableInput(!gui->isOpen());
     }
@@ -90,10 +91,8 @@ static BOOL WINAPI setCursorPos(int X, int Y) noexcept
     return hooks->setCursorPos(X, Y);
 }
 
-Hooks::Hooks(HMODULE moduleHandle) noexcept
+Hooks::Hooks(HMODULE moduleHandle) noexcept : moduleHandle{ moduleHandle }
 {
-    this->moduleHandle = moduleHandle;
-
     _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
     _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
 
@@ -168,7 +167,7 @@ Hooks::Hooks() noexcept
 void Hooks::setup() noexcept
 {
 #ifdef _WIN32
-    wndProc = WNDPROC(SetWindowLongPtrW(window, GWLP_WNDPROC, LONG_PTR(::wndProc)));
+    wndProc = WNDPROC(SetWindowLongPtrW(window, GWLP_WNDPROC, LONG_PTR(&::wndProc)));
 #elif __linux__
     pollEvent = *reinterpret_cast<decltype(pollEvent)*>(memory->pollEvent);
     *reinterpret_cast<decltype(::pollEvent)**>(memory->pollEvent) = ::pollEvent;

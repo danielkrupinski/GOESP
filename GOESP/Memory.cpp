@@ -112,7 +112,7 @@ static std::uintptr_t findPattern(const char* moduleName, const char* pattern) n
             return reinterpret_cast<std::uintptr_t>(start);
     }
 #ifdef _WIN32
-    MessageBoxA(NULL, ("Failed to find pattern #" + std::to_string(id) + '!').c_str(), "GOESP", MB_OK | MB_ICONWARNING);
+    MessageBoxA(nullptr, ("Failed to find pattern #" + std::to_string(id) + '!').c_str(), "GOESP", MB_OK | MB_ICONWARNING);
 #endif
     return 0;
 }
