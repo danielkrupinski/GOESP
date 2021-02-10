@@ -75,7 +75,7 @@ struct PlayerList {
     bool health = true;
     bool armor = false;
     bool lastPlace = false;
-    
+
     ImVec2 pos;
     ImVec2 size{ 270.0f, 200.0f };
 };
@@ -233,7 +233,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
         if ((!interfaces->engine->isInGame() || (freezeEnd != 0.0f && memory->globalVars->realtime > freezeEnd + (!miscConfig.purchaseList.onlyDuringFreezeTime ? mp_buytime->getFloat() : 0.0f)) || playerPurchases.empty() || purchaseTotal.empty()) && !gui->isOpen())
             return;
-        
+
         if (miscConfig.purchaseList.pos != ImVec2{}) {
             ImGui::SetNextWindowPos(miscConfig.purchaseList.pos);
             miscConfig.purchaseList.pos = {};
@@ -362,7 +362,7 @@ void Misc::drawFpsCounter() noexcept
 
     ImGui::SetNextWindowBgAlpha(0.35f);
     ImGui::Begin("FPS Counter", nullptr, windowFlags);
-    
+
     static auto frameRate = 1.0f;
     frameRate = 0.9f * frameRate + 0.1f * memory->globalVars->absoluteFrameTime;
     if (frameRate != 0.0f)
@@ -597,7 +597,7 @@ void Misc::drawPlayerList() noexcept
             ImGui::TableSetColumnIsEnabled(4, !miscConfig.playerList.health);
             ImGui::TableSetColumnIsEnabled(5, !miscConfig.playerList.armor);
             ImGui::TableSetColumnIsEnabled(6, !miscConfig.playerList.lastPlace);
-            
+
             ImGui::TableHeadersRow();
 
             std::vector<std::reference_wrapper<const PlayerData>> playersOrdered{ GameData::players().begin(), GameData::players().end() };
@@ -607,7 +607,7 @@ void Misc::drawPlayerList() noexcept
                     return a.get().enemy && !b.get().enemy;
 
                 return a.get().handle < b.get().handle;
-            });
+                });
 
             ImGui::PushFont(gui->getUnicodeFont());
 
@@ -685,6 +685,77 @@ void Misc::drawMolotovHull(ImDrawList* drawList) noexcept
     }
 }
 
+#define IM_NORMALIZE2F_OVER_ZERO(VX,VY)     do { float d2 = VX*VX + VY*VY; if (d2 > 0.0f) { float inv_len = 1.0f / ImSqrt(d2); VX *= inv_len; VY *= inv_len; } } while (0)
+#define IM_FIXNORMAL2F(VX,VY)               do { float d2 = VX*VX + VY*VY; if (d2 < 0.5f) d2 = 0.5f; float inv_lensq = 1.0f / d2; VX *= inv_lensq; VY *= inv_lensq; } while (0)
+
+static auto generateAntialiasedDot() noexcept
+{
+    constexpr auto segments = 12;
+    constexpr auto radius = 1.0f;
+
+    // based on ImDrawList::PathArcToFast()
+    std::array<ImVec2, segments> circleSegments;
+
+    for (int i = 0; i < segments; ++i) {
+        const auto data = ImGui::GetDrawListSharedData();
+        const ImVec2& c = data->ArcFastVtx[i % IM_ARRAYSIZE(data->ArcFastVtx)];
+        circleSegments[i] = ImVec2{ c.x * radius, c.y * radius };
+    }
+
+    // based on ImDrawList::AddConvexPolyFilled()
+    const float AA_SIZE = 1.0f; // _FringeScale;
+    constexpr int idx_count = (segments - 2) * 3 + segments * 6;
+    constexpr int vtx_count = (segments * 2);
+
+    std::array<ImDrawIdx, idx_count> indices;
+    std::size_t indexIdx = 0;
+
+    // Add indexes for fill
+    for (int i = 2; i < segments; ++i) {
+        indices[indexIdx++] = 0;
+        indices[indexIdx++] = (i - 1) << 1;
+        indices[indexIdx++] = i << 1;
+    }
+
+    // Compute normals
+    std::array<ImVec2, segments> temp_normals;
+    for (int i0 = segments - 1, i1 = 0; i1 < segments; i0 = i1++) {
+        const ImVec2& p0 = circleSegments[i0];
+        const ImVec2& p1 = circleSegments[i1];
+        float dx = p1.x - p0.x;
+        float dy = p1.y - p0.y;
+        IM_NORMALIZE2F_OVER_ZERO(dx, dy);
+        temp_normals[i0].x = dy;
+        temp_normals[i0].y = -dx;
+    }
+
+    std::array<ImVec2, vtx_count> vertices;
+    std::size_t vertexIdx = 0;
+
+    for (int i0 = segments - 1, i1 = 0; i1 < segments; i0 = i1++) {
+        // Average normals
+        const ImVec2& n0 = temp_normals[i0];
+        const ImVec2& n1 = temp_normals[i1];
+        float dm_x = (n0.x + n1.x) * 0.5f;
+        float dm_y = (n0.y + n1.y) * 0.5f;
+        IM_FIXNORMAL2F(dm_x, dm_y);
+        dm_x *= AA_SIZE * 0.5f;
+        dm_y *= AA_SIZE * 0.5f;
+
+        vertices[vertexIdx++] = ImVec2{ circleSegments[i1].x - dm_x, circleSegments[i1].y - dm_y };
+        vertices[vertexIdx++] = ImVec2{ circleSegments[i1].x + dm_x, circleSegments[i1].y + dm_y };
+
+        indices[indexIdx++] = (i1 << 1);
+        indices[indexIdx++] = (i0 << 1);
+        indices[indexIdx++] = (i0 << 1) + 1;
+        indices[indexIdx++] = (i0 << 1) + 1;
+        indices[indexIdx++] = (i1 << 1) + 1;
+        indices[indexIdx++] = (i1 << 1);
+    }
+
+    return std::make_pair(vertices, indices);
+}
+
 static void drawSmokeHull(ImDrawList* drawList) noexcept
 {
     if (!miscConfig.smokeHull.enabled)
@@ -707,11 +778,32 @@ static void drawSmokeHull(ImDrawList* drawList) noexcept
         return points;
     }();
 
+    static const auto [vertices, indices] = generateAntialiasedDot();
+
     GameData::Lock lock;
     for (const auto& smokePos : GameData::smokes()) {
         for (const auto& point : spheroidPoints) {
-            if (ImVec2 screenPos; GameData::worldToScreen(smokePos + point, screenPos))
-                drawList->AddCircleFilled(screenPos, 1.0f, color);
+            if (ImVec2 screenPos; GameData::worldToScreen(smokePos + point, screenPos)) {
+                drawList->PrimReserve(indices.size(), vertices.size());
+
+                const ImU32 colors[2]{ color, color & ~IM_COL32_A_MASK };
+                const auto uv = ImGui::GetDrawListSharedData()->TexUvWhitePixel;
+                for (std::size_t i = 0; i < vertices.size(); ++i) {
+                    drawList->_VtxWritePtr[i].pos = vertices[i] + screenPos;
+                    drawList->_VtxWritePtr[i].uv = uv;
+                    drawList->_VtxWritePtr[i].col = colors[i & 1];
+                }
+                drawList->_VtxWritePtr += vertices.size();
+
+                std::memcpy(drawList->_IdxWritePtr, indices.data(), indices.size() * sizeof(ImDrawIdx));
+
+                const auto baseIdx = drawList->_VtxCurrentIdx;
+                for (std::size_t i = 0; i < indices.size(); ++i)
+                    drawList->_IdxWritePtr[i] += baseIdx;
+
+                drawList->_IdxWritePtr += indices.size();
+                drawList->_VtxCurrentIdx += (ImDrawIdx)vertices.size();
+            }
         }
     }
 }
