@@ -307,10 +307,8 @@ void LocalPlayerData::update() noexcept
         origin = localPlayer->getAbsOrigin();
 }
 
-BaseData::BaseData(Entity* entity) noexcept
+BaseData::BaseData(Entity* entity) noexcept : distanceToLocal{ entity->getAbsOrigin().distTo(localPlayerData.origin) }, coordinateFrame { entity->toWorldTransform() }
 {
-    distanceToLocal = entity->getAbsOrigin().distTo(localPlayerData.origin);
-
     if (entity->isPlayer()) {
         const auto collideable = entity->getCollideable();
         obbMins = collideable->obbMins();
@@ -319,8 +317,6 @@ BaseData::BaseData(Entity* entity) noexcept
         obbMins = model->mins;
         obbMaxs = model->maxs;
     }
-
-    coordinateFrame = entity->toWorldTransform();
 }
 
 EntityData::EntityData(Entity* entity) noexcept : BaseData{ entity }
