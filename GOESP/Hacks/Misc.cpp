@@ -45,7 +45,7 @@ struct PurchaseList {
     int mode = Details;
 
     ImVec2 pos;
-    ImVec2 size{ 200.0f, 200.0f };
+    ImVec2 size{ 300.0f, 200.0f };
 };
 
 struct ObserverList {
@@ -254,26 +254,39 @@ void Misc::purchaseList(GameEvent* event) noexcept
         ImGui::PushFont(gui->getUnicodeFont());
 
         if (miscConfig.purchaseList.mode == PurchaseList::Details) {
-            GameData::Lock lock;
+            if (ImGui::BeginTable("table", 3, ImGuiTableFlags_Hideable | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_Resizable)) {
+                ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoHide, 100.0f);
+                ImGui::TableSetupColumn("Price", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize);
+                ImGui::TableSetupColumn("Purchases", ImGuiTableColumnFlags_WidthStretch);
+                ImGui::TableSetColumnIsEnabled(1, !miscConfig.purchaseList.showPrices);
 
-            for (const auto& [userId, purchases] : playerPurchases) {
-                std::string s;
-                s.reserve(std::accumulate(purchases.items.begin(), purchases.items.end(), 0, [](int length, const auto& p) { return length + p.first.length() + 2; }));
-                for (const auto& purchasedItem : purchases.items) {
-                    if (purchasedItem.second > 1)
-                        s += std::to_string(purchasedItem.second) + "x ";
-                    s += purchasedItem.first + ", ";
+                GameData::Lock lock;
+
+                for (const auto& [userId, purchases] : playerPurchases) {
+                    std::string s;
+                    s.reserve(std::accumulate(purchases.items.begin(), purchases.items.end(), 0, [](int length, const auto& p) { return length + p.first.length() + 2; }));
+                    for (const auto& purchasedItem : purchases.items) {
+                        if (purchasedItem.second > 1)
+                            s += std::to_string(purchasedItem.second) + "x ";
+                        s += purchasedItem.first + ", ";
+                    }
+
+                    if (s.length() >= 2)
+                        s.erase(s.length() - 2);
+
+                    ImGui::TableNextRow();
+
+                    if (const auto it = std::ranges::find(GameData::players(), userId, &PlayerData::userId); it != GameData::players().cend()) {
+                        if (ImGui::TableNextColumn())
+                            ImGui::textEllipsisInTableCell(it->name);
+                        if (ImGui::TableNextColumn())
+                            ImGui::TextColored({ 0.0f, 1.0f, 0.0f, 1.0f }, "$%d", purchases.totalCost);
+                        if (ImGui::TableNextColumn())
+                            ImGui::TextWrapped("%s", s.c_str());
+                    }
                 }
 
-                if (s.length() >= 2)
-                    s.erase(s.length() - 2);
-
-                if (const auto it = std::ranges::find(GameData::players(), userId, &PlayerData::userId); it != GameData::players().cend()) {
-                    if (miscConfig.purchaseList.showPrices)
-                        ImGui::TextWrapped("%s $%d: %s", it->name, purchases.totalCost, s.c_str());
-                    else
-                        ImGui::TextWrapped("%s: %s", it->name, s.c_str());
-                }
+                ImGui::EndTable();
             }
         } else if (miscConfig.purchaseList.mode == PurchaseList::Summary) {
             for (const auto& purchase : purchaseTotal)
