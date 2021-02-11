@@ -657,8 +657,6 @@ void Misc::drawMolotovHull(ImDrawList* drawList) noexcept
 
     const auto color = Helpers::calculateColor(miscConfig.molotovHull);
 
-    GameData::Lock lock;
-
     static const auto flameCircumference = []{
         std::array<Vector, 72> points;
         for (std::size_t i = 0; i < points.size(); ++i) {
@@ -670,6 +668,7 @@ void Misc::drawMolotovHull(ImDrawList* drawList) noexcept
         return points;
     }();
 
+    GameData::Lock lock;
     for (const auto& molotov : GameData::infernos()) {
         for (const auto& pos : molotov.points) {
             std::array<ImVec2, flameCircumference.size()> screenPoints;
