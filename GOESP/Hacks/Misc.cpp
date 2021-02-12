@@ -631,9 +631,16 @@ void Misc::drawPlayerList() noexcept
                 if (ImGui::TableNextColumn() && ImGui::smallButtonFullWidth("Copy", player.get().steamID == 0))
                     ImGui::SetClipboardText(std::to_string(player.get().steamID).c_str());
 
-                if (ImGui::TableNextColumn())
+                if (ImGui::TableNextColumn()) {
                     ImGui::Image(player.get().getRankTexture(), { 2.45f /* -> proportion 49x20px */ * ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight() });
-
+                    if (ImGui::IsItemHovered()) {
+                        ImGui::BeginTooltip();
+                        ImGui::PushFont(nullptr);
+                        ImGui::TextUnformatted(player.get().getRankName().c_str());
+                        ImGui::PopFont();
+                        ImGui::EndTooltip();
+                    }
+                }
                 if (ImGui::TableNextColumn())
                     ImGui::TextColored({ 0.0f, 1.0f, 0.0f, 1.0f }, "$%d", player.get().money);
 
