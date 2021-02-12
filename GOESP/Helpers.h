@@ -11,7 +11,7 @@ struct Color;
 
 namespace Helpers
 {
-    unsigned int calculateColor(Color color) noexcept;
+    unsigned int calculateColor(Color color, bool ignoreFlashbang = false) noexcept;
     unsigned int calculateColor(int r, int g, int b, int a) noexcept;
     void setAlphaFactor(float newAlphaFactor) noexcept;
     float getAlphaFactor() noexcept;

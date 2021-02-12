@@ -23,11 +23,11 @@ static auto rainbowColor(float time, float speed, float alpha) noexcept
 
 static float alphaFactor = 1.0f;
 
-unsigned int Helpers::calculateColor(Color color) noexcept
+unsigned int Helpers::calculateColor(Color color, bool ignoreFlashbang) noexcept
 {
     color.color[3] *= alphaFactor;
 
-    if (!Misc::ignoresFlashbang())
+    if (!ignoreFlashbang && !Misc::ignoresFlashbang())
         color.color[3] -= color.color[3] * GameData::local().flashDuration / 255.0f;
     return ImGui::ColorConvertFloat4ToU32(color.rainbow ? rainbowColor(memory->globalVars->realtime, color.rainbowSpeed, color.color[3]) : color.color);
 }
