@@ -55,6 +55,8 @@ static std::vector<InfernoData> infernoData;
 static std::vector<Vector> smokeGrenades;
 static BombData bombData;
 static std::string gameModeName;
+static std::array<std::string, 19> skillGroupNames;
+static std::array<std::string, 16> skillGroupNamesDangerzone;
 
 void GameData::update() noexcept
 {
@@ -74,6 +76,17 @@ void GameData::update() noexcept
 
     localPlayerData.update();
     bombData.update();
+
+    static bool skillgroupNamesInitialized = false;
+    if (!skillgroupNamesInitialized) {
+        for (std::size_t i = 0; i < skillGroupNames.size(); ++i)
+            skillGroupNames[i] = interfaces->localize->findAsUTF8(("RankName_" + std::to_string(i)).c_str());
+
+        for (std::size_t i = 0; i < skillGroupNamesDangerzone.size(); ++i)
+            skillGroupNamesDangerzone[i] = interfaces->localize->findAsUTF8(("skillgroup_" + std::to_string(i) + "dangerzone").c_str());
+
+        skillgroupNamesInitialized = true;
+    }
 
     if (!localPlayer) {
         playerData.clear();
@@ -493,6 +506,14 @@ void PlayerData::update(CSPlayer* entity) noexcept
         headMins -= headBox->capsuleRadius;
         headMaxs += headBox->capsuleRadius;
     }
+}
+
+const std::string& PlayerData::getRankName() const noexcept
+{
+    if (gameModeName == "survival")
+        return skillGroupNamesDangerzone[std::size_t(skillgroup) < skillGroupNamesDangerzone.size() ? skillgroup : 0];
+    else
+        return skillGroupNames[std::size_t(skillgroup) < skillGroupNames.size() ? skillgroup : 0];
 }
 
 struct SkillgroupImage {

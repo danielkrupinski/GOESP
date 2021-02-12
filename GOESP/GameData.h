@@ -116,6 +116,7 @@ struct PlayerData : BaseData {
     PlayerData& operator=(PlayerData&& other) = default;
 
     void update(CSPlayer* entity) noexcept;
+    const std::string& getRankName() const noexcept;
     ImTextureID getAvatarTexture() const noexcept;
     ImTextureID getRankTexture() const noexcept;
     void clearAvatarTexture() noexcept { avatarTexture = {}; }
