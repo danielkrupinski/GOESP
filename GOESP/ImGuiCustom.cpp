@@ -120,23 +120,16 @@ void ImGui::progressBarFullWidth(float fraction, float height) noexcept
 
     // Render
     fraction = ImSaturate(fraction);
-    RenderFrame(bb.Min, bb.Max, GetColorU32(ImGuiCol_FrameBg), true, style.FrameRounding);
+    RenderFrame(bb.Min, bb.Max, GetColorU32(ImGuiCol_FrameBg), true);
     bb.Expand(ImVec2(-style.FrameBorderSize, -style.FrameBorderSize));
 
     if (fraction == 0.0f)
         return;
 
-    const ImVec2 p0{ ImLerp(bb.Min.x, bb.Max.x, 0.0f), bb.Min.y };
+    const ImVec2 p0{ bb.Min };
     const ImVec2 p1{ ImLerp(bb.Min.x, bb.Max.x, fraction), bb.Max.y };
 
-    const float x0 = ImMax(p0.x, bb.Min.x);
-    const float x1 = ImMin(p1.x, bb.Max.x);
-
-    window->DrawList->PathLineTo({ x0, p1.y });
-    window->DrawList->PathLineTo({ x0, p0.y });
-    window->DrawList->PathLineTo({ x1, p0.y });
-    window->DrawList->PathLineTo({ x1, p1.y });
-    window->DrawList->PathFillConvex(GetColorU32(ImGuiCol_PlotHistogram));
+    window->DrawList->AddQuadFilled(p0, { p1.x, p0.y }, p1, { p0.x, p1.y }, GetColorU32(ImGuiCol_PlotHistogram));
 }
 
 bool ImGui::beginTable(const char* str_id, int columns_count, ImGuiTableFlags flags, const ImVec2& outer_size, float inner_width) noexcept
