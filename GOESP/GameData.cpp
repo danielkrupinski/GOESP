@@ -707,12 +707,7 @@ LootCrateData::LootCrateData(Entity* entity) noexcept : BaseData{ entity }
     }(model->name);
 }
 
-ObserverData::ObserverData(CSPlayer* entity, CSPlayer* obs, bool targetIsLocalPlayer) noexcept
-{
-    playerUserId = entity->getUserId();
-    targetUserId = obs->getUserId();
-    this->targetIsLocalPlayer = targetIsLocalPlayer;
-}
+ObserverData::ObserverData(CSPlayer* entity, CSPlayer* obs, bool targetIsLocalPlayer) noexcept : playerUserId{ entity->getUserId() }, targetUserId{ obs->getUserId() }, targetIsLocalPlayer{ targetIsLocalPlayer} {}
 
 PlayerData::Texture::~Texture()
 {
