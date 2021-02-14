@@ -388,15 +388,11 @@ void ProjectileData::update(Entity* projectile) noexcept
         trajectory.emplace_back(memory->globalVars->realtime, pos);
 }
 
-PlayerData::PlayerData(CSPlayer* entity) noexcept : BaseData{ entity }
+PlayerData::PlayerData(CSPlayer* entity) noexcept : BaseData{ entity }, userId{ entity->getUserId() }, handle{ entity->handle() }, money{ entity->money() }, team{ entity->getTeamNumber() }, steamID{ entity->getSteamID() }, lastPlaceName{ interfaces->localize->findAsUTF8(entity->lastPlaceName()) }
 {
-    userId = entity->getUserId();
-    handle = entity->handle();
-    
     if (*memory->playerResource)
         skillgroup = (*memory->playerResource)->competitiveRanking()[entity->index()];
 
-    steamID = entity->getSteamID();
     if (steamID) {
         const auto ctx = interfaces->engine->getSteamAPIContext();
         const auto avatar = ctx->steamFriends->getSmallFriendAvatar(steamID);
@@ -404,9 +400,6 @@ PlayerData::PlayerData(CSPlayer* entity) noexcept : BaseData{ entity }
     }
 
     entity->getPlayerName(name);
-    money = entity->money();
-    team = entity->getTeamNumber();
-    lastPlaceName = interfaces->localize->findAsUTF8(entity->lastPlaceName());
     update(entity);
 }
 
