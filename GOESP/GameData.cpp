@@ -77,8 +77,7 @@ void GameData::update() noexcept
     localPlayerData.update();
     bombData.update();
 
-    static bool skillgroupNamesInitialized = false;
-    if (!skillgroupNamesInitialized) {
+    if (static bool skillgroupNamesInitialized = false; !skillgroupNamesInitialized) {
         for (std::size_t i = 0; i < skillGroupNames.size(); ++i)
             skillGroupNames[i] = interfaces->localize->findAsUTF8(("RankName_" + std::to_string(i)).c_str());
 
