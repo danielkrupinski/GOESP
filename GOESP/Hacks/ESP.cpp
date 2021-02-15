@@ -255,6 +255,7 @@ static void renderBox(const BoundingBox& bbox, const Box& config) noexcept
     case Box::_3d:
         if (config.fill.enabled) {
             auto [hull, count] = convexHull(bbox.vertices);
+            std::reverse(hull.begin(), hull.begin() + count); // make them clockwise for antialiasing
             drawList->AddConvexPolyFilled(hull.data(), count, fillColor);
         } else {
             for (int i = 0; i < 8; ++i) {
@@ -275,6 +276,7 @@ static void renderBox(const BoundingBox& bbox, const Box& config) noexcept
     case Box::_3dCorners:
         if (config.fill.enabled) {
             auto [hull, count] = convexHull(bbox.vertices);
+            std::reverse(hull.begin(), hull.begin() + count); // make them clockwise for antialiasing
             drawList->AddConvexPolyFilled(hull.data(), count, fillColor);
         } else {
             for (int i = 0; i < 8; ++i) {
