@@ -101,7 +101,10 @@ static std::pair<std::array<ImVec2, 8>, std::size_t> convexHull(std::array<ImVec
         return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
     };
 
-    std::sort(points.begin() + 1, points.end(), [&](const auto& a, const auto& b) { return orientation(points[0], a, b) < 0.0f; });
+    std::sort(points.begin() + 1, points.end(), [&](const auto& a, const auto& b) {
+        const auto o = orientation(points[0], a, b);
+        return o == 0.0f ? ImLengthSqr(points[0] - a) < ImLengthSqr(points[0] - b) : o < 0.0f;
+    });
 
     std::array<ImVec2, 8> hull;
     std::size_t count = 0;
