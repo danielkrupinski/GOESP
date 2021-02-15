@@ -430,14 +430,3 @@ void ImGui::textEllipsisInTableCell(const char* text) noexcept
     ItemSize(textSize, 0.0f);
     ItemAdd(bb, 0);
 }
-
-void ImGui::TableSetColumnIsEnabled(int column_n, bool hidden)
-{
-    ImGuiContext& g = *GImGui;
-    ImGuiTable* table = g.CurrentTable;
-    IM_ASSERT(table != NULL && table->IsLayoutLocked == false);
-    if (column_n < 0)
-        column_n = table->CurrentColumn;
-    IM_ASSERT(column_n >= 0 && column_n < table->ColumnsCount);
-    table->Columns[column_n].IsEnabledNextFrame = !hidden;
-}

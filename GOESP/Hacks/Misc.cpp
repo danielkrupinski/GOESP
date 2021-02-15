@@ -258,7 +258,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
                 ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoHide, 100.0f);
                 ImGui::TableSetupColumn("Price", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize);
                 ImGui::TableSetupColumn("Purchases", ImGuiTableColumnFlags_WidthStretch);
-                ImGui::TableSetColumnIsEnabled(1, !miscConfig.purchaseList.showPrices);
+                ImGui::TableSetColumnEnabled(1, miscConfig.purchaseList.showPrices);
 
                 GameData::Lock lock;
 
@@ -601,12 +601,12 @@ void Misc::drawPlayerList() noexcept
             ImGui::TableSetupColumn("Armor", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize);
             ImGui::TableSetupColumn("Last Place", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize);
             ImGui::TableSetupScrollFreeze(0, 1);
-            ImGui::TableSetColumnIsEnabled(1, !miscConfig.playerList.steamID);
-            ImGui::TableSetColumnIsEnabled(2, !miscConfig.playerList.rank);
-            ImGui::TableSetColumnIsEnabled(3, !miscConfig.playerList.money);
-            ImGui::TableSetColumnIsEnabled(4, !miscConfig.playerList.health);
-            ImGui::TableSetColumnIsEnabled(5, !miscConfig.playerList.armor);
-            ImGui::TableSetColumnIsEnabled(6, !miscConfig.playerList.lastPlace);
+            ImGui::TableSetColumnEnabled(1, miscConfig.playerList.steamID);
+            ImGui::TableSetColumnEnabled(2, miscConfig.playerList.rank);
+            ImGui::TableSetColumnEnabled(3, miscConfig.playerList.money);
+            ImGui::TableSetColumnEnabled(4, miscConfig.playerList.health);
+            ImGui::TableSetColumnEnabled(5, miscConfig.playerList.armor);
+            ImGui::TableSetColumnEnabled(6, miscConfig.playerList.lastPlace);
 
             ImGui::TableHeadersRow();
 
