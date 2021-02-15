@@ -706,16 +706,14 @@ void Misc::drawMolotovHull(ImDrawList* drawList) noexcept
 
 static auto generateAntialiasedDot() noexcept
 {
-    constexpr auto segments = 12;
+    constexpr auto segments = 4;
     constexpr auto radius = 1.0f;
 
-    // based on ImDrawList::PathArcToFast()
     std::array<ImVec2, segments> circleSegments;
 
     for (int i = 0; i < segments; ++i) {
-        const auto data = ImGui::GetDrawListSharedData();
-        const ImVec2& c = data->ArcFastVtx[i % IM_ARRAYSIZE(data->ArcFastVtx)];
-        circleSegments[i] = ImVec2{ c.x * radius, c.y * radius };
+        circleSegments[i] = ImVec2{ radius * std::cos(Helpers::deg2rad(i * (360.0f / segments) + 45.0f)),
+                                    radius * std::sin(Helpers::deg2rad(i * (360.0f / segments) + 45.0f)) };
     }
 
     // based on ImDrawList::AddConvexPolyFilled()
