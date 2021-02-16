@@ -127,7 +127,7 @@ void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
     }
 }
 
-static void drawCrosshair(ImDrawList* drawList, const ImVec2& pos, ImU32 color, float thickness) noexcept
+static void drawCrosshair(ImDrawList* drawList, const ImVec2& pos, ImU32 color) noexcept
 {
     // dot
     drawList->AddRectFilled(pos - ImVec2{ 1, 1 }, pos + ImVec2{ 2, 2 }, color & IM_COL32_A_MASK);
@@ -168,7 +168,7 @@ void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
     pos.x *= 0.5f - localPlayerData.aimPunch.y / (localPlayerData.fov * 2.0f);
     pos.y *= 0.5f + localPlayerData.aimPunch.x / (localPlayerData.fov * 2.0f);
 
-    drawCrosshair(drawList, pos, Helpers::calculateColor(miscConfig.recoilCrosshair), miscConfig.recoilCrosshair.thickness);
+    drawCrosshair(drawList, pos, Helpers::calculateColor(miscConfig.recoilCrosshair));
 }
 
 void Misc::purchaseList(GameEvent* event) noexcept
@@ -358,7 +358,7 @@ void Misc::drawNoscopeCrosshair(ImDrawList* drawList) noexcept
             return;
     }
 
-    drawCrosshair(drawList, ImGui::GetIO().DisplaySize / 2, Helpers::calculateColor(miscConfig.noscopeCrosshair), miscConfig.noscopeCrosshair.thickness);
+    drawCrosshair(drawList, ImGui::GetIO().DisplaySize / 2, Helpers::calculateColor(miscConfig.noscopeCrosshair));
 }
 
 void Misc::drawFpsCounter() noexcept
