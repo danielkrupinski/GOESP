@@ -137,6 +137,7 @@ struct PlayerData : BaseData {
     int userId;
     int handle;
     int money;
+    int competitiveWins;
     Team team;
     std::uint64_t steamID;
     char name[128];

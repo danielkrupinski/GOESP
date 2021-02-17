@@ -389,9 +389,6 @@ void ProjectileData::update(Entity* projectile) noexcept
 
 PlayerData::PlayerData(CSPlayer* entity) noexcept : BaseData{ entity }, userId{ entity->getUserId() }, handle{ entity->handle() }, money{ entity->money() }, team{ entity->getTeamNumber() }, steamID{ entity->getSteamID() }, lastPlaceName{ interfaces->localize->findAsUTF8(entity->lastPlaceName()) }
 {
-    if (*memory->playerResource)
-        skillgroup = (*memory->playerResource)->competitiveRanking()[entity->index()];
-
     if (steamID) {
         const auto ctx = interfaces->engine->getSteamAPIContext();
         const auto avatar = ctx->steamFriends->getSmallFriendAvatar(steamID);
@@ -410,6 +407,7 @@ void PlayerData::update(CSPlayer* entity) noexcept
     if (*memory->playerResource) {
         const auto idx = entity->index();
         skillgroup = (*memory->playerResource)->competitiveRanking()[idx];
+        competitiveWins = (*memory->playerResource)->competitiveWins()[idx];
         armor = (*memory->playerResource)->armor()[idx];
     }
 
