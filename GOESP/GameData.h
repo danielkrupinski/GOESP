@@ -29,6 +29,7 @@ namespace GameData
     void update() noexcept;
     void clearProjectileList() noexcept;
     void clearTextures() noexcept;
+    void clearPlayersLastLocation() noexcept;
 
     class Lock {
     public:

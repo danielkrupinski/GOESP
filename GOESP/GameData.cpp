@@ -213,6 +213,12 @@ void GameData::clearTextures() noexcept
         player.clearAvatarTexture();
 }
 
+void GameData::clearPlayersLastLocation() noexcept
+{
+    Lock lock;
+    std::ranges::for_each(playerData, &std::string::clear, &PlayerData::lastPlaceName);
+}
+
 bool GameData::worldToScreen(const Vector& in, ImVec2& out, bool floor) noexcept
 {
     const auto& matrix = viewMatrix;
