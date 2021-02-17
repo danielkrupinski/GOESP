@@ -27,6 +27,7 @@ void EventListener::fireGameEvent(GameEvent* event)
     switch (fnv::hashRuntime(event->getName())) {
     case fnv::hash("round_start"):
         GameData::clearProjectileList();
+        GameData::clearPlayersLastLocation();
         [[fallthrough]];
     case fnv::hash("item_purchase"):
     case fnv::hash("round_freeze_end"):
