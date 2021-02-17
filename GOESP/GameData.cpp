@@ -125,10 +125,7 @@ void GameData::update() noexcept
             if (entity->isDormant())
                 continue;
 
-            if (entity->isWeapon()) {
-                if (entity->ownerEntity() == -1)
-                    weaponData.emplace_back(entity);
-            } else {
+            if (!entity->isWeapon()) {
                 switch (entity->getClientClass()->classId) {
                 case ClassId::BaseCSGrenadeProjectile:
                     if (entity->grenadeExploded()) {
@@ -169,6 +166,8 @@ void GameData::update() noexcept
                 default:
                     break;
                 }
+            } else if (entity->ownerEntity() == -1) {
+                weaponData.emplace_back(entity);
             }
         }
     }
