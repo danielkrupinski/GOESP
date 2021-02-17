@@ -71,6 +71,7 @@ struct PlayerList {
     bool enabled = false;
     bool steamID = false;
     bool rank = false;
+    bool wins = false;
     bool money = true;
     bool health = true;
     bool armor = false;
@@ -545,6 +546,7 @@ void Misc::drawGUI() noexcept
     if (ImGui::BeginPopup("")) {
         ImGui::Checkbox("Steam ID", &miscConfig.playerList.steamID);
         ImGui::Checkbox("Rank", &miscConfig.playerList.rank);
+        ImGui::Checkbox("Wins", &miscConfig.playerList.wins);
         ImGui::Checkbox("Money", &miscConfig.playerList.money);
         ImGui::Checkbox("Health", &miscConfig.playerList.health);
         ImGui::Checkbox("Armor", &miscConfig.playerList.armor);
@@ -592,10 +594,11 @@ void Misc::drawPlayerList() noexcept
         return;
 
     if (ImGui::Begin("Player List", nullptr, windowFlags)) {
-        if (ImGui::beginTable("", 7, ImGuiTableFlags_Borders | ImGuiTableFlags_Hideable | ImGuiTableFlags_ScrollY | ImGuiTableFlags_Resizable)) {
+        if (ImGui::beginTable("", 8, ImGuiTableFlags_Borders | ImGuiTableFlags_Hideable | ImGuiTableFlags_ScrollY | ImGuiTableFlags_Resizable)) {
             ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoHide, 120.0f);
             ImGui::TableSetupColumn("Steam ID", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize);
             ImGui::TableSetupColumn("Rank", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize);
+            ImGui::TableSetupColumn("Wins", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize);
             ImGui::TableSetupColumn("Money", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize);
             ImGui::TableSetupColumn("Health", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize);
             ImGui::TableSetupColumn("Armor", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize);
@@ -603,10 +606,11 @@ void Misc::drawPlayerList() noexcept
             ImGui::TableSetupScrollFreeze(0, 1);
             ImGui::TableSetColumnEnabled(1, miscConfig.playerList.steamID);
             ImGui::TableSetColumnEnabled(2, miscConfig.playerList.rank);
-            ImGui::TableSetColumnEnabled(3, miscConfig.playerList.money);
-            ImGui::TableSetColumnEnabled(4, miscConfig.playerList.health);
-            ImGui::TableSetColumnEnabled(5, miscConfig.playerList.armor);
-            ImGui::TableSetColumnEnabled(6, miscConfig.playerList.lastPlace);
+            ImGui::TableSetColumnEnabled(3, miscConfig.playerList.wins);
+            ImGui::TableSetColumnEnabled(4, miscConfig.playerList.money);
+            ImGui::TableSetColumnEnabled(5, miscConfig.playerList.health);
+            ImGui::TableSetColumnEnabled(6, miscConfig.playerList.armor);
+            ImGui::TableSetColumnEnabled(7, miscConfig.playerList.lastPlace);
 
             ImGui::TableHeadersRow();
 
@@ -641,6 +645,10 @@ void Misc::drawPlayerList() noexcept
                         ImGui::EndTooltip();
                     }
                 }
+
+                if (ImGui::TableNextColumn())
+                    ImGui::Text("%d", player.get().competitiveWins);
+
                 if (ImGui::TableNextColumn())
                     ImGui::TextColored({ 0.0f, 1.0f, 0.0f, 1.0f }, "$%d", player.get().money);
 
@@ -890,6 +898,7 @@ static void to_json(json& j, const PlayerList& o, const PlayerList& dummy = {})
     WRITE("Enabled", enabled)
     WRITE("Steam ID", steamID)
     WRITE("Rank", rank)
+    WRITE("Wins", wins)
     WRITE("Money", money)
     WRITE("Health", health)
     WRITE("Armor", armor)
@@ -959,6 +968,7 @@ static void from_json(const json& j, PlayerList& o)
     read(j, "Enabled", o.enabled);
     read(j, "Steam ID", o.steamID);
     read(j, "Rank", o.rank);
+    read(j, "Wins", o.wins);
     read(j, "Money", o.money);
     read(j, "Health", o.health);
     read(j, "Armor", o.armor);
