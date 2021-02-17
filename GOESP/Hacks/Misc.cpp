@@ -340,7 +340,7 @@ void Misc::drawObserverList() noexcept
             continue;
 
         if (const auto it = std::ranges::find(GameData::players(), observer.playerUserId, &PlayerData::userId); it != GameData::players().cend()) {
-            ImGui::TextWrapped("%s", it->name);
+            ImGui::TextUnformatted(it->name);
         }
     }
 
