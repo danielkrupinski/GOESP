@@ -806,6 +806,30 @@ static auto generateSpherePoints() noexcept
     return points;
 };
 
+template <std::size_t VTX_COUNT, std::size_t IDX_COUNT>
+static void drawPrecomputedPrimitive(ImDrawList* drawList, const ImVec2& pos, ImU32 color, const std::array<ImVec2, VTX_COUNT>& vertices, const std::array<ImDrawIdx, IDX_COUNT>& indices) noexcept
+{
+    drawList->PrimReserve(indices.size(), vertices.size());
+
+    const ImU32 colors[2]{ color, color & ~IM_COL32_A_MASK };
+    const auto uv = ImGui::GetDrawListSharedData()->TexUvWhitePixel;
+    for (std::size_t i = 0; i < vertices.size(); ++i) {
+        drawList->_VtxWritePtr[i].pos = vertices[i] + pos;
+        drawList->_VtxWritePtr[i].uv = uv;
+        drawList->_VtxWritePtr[i].col = colors[i & 1];
+    }
+    drawList->_VtxWritePtr += vertices.size();
+
+    std::memcpy(drawList->_IdxWritePtr, indices.data(), indices.size() * sizeof(ImDrawIdx));
+
+    const auto baseIdx = drawList->_VtxCurrentIdx;
+    for (std::size_t i = 0; i < indices.size(); ++i)
+        drawList->_IdxWritePtr[i] += baseIdx;
+
+    drawList->_IdxWritePtr += indices.size();
+    drawList->_VtxCurrentIdx += vertices.size();
+}
+
 static void drawSmokeHull(ImDrawList* drawList) noexcept
 {
     if (!miscConfig.smokeHull.enabled)
@@ -821,25 +845,7 @@ static void drawSmokeHull(ImDrawList* drawList) noexcept
         for (const auto& point : spherePoints) {
             constexpr auto radius = 140.0f;
             if (ImVec2 screenPos; GameData::worldToScreen(smokePos + point * Vector{ radius, radius, radius * 0.7f }, screenPos)) {
-                drawList->PrimReserve(indices.size(), vertices.size());
-
-                const ImU32 colors[2]{ color, color & ~IM_COL32_A_MASK };
-                const auto uv = ImGui::GetDrawListSharedData()->TexUvWhitePixel;
-                for (std::size_t i = 0; i < vertices.size(); ++i) {
-                    drawList->_VtxWritePtr[i].pos = vertices[i] + screenPos;
-                    drawList->_VtxWritePtr[i].uv = uv;
-                    drawList->_VtxWritePtr[i].col = colors[i & 1];
-                }
-                drawList->_VtxWritePtr += vertices.size();
-
-                std::memcpy(drawList->_IdxWritePtr, indices.data(), indices.size() * sizeof(ImDrawIdx));
-
-                const auto baseIdx = drawList->_VtxCurrentIdx;
-                for (std::size_t i = 0; i < indices.size(); ++i)
-                    drawList->_IdxWritePtr[i] += baseIdx;
-
-                drawList->_IdxWritePtr += indices.size();
-                drawList->_VtxCurrentIdx += (ImDrawIdx)vertices.size();
+                drawPrecomputedPrimitive(drawList, screenPos, color, vertices, indices);
             }
         }
     }
@@ -862,25 +868,7 @@ static void drawNadeBlast(ImDrawList* drawList) noexcept
         for (const auto& point : spherePoints) {
             const auto radius = ImLerp(10.0f, 70.0f, (memory->globalVars->realtime - projectile.explosionTime) / blastDuration);
             if (ImVec2 screenPos; GameData::worldToScreen(projectile.coordinateFrame.origin() + point * radius, screenPos)) {
-                drawList->PrimReserve(indices.size(), vertices.size());
-
-                const ImU32 colors[2]{ color, color & ~IM_COL32_A_MASK };
-                const auto uv = ImGui::GetDrawListSharedData()->TexUvWhitePixel;
-                for (std::size_t i = 0; i < vertices.size(); ++i) {
-                    drawList->_VtxWritePtr[i].pos = vertices[i] + screenPos;
-                    drawList->_VtxWritePtr[i].uv = uv;
-                    drawList->_VtxWritePtr[i].col = colors[i & 1];
-                }
-                drawList->_VtxWritePtr += vertices.size();
-
-                std::memcpy(drawList->_IdxWritePtr, indices.data(), indices.size() * sizeof(ImDrawIdx));
-
-                const auto baseIdx = drawList->_VtxCurrentIdx;
-                for (std::size_t i = 0; i < indices.size(); ++i)
-                    drawList->_IdxWritePtr[i] += baseIdx;
-
-                drawList->_IdxWritePtr += indices.size();
-                drawList->_VtxCurrentIdx += (ImDrawIdx)vertices.size();
+                drawPrecomputedPrimitive(drawList, screenPos, color, vertices, indices);
             }
         }
     }
