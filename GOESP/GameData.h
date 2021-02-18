@@ -104,6 +104,7 @@ struct ProjectileData : BaseData {
     bool exploded = false;
     bool thrownByLocalPlayer = false;
     bool thrownByEnemy = false;
+    float explosionTime = 0.0f;
     int handle;
     const char* name = nullptr;
     std::vector<std::pair<float, Vector>> trajectory;
