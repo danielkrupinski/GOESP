@@ -90,6 +90,11 @@ public:
         return getWeaponType() == WeaponType::SniperRifle;
     }
 
+    auto isEffectActive(int effect) noexcept
+    {
+        return (effectFlags() & effect) != 0;
+    }
+
     PROP(effectFlags, WIN32_UNIX(0xF0, 0x128), int)
 
     PROP(hitboxSet, WIN32_UNIX(0x9FC, 0xFA8), int)                                 // CBaseAnimating->m_nHitboxSet
