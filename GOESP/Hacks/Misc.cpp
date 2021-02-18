@@ -1,5 +1,6 @@
 #include <numbers>
 #include <numeric>
+#include <ranges>
 #include <sstream>
 #include <unordered_map>
 #include <vector>
@@ -94,6 +95,7 @@ struct {
     ColorToggle molotovHull{ 1.0f, 0.27f, 0.0f, 0.3f };
     ColorToggle bombTimer{ 1.0f, 0.55f, 0.0f, 1.0f };
     ColorToggle smokeHull{ 0.0f, 0.81f, 1.0f, 0.60f };
+    ColorToggle nadeBlast{ 1.0f, 0.0f, 0.09f, 0.51f };
 } miscConfig;
 
 void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
@@ -561,6 +563,7 @@ void Misc::drawGUI() noexcept
     ImGui::TableNextColumn();
 
     ImGuiCustom::colorPicker("Smoke Hull", miscConfig.smokeHull);
+    ImGuiCustom::colorPicker("Nade Blast", miscConfig.nadeBlast);
 
     ImGui::EndTable();
 }
@@ -840,6 +843,58 @@ static void drawSmokeHull(ImDrawList* drawList) noexcept
     }
 }
 
+static void drawNadeBlast(ImDrawList* drawList) noexcept
+{
+    if (!miscConfig.nadeBlast.enabled)
+        return;
+
+    const auto color = Helpers::calculateColor(miscConfig.nadeBlast);
+
+    static const auto spherePoints = [] {
+        std::array<Vector, 1000> points;
+
+        for (std::size_t i = 1; i <= points.size(); ++i) {
+            const auto latitude = std::asin(2.0f * i / (points.size() + 1) - 1.0f);
+            constexpr auto goldenAngle = static_cast<float>(2.399963229728653);
+            const auto longitude = goldenAngle * i;
+
+            points[i - 1] = Vector{ std::cos(longitude) * std::cos(latitude), std::sin(longitude) * std::cos(latitude), std::sin(latitude) };
+        }
+        return points;
+    }();
+
+    static const auto [vertices, indices] = generateAntialiasedDot();
+    constexpr auto blastDuration = 0.35f;
+
+    GameData::Lock lock;
+    for (const auto& projectile : std::views::filter(GameData::projectiles(), [](const auto& projectile) { return projectile.exploded && projectile.explosionTime + blastDuration >= memory->globalVars->realtime; })) {
+        for (const auto& point : spherePoints) {
+            const auto radius = ImLerp(10.0f, 70.0f, (memory->globalVars->realtime - projectile.explosionTime) / blastDuration);
+            if (ImVec2 screenPos; GameData::worldToScreen(projectile.coordinateFrame.origin() + point * radius, screenPos)) {
+                drawList->PrimReserve(indices.size(), vertices.size());
+
+                const ImU32 colors[2]{ color, color & ~IM_COL32_A_MASK };
+                const auto uv = ImGui::GetDrawListSharedData()->TexUvWhitePixel;
+                for (std::size_t i = 0; i < vertices.size(); ++i) {
+                    drawList->_VtxWritePtr[i].pos = vertices[i] + screenPos;
+                    drawList->_VtxWritePtr[i].uv = uv;
+                    drawList->_VtxWritePtr[i].col = colors[i & 1];
+                }
+                drawList->_VtxWritePtr += vertices.size();
+
+                std::memcpy(drawList->_IdxWritePtr, indices.data(), indices.size() * sizeof(ImDrawIdx));
+
+                const auto baseIdx = drawList->_VtxCurrentIdx;
+                for (std::size_t i = 0; i < indices.size(); ++i)
+                    drawList->_IdxWritePtr[i] += baseIdx;
+
+                drawList->_IdxWritePtr += indices.size();
+                drawList->_VtxCurrentIdx += (ImDrawIdx)vertices.size();
+            }
+        }
+    }
+}
+
 void Misc::draw(ImDrawList* drawList) noexcept
 {
     drawReloadProgress(drawList);
@@ -853,6 +908,7 @@ void Misc::draw(ImDrawList* drawList) noexcept
     drawMolotovHull(drawList);
     drawBombTimer();
     drawSmokeHull(drawList);
+    drawNadeBlast(drawList);
 }
 
 static void to_json(json& j, const PurchaseList& o, const PurchaseList& dummy = {})
@@ -929,6 +985,7 @@ json Misc::toJSON() noexcept
     WRITE_OBJ("Molotov Hull", molotovHull);
     WRITE_OBJ("Bomb Timer", bombTimer);
     WRITE_OBJ("Smoke Hull", smokeHull);
+    WRITE_OBJ("Nade Blast", nadeBlast);
 
     return j;
 }
@@ -991,4 +1048,5 @@ void Misc::fromJSON(const json& j) noexcept
     read<value_t::object>(j, "Molotov Hull", miscConfig.molotovHull);
     read<value_t::object>(j, "Bomb Timer", miscConfig.bombTimer);
     read<value_t::object>(j, "Smoke Hull", miscConfig.smokeHull);
+    read<value_t::object>(j, "Nade Blast", miscConfig.nadeBlast);
 }
