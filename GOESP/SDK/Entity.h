@@ -51,6 +51,8 @@ enum class Team {
     CT
 };
 
+constexpr auto EF_NODRAW = 0x20;
+
 class CSPlayer;
 
 class Entity {
@@ -87,6 +89,8 @@ public:
     {
         return getWeaponType() == WeaponType::SniperRifle;
     }
+
+    PROP(effectFlags, WIN32_UNIX(0xF0, 0x128), int)
 
     PROP(hitboxSet, WIN32_UNIX(0x9FC, 0xFA8), int)                                 // CBaseAnimating->m_nHitboxSet
 
