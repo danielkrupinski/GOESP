@@ -864,7 +864,10 @@ static void drawNadeBlast(ImDrawList* drawList) noexcept
     constexpr auto blastDuration = 0.35f;
 
     GameData::Lock lock;
-    for (const auto& projectile : std::views::filter(GameData::projectiles(), [](const auto& projectile) { return projectile.exploded && projectile.explosionTime + blastDuration >= memory->globalVars->realtime; })) {
+    for (const auto& projectile : GameData::projectiles()) {
+        if (!projectile.exploded || projectile.explosionTime + blastDuration < memory->globalVars->realtime)
+            continue;
+
         for (const auto& point : spherePoints) {
             const auto radius = ImLerp(10.0f, 70.0f, (memory->globalVars->realtime - projectile.explosionTime) / blastDuration);
             if (ImVec2 screenPos; GameData::worldToScreen(projectile.coordinateFrame.origin() + point * radius, screenPos)) {
