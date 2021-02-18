@@ -791,6 +791,21 @@ static auto generateAntialiasedDot() noexcept
     return std::make_pair(vertices, indices);
 }
 
+template <std::size_t N>
+static auto generateSpherePoints() noexcept
+{
+    constexpr auto goldenAngle = static_cast<float>(2.399963229728653);
+
+    std::array<Vector, N> points;
+    for (std::size_t i = 1; i <= points.size(); ++i) {
+        const auto latitude = std::asin(2.0f * i / (points.size() + 1) - 1.0f);
+        const auto longitude = goldenAngle * i;
+
+        points[i - 1] = Vector{ std::cos(longitude) * std::cos(latitude), std::sin(longitude) * std::cos(latitude), std::sin(latitude) };
+    }
+    return points;
+};
+
 static void drawSmokeHull(ImDrawList* drawList) noexcept
 {
     if (!miscConfig.smokeHull.enabled)
@@ -798,27 +813,14 @@ static void drawSmokeHull(ImDrawList* drawList) noexcept
 
     const auto color = Helpers::calculateColor(miscConfig.smokeHull);
 
-    static const auto spheroidPoints = [] {
-        std::array<Vector, 2000> points;
-
-        constexpr auto goldenAngle = static_cast<float>(2.399963229728653);
-        constexpr auto radius = 140.0f;
-
-        for (std::size_t i = 1; i <= points.size(); ++i) {
-            const auto latitude = std::asin(2.0f * i / (points.size() + 1) - 1.0f);
-            const auto longitude = goldenAngle * i;
-
-            points[i - 1] = Vector{ std::cos(longitude) * std::cos(latitude) * radius,  std::sin(longitude) * std::cos(latitude) * radius,  std::sin(latitude) * radius * 0.7f };
-        }
-        return points;
-    }();
-
+    static const auto spherePoints = generateSpherePoints<2000>();
     static const auto [vertices, indices] = generateAntialiasedDot();
 
     GameData::Lock lock;
     for (const auto& smokePos : GameData::smokes()) {
-        for (const auto& point : spheroidPoints) {
-            if (ImVec2 screenPos; GameData::worldToScreen(smokePos + point, screenPos)) {
+        for (const auto& point : spherePoints) {
+            constexpr auto radius = 140.0f;
+            if (ImVec2 screenPos; GameData::worldToScreen(smokePos + point * Vector{ radius, radius, radius * 0.7f }, screenPos)) {
                 drawList->PrimReserve(indices.size(), vertices.size());
 
                 const ImU32 colors[2]{ color, color & ~IM_COL32_A_MASK };
@@ -850,20 +852,9 @@ static void drawNadeBlast(ImDrawList* drawList) noexcept
 
     const auto color = Helpers::calculateColor(miscConfig.nadeBlast);
 
-    static const auto spherePoints = [] {
-        std::array<Vector, 1000> points;
-
-        for (std::size_t i = 1; i <= points.size(); ++i) {
-            const auto latitude = std::asin(2.0f * i / (points.size() + 1) - 1.0f);
-            constexpr auto goldenAngle = static_cast<float>(2.399963229728653);
-            const auto longitude = goldenAngle * i;
-
-            points[i - 1] = Vector{ std::cos(longitude) * std::cos(latitude), std::sin(longitude) * std::cos(latitude), std::sin(latitude) };
-        }
-        return points;
-    }();
-
+    static const auto spherePoints = generateSpherePoints<1000>();
     static const auto [vertices, indices] = generateAntialiasedDot();
+
     constexpr auto blastDuration = 0.35f;
 
     GameData::Lock lock;
