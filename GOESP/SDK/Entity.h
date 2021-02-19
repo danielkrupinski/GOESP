@@ -120,15 +120,6 @@ public:
     PROP(fireCount, WIN32_UNIX(0x13A8, 0x1944), int)                               // CInferno->m_fireCount
 
     PROP(mapHasBombTarget, WIN32_UNIX(0x71, 0x89), bool)                           // CCSGameRulesProxy->m_bMapHasBombTarget
-
-#ifdef _WIN32
-    PROP(grenadeExploded, 0x29E8, bool)
-#else
-    bool grenadeExploded()
-    {
-        return false;
-    }
-#endif
 };
 
 class CSPlayer : public Entity {
