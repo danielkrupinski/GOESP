@@ -1,5 +1,6 @@
 #include <numbers>
 #include <numeric>
+#include <ranges>
 #include <sstream>
 #include <unordered_map>
 #include <vector>
@@ -94,6 +95,7 @@ struct {
     ColorToggle molotovHull{ 1.0f, 0.27f, 0.0f, 0.3f };
     ColorToggle bombTimer{ 1.0f, 0.55f, 0.0f, 1.0f };
     ColorToggle smokeHull{ 0.0f, 0.81f, 1.0f, 0.60f };
+    ColorToggle nadeBlast{ 1.0f, 0.0f, 0.09f, 0.51f };
 } miscConfig;
 
 void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
@@ -561,6 +563,7 @@ void Misc::drawGUI() noexcept
     ImGui::TableNextColumn();
 
     ImGuiCustom::colorPicker("Smoke Hull", miscConfig.smokeHull);
+    ImGuiCustom::colorPicker("Nade Blast", miscConfig.nadeBlast);
 
     ImGui::EndTable();
 }
@@ -788,6 +791,45 @@ static auto generateAntialiasedDot() noexcept
     return std::make_pair(vertices, indices);
 }
 
+template <std::size_t N>
+static auto generateSpherePoints() noexcept
+{
+    constexpr auto goldenAngle = static_cast<float>(2.399963229728653);
+
+    std::array<Vector, N> points;
+    for (std::size_t i = 1; i <= points.size(); ++i) {
+        const auto latitude = std::asin(2.0f * i / (points.size() + 1) - 1.0f);
+        const auto longitude = goldenAngle * i;
+
+        points[i - 1] = Vector{ std::cos(longitude) * std::cos(latitude), std::sin(longitude) * std::cos(latitude), std::sin(latitude) };
+    }
+    return points;
+};
+
+template <std::size_t VTX_COUNT, std::size_t IDX_COUNT>
+static void drawPrecomputedPrimitive(ImDrawList* drawList, const ImVec2& pos, ImU32 color, const std::array<ImVec2, VTX_COUNT>& vertices, const std::array<ImDrawIdx, IDX_COUNT>& indices) noexcept
+{
+    drawList->PrimReserve(indices.size(), vertices.size());
+
+    const ImU32 colors[2]{ color, color & ~IM_COL32_A_MASK };
+    const auto uv = ImGui::GetDrawListSharedData()->TexUvWhitePixel;
+    for (std::size_t i = 0; i < vertices.size(); ++i) {
+        drawList->_VtxWritePtr[i].pos = vertices[i] + pos;
+        drawList->_VtxWritePtr[i].uv = uv;
+        drawList->_VtxWritePtr[i].col = colors[i & 1];
+    }
+    drawList->_VtxWritePtr += vertices.size();
+
+    std::memcpy(drawList->_IdxWritePtr, indices.data(), indices.size() * sizeof(ImDrawIdx));
+
+    const auto baseIdx = drawList->_VtxCurrentIdx;
+    for (std::size_t i = 0; i < indices.size(); ++i)
+        drawList->_IdxWritePtr[i] += baseIdx;
+
+    drawList->_IdxWritePtr += indices.size();
+    drawList->_VtxCurrentIdx += vertices.size();
+}
+
 static void drawSmokeHull(ImDrawList* drawList) noexcept
 {
     if (!miscConfig.smokeHull.enabled)
@@ -795,46 +837,41 @@ static void drawSmokeHull(ImDrawList* drawList) noexcept
 
     const auto color = Helpers::calculateColor(miscConfig.smokeHull);
 
-    static const auto spheroidPoints = [] {
-        std::array<Vector, 2000> points;
-
-        constexpr auto goldenAngle = static_cast<float>(2.399963229728653);
-        constexpr auto radius = 140.0f;
-
-        for (std::size_t i = 1; i <= points.size(); ++i) {
-            const auto latitude = std::asin(2.0f * i / (points.size() + 1) - 1.0f);
-            const auto longitude = goldenAngle * i;
-
-            points[i - 1] = Vector{ std::cos(longitude) * std::cos(latitude) * radius,  std::sin(longitude) * std::cos(latitude) * radius,  std::sin(latitude) * radius * 0.7f };
-        }
-        return points;
-    }();
-
+    static const auto spherePoints = generateSpherePoints<2000>();
     static const auto [vertices, indices] = generateAntialiasedDot();
 
     GameData::Lock lock;
     for (const auto& smokePos : GameData::smokes()) {
-        for (const auto& point : spheroidPoints) {
-            if (ImVec2 screenPos; GameData::worldToScreen(smokePos + point, screenPos)) {
-                drawList->PrimReserve(indices.size(), vertices.size());
+        for (const auto& point : spherePoints) {
+            constexpr auto radius = 140.0f;
+            if (ImVec2 screenPos; GameData::worldToScreen(smokePos + point * Vector{ radius, radius, radius * 0.7f }, screenPos)) {
+                drawPrecomputedPrimitive(drawList, screenPos, color, vertices, indices);
+            }
+        }
+    }
+}
 
-                const ImU32 colors[2]{ color, color & ~IM_COL32_A_MASK };
-                const auto uv = ImGui::GetDrawListSharedData()->TexUvWhitePixel;
-                for (std::size_t i = 0; i < vertices.size(); ++i) {
-                    drawList->_VtxWritePtr[i].pos = vertices[i] + screenPos;
-                    drawList->_VtxWritePtr[i].uv = uv;
-                    drawList->_VtxWritePtr[i].col = colors[i & 1];
-                }
-                drawList->_VtxWritePtr += vertices.size();
+static void drawNadeBlast(ImDrawList* drawList) noexcept
+{
+    if (!miscConfig.nadeBlast.enabled)
+        return;
 
-                std::memcpy(drawList->_IdxWritePtr, indices.data(), indices.size() * sizeof(ImDrawIdx));
+    const auto color = Helpers::calculateColor(miscConfig.nadeBlast);
 
-                const auto baseIdx = drawList->_VtxCurrentIdx;
-                for (std::size_t i = 0; i < indices.size(); ++i)
-                    drawList->_IdxWritePtr[i] += baseIdx;
+    static const auto spherePoints = generateSpherePoints<1000>();
+    static const auto [vertices, indices] = generateAntialiasedDot();
 
-                drawList->_IdxWritePtr += indices.size();
-                drawList->_VtxCurrentIdx += (ImDrawIdx)vertices.size();
+    constexpr auto blastDuration = 0.35f;
+
+    GameData::Lock lock;
+    for (const auto& projectile : GameData::projectiles()) {
+        if (!projectile.exploded || projectile.explosionTime + blastDuration < memory->globalVars->realtime)
+            continue;
+
+        for (const auto& point : spherePoints) {
+            const auto radius = ImLerp(10.0f, 70.0f, (memory->globalVars->realtime - projectile.explosionTime) / blastDuration);
+            if (ImVec2 screenPos; GameData::worldToScreen(projectile.coordinateFrame.origin() + point * radius, screenPos)) {
+                drawPrecomputedPrimitive(drawList, screenPos, color, vertices, indices);
             }
         }
     }
@@ -853,6 +890,7 @@ void Misc::draw(ImDrawList* drawList) noexcept
     drawMolotovHull(drawList);
     drawBombTimer();
     drawSmokeHull(drawList);
+    drawNadeBlast(drawList);
 }
 
 static void to_json(json& j, const PurchaseList& o, const PurchaseList& dummy = {})
@@ -929,6 +967,7 @@ json Misc::toJSON() noexcept
     WRITE_OBJ("Molotov Hull", molotovHull);
     WRITE_OBJ("Bomb Timer", bombTimer);
     WRITE_OBJ("Smoke Hull", smokeHull);
+    WRITE_OBJ("Nade Blast", nadeBlast);
 
     return j;
 }
@@ -991,4 +1030,5 @@ void Misc::fromJSON(const json& j) noexcept
     read<value_t::object>(j, "Molotov Hull", miscConfig.molotovHull);
     read<value_t::object>(j, "Bomb Timer", miscConfig.bombTimer);
     read<value_t::object>(j, "Smoke Hull", miscConfig.smokeHull);
+    read<value_t::object>(j, "Nade Blast", miscConfig.nadeBlast);
 }

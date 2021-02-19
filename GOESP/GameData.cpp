@@ -128,9 +128,12 @@ void GameData::update() noexcept
             if (!entity->isWeapon()) {
                 switch (entity->getClientClass()->classId) {
                 case ClassId::BaseCSGrenadeProjectile:
-                    if (entity->grenadeExploded()) {
-                        if (const auto it = std::ranges::find(projectileData, entity->handle(), &ProjectileData::handle); it != projectileData.end())
+                    if (entity->isEffectActive(EF_NODRAW)) {
+                        if (const auto it = std::ranges::find(projectileData, entity->handle(), &ProjectileData::handle); it != projectileData.end()) {
+                            if (!it->exploded)
+                                it->explosionTime = memory->globalVars->realtime;
                             it->exploded = true;
+                        }
                         break;
                     }
                     [[fallthrough]];
