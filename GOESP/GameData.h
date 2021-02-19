@@ -21,6 +21,7 @@ struct LootCrateData;
 struct ProjectileData;
 struct InfernoData;
 struct BombData;
+struct SmokeData;
 
 struct Matrix4x4;
 
@@ -209,4 +210,12 @@ struct InfernoData {
     InfernoData(Entity* inferno) noexcept;
 
     std::vector<Vector> points;
+};
+
+struct SmokeData {
+    SmokeData(const Vector& origin, int handle) noexcept;
+
+    Vector origin;
+    float explosionTime;
+    int handle;
 };
