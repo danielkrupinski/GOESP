@@ -52,7 +52,7 @@ static std::vector<EntityData> entityData;
 static std::vector<LootCrateData> lootCrateData;
 static std::list<ProjectileData> projectileData;
 static std::vector<InfernoData> infernoData;
-static std::vector<Vector> smokeGrenades;
+static std::vector<SmokeData> smokeGrenades;
 static BombData bombData;
 static std::string gameModeName;
 static std::array<std::string, 19> skillGroupNames;
@@ -72,7 +72,6 @@ void GameData::update() noexcept
     entityData.clear();
     lootCrateData.clear();
     infernoData.clear();
-    smokeGrenades.clear();
 
     localPlayerData.update();
     bombData.update();
@@ -91,12 +90,19 @@ void GameData::update() noexcept
         playerData.clear();
         projectileData.clear();
         gameModeName.clear();
+        smokeGrenades.clear();
         return;
     }
 
+    std::erase_if(smokeGrenades, [](const auto& smoke) { return interfaces->entityList->getEntityFromHandle(smoke.handle) == nullptr; });
     for (int i = 0; i < memory->smokeHandles->size; ++i) {
-        if (const auto smoke = interfaces->entityList->getEntityFromHandle(memory->smokeHandles->memory[i]))
-            smokeGrenades.push_back(smoke->getAbsOrigin() + Vector{ 0.0f, 0.0f, 60.0f });
+        const auto handle = memory->smokeHandles->memory[i];
+        const auto smoke = interfaces->entityList->getEntityFromHandle(handle);
+        if (!smoke)
+            continue;
+
+        if (std::ranges::find(std::as_const(smokeGrenades), handle, &SmokeData::handle) == smokeGrenades.cend())
+            smokeGrenades.emplace_back(smoke->getAbsOrigin() + Vector{ 0.0f, 0.0f, 60.0f }, handle);
     }
 
     gameModeName = memory->getGameModeName(false);
@@ -283,7 +289,7 @@ const std::vector<InfernoData>& GameData::infernos() noexcept
     return infernoData;
 }
 
-const std::vector<Vector>& GameData::smokes() noexcept
+const std::vector<SmokeData>& GameData::smokes() noexcept
 {
     return smokeGrenades;
 }
@@ -756,3 +762,5 @@ void BombData::update() noexcept
     }
     blowTime = 0.0f;
 }
+
+SmokeData::SmokeData(const Vector& origin, int handle) noexcept : origin{ origin }, explosionTime{ memory->globalVars->realtime }, handle{ handle } {}

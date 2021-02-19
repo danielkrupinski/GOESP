@@ -51,7 +51,7 @@ namespace GameData
     const std::vector<LootCrateData>& lootCrates() noexcept;
     const std::list<ProjectileData>& projectiles() noexcept;
     const std::vector<InfernoData>& infernos() noexcept;
-    const std::vector<Vector>& smokes() noexcept;
+    const std::vector<SmokeData>& smokes() noexcept;
     const BombData& plantedC4() noexcept;
     const std::string& gameMode() noexcept;
 }

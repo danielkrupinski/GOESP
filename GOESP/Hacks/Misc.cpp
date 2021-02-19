@@ -840,11 +840,13 @@ static void drawSmokeHull(ImDrawList* drawList) noexcept
     static const auto spherePoints = generateSpherePoints<2000>();
     static const auto [vertices, indices] = generateAntialiasedDot();
 
+    constexpr auto animationDuration = 0.35f;
+
     GameData::Lock lock;
-    for (const auto& smokePos : GameData::smokes()) {
+    for (const auto& smoke : GameData::smokes()) {
         for (const auto& point : spherePoints) {
-            constexpr auto radius = 140.0f;
-            if (ImVec2 screenPos; GameData::worldToScreen(smokePos + point * Vector{ radius, radius, radius * 0.7f }, screenPos)) {
+            const auto radius = ImLerp(10.0f, 140.0f, std::clamp((memory->globalVars->realtime - smoke.explosionTime) / animationDuration, 0.0f, 1.0f));
+            if (ImVec2 screenPos; GameData::worldToScreen(smoke.origin + point * Vector{ radius, radius, radius * 0.7f }, screenPos)) {
                 drawPrecomputedPrimitive(drawList, screenPos, color, vertices, indices);
             }
         }
