@@ -899,12 +899,6 @@ void Misc::drawPostESP(ImDrawList* drawList) noexcept
     drawBombTimer();
 }
 
-void Misc::draw(ImDrawList* drawList) noexcept
-{
-    drawPreESP(drawList);
-    drawPostESP(drawList);
-}
-
 static void to_json(json& j, const PurchaseList& o, const PurchaseList& dummy = {})
 {
     WRITE("Enabled", enabled)

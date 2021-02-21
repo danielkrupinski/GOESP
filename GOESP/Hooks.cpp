@@ -62,8 +62,9 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
+    Misc::drawPreESP(ImGui::GetBackgroundDrawList());
     ESP::render();
-    Misc::draw(ImGui::GetBackgroundDrawList());
+    Misc::drawPostESP(ImGui::GetBackgroundDrawList());
 
     gui->render();
     gui->handleToggle();
@@ -131,8 +132,10 @@ static void swapWindow(SDL_Window* window) noexcept
     ImGui::NewFrame();
 
     if (const auto& displaySize = ImGui::GetIO().DisplaySize; displaySize.x > 0.0f && displaySize.y > 0.0f) {
+        Misc::drawPreESP(ImGui::GetBackgroundDrawList());
         ESP::render();
-        Misc::draw(ImGui::GetBackgroundDrawList());
+        Misc::drawPostESP(ImGui::GetBackgroundDrawList());
+
         gui->render();
         gui->handleToggle();
     }
