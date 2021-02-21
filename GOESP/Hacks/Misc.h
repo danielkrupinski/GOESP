@@ -7,6 +7,9 @@ struct ImDrawList;
 
 namespace Misc
 {
+    void drawPreESP(ImDrawList* drawList) noexcept;
+    void drawPostESP(ImDrawList* drawList) noexcept;
+
     void drawReloadProgress(ImDrawList* drawList) noexcept;
     void drawRecoilCrosshair(ImDrawList* drawList) noexcept;
     void purchaseList(GameEvent* event = nullptr) noexcept;

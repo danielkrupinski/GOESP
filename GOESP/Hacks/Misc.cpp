@@ -879,7 +879,14 @@ static void drawNadeBlast(ImDrawList* drawList) noexcept
     }
 }
 
-void Misc::draw(ImDrawList* drawList) noexcept
+void Misc::drawPreESP(ImDrawList* drawList) noexcept
+{
+    drawMolotovHull(drawList);
+    drawSmokeHull(drawList);
+    drawNadeBlast(drawList);
+}
+
+void Misc::drawPostESP(ImDrawList* drawList) noexcept
 {
     drawReloadProgress(drawList);
     drawRecoilCrosshair(drawList);
@@ -889,10 +896,13 @@ void Misc::draw(ImDrawList* drawList) noexcept
     drawFpsCounter();
     drawOffscreenEnemies(drawList);
     drawPlayerList();
-    drawMolotovHull(drawList);
     drawBombTimer();
-    drawSmokeHull(drawList);
-    drawNadeBlast(drawList);
+}
+
+void Misc::draw(ImDrawList* drawList) noexcept
+{
+    drawPreESP(drawList);
+    drawPostESP(drawList);
 }
 
 static void to_json(json& j, const PurchaseList& o, const PurchaseList& dummy = {})
