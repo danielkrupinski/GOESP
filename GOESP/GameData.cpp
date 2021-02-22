@@ -60,11 +60,10 @@ static std::array<std::string, 16> skillGroupNamesDangerzone;
 
 void GameData::update() noexcept
 {
-    static int lastFrame;
-    if (lastFrame == memory->globalVars->framecount)
+    if (static int lastFrame; lastFrame != memory->globalVars->framecount)
+        lastFrame = memory->globalVars->framecount;
+    else
         return;
-
-    lastFrame = memory->globalVars->framecount;
 
     Lock lock;
     observerData.clear();
