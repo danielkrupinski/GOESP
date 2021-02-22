@@ -98,7 +98,7 @@ struct {
     ColorToggle nadeBlast{ 1.0f, 0.0f, 0.09f, 0.51f };
 } miscConfig;
 
-void Misc::drawReloadProgress(ImDrawList* drawList) noexcept
+static void drawReloadProgress(ImDrawList* drawList) noexcept
 {
     if (!miscConfig.reloadProgress.enabled)
         return;
@@ -153,7 +153,7 @@ static void drawCrosshair(ImDrawList* drawList, const ImVec2& pos, ImU32 color) 
     drawList->AddRectFilled(ImVec2{ pos.x, pos.y + 5 }, ImVec2{ pos.x + 1, pos.y + 11 }, color);
 }
 
-void Misc::drawRecoilCrosshair(ImDrawList* drawList) noexcept
+static void drawRecoilCrosshair(ImDrawList* drawList) noexcept
 {
     if (!miscConfig.recoilCrosshair.enabled)
         return;
@@ -306,7 +306,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
     }
 }
 
-void Misc::drawObserverList() noexcept
+static void drawObserverList() noexcept
 {
     if (!miscConfig.observerList.enabled)
         return;
@@ -350,7 +350,7 @@ void Misc::drawObserverList() noexcept
     ImGui::End();
 }
 
-void Misc::drawNoscopeCrosshair(ImDrawList* drawList) noexcept
+static void drawNoscopeCrosshair(ImDrawList* drawList) noexcept
 {
     if (!miscConfig.noscopeCrosshair.enabled)
         return;
@@ -364,7 +364,7 @@ void Misc::drawNoscopeCrosshair(ImDrawList* drawList) noexcept
     drawCrosshair(drawList, ImGui::GetIO().DisplaySize / 2, Helpers::calculateColor(miscConfig.noscopeCrosshair));
 }
 
-void Misc::drawFpsCounter() noexcept
+static void drawFpsCounter() noexcept
 {
     if (!miscConfig.fpsCounter.enabled)
         return;
@@ -384,7 +384,7 @@ void Misc::drawFpsCounter() noexcept
     ImGui::End();
 }
 
-void Misc::drawOffscreenEnemies(ImDrawList* drawList) noexcept
+static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
 {
     if (!miscConfig.offscreenEnemies.enabled)
         return;
@@ -573,7 +573,7 @@ bool Misc::ignoresFlashbang() noexcept
     return miscConfig.ignoreFlashbang;
 }
 
-void Misc::drawPlayerList() noexcept
+static void drawPlayerList() noexcept
 {
     if (!miscConfig.playerList.enabled)
         return;
@@ -678,7 +678,7 @@ void Misc::drawPlayerList() noexcept
     ImGui::End();
 }
 
-void Misc::drawMolotovHull(ImDrawList* drawList) noexcept
+static void drawMolotovHull(ImDrawList* drawList) noexcept
 {
     if (!miscConfig.molotovHull.enabled)
         return;
