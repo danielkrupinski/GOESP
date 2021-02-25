@@ -248,9 +248,4 @@
       <Filter>Resources</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Resources\Shaders\blur_x.hlsl">
-      <Filter>Resources\Shaders</Filter>
-    </FxCompile>
-  </ItemGroup>
 </Project>
