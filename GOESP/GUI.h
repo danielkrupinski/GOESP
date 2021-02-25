@@ -12,6 +12,7 @@ public:
     ImFont* getUnicodeFont() const noexcept;
     void handleToggle() noexcept;
     bool isOpen() const noexcept { return open; }
+    bool isFullyClosed() const noexcept { return !open && toggleAnimationEnd > 1.0f; }
 private:
     void loadConfig() const noexcept;
     void saveConfig() const noexcept;
