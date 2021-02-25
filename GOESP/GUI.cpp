@@ -82,7 +82,7 @@ GUI::GUI() noexcept
 
 void GUI::render() noexcept
 {
-    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, std::clamp(open ? toggleAnimationEnd : 1.0f - toggleAnimationEnd, 0.0f, 1.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, getTransparency());
 
     ImGui::Begin(
         "GOESP for "

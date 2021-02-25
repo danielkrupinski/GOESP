@@ -13,6 +13,7 @@ public:
     void handleToggle() noexcept;
     bool isOpen() const noexcept { return open; }
     bool isFullyClosed() const noexcept { return !open && toggleAnimationEnd > 1.0f; }
+    float getTransparency() const noexcept { return std::clamp(open ? toggleAnimationEnd : 1.0f - toggleAnimationEnd, 0.0f, 1.0f); }
 private:
     void loadConfig() const noexcept;
     void saveConfig() const noexcept;
