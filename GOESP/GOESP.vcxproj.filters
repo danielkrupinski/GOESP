@@ -250,5 +250,8 @@
     <ClInclude Include="Resources\Shaders\blur_x.h">
       <Filter>Resources\Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\Shaders\blur_y.h">
+      <Filter>Resources\Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
