@@ -166,6 +166,7 @@
     <ClInclude Include="Resources\avatar_ct.h" />
     <ClInclude Include="Resources\avatar_tt.h" />
     <ClInclude Include="Resources\Resource.h" />
+    <ClInclude Include="Resources\Shaders\blur_x.h" />
     <ClInclude Include="Resources\skillgroups.h" />
     <ClInclude Include="SDK\ClassId.h" />
     <ClInclude Include="SDK\ClientClass.h" />

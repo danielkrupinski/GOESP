@@ -247,5 +247,8 @@
     <ClInclude Include="Resources\Resource.h">
       <Filter>Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\Shaders\blur_x.h">
+      <Filter>Resources\Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
