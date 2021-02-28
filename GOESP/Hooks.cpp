@@ -61,15 +61,20 @@ static HRESULT D3DAPI reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* par
 static IDirect3DSurface9* rtBackup = nullptr;
 static IDirect3DPixelShader9* blurShaderX = nullptr;
 static IDirect3DPixelShader9* blurShaderY = nullptr;
-static IDirect3DTexture9* texture = nullptr;
+static IDirect3DTexture9* blurTexture1 = nullptr;
+static IDirect3DTexture9* blurTexture2 = nullptr;
 static int backbufferWidth = 0;
 static int backbufferHeight = 0;
 
 static void clearBlurTexture() noexcept
 {
-    if (texture) {
-        texture->Release();
-        texture = nullptr;
+    if (blurTexture1) {
+        blurTexture1->Release();
+        blurTexture1 = nullptr;
+    }
+    if (blurTexture2) {
+        blurTexture2->Release();
+        blurTexture2 = nullptr;
     }
 }
 
@@ -89,21 +94,31 @@ static void beginBlur(const ImDrawList* parent_list, const ImDrawCmd* cmd) noexc
     backBuffer->GetDesc(&desc);
 
     if (backbufferWidth != desc.Width || backbufferHeight != desc.Height) {
-        if (texture)
-            texture->Release();
+        clearBlurTexture();
 
         backbufferWidth = desc.Width;
         backbufferHeight = desc.Height;
-        device->CreateTexture(desc.Width, desc.Height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &texture, nullptr);
     }
+
+    if (!blurTexture1)
+        device->CreateTexture(desc.Width, desc.Height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &blurTexture1, nullptr);
+
+    if (!blurTexture2)
+        device->CreateTexture(desc.Width, desc.Height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &blurTexture2, nullptr);
 
     device->GetRenderTarget(0, &rtBackup);
 
     {
         IDirect3DSurface9* surface;
-        texture->GetSurfaceLevel(0, &surface);
+        blurTexture1->GetSurfaceLevel(0, &surface);
         device->StretchRect(backBuffer, NULL, surface, NULL, D3DTEXF_NONE);
-        device->SetRenderTarget(0, surface);
+        surface->Release();
+    }
+
+    {
+        IDirect3DSurface9* surface;
+        blurTexture2->GetSurfaceLevel(0, &surface);
+        device->StretchRect(backBuffer, NULL, surface, NULL, D3DTEXF_NONE);
         surface->Release();
     }
 
@@ -117,6 +132,13 @@ static void firstBlurPass(const ImDrawList* parent_list, const ImDrawCmd* cmd) n
 {
     const auto device = reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData);
 
+    {
+        IDirect3DSurface9* surface;
+        blurTexture2->GetSurfaceLevel(0, &surface);
+        device->SetRenderTarget(0, surface);
+        surface->Release();
+    }
+
     device->SetPixelShader(blurShaderX);
     const float params[4] = { 1.0f / backbufferWidth };
     device->SetPixelShaderConstantF(0, params, 1);
@@ -125,6 +147,13 @@ static void firstBlurPass(const ImDrawList* parent_list, const ImDrawCmd* cmd) n
 static void secondBlurPass(const ImDrawList* parent_list, const ImDrawCmd* cmd) noexcept
 {
     const auto device = reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData);
+
+    {
+        IDirect3DSurface9* surface;
+        blurTexture1->GetSurfaceLevel(0, &surface);
+        device->SetRenderTarget(0, surface);
+        surface->Release();
+    }
 
     device->SetPixelShader(blurShaderY);
     const float params[4] = { 1.0f / backbufferHeight };
@@ -149,13 +178,13 @@ static void drawBackgroundBlur(ImDrawList* drawList, IDirect3DDevice9* device) n
 
     for (int i = 0; i < 8; ++i) {
         drawList->AddCallback(firstBlurPass, device);
-        drawList->AddImage(texture, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
+        drawList->AddImage(blurTexture1, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
         drawList->AddCallback(secondBlurPass, device);
-        drawList->AddImage(texture, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
+        drawList->AddImage(blurTexture2, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
     }
 
     drawList->AddCallback(endBlur, device);
-    drawList->AddImage(texture, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, IM_COL32(255, 255, 255, 255 * gui->getTransparency()));
+    drawList->AddImage(blurTexture1, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, IM_COL32(255, 255, 255, 255 * gui->getTransparency()));
 }
 
 static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const RECT* dest, HWND windowOverride, const RGNDATA* dirtyRegion) noexcept
