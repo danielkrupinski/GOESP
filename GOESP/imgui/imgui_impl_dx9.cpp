@@ -37,8 +37,14 @@ static LPDIRECT3DDEVICE9        g_pd3dDevice = NULL;
 static LPDIRECT3DVERTEXBUFFER9  g_pVB = NULL;
 static LPDIRECT3DINDEXBUFFER9   g_pIB = NULL;
 static LPDIRECT3DTEXTURE9       g_FontTexture = NULL;
-static IDirect3DVertexDeclaration9* vertexDeclaration = nullptr;
 static int                      g_VertexBufferSize = 5000, g_IndexBufferSize = 10000;
+
+struct CUSTOMVERTEX {
+    float    pos[3];
+    D3DCOLOR col;
+    float    uv[2];
+};
+#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 
 static void ImGui_ImplDX9_SetupRenderState(const ImDrawData* draw_data)
 {
@@ -127,25 +133,35 @@ void ImGui_ImplDX9_RenderDrawData(const ImDrawData* draw_data)
     if (d3d9_state_block->Capture() != D3D_OK)
         return;
 
-    ImDrawVert* vtx_dst;
+    CUSTOMVERTEX* vtx_dst;
     ImDrawIdx* idx_dst;
-    if (g_pVB->Lock(0, (UINT)(draw_data->TotalVtxCount * sizeof(ImDrawVert)), (void**)&vtx_dst, D3DLOCK_DISCARD) < 0)
+    if (g_pVB->Lock(0, (UINT)(draw_data->TotalVtxCount * sizeof(CUSTOMVERTEX)), (void**)&vtx_dst, D3DLOCK_DISCARD) < 0)
         return;
     if (g_pIB->Lock(0, (UINT)(draw_data->TotalIdxCount * sizeof(ImDrawIdx)), (void**)&idx_dst, D3DLOCK_DISCARD) < 0)
         return;
-    for (int n = 0; n < draw_data->CmdListsCount; n++)
-    {
+
+    for (int n = 0; n < draw_data->CmdListsCount; ++n) {
         const ImDrawList* cmd_list = draw_data->CmdLists[n];
-        memcpy(vtx_dst, cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(ImDrawVert));
-        vtx_dst += cmd_list->VtxBuffer.Size;
+        const ImDrawVert* vtx_src = cmd_list->VtxBuffer.Data;
+        for (int i = 0; i < cmd_list->VtxBuffer.Size; ++i) {
+            vtx_dst->pos[0] = vtx_src->pos.x;
+            vtx_dst->pos[1] = vtx_src->pos.y;
+            vtx_dst->pos[2] = 0.0f;
+            vtx_dst->col = vtx_src->col;
+            vtx_dst->uv[0] = vtx_src->uv.x;
+            vtx_dst->uv[1] = vtx_src->uv.y;
+            vtx_dst++;
+            vtx_src++;
+        }
         memcpy(idx_dst, cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx));
         idx_dst += cmd_list->IdxBuffer.Size;
     }
+
     g_pVB->Unlock();
     g_pIB->Unlock();
-    g_pd3dDevice->SetStreamSource(0, g_pVB, 0, sizeof(ImDrawVert));
+    g_pd3dDevice->SetStreamSource(0, g_pVB, 0, sizeof(CUSTOMVERTEX));
     g_pd3dDevice->SetIndices(g_pIB);
-    g_pd3dDevice->SetVertexDeclaration(vertexDeclaration);
+    g_pd3dDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
 
     // Setup desired DX state
     ImGui_ImplDX9_SetupRenderState(draw_data);
@@ -242,14 +258,6 @@ bool ImGui_ImplDX9_CreateDeviceObjects()
     if (!g_pd3dDevice)
         return false;
 
-    constexpr D3DVERTEXELEMENT9 elements[]{
-        { 0, 0, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-        { 0, 8, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
-        { 0, 16, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0 },
-        D3DDECL_END()
-    };
-    g_pd3dDevice->CreateVertexDeclaration(elements, &vertexDeclaration);
-
     if (!ImGui_ImplDX9_CreateFontsTexture())
         return false;
 
@@ -263,7 +271,6 @@ void ImGui_ImplDX9_InvalidateDeviceObjects()
     if (g_pVB) { g_pVB->Release(); g_pVB = nullptr; }
     if (g_pIB) { g_pIB->Release(); g_pIB = nullptr; }
     ImGui_ImplDX9_DestroyFontsTexture();
-    if (vertexDeclaration) { vertexDeclaration->Release(); vertexDeclaration = nullptr; }
 }
 
 void ImGui_ImplDX9_NewFrame()
