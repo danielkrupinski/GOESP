@@ -65,6 +65,7 @@ static IDirect3DTexture9* blurTexture1 = nullptr;
 static IDirect3DTexture9* blurTexture2 = nullptr;
 static int backbufferWidth = 0;
 static int backbufferHeight = 0;
+constexpr auto blurDownsample = 2;
 
 static void clearBlurTexture() noexcept
 {
@@ -101,10 +102,10 @@ static void beginBlur(const ImDrawList* parent_list, const ImDrawCmd* cmd) noexc
     }
 
     if (!blurTexture1)
-        device->CreateTexture(desc.Width, desc.Height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &blurTexture1, nullptr);
+        device->CreateTexture(desc.Width / blurDownsample, desc.Height / blurDownsample, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &blurTexture1, nullptr);
 
     if (!blurTexture2)
-        device->CreateTexture(desc.Width, desc.Height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &blurTexture2, nullptr);
+        device->CreateTexture(desc.Width / blurDownsample, desc.Height / blurDownsample, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &blurTexture2, nullptr);
 
     device->GetRenderTarget(0, &rtBackup);
 
@@ -126,6 +127,7 @@ static void beginBlur(const ImDrawList* parent_list, const ImDrawCmd* cmd) noexc
 
     device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
     device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+    device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
 }
 
 static void firstBlurPass(const ImDrawList* parent_list, const ImDrawCmd* cmd) noexcept
@@ -140,7 +142,7 @@ static void firstBlurPass(const ImDrawList* parent_list, const ImDrawCmd* cmd) n
     }
 
     device->SetPixelShader(blurShaderX);
-    const float params[4] = { 1.0f / backbufferWidth };
+    const float params[4] = { 1.0f / (backbufferWidth / blurDownsample) };
     device->SetPixelShaderConstantF(0, params, 1);
 }
 
@@ -156,7 +158,7 @@ static void secondBlurPass(const ImDrawList* parent_list, const ImDrawCmd* cmd) 
     }
 
     device->SetPixelShader(blurShaderY);
-    const float params[4] = { 1.0f / backbufferHeight };
+    const float params[4] = { 1.0f / (backbufferHeight / blurDownsample) };
     device->SetPixelShaderConstantF(0, params, 1);
 }
 
@@ -170,6 +172,7 @@ static void endBlur(const ImDrawList* parent_list, const ImDrawCmd* cmd) noexcep
     device->SetPixelShader(nullptr);
     device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
     device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+    device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 }
 
 static void drawBackgroundBlur(ImDrawList* drawList, IDirect3DDevice9* device) noexcept
@@ -293,7 +296,7 @@ Hooks::Hooks() noexcept
 static void warpMouseInWindow(SDL_Window* window, int x, int y) noexcept
 {
     if (!gui->isOpen())
-    	hooks->warpMouseInWindow(window, x, y);
+        hooks->warpMouseInWindow(window, x, y);
 }
 
 #elif __APPLE__
