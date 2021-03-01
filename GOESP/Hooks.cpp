@@ -171,8 +171,6 @@ static void endBlur(const ImDrawList* parent_list, const ImDrawCmd* cmd) noexcep
     rtBackup->Release();
 
     device->SetPixelShader(nullptr);
-    device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-    device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
     device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
     device->SetRenderState(D3DRS_SCISSORTESTENABLE, true);
 }
