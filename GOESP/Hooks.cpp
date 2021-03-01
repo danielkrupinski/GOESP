@@ -128,6 +128,7 @@ static void beginBlur(const ImDrawList* parent_list, const ImDrawCmd* cmd) noexc
     device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
     device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
     device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+    device->SetRenderState(D3DRS_SCISSORTESTENABLE, false);
 }
 
 static void firstBlurPass(const ImDrawList* parent_list, const ImDrawCmd* cmd) noexcept
@@ -173,6 +174,7 @@ static void endBlur(const ImDrawList* parent_list, const ImDrawCmd* cmd) noexcep
     device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
     device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
     device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+    device->SetRenderState(D3DRS_SCISSORTESTENABLE, true);
 }
 
 static void drawBackgroundBlur(ImDrawList* drawList, IDirect3DDevice9* device) noexcept
