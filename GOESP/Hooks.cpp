@@ -112,14 +112,14 @@ static void beginBlur(const ImDrawList* parent_list, const ImDrawCmd* cmd) noexc
     {
         IDirect3DSurface9* surface;
         blurTexture1->GetSurfaceLevel(0, &surface);
-        device->StretchRect(backBuffer, NULL, surface, NULL, D3DTEXF_NONE);
+        device->StretchRect(backBuffer, NULL, surface, NULL, D3DTEXF_LINEAR);
         surface->Release();
     }
 
     {
         IDirect3DSurface9* surface;
         blurTexture2->GetSurfaceLevel(0, &surface);
-        device->StretchRect(backBuffer, NULL, surface, NULL, D3DTEXF_NONE);
+        device->StretchRect(backBuffer, NULL, surface, NULL, D3DTEXF_LINEAR);
         surface->Release();
     }
 
