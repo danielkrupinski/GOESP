@@ -65,7 +65,7 @@ static IDirect3DTexture9* blurTexture1 = nullptr;
 static IDirect3DTexture9* blurTexture2 = nullptr;
 static int backbufferWidth = 0;
 static int backbufferHeight = 0;
-constexpr auto blurDownsample = 2;
+constexpr auto blurDownsample = 4;
 
 static void clearBlurTexture() noexcept
 {
