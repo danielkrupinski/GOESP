@@ -168,7 +168,7 @@ private:
     int skillgroup;
 
     mutable Texture avatarTexture;
-    std::uint8_t avatarRGBA[4 * 32 * 32 * sizeof(char)];
+    std::unique_ptr<std::uint8_t[]> avatarRGBA;
 };
 
 struct WeaponData : BaseData {

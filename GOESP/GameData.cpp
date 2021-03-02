@@ -405,7 +405,9 @@ PlayerData::PlayerData(CSPlayer* entity) noexcept : BaseData{ entity }, userId{ 
     if (steamID) {
         const auto ctx = interfaces->engine->getSteamAPIContext();
         const auto avatar = ctx->steamFriends->getSmallFriendAvatar(steamID);
-        hasAvatar = ctx->steamUtils->getImageRGBA(avatar, avatarRGBA, sizeof(avatarRGBA));
+        constexpr auto rgbaDataSize = 4 * 32 * 32;
+        avatarRGBA = std::make_unique<std::uint8_t[]>(rgbaDataSize);
+        hasAvatar = ctx->steamUtils->getImageRGBA(avatar, avatarRGBA.get(), rgbaDataSize);
     }
 
     entity->getPlayerName(name);
@@ -567,7 +569,7 @@ ImTextureID PlayerData::getAvatarTexture() const noexcept
         return team == Team::TT ? avatarTT.getTexture() : avatarCT.getTexture();
 
     if (!avatarTexture.get())
-        avatarTexture.init(32, 32, avatarRGBA);
+        avatarTexture.init(32, 32, avatarRGBA.get());
 
     return avatarTexture.get();
 }
