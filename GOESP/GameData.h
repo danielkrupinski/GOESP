@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <memory>
 #include <mutex>
 #include <string>
 #include <tuple>
@@ -22,8 +23,6 @@ struct ProjectileData;
 struct InfernoData;
 struct BombData;
 struct SmokeData;
-
-struct Matrix4x4;
 
 namespace GameData
 {
