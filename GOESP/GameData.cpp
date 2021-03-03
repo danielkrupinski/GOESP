@@ -756,7 +756,7 @@ void BombData::update() noexcept
 
             if (*memory->playerResource) {
                 const auto& bombOrigin = bomb->getAbsOrigin();
-                bombsite = bombOrigin.distTo((*memory->playerResource)->bombsiteCenterA()) > bombOrigin.distTo((*memory->playerResource)->bombsiteCenterB());
+                bombsite = bombOrigin.distToSqr((*memory->playerResource)->bombsiteCenterA()) > bombOrigin.distToSqr((*memory->playerResource)->bombsiteCenterB());
             }
             return;
         }
