@@ -110,6 +110,11 @@ struct Vector {
         return (*this - v).length();
     }
 
+    auto distToSqr(const Vector& v) const noexcept
+    {
+        return (*this - v).squareLength();
+    }
+
     float x, y, z;
 };
 
