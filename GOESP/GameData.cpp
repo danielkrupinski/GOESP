@@ -419,8 +419,9 @@ void PlayerData::update(CSPlayer* entity) noexcept
     if (memory->globalVars->framecount % 20 == 0)
         entity->getPlayerName(name);
 
-    if (*memory->playerResource) {
-        const auto idx = entity->index();
+    const auto idx = entity->index();
+
+    if (*memory->playerResource) {    
         skillgroup = (*memory->playerResource)->competitiveRanking()[idx];
         competitiveWins = (*memory->playerResource)->competitiveWins()[idx];
         armor = (*memory->playerResource)->armor()[idx];
@@ -428,13 +429,14 @@ void PlayerData::update(CSPlayer* entity) noexcept
 
     dormant = entity->isDormant();
     if (dormant) {
+        if (const auto pr = *memory->playerResource) {
+            alive = pr->getIPlayerResource()->isAlive(idx);
+            if (!alive)
+                fadingEndTime = -1.0f;
+            health = pr->getIPlayerResource()->getPlayerHealth(idx);
+        }
         if (fadingEndTime == 0.0f)
             fadingEndTime = memory->globalVars->realtime + 1.75f;
-        
-        if (const auto pr = *memory->playerResource) {
-            alive = pr->getIPlayerResource()->isAlive(entity->index());
-            health = pr->getIPlayerResource()->getPlayerHealth(entity->index());
-        }
         return;
     }
 
