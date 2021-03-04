@@ -562,7 +562,7 @@ static bool renderPlayerEsp(const PlayerData& playerData, const Player& playerCo
         Helpers::setAlphaFactor(0.5f);
 
     if (playerData.fadingEndTime != 0.0f)
-        Helpers::setAlphaFactor(Helpers::getAlphaFactor() * Helpers::fadingAlpha(playerData.fadingEndTime));
+        Helpers::setAlphaFactor(Helpers::getAlphaFactor() * playerData.fadingAlpha());
 
     drawPlayerSkeleton(playerConfig.skeleton, playerData.bones);
     renderPlayerBox(playerData, playerConfig);
@@ -632,7 +632,7 @@ void ESP::render() noexcept
         renderProjectileEsp(projectile, espConfig.projectiles["All"], espConfig.projectiles[projectile.name], projectile.name);
 
     for (const auto& player : GameData::players()) {
-        if ((player.dormant && Helpers::fadingAlpha(player.fadingEndTime) == 0.0f) || !player.alive || !player.inViewFrustum)
+        if ((player.dormant && player.fadingAlpha() == 0.0f) || !player.alive || !player.inViewFrustum)
             continue;
             
         auto& playerConfig = player.enemy ? espConfig.enemies : espConfig.allies;

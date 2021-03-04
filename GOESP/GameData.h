@@ -122,6 +122,7 @@ struct PlayerData : BaseData {
     ImTextureID getAvatarTexture() const noexcept;
     ImTextureID getRankTexture() const noexcept;
     void clearAvatarTexture() noexcept { avatarTexture = {}; }
+    float fadingAlpha() const noexcept;
 
     bool dormant;
     bool alive;

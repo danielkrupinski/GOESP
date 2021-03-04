@@ -394,7 +394,7 @@ static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
     const auto yaw = Helpers::deg2rad(interfaces->engine->getViewAngles().y);
 
     for (auto& player : GameData::players()) {
-        if ((player.dormant && Helpers::fadingAlpha(player.fadingEndTime) == 0.0f) || !player.alive || !player.enemy || player.inViewFrustum)
+        if ((player.dormant && player.fadingAlpha() == 0.0f) || !player.alive || !player.enemy || player.inViewFrustum)
             continue;
 
         const auto positionDiff = GameData::local().origin - player.origin;
@@ -408,7 +408,7 @@ static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
 
         const auto pos = ImGui::GetIO().DisplaySize / 2 + ImVec2{ x, y } * 200;
         if (player.fadingEndTime != 0.0f)
-            Helpers::setAlphaFactor(Helpers::fadingAlpha(player.fadingEndTime));
+            Helpers::setAlphaFactor(player.fadingAlpha());
         const auto color = Helpers::calculateColor(255, 255, 255, 255);
         Helpers::setAlphaFactor(1.0f);
 

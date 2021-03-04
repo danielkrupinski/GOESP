@@ -598,6 +598,12 @@ ImTextureID PlayerData::getRankTexture() const noexcept
         return skillgroupImages[std::size_t(skillgroup) < skillgroupImages.size() ? skillgroup : 0].getTexture();
 }
 
+float PlayerData::fadingAlpha() const noexcept
+{
+    constexpr float fadeTime = 1.75f;
+    return std::clamp((std::max)(fadingEndTime - memory->globalVars->realtime, 0.0f) / fadeTime, 0.0f, 1.0f);
+}
+
 WeaponData::WeaponData(Entity* entity) noexcept : BaseData{ entity }, clip{ entity->clip() }, reserveAmmo{ entity->reserveAmmoCount() }
 {
     if (const auto weaponInfo = entity->getWeaponInfo()) {

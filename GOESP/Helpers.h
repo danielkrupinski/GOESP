@@ -15,7 +15,6 @@ namespace Helpers
     unsigned int calculateColor(int r, int g, int b, int a) noexcept;
     void setAlphaFactor(float newAlphaFactor) noexcept;
     float getAlphaFactor() noexcept;
-    float fadingAlpha(float endTime) noexcept;
 
     constexpr auto units2meters(float units) noexcept
     {
