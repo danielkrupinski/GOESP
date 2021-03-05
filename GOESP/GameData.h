@@ -162,7 +162,7 @@ struct PlayerData : BaseData {
 
         void init(int width, int height, const std::uint8_t* data) noexcept;
         void clear() noexcept;
-        ImTextureID get() noexcept { return texture; }
+        ImTextureID get() const noexcept { return texture; }
     };
 private:
     int skillgroup;
