@@ -409,7 +409,7 @@ static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
         if (player.fadingEndTime != 0.0f)
             Helpers::setAlphaFactor(player.fadingAlpha());
         const auto color = Helpers::calculateColor(255, 255, 255, 255);
-        const auto trangleColor = Helpers::calculateColor(255, 66, 54, 255);
+        const auto triangleColor = Helpers::calculateColor(255, 66, 54, 255);
         Helpers::setAlphaFactor(1.0f);
 
         constexpr auto avatarRadius = 13.0f;
@@ -423,7 +423,7 @@ static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
             trianglePos + ImVec2{  1.0f * x,  1.0f * y } * triangleSize,
             trianglePos + ImVec2{ -0.4f * y,  0.4f * x } * triangleSize
         };
-        drawList->AddConvexPolyFilled(trianglePoints, 3, trangleColor);
+        drawList->AddConvexPolyFilled(trianglePoints, 3, triangleColor);
 
         drawList->AddCircleFilled(pos, avatarRadius + 1, color & IM_COL32_A_MASK, 40);
 
