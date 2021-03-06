@@ -389,10 +389,9 @@ static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
     if (!miscConfig.offscreenEnemies.enabled)
         return;
 
-    GameData::Lock lock;
-
     const auto yaw = Helpers::deg2rad(interfaces->engine->getViewAngles().y);
 
+    GameData::Lock lock;
     for (auto& player : GameData::players()) {
         if ((player.dormant && player.fadingAlpha() == 0.0f) || !player.alive || !player.enemy || player.inViewFrustum)
             continue;
