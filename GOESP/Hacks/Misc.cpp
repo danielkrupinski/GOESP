@@ -467,7 +467,7 @@ static void drawBombTimer() noexcept
     ImGui::SetNextWindowSizeConstraints({ 0, -1 }, { FLT_MAX, -1 });
     ImGui::Begin("Bomb Timer", nullptr, ImGuiWindowFlags_NoTitleBar | (gui->isOpen() ? 0 : ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoDecoration));
 
-    std::ostringstream ss; ss << "Bomb on " << (!plantedC4.bombsite ? 'A' : 'B') << " : " << std::fixed << std::showpoint << std::setprecision(3) << (std::max)(plantedC4.blowTime - memory->globalVars->currenttime, 0.0f) << " s";
+    std::ostringstream ss; ss << "Bomb on " << (!plantedC4.bombsite ? 'A' : 'B') << " : " << std::fixed << std::showpoint << std::setprecision(3) << std::max(plantedC4.blowTime - memory->globalVars->currenttime, 0.0f) << " s";
 
     ImGui::textUnformattedCentered(ss.str().c_str());
 
@@ -488,7 +488,7 @@ static void drawBombTimer() noexcept
             }
             ImGui::PopStyleColor();
         } else if (const auto defusingPlayer = GameData::playerByHandle(plantedC4.defuserHandle)) {
-            std::ostringstream ss; ss << defusingPlayer->name << " is defusing: " << std::fixed << std::showpoint << std::setprecision(3) << (std::max)(plantedC4.defuseCountDown - memory->globalVars->currenttime, 0.0f) << " s";
+            std::ostringstream ss; ss << defusingPlayer->name << " is defusing: " << std::fixed << std::showpoint << std::setprecision(3) << std::max(plantedC4.defuseCountDown - memory->globalVars->currenttime, 0.0f) << " s";
 
             ImGui::textUnformattedCentered(ss.str().c_str());
 
