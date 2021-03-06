@@ -79,7 +79,7 @@ static void clearBlurTexture() noexcept
     }
 }
 
-static void beginBlur(const ImDrawList* parent_list, const ImDrawCmd* cmd) noexcept
+static void beginBlur(const ImDrawList*, const ImDrawCmd* cmd) noexcept
 {
     const auto device = reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData);
 
@@ -131,7 +131,7 @@ static void beginBlur(const ImDrawList* parent_list, const ImDrawCmd* cmd) noexc
     device->SetRenderState(D3DRS_SCISSORTESTENABLE, false);
 }
 
-static void firstBlurPass(const ImDrawList* parent_list, const ImDrawCmd* cmd) noexcept
+static void firstBlurPass(const ImDrawList*, const ImDrawCmd* cmd) noexcept
 {
     const auto device = reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData);
 
@@ -147,7 +147,7 @@ static void firstBlurPass(const ImDrawList* parent_list, const ImDrawCmd* cmd) n
     device->SetPixelShaderConstantF(0, params, 1);
 }
 
-static void secondBlurPass(const ImDrawList* parent_list, const ImDrawCmd* cmd) noexcept
+static void secondBlurPass(const ImDrawList*, const ImDrawCmd* cmd) noexcept
 {
     const auto device = reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData);
 
@@ -163,7 +163,7 @@ static void secondBlurPass(const ImDrawList* parent_list, const ImDrawCmd* cmd) 
     device->SetPixelShaderConstantF(0, params, 1);
 }
 
-static void endBlur(const ImDrawList* parent_list, const ImDrawCmd* cmd) noexcept
+static void endBlur(const ImDrawList*, const ImDrawCmd* cmd) noexcept
 {
     const auto device = reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData);
 
