@@ -142,29 +142,6 @@ bool    ImGui_ImplOpenGL3_Init(const char* glsl_version)
     strcpy(g_GlslVersionString, glsl_version);
     strcat(g_GlslVersionString, "\n");
 
-    // Dummy construct to make it easily visible in the IDE and debugger which GL loader has been selected.
-    // The code actually never uses the 'gl_loader' variable! It is only here so you can read it!
-    // If auto-detection fails or doesn't select the same GL loader file as used by your application,
-    // you are likely to get a crash below.
-    // You can explicitly select a loader by using '#define IMGUI_IMPL_OPENGL_LOADER_XXX' in imconfig.h or compiler command-line.
-    const char* gl_loader = "Unknown";
-    IM_UNUSED(gl_loader);
-#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
-    gl_loader = "GL3W";
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
-    gl_loader = "GLEW";
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
-    gl_loader = "GLAD";
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLBINDING2)
-    gl_loader = "glbinding2";
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLBINDING3)
-    gl_loader = "glbinding3";
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_CUSTOM)
-    gl_loader = "custom";
-#else
-    gl_loader = "none";
-#endif
-
     // Make a dummy GL call (we don't actually need the result)
     // IF YOU GET A CRASH HERE: it probably means that you haven't initialized the OpenGL function loader used by this code.
     // Desktop OpenGL 3/4 need a function loader. See the IMGUI_IMPL_OPENGL_LOADER_xxx explanation above.
