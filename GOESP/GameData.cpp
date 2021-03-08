@@ -400,7 +400,7 @@ void ProjectileData::update(Entity* projectile) noexcept
         trajectory.emplace_back(memory->globalVars->realtime, pos);
 }
 
-PlayerData::PlayerData(CSPlayer* entity) noexcept : BaseData{ entity }, userId{ entity->getUserId() }, handle{ entity->handle() }, money{ entity->money() }, team{ entity->getTeamNumber() }, steamID{ entity->getSteamID() }, lastPlaceName{ interfaces->localize->findAsUTF8(entity->lastPlaceName()) }
+PlayerData::PlayerData(CSPlayer* entity) noexcept : BaseData{ entity }, userId{ entity->getUserId() }, handle{ entity->handle() }, money{ entity->money() }, team{ entity->getTeamNumber() }, steamID{ entity->getSteamID() }, name{ entity->getPlayerName() }, lastPlaceName{ interfaces->localize->findAsUTF8(entity->lastPlaceName()) }
 {
     if (steamID) {
         const auto ctx = interfaces->engine->getSteamAPIContext();
@@ -410,14 +410,13 @@ PlayerData::PlayerData(CSPlayer* entity) noexcept : BaseData{ entity }, userId{ 
         hasAvatar = ctx->steamUtils->getImageRGBA(avatar, avatarRGBA.get(), rgbaDataSize);
     }
 
-    entity->getPlayerName(name);
     update(entity);
 }
 
 void PlayerData::update(CSPlayer* entity) noexcept
 {
     if (memory->globalVars->framecount % 20 == 0)
-        entity->getPlayerName(name);
+        name = entity->getPlayerName();
 
     const auto idx = entity->index();
 

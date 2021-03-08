@@ -141,7 +141,7 @@ struct PlayerData : BaseData {
     int competitiveWins;
     Team team;
     std::uint64_t steamID;
-    char name[128];
+    std::string name;
     std::string activeWeapon;
     Vector origin;
     std::vector<std::pair<Vector, Vector>> bones;

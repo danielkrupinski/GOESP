@@ -281,7 +281,7 @@ void Misc::purchaseList(GameEvent* event) noexcept
 
                     if (const auto it = std::ranges::find(GameData::players(), userId, &PlayerData::userId); it != GameData::players().cend()) {
                         if (ImGui::TableNextColumn())
-                            ImGui::textEllipsisInTableCell(it->name);
+                            ImGui::textEllipsisInTableCell(it->name.c_str());
                         if (ImGui::TableNextColumn())
                             ImGui::TextColored({ 0.0f, 1.0f, 0.0f, 1.0f }, "$%d", purchases.totalCost);
                         if (ImGui::TableNextColumn())
@@ -342,7 +342,7 @@ static void drawObserverList() noexcept
             continue;
 
         if (const auto it = std::ranges::find(GameData::players(), observer.playerUserId, &PlayerData::userId); it != GameData::players().cend()) {
-            ImGui::TextUnformatted(it->name);
+            ImGui::TextUnformatted(it->name.c_str());
         }
     }
 
@@ -643,7 +643,7 @@ static void drawPlayerList() noexcept
                 ImGui::PushID(ImGui::TableGetRowIndex());
 
                 ImGui::TableNextColumn();
-                ImGui::textEllipsisInTableCell(player.get().name);
+                ImGui::textEllipsisInTableCell(player.get().name.c_str());
 
                 if (ImGui::TableNextColumn() && ImGui::smallButtonFullWidth("Copy", player.get().steamID == 0))
                     ImGui::SetClipboardText(std::to_string(player.get().steamID).c_str());
