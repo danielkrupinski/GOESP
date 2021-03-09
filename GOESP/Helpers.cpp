@@ -116,9 +116,9 @@ std::vector<char> Helpers::loadBinaryFile(const std::string& path) noexcept
     std::ifstream in{ path, std::ios::binary };
     if (!in)
         return result;
-    in.seekg(0, in.end);
+    in.seekg(0, std::ios_base::end);
     result.resize(static_cast<std::size_t>(in.tellg()));
-    in.seekg(0, in.beg);
+    in.seekg(0, std::ios_base::beg);
     in.read(result.data(), result.size());
     return result;
 }
