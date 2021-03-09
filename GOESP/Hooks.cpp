@@ -217,6 +217,8 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
         device->EndScene();
     }
 
+    GameData::clearUnusedAvatars();
+
     return hooks->present(device, src, dest, windowOverride, dirtyRegion);
 }
 
@@ -284,6 +286,9 @@ static void swapWindow(SDL_Window* window) noexcept
     ImGui::Render();
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    GameData::clearUnusedAvatars();
+
     hooks->swapWindow(window);
 }
 

@@ -30,6 +30,7 @@ namespace GameData
     void clearProjectileList() noexcept;
     void clearTextures() noexcept;
     void clearPlayersLastLocation() noexcept;
+    void clearUnusedAvatars() noexcept;
 
     class Lock {
     private:
@@ -119,7 +120,6 @@ struct PlayerData : BaseData {
     const std::string& getRankName() const noexcept;
     ImTextureID getAvatarTexture() const noexcept;
     ImTextureID getRankTexture() const noexcept;
-    void clearAvatarTexture() noexcept { avatarTexture = {}; }
     float fadingAlpha() const noexcept;
 
     bool dormant;
@@ -130,7 +130,6 @@ struct PlayerData : BaseData {
     bool audible;
     bool spotted;
     bool immune;
-    bool hasAvatar = false;
     float fadingEndTime = 0.0f;
     float flashDuration;
     int health;
@@ -164,9 +163,6 @@ struct PlayerData : BaseData {
     };
 private:
     int skillgroup;
-
-    mutable Texture avatarTexture;
-    std::unique_ptr<std::uint8_t[]> avatarRGBA;
 };
 
 struct WeaponData : BaseData {
