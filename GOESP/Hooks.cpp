@@ -58,136 +58,173 @@ static HRESULT D3DAPI reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* par
     return hooks->reset(device, params);
 }
 
-static IDirect3DSurface9* rtBackup = nullptr;
-static IDirect3DPixelShader9* blurShaderX = nullptr;
-static IDirect3DPixelShader9* blurShaderY = nullptr;
-static IDirect3DTexture9* blurTexture1 = nullptr;
-static IDirect3DTexture9* blurTexture2 = nullptr;
-static int backbufferWidth = 0;
-static int backbufferHeight = 0;
-constexpr auto blurDownsample = 4;
+class BlurEffect {
+public:
+    static void draw(ImDrawList* drawList, IDirect3DDevice9* device) noexcept
+    {
+        instance()._draw(drawList, device);
+    }
+
+    static void clearTextures() noexcept
+    {
+        instance()._clearTextures();
+    }
+
+private:
+    IDirect3DSurface9* rtBackup = nullptr;
+    IDirect3DPixelShader9* blurShaderX = nullptr;
+    IDirect3DPixelShader9* blurShaderY = nullptr;
+    IDirect3DTexture9* blurTexture1 = nullptr;
+    IDirect3DTexture9* blurTexture2 = nullptr;
+    int backbufferWidth = 0;
+    int backbufferHeight = 0;
+    static constexpr auto blurDownsample = 4;
+
+    static BlurEffect& instance() noexcept
+    {
+        static BlurEffect blurEffect;
+        return blurEffect;
+    }
+
+    void _clearTextures() noexcept
+    {
+        if (blurTexture1) {
+            blurTexture1->Release();
+            blurTexture1 = nullptr;
+        }
+        if (blurTexture2) {
+            blurTexture2->Release();
+            blurTexture2 = nullptr;
+        }
+    }
+
+    static void begin(const ImDrawList*, const ImDrawCmd* cmd) noexcept
+    {
+        instance()._begin(reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData));
+    }
+
+    static void firstPass(const ImDrawList*, const ImDrawCmd* cmd) noexcept
+    {
+        instance()._firstPass(reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData));
+    }
+
+    static void secondPass(const ImDrawList*, const ImDrawCmd* cmd) noexcept
+    {
+        instance()._secondPass(reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData));
+    }
+
+    static void end(const ImDrawList*, const ImDrawCmd* cmd) noexcept
+    {
+        instance()._end(reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData));
+    }
+
+    void _begin(IDirect3DDevice9* device) noexcept
+    {
+        if (!blurShaderX)
+            device->CreatePixelShader(reinterpret_cast<const DWORD*>(Resource::blur_x.data()), &blurShaderX);
+
+        if (!blurShaderY)
+            device->CreatePixelShader(reinterpret_cast<const DWORD*>(Resource::blur_y.data()), &blurShaderY);
+
+        IDirect3DSurface9* backBuffer;
+        device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
+        D3DSURFACE_DESC desc;
+        backBuffer->GetDesc(&desc);
+
+        if (backbufferWidth != desc.Width || backbufferHeight != desc.Height) {
+            clearBlurTexture();
+
+            backbufferWidth = desc.Width;
+            backbufferHeight = desc.Height;
+        }
+
+        if (!blurTexture1)
+            device->CreateTexture(desc.Width / blurDownsample, desc.Height / blurDownsample, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &blurTexture1, nullptr);
+
+        if (!blurTexture2)
+            device->CreateTexture(desc.Width / blurDownsample, desc.Height / blurDownsample, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &blurTexture2, nullptr);
+
+        device->GetRenderTarget(0, &rtBackup);
+
+        {
+            IDirect3DSurface9* surface;
+            blurTexture1->GetSurfaceLevel(0, &surface);
+            device->StretchRect(backBuffer, NULL, surface, NULL, D3DTEXF_LINEAR);
+            surface->Release();
+        }
+
+        {
+            IDirect3DSurface9* surface;
+            blurTexture2->GetSurfaceLevel(0, &surface);
+            device->StretchRect(backBuffer, NULL, surface, NULL, D3DTEXF_LINEAR);
+            surface->Release();
+        }
+
+        backBuffer->Release();
+
+        device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+        device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+        device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+        device->SetRenderState(D3DRS_SCISSORTESTENABLE, false);
+    }
+
+    void _firstPass(IDirect3DDevice9* device) noexcept
+    {
+        {
+            IDirect3DSurface9* surface;
+            blurTexture2->GetSurfaceLevel(0, &surface);
+            device->SetRenderTarget(0, surface);
+            surface->Release();
+        }
+
+        device->SetPixelShader(blurShaderX);
+        const float params[4] = { 1.0f / (backbufferWidth / blurDownsample) };
+        device->SetPixelShaderConstantF(0, params, 1);
+    }
+
+    void _secondPass(IDirect3DDevice9* device) noexcept
+    {
+        {
+            IDirect3DSurface9* surface;
+            blurTexture1->GetSurfaceLevel(0, &surface);
+            device->SetRenderTarget(0, surface);
+            surface->Release();
+        }
+
+        device->SetPixelShader(blurShaderY);
+        const float params[4] = { 1.0f / (backbufferHeight / blurDownsample) };
+        device->SetPixelShaderConstantF(0, params, 1);
+    }
+
+    void _end(IDirect3DDevice9* device) noexcept
+    {
+        device->SetRenderTarget(0, rtBackup);
+        rtBackup->Release();
+
+        device->SetPixelShader(nullptr);
+        device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+        device->SetRenderState(D3DRS_SCISSORTESTENABLE, true);
+    }
+
+    void _draw(ImDrawList* drawList, IDirect3DDevice9* device) noexcept
+    {
+        drawList->AddCallback(&BlurEffect::begin, device);
+
+        for (int i = 0; i < 8; ++i) {
+            drawList->AddCallback(&BlurEffect::firstPass, device);
+            drawList->AddImage(blurTexture1, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
+            drawList->AddCallback(&BlurEffect::secondPass, device);
+            drawList->AddImage(blurTexture2, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
+        }
+
+        drawList->AddCallback(&BlurEffect::end, device);
+        drawList->AddImage(blurTexture1, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, IM_COL32(255, 255, 255, 255 * gui->getTransparency()));
+    }
+};
 
 static void clearBlurTexture() noexcept
 {
-    if (blurTexture1) {
-        blurTexture1->Release();
-        blurTexture1 = nullptr;
-    }
-    if (blurTexture2) {
-        blurTexture2->Release();
-        blurTexture2 = nullptr;
-    }
-}
-
-static void beginBlur(const ImDrawList*, const ImDrawCmd* cmd) noexcept
-{
-    const auto device = reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData);
-
-    if (!blurShaderX)
-        device->CreatePixelShader(reinterpret_cast<const DWORD*>(Resource::blur_x.data()), &blurShaderX);
-
-    if (!blurShaderY)
-        device->CreatePixelShader(reinterpret_cast<const DWORD*>(Resource::blur_y.data()), &blurShaderY);
-
-    IDirect3DSurface9* backBuffer;
-    device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
-    D3DSURFACE_DESC desc;
-    backBuffer->GetDesc(&desc);
-
-    if (backbufferWidth != desc.Width || backbufferHeight != desc.Height) {
-        clearBlurTexture();
-
-        backbufferWidth = desc.Width;
-        backbufferHeight = desc.Height;
-    }
-
-    if (!blurTexture1)
-        device->CreateTexture(desc.Width / blurDownsample, desc.Height / blurDownsample, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &blurTexture1, nullptr);
-
-    if (!blurTexture2)
-        device->CreateTexture(desc.Width / blurDownsample, desc.Height / blurDownsample, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &blurTexture2, nullptr);
-
-    device->GetRenderTarget(0, &rtBackup);
-
-    {
-        IDirect3DSurface9* surface;
-        blurTexture1->GetSurfaceLevel(0, &surface);
-        device->StretchRect(backBuffer, NULL, surface, NULL, D3DTEXF_LINEAR);
-        surface->Release();
-    }
-
-    {
-        IDirect3DSurface9* surface;
-        blurTexture2->GetSurfaceLevel(0, &surface);
-        device->StretchRect(backBuffer, NULL, surface, NULL, D3DTEXF_LINEAR);
-        surface->Release();
-    }
-
-    backBuffer->Release();
-
-    device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-    device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-    device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-    device->SetRenderState(D3DRS_SCISSORTESTENABLE, false);
-}
-
-static void firstBlurPass(const ImDrawList*, const ImDrawCmd* cmd) noexcept
-{
-    const auto device = reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData);
-
-    {
-        IDirect3DSurface9* surface;
-        blurTexture2->GetSurfaceLevel(0, &surface);
-        device->SetRenderTarget(0, surface);
-        surface->Release();
-    }
-
-    device->SetPixelShader(blurShaderX);
-    const float params[4] = { 1.0f / (backbufferWidth / blurDownsample) };
-    device->SetPixelShaderConstantF(0, params, 1);
-}
-
-static void secondBlurPass(const ImDrawList*, const ImDrawCmd* cmd) noexcept
-{
-    const auto device = reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData);
-
-    {
-        IDirect3DSurface9* surface;
-        blurTexture1->GetSurfaceLevel(0, &surface);
-        device->SetRenderTarget(0, surface);
-        surface->Release();
-    }
-
-    device->SetPixelShader(blurShaderY);
-    const float params[4] = { 1.0f / (backbufferHeight / blurDownsample) };
-    device->SetPixelShaderConstantF(0, params, 1);
-}
-
-static void endBlur(const ImDrawList*, const ImDrawCmd* cmd) noexcept
-{
-    const auto device = reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData);
-
-    device->SetRenderTarget(0, rtBackup);
-    rtBackup->Release();
-
-    device->SetPixelShader(nullptr);
-    device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-    device->SetRenderState(D3DRS_SCISSORTESTENABLE, true);
-}
-
-static void drawBackgroundBlur(ImDrawList* drawList, IDirect3DDevice9* device) noexcept
-{
-    drawList->AddCallback(beginBlur, device);
-
-    for (int i = 0; i < 8; ++i) {
-        drawList->AddCallback(firstBlurPass, device);
-        drawList->AddImage(blurTexture1, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
-        drawList->AddCallback(secondBlurPass, device);
-        drawList->AddImage(blurTexture2, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
-    }
-
-    drawList->AddCallback(endBlur, device);
-    drawList->AddImage(blurTexture1, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, IM_COL32(255, 255, 255, 255 * gui->getTransparency()));
+    BlurEffect::clearTextures();
 }
 
 static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const RECT* dest, HWND windowOverride, const RGNDATA* dirtyRegion) noexcept
@@ -208,7 +245,7 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     gui->handleToggle();
 
     if (!gui->isFullyClosed())
-        drawBackgroundBlur(ImGui::GetBackgroundDrawList(), device);
+        BlurEffect::draw(ImGui::GetBackgroundDrawList(), device);
 
     ImGui::Render();
 
