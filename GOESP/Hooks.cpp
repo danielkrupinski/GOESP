@@ -81,6 +81,19 @@ private:
     static constexpr auto blurDownsample = 4;
 
     BlurEffect() = default;
+    ~BlurEffect()
+    {
+        if (rtBackup)
+            rtBackup->Release();
+        if (blurShaderX)
+            blurShaderX->Release();
+        if (blurShaderY)
+            blurShaderY->Release();
+        if (blurTexture1)
+            blurTexture1->Release();
+        if (blurTexture2)
+            blurTexture2->Release();
+    }
 
     static BlurEffect& instance() noexcept
     {
