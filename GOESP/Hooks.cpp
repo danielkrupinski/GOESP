@@ -80,6 +80,8 @@ private:
     int backbufferHeight = 0;
     static constexpr auto blurDownsample = 4;
 
+    BlurEffect() = default;
+
     static BlurEffect& instance() noexcept
     {
         static BlurEffect blurEffect;
