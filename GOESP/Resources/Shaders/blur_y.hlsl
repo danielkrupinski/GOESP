@@ -11,8 +11,8 @@ float4 main(float2 uv : TEXCOORD0) : COLOR0
     (float3)color *= weights[0];
 
     for (int i = 1; i < 5; ++i) {
-        (float3)color += (float3)tex2D(texSampler, uv - float2(0.0f, texelHeight * offsets[i])) * weights[i];
-        (float3)color += (float3)tex2D(texSampler, uv + float2(0.0f, texelHeight * offsets[i])) * weights[i];
+        (float3)color += (float3)tex2D(texSampler, uv + float2(0.0f, -texelHeight * offsets[i])) * weights[i];
+        (float3)color += (float3)tex2D(texSampler, uv + float2(0.0f,  texelHeight * offsets[i])) * weights[i];
     }
 
     return color;
