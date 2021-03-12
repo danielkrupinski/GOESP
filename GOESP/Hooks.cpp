@@ -60,10 +60,13 @@ static HRESULT D3DAPI reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* par
 
 class BlurEffect {
 public:
+#ifdef _WIN32
     static void draw(ImDrawList* drawList, IDirect3DDevice9* device) noexcept
     {
-        instance()._draw(drawList, device);
+        instance().device = device;
+        instance()._draw(drawList);
     }
+#endif
 
     static void clearTextures() noexcept
     {
@@ -71,11 +74,13 @@ public:
     }
 
 private:
+    IDirect3DDevice9* device = nullptr; // DO NOT RELEASE!
     IDirect3DSurface9* rtBackup = nullptr;
     IDirect3DPixelShader9* blurShaderX = nullptr;
     IDirect3DPixelShader9* blurShaderY = nullptr;
     IDirect3DTexture9* blurTexture1 = nullptr;
     IDirect3DTexture9* blurTexture2 = nullptr;
+
     int backbufferWidth = 0;
     int backbufferHeight = 0;
     static constexpr auto blurDownsample = 4;
@@ -113,27 +118,27 @@ private:
         }
     }
 
-    static void begin(const ImDrawList*, const ImDrawCmd* cmd) noexcept
+    static void begin(const ImDrawList*, const ImDrawCmd*) noexcept
     {
-        instance()._begin(reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData));
+        instance()._begin();
     }
 
-    static void firstPass(const ImDrawList*, const ImDrawCmd* cmd) noexcept
+    static void firstPass(const ImDrawList*, const ImDrawCmd*) noexcept
     {
-        instance()._firstPass(reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData));
+        instance()._firstPass();
     }
 
-    static void secondPass(const ImDrawList*, const ImDrawCmd* cmd) noexcept
+    static void secondPass(const ImDrawList*, const ImDrawCmd*) noexcept
     {
-        instance()._secondPass(reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData));
+        instance()._secondPass();
     }
 
-    static void end(const ImDrawList*, const ImDrawCmd* cmd) noexcept
+    static void end(const ImDrawList*, const ImDrawCmd*) noexcept
     {
-        instance()._end(reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData));
+        instance()._end();
     }
 
-    void _begin(IDirect3DDevice9* device) noexcept
+    void _begin() noexcept
     {
         if (!blurShaderX)
             device->CreatePixelShader(reinterpret_cast<const DWORD*>(Resource::blur_x.data()), &blurShaderX);
@@ -183,7 +188,7 @@ private:
         device->SetRenderState(D3DRS_SCISSORTESTENABLE, false);
     }
 
-    void _firstPass(IDirect3DDevice9* device) noexcept
+    void _firstPass() noexcept
     {
         {
             IDirect3DSurface9* surface;
@@ -197,7 +202,7 @@ private:
         device->SetPixelShaderConstantF(0, params, 1);
     }
 
-    void _secondPass(IDirect3DDevice9* device) noexcept
+    void _secondPass() noexcept
     {
         {
             IDirect3DSurface9* surface;
@@ -211,7 +216,7 @@ private:
         device->SetPixelShaderConstantF(0, params, 1);
     }
 
-    void _end(IDirect3DDevice9* device) noexcept
+    void _end() noexcept
     {
         device->SetRenderTarget(0, rtBackup);
         rtBackup->Release();
@@ -221,18 +226,18 @@ private:
         device->SetRenderState(D3DRS_SCISSORTESTENABLE, true);
     }
 
-    void _draw(ImDrawList* drawList, IDirect3DDevice9* device) noexcept
+    void _draw(ImDrawList* drawList) noexcept
     {
-        drawList->AddCallback(&BlurEffect::begin, device);
+        drawList->AddCallback(&BlurEffect::begin, nullptr);
 
         for (int i = 0; i < 8; ++i) {
-            drawList->AddCallback(&BlurEffect::firstPass, device);
+            drawList->AddCallback(&BlurEffect::firstPass, nullptr);
             drawList->AddImage(blurTexture1, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
-            drawList->AddCallback(&BlurEffect::secondPass, device);
+            drawList->AddCallback(&BlurEffect::secondPass, nullptr);
             drawList->AddImage(blurTexture2, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
         }
 
-        drawList->AddCallback(&BlurEffect::end, device);
+        drawList->AddCallback(&BlurEffect::end, nullptr);
         drawList->AddImage(blurTexture1, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, IM_COL32(255, 255, 255, 255 * gui->getTransparency()));
     }
 };
