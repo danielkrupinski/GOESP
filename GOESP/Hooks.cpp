@@ -30,34 +30,6 @@
 #include "imgui/imgui_impl_opengl3.h"
 #endif
 
-#ifdef _WIN32
-LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
-{
-    if (hooks->getState() == Hooks::State::NotInstalled)
-        hooks->install();
-
-    if (hooks->getState() == Hooks::State::Installed) {
-        GameData::update();
-
-        ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
-        interfaces->inputSystem->enableInput(!gui->isOpen());
-    }
-
-    return CallWindowProcW(hooks->wndProc, window, msg, wParam, lParam);
-}
-
-static void clearBlurTexture() noexcept;
-
-static HRESULT D3DAPI reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* params) noexcept
-{
-    GameData::clearTextures();
-    clearBlurTexture();
-    ImGui_ImplDX9_InvalidateDeviceObjects();
-    return hooks->reset(device, params);
-}
-
 class BlurEffect {
 public:
 #ifdef _WIN32
@@ -66,20 +38,35 @@ public:
         instance().device = device;
         instance()._draw(drawList);
     }
-#endif
 
     static void clearTextures() noexcept
     {
-        instance()._clearTextures();
+        if (instance().blurTexture1) {
+            instance().blurTexture1->Release();
+            instance().blurTexture1 = nullptr;
+        }
+        if (instance().blurTexture2) {
+            instance().blurTexture2->Release();
+            instance().blurTexture2 = nullptr;
+        }
     }
 
+#else
+    static void draw(ImDrawList* drawList) noexcept
+    {
+        instance()._draw(drawList);
+    }
+#endif
+
 private:
+#ifdef _WIN32
     IDirect3DDevice9* device = nullptr; // DO NOT RELEASE!
     IDirect3DSurface9* rtBackup = nullptr;
     IDirect3DPixelShader9* blurShaderX = nullptr;
     IDirect3DPixelShader9* blurShaderY = nullptr;
     IDirect3DTexture9* blurTexture1 = nullptr;
     IDirect3DTexture9* blurTexture2 = nullptr;
+#endif
 
     int backbufferWidth = 0;
     int backbufferHeight = 0;
@@ -88,6 +75,7 @@ private:
     BlurEffect() = default;
     ~BlurEffect()
     {
+#ifdef _WIN32
         if (rtBackup)
             rtBackup->Release();
         if (blurShaderX)
@@ -98,6 +86,7 @@ private:
             blurTexture1->Release();
         if (blurTexture2)
             blurTexture2->Release();
+#endif
     }
 
     static BlurEffect& instance() noexcept
@@ -106,40 +95,14 @@ private:
         return blurEffect;
     }
 
-    void _clearTextures() noexcept
-    {
-        if (blurTexture1) {
-            blurTexture1->Release();
-            blurTexture1 = nullptr;
-        }
-        if (blurTexture2) {
-            blurTexture2->Release();
-            blurTexture2 = nullptr;
-        }
-    }
-
-    static void begin(const ImDrawList*, const ImDrawCmd*) noexcept
-    {
-        instance()._begin();
-    }
-
-    static void firstPass(const ImDrawList*, const ImDrawCmd*) noexcept
-    {
-        instance()._firstPass();
-    }
-
-    static void secondPass(const ImDrawList*, const ImDrawCmd*) noexcept
-    {
-        instance()._secondPass();
-    }
-
-    static void end(const ImDrawList*, const ImDrawCmd*) noexcept
-    {
-        instance()._end();
-    }
+    static void begin(const ImDrawList*, const ImDrawCmd*) noexcept { instance()._begin(); }
+    static void firstPass(const ImDrawList*, const ImDrawCmd*) noexcept { instance()._firstPass(); }
+    static void secondPass(const ImDrawList*, const ImDrawCmd*) noexcept { instance()._secondPass(); }
+    static void end(const ImDrawList*, const ImDrawCmd*) noexcept { instance()._end(); }
 
     void _begin() noexcept
     {
+#ifdef _WIN32
         if (!blurShaderX)
             device->CreatePixelShader(reinterpret_cast<const DWORD*>(Resource::blur_x.data()), &blurShaderX);
 
@@ -152,7 +115,7 @@ private:
         backBuffer->GetDesc(&desc);
 
         if (backbufferWidth != desc.Width || backbufferHeight != desc.Height) {
-            clearBlurTexture();
+            clearTextures();
 
             backbufferWidth = desc.Width;
             backbufferHeight = desc.Height;
@@ -186,10 +149,12 @@ private:
         device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
         device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
         device->SetRenderState(D3DRS_SCISSORTESTENABLE, false);
+#endif
     }
 
     void _firstPass() noexcept
     {
+#ifdef _WIN32
         {
             IDirect3DSurface9* surface;
             blurTexture2->GetSurfaceLevel(0, &surface);
@@ -200,10 +165,12 @@ private:
         device->SetPixelShader(blurShaderX);
         const float params[4] = { 1.0f / (backbufferWidth / blurDownsample) };
         device->SetPixelShaderConstantF(0, params, 1);
+#endif
     }
 
     void _secondPass() noexcept
     {
+#ifdef _WIN32
         {
             IDirect3DSurface9* surface;
             blurTexture1->GetSurfaceLevel(0, &surface);
@@ -214,16 +181,19 @@ private:
         device->SetPixelShader(blurShaderY);
         const float params[4] = { 1.0f / (backbufferHeight / blurDownsample) };
         device->SetPixelShaderConstantF(0, params, 1);
+#endif
     }
 
     void _end() noexcept
     {
+#ifdef _WIN32
         device->SetRenderTarget(0, rtBackup);
         rtBackup->Release();
 
         device->SetPixelShader(nullptr);
         device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
         device->SetRenderState(D3DRS_SCISSORTESTENABLE, true);
+#endif
     }
 
     void _draw(ImDrawList* drawList) noexcept
@@ -242,9 +212,30 @@ private:
     }
 };
 
-static void clearBlurTexture() noexcept
+#ifdef _WIN32
+LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
+    if (hooks->getState() == Hooks::State::NotInstalled)
+        hooks->install();
+
+    if (hooks->getState() == Hooks::State::Installed) {
+        GameData::update();
+
+        ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
+        interfaces->inputSystem->enableInput(!gui->isOpen());
+    }
+
+    return CallWindowProcW(hooks->wndProc, window, msg, wParam, lParam);
+}
+
+static HRESULT D3DAPI reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* params) noexcept
+{
+    GameData::clearTextures();
     BlurEffect::clearTextures();
+    ImGui_ImplDX9_InvalidateDeviceObjects();
+    return hooks->reset(device, params);
 }
 
 static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const RECT* dest, HWND windowOverride, const RGNDATA* dirtyRegion) noexcept
