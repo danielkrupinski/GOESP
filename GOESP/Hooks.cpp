@@ -21,6 +21,7 @@
 
 #include "Resources/Shaders/blur_x.h"
 #include "Resources/Shaders/blur_y.h"
+#include "Resources/Shaders/monochrome.h"
 
 #elif __linux__
 #include <SDL2/SDL.h>
@@ -49,11 +50,13 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 }
 
 static void clearBlurTexture() noexcept;
+static void clearMonochromeTexture() noexcept;
 
 static HRESULT D3DAPI reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* params) noexcept
 {
     GameData::clearTextures();
     clearBlurTexture();
+    clearMonochromeTexture();
     ImGui_ImplDX9_InvalidateDeviceObjects();
     return hooks->reset(device, params);
 }
@@ -237,9 +240,111 @@ private:
     }
 };
 
+class MonochromeEffect {
+public:
+    static void draw(ImDrawList* drawList, IDirect3DDevice9* device) noexcept
+    {
+        instance()._draw(drawList, device);
+    }
+
+    static void clearTexture() noexcept
+    {
+        instance()._clearTexture();
+    }
+
+private:
+    IDirect3DPixelShader9* shader = nullptr;
+    IDirect3DTexture9* texture = nullptr;
+    int backbufferWidth = 0;
+    int backbufferHeight = 0;
+
+    MonochromeEffect() = default;
+    ~MonochromeEffect()
+    {
+        if (shader)
+            shader->Release();
+        if (texture)
+            texture->Release();
+    }
+
+    static MonochromeEffect& instance() noexcept
+    {
+        static MonochromeEffect monochromeEffect;
+        return monochromeEffect;
+    }
+
+    void _clearTexture() noexcept
+    {
+        if (texture) {
+            texture->Release();
+            texture = nullptr;
+        }
+    }
+
+    static void begin(const ImDrawList*, const ImDrawCmd* cmd) noexcept
+    {
+        instance()._begin(reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData));
+    }
+
+    static void end(const ImDrawList*, const ImDrawCmd* cmd) noexcept
+    {
+        instance()._end(reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData));
+    }
+
+    void _begin(IDirect3DDevice9* device) noexcept
+    {
+        if (!shader)
+            device->CreatePixelShader(reinterpret_cast<const DWORD*>(Resource::monochrome.data()), &shader);
+
+        IDirect3DSurface9* backBuffer;
+        device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
+        D3DSURFACE_DESC desc;
+        backBuffer->GetDesc(&desc);
+
+        if (backbufferWidth != desc.Width || backbufferHeight != desc.Height) {
+            _clearTexture();
+
+            backbufferWidth = desc.Width;
+            backbufferHeight = desc.Height;
+        }
+
+        if (!texture)
+            device->CreateTexture(desc.Width, desc.Height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &texture, nullptr);
+
+        {
+            IDirect3DSurface9* surface;
+            texture->GetSurfaceLevel(0, &surface);
+            device->StretchRect(backBuffer, NULL, surface, NULL, D3DTEXF_NONE);
+            surface->Release();
+        }
+
+        backBuffer->Release();
+        device->SetPixelShader(shader);
+        const float params[4] = { gui->getTransparency() };
+        device->SetPixelShaderConstantF(0, params, 1);
+    }
+
+    void _end(IDirect3DDevice9* device) noexcept
+    {
+        device->SetPixelShader(nullptr);
+    }
+
+    void _draw(ImDrawList* drawList, IDirect3DDevice9* device) noexcept
+    {
+        drawList->AddCallback(&MonochromeEffect::begin, device);
+        drawList->AddImage(texture, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
+        drawList->AddCallback(&MonochromeEffect::end, device);
+    }
+};
+
 static void clearBlurTexture() noexcept
 {
     BlurEffect::clearTextures();
+}
+
+static void clearMonochromeTexture() noexcept
+{
+    MonochromeEffect::clearTexture();
 }
 
 static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const RECT* dest, HWND windowOverride, const RGNDATA* dirtyRegion) noexcept
