@@ -428,7 +428,6 @@ private:
         drawList->AddCallback(ImDrawCallback_ResetRenderState, nullptr);
         drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, IM_COL32(255, 255, 255, 255 * gui->getTransparency()));
 #endif
-     //drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture2), { 1024 / 2, 0.0f }, { 1024, 768 / 2 }, { 0.0f, 1.0f }, { 1.0f, 0.0f  }, IM_COL32(255, 255, 255, 255 * gui->getTransparency()));
     }
 };
 
