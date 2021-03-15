@@ -168,8 +168,20 @@ private:
 
         device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
         device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-        device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
         device->SetRenderState(D3DRS_SCISSORTESTENABLE, false);
+
+        const ImDrawData* drawData = ImGui::GetDrawData();
+        float L = drawData->DisplayPos.x + 0.5f * blurDownsample;
+        float R = drawData->DisplayPos.x + drawData->DisplaySize.x + 0.5f * blurDownsample;
+        float T = drawData->DisplayPos.y + 0.5f * blurDownsample;
+        float B = drawData->DisplayPos.y + drawData->DisplaySize.y + 0.5f * blurDownsample;
+        D3DMATRIX projection = {{{
+            2.0f/(R-L),  0.0f,        0.0f, 0.0f,
+            0.0f,        2.0f/(T-B),  0.0f, 0.0f,
+            0.0f,        0.0f,        0.5f, 0.0f,
+            (L+R)/(L-R), (T+B)/(B-T), 0.5f, 1.0f
+        }}};
+        device->SetTransform(D3DTS_PROJECTION, &projection);
 #else
         glGetIntegerv(GL_TEXTURE_BINDING_2D, &textureBackup);
         glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &fboBackup);
@@ -394,7 +406,6 @@ private:
         rtBackup->Release();
 
         device->SetPixelShader(nullptr);
-        device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
         device->SetRenderState(D3DRS_SCISSORTESTENABLE, true);
 #else
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboBackup);
@@ -415,10 +426,10 @@ private:
         }
 
         drawList->AddCallback(&BlurEffect::end, nullptr);
+        drawList->AddCallback(ImDrawCallback_ResetRenderState, nullptr);
 #ifdef _WIN32
         drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, IM_COL32(255, 255, 255, 255 * gui->getTransparency()));
 #else
-        drawList->AddCallback(ImDrawCallback_ResetRenderState, nullptr);
         drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, IM_COL32(255, 255, 255, 255 * gui->getTransparency()));
 #endif
     }
