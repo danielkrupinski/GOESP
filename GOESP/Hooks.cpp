@@ -210,22 +210,8 @@ private:
         if (!fragmentShaderX) {
             fragmentShaderX = glCreateShader(GL_FRAGMENT_SHADER);
             constexpr const GLchar* fsSource =
-                "#version 130\n"
-                "in vec2 fragUV;\n"
-                "uniform sampler2D texSampler;\n"
-                "uniform float texelWidth;\n"
-                "float offsets[5] = float[](0.0f, 1.0f, 2.0f, 3.0f, 4.0f);\n"
-                "float weights[5] = float[](0.2270270270f, 0.1945945946f, 0.1216216216f, 0.0540540541f, 0.0162162162f);\n"
-                "out vec4 color;\n"
-                "void main()\n"
-                "{\n"
-                "    color = texture(texSampler, fragUV);\n"
-                "    color.rgb *= weights[0];\n"
-                "    for (int i = 1; i < 5; ++i) {\n"
-		        "        color.rgb += texture(texSampler, fragUV - vec2(texelWidth * offsets[i], 0.0f)).rgb * weights[i];\n"
-		        "        color.rgb += texture(texSampler, fragUV + vec2(texelWidth * offsets[i], 0.0f)).rgb * weights[i];\n"
-	            "    }\n"
-                "}\n";
+                #include "Resources/Shaders/blur_x.glsl"
+            ;
             glShaderSource(fragmentShaderX, 1, &fsSource, nullptr);
             glCompileShader(fragmentShaderX);
         }
@@ -245,9 +231,9 @@ private:
                 "    color = texture(texSampler, fragUV);\n"
                 "    color.rgb *= weights[0];\n"
                 "    for (int i = 1; i < 5; ++i) {\n"
-		        "        color.rgb += texture(texSampler, fragUV - vec2(0.0f, texelHeight * offsets[i])).rgb * weights[i];\n"
-		        "        color.rgb += texture(texSampler, fragUV + vec2(0.0f, texelHeight * offsets[i])).rgb * weights[i];\n"
-	            "    }\n"
+                "        color.rgb += texture(texSampler, fragUV - vec2(0.0f, texelHeight * offsets[i])).rgb * weights[i];\n"
+                "        color.rgb += texture(texSampler, fragUV + vec2(0.0f, texelHeight * offsets[i])).rgb * weights[i];\n"
+                "    }\n"
                 "}\n";
             glShaderSource(fragmentShaderY, 1, &fsSource, nullptr);
             glCompileShader(fragmentShaderY);
@@ -305,7 +291,7 @@ private:
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, backbufferWidth / blurDownsample, backbufferHeight / blurDownsample, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
         }
 
@@ -315,7 +301,7 @@ private:
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, backbufferWidth / blurDownsample, backbufferHeight / blurDownsample, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
         }
 
