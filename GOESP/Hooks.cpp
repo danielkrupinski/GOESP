@@ -219,22 +219,8 @@ private:
          if (!fragmentShaderY) {
             fragmentShaderY = glCreateShader(GL_FRAGMENT_SHADER);
             constexpr const GLchar* fsSource =
-                "#version 130\n"
-                "in vec2 fragUV;\n"
-                "uniform sampler2D texSampler;\n"
-                "uniform float texelHeight;\n"
-                "float offsets[5] = float[](0.0f, 1.0f, 2.0f, 3.0f, 4.0f);\n"
-                "float weights[5] = float[](0.2270270270f, 0.1945945946f, 0.1216216216f, 0.0540540541f, 0.0162162162f);\n"
-                "out vec4 color;\n"
-                "void main()\n"
-                "{\n"
-                "    color = texture(texSampler, fragUV);\n"
-                "    color.rgb *= weights[0];\n"
-                "    for (int i = 1; i < 5; ++i) {\n"
-                "        color.rgb += texture(texSampler, fragUV - vec2(0.0f, texelHeight * offsets[i])).rgb * weights[i];\n"
-                "        color.rgb += texture(texSampler, fragUV + vec2(0.0f, texelHeight * offsets[i])).rgb * weights[i];\n"
-                "    }\n"
-                "}\n";
+                #include "Resources/Shaders/blur_y.glsl"
+            ;
             glShaderSource(fragmentShaderY, 1, &fsSource, nullptr);
             glCompileShader(fragmentShaderY);
         }
