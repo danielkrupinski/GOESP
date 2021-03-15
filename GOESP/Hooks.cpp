@@ -164,13 +164,6 @@ private:
             surface->Release();
         }
 
-        {
-            IDirect3DSurface9* surface;
-            blurTexture2->GetSurfaceLevel(0, &surface);
-            device->StretchRect(backBuffer, NULL, surface, NULL, D3DTEXF_LINEAR);
-            surface->Release();
-        }
-
         backBuffer->Release();
 
         device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
