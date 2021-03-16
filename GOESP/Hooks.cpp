@@ -92,19 +92,10 @@ private:
     GLuint shaderProgramY = 0;
 
     GLuint uniformLocationTex = 0;
-    GLuint uniformLocationProjMtx = 0;
     GLuint uniformTexelWidth = 0;
 
     GLuint uniformLocationTex2 = 0;
-    GLuint uniformLocationProjMtx2 = 0;
     GLuint uniformTexelHeight = 0;
-
-    float orthoProjection[4][4]{
-        { 0.0f, 0.0f, 0.0f, 0.0f },
-        { 0.0f, 0.0f, 0.0f, 0.0f },
-        { 0.0f, 0.0f,-1.0f, 0.0f },
-        { 0.0f, 0.0f, 0.0f, 1.0f }
-    };
 #endif
 
     int backbufferWidth = 0;
@@ -226,7 +217,6 @@ private:
             vertexShader = glCreateShader(GL_VERTEX_SHADER);
             constexpr const GLchar* vsSource =
                 "#version 130\n"
-                "uniform mat4 proj;\n"
                 "in vec2 pos;\n"
                 "in vec2 uv;\n"
                 "in vec4 color;\n"
@@ -236,7 +226,7 @@ private:
                 "{\n"
                 "    fragUV = uv;\n"
                 "    fragColor = color;\n"
-                "    gl_Position = proj * vec4(pos.xy, 0, 1);\n"
+                "    gl_Position = vec4(pos.xy, 0, 1);\n"
                 "}\n";
             glShaderSource(vertexShader, 1, &vsSource, nullptr);
             glCompileShader(vertexShader);
@@ -272,7 +262,6 @@ private:
             glLinkProgram(shaderProgramX);
 
             uniformLocationTex = glGetUniformLocation(shaderProgramX, "texSampler");
-            uniformLocationProjMtx = glGetUniformLocation(shaderProgramX, "proj");
             uniformTexelWidth = glGetUniformLocation(shaderProgramX, "texelWidth");
         }
 
@@ -288,7 +277,6 @@ private:
             glLinkProgram(shaderProgramY);
 
             uniformLocationTex2 = glGetUniformLocation(shaderProgramY, "texSampler");
-            uniformLocationProjMtx2 = glGetUniformLocation(shaderProgramY, "proj");
             uniformTexelHeight = glGetUniformLocation(shaderProgramY, "texelHeight");
         }
 
@@ -304,17 +292,6 @@ private:
         glReadBuffer(GL_BACK);
         glDrawBuffer(GL_COLOR_ATTACHMENT0);
         glBlitFramebuffer(0, 0, backbufferWidth, backbufferHeight, 0, 0, backbufferWidth / blurDownsample, backbufferHeight / blurDownsample, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-
-        const ImDrawData* drawData = ImGui::GetDrawData();
-        float L = drawData->DisplayPos.x;
-        float R = drawData->DisplayPos.x + drawData->DisplaySize.x;
-        float T = drawData->DisplayPos.y;
-        float B = drawData->DisplayPos.y + drawData->DisplaySize.y;
-
-        orthoProjection[0][0] = 2.0f/(R-L);
-        orthoProjection[1][1] = 2.0f/(T-B);
-        orthoProjection[3][0] = (R+L)/(L-R);
-        orthoProjection[3][1] = (T+B)/(B-T);
 
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
@@ -345,7 +322,6 @@ private:
         glUseProgram(shaderProgramX);
         glUniform1i(uniformLocationTex, 0);
         glUniform1f(uniformTexelWidth, 1.0f / (backbufferWidth / blurDownsample));
-        glUniformMatrix4fv(uniformLocationProjMtx, 1, GL_FALSE, &orthoProjection[0][0]);
 #endif
     }
 
@@ -368,7 +344,6 @@ private:
         glUseProgram(shaderProgramY);
         glUniform1i(uniformLocationTex2, 0);
         glUniform1f(uniformTexelHeight, 1.0f / (backbufferHeight / blurDownsample));
-        glUniformMatrix4fv(uniformLocationProjMtx2, 1, GL_FALSE, &orthoProjection[0][0]);
 #endif
     }
 
@@ -393,10 +368,17 @@ private:
 
         drawList->AddCallback(&begin, nullptr);
         for (int i = 0; i < 8; ++i) {
+#ifdef _WIN32
             drawList->AddCallback(&firstPass, nullptr);
             drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
             drawList->AddCallback(&secondPass, nullptr);
             drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture2), { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
+#else
+            drawList->AddCallback(&firstPass, nullptr);
+            drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { -1.0f, -1.0f }, { 1.0f, 1.0f });
+            drawList->AddCallback(&secondPass, nullptr);
+            drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture2), { -1.0f, -1.0f }, { 1.0f, 1.0f });
+#endif
         }
         drawList->AddCallback(&end, nullptr);
         drawList->AddCallback(ImDrawCallback_ResetRenderState, nullptr);
