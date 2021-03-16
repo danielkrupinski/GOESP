@@ -56,8 +56,19 @@ public:
     {
         instance()._draw(drawList);
     }
-#endif
 
+    static void clearTextures() noexcept
+    {
+        if (instance().blurTexture1) {
+            glDeleteTextures(1, &instance().blurTexture1);
+            instance().blurTexture1 = 0;
+        }
+        if (instance().blurTexture2) {
+            glDeleteTextures(1, &instance().blurTexture2);
+            instance().blurTexture2 = 0;
+        }
+    }
+#endif
 private:
 #ifdef _WIN32
     IDirect3DDevice9* device = nullptr; // DO NOT RELEASE!
@@ -128,6 +139,43 @@ private:
     static void secondPass(const ImDrawList*, const ImDrawCmd*) noexcept { instance()._secondPass(); }
     static void end(const ImDrawList*, const ImDrawCmd*) noexcept { instance()._end(); }
 
+    void createTextures() noexcept
+    {
+        if (const auto [width, height] = ImGui::GetIO().DisplaySize; backbufferWidth != static_cast<int>(width) || backbufferHeight != static_cast<int>(height)) {
+            clearTextures();
+            backbufferWidth = static_cast<int>(width);
+            backbufferHeight = static_cast<int>(height);
+        }
+
+#ifdef _WIN32
+        if (!blurTexture1)
+            device->CreateTexture(backbufferWidth / blurDownsample, backbufferHeight / blurDownsample, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &blurTexture1, nullptr);
+
+        if (!blurTexture2)
+            device->CreateTexture(backbufferWidth / blurDownsample, backbufferHeight / blurDownsample, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &blurTexture2, nullptr);
+#else
+        if (!blurTexture1) {
+            glGenTextures(1, &blurTexture1);
+            glBindTexture(GL_TEXTURE_2D, blurTexture1);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, backbufferWidth / blurDownsample, backbufferHeight / blurDownsample, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+        }
+
+        if (!blurTexture2) {
+            glGenTextures(1, &blurTexture2);
+            glBindTexture(GL_TEXTURE_2D, blurTexture2);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, backbufferWidth / blurDownsample, backbufferHeight / blurDownsample, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+        }
+#endif
+    }
+
     void _begin() noexcept
     {
 #ifdef _WIN32
@@ -137,34 +185,21 @@ private:
         if (!blurShaderY)
             device->CreatePixelShader(reinterpret_cast<const DWORD*>(Resource::blur_y.data()), &blurShaderY);
 
-        IDirect3DSurface9* backBuffer;
-        device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
-        D3DSURFACE_DESC desc;
-        backBuffer->GetDesc(&desc);
-
-        if (backbufferWidth != desc.Width || backbufferHeight != desc.Height) {
-            clearTextures();
-
-            backbufferWidth = desc.Width;
-            backbufferHeight = desc.Height;
-        }
-
-        if (!blurTexture1)
-            device->CreateTexture(desc.Width / blurDownsample, desc.Height / blurDownsample, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &blurTexture1, nullptr);
-
-        if (!blurTexture2)
-            device->CreateTexture(desc.Width / blurDownsample, desc.Height / blurDownsample, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &blurTexture2, nullptr);
-
         device->GetRenderTarget(0, &rtBackup);
 
+        assert(blurTexture1 && blurTexture2);
+
         {
+            IDirect3DSurface9* backBuffer;
+            device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
+
             IDirect3DSurface9* surface;
             blurTexture1->GetSurfaceLevel(0, &surface);
             device->StretchRect(backBuffer, NULL, surface, NULL, D3DTEXF_LINEAR);
-            surface->Release();
-        }
 
-        backBuffer->Release();
+            surface->Release();
+            backBuffer->Release();
+        }
 
         device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
         device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
@@ -255,40 +290,6 @@ private:
             uniformLocationTex2 = glGetUniformLocation(shaderProgramY, "texSampler");
             uniformLocationProjMtx2 = glGetUniformLocation(shaderProgramY, "proj");
             uniformTexelHeight = glGetUniformLocation(shaderProgramY, "texelHeight");
-        }
-
-        if (const auto [width, height] = ImGui::GetIO().DisplaySize; backbufferWidth != width || backbufferHeight != height) {
-            backbufferWidth = width;
-            backbufferHeight = height;
-
-            if (blurTexture1) {
-                glDeleteTextures(1, &blurTexture1);
-                blurTexture1 = 0;
-            }
-            if (blurTexture2) {
-                glDeleteTextures(1, &blurTexture2);
-                blurTexture2 = 0;
-            }
-        }
-
-        if (!blurTexture1) {
-            glGenTextures(1, &blurTexture1);
-            glBindTexture(GL_TEXTURE_2D, blurTexture1);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, backbufferWidth / blurDownsample, backbufferHeight / blurDownsample, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-        }
-
-        if (!blurTexture2) {
-            glGenTextures(1, &blurTexture2);
-            glBindTexture(GL_TEXTURE_2D, blurTexture2);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, backbufferWidth / blurDownsample, backbufferHeight / blurDownsample, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
         }
 
         if (!frameBuffer)
@@ -388,16 +389,16 @@ private:
 
     void _draw(ImDrawList* drawList) noexcept
     {
-        drawList->AddCallback(&BlurEffect::begin, nullptr);
+        createTextures();
 
+        drawList->AddCallback(&begin, nullptr);
         for (int i = 0; i < 8; ++i) {
-            drawList->AddCallback(&BlurEffect::firstPass, nullptr);
+            drawList->AddCallback(&firstPass, nullptr);
             drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
-            drawList->AddCallback(&BlurEffect::secondPass, nullptr);
+            drawList->AddCallback(&secondPass, nullptr);
             drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture2), { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
         }
-
-        drawList->AddCallback(&BlurEffect::end, nullptr);
+        drawList->AddCallback(&end, nullptr);
         drawList->AddCallback(ImDrawCallback_ResetRenderState, nullptr);
 #ifdef _WIN32
         drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, IM_COL32(255, 255, 255, 255 * gui->getTransparency()));
