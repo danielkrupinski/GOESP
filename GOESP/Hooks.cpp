@@ -196,18 +196,8 @@ private:
         device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
         device->SetRenderState(D3DRS_SCISSORTESTENABLE, false);
 
-        const ImDrawData* drawData = ImGui::GetDrawData();
-        float L = drawData->DisplayPos.x + 0.5f * blurDownsample;
-        float R = drawData->DisplayPos.x + drawData->DisplaySize.x + 0.5f * blurDownsample;
-        float T = drawData->DisplayPos.y + 0.5f * blurDownsample;
-        float B = drawData->DisplayPos.y + drawData->DisplaySize.y + 0.5f * blurDownsample;
-        D3DMATRIX projection = {{{
-            2.0f/(R-L),  0.0f,        0.0f, 0.0f,
-            0.0f,        2.0f/(T-B),  0.0f, 0.0f,
-            0.0f,        0.0f,        0.5f, 0.0f,
-            (L+R)/(L-R), (T+B)/(B-T), 0.5f, 1.0f
-        }}};
-        device->SetTransform(D3DTS_PROJECTION, &projection);
+        constexpr D3DMATRIX identity{ { { 1.0f, 0.0f, 0.0f, 0.0f,  0.0f, 1.0f, 0.0f, 0.0f,  0.0f, 0.0f, 1.0f, 0.0f,  0.0f, 0.0f, 0.0f, 1.0f } } };
+        device->SetTransform(D3DTS_PROJECTION, &identity);
 #else
         glGetIntegerv(GL_TEXTURE_BINDING_2D, &textureBackup);
         glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &fboBackup);
@@ -366,22 +356,25 @@ private:
     {
         createTextures();
 
+#ifdef _WIN32
+        // half-pixel offset for dx9
+        const float offsetX = -1.0f / (backbufferWidth / blurDownsample);
+        const float offsetY = 1.0f / (backbufferHeight / blurDownsample);
+#else
+        constexpr auto offsetX = 0.0f;
+        constexpr auto offsetY = 0.0f;
+#endif
+
         drawList->AddCallback(&begin, nullptr);
         for (int i = 0; i < 8; ++i) {
-#ifdef _WIN32
             drawList->AddCallback(&firstPass, nullptr);
-            drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
+            drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { -1.0f + offsetX, -1.0f + offsetY }, { 1.0f + offsetX, 1.0f + offsetY });
             drawList->AddCallback(&secondPass, nullptr);
-            drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture2), { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
-#else
-            drawList->AddCallback(&firstPass, nullptr);
-            drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { -1.0f, -1.0f }, { 1.0f, 1.0f });
-            drawList->AddCallback(&secondPass, nullptr);
-            drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture2), { -1.0f, -1.0f }, { 1.0f, 1.0f });
-#endif
+            drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture2), { -1.0f + offsetX, -1.0f + offsetY }, { 1.0f + offsetX, 1.0f + offsetY });
         }
         drawList->AddCallback(&end, nullptr);
         drawList->AddCallback(ImDrawCallback_ResetRenderState, nullptr);
+
 #ifdef _WIN32
         drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, IM_COL32(255, 255, 255, 255 * gui->getTransparency()));
 #else
