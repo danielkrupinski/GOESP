@@ -237,7 +237,6 @@ private:
                         
             glBindAttribLocation(shaderProgramX, 0, "pos");
             glBindAttribLocation(shaderProgramX, 1, "uv");
-            glBindAttribLocation(shaderProgramX, 2, "color");
 
             glLinkProgram(shaderProgramX);
 
@@ -252,7 +251,6 @@ private:
 
             glBindAttribLocation(shaderProgramY, 0, "pos");
             glBindAttribLocation(shaderProgramY, 1, "uv");
-            glBindAttribLocation(shaderProgramY, 2, "color");
 
             glLinkProgram(shaderProgramY);
 
@@ -275,11 +273,9 @@ private:
 
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
 
         glVertexAttribPointer(0, 2, GL_FLOAT,         GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, pos));
         glVertexAttribPointer(1, 2, GL_FLOAT,         GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, uv));
-        glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, col));
 #endif
     }
 
