@@ -1,5 +1,6 @@
 R"(
 #version 130
+#extension GL_ARB_explicit_attrib_location : require
 
 in vec2 pos;
 in vec2 uv;
