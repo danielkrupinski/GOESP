@@ -130,6 +130,33 @@ private:
     static void secondPass(const ImDrawList*, const ImDrawCmd*) noexcept { instance()._secondPass(); }
     static void end(const ImDrawList*, const ImDrawCmd*) noexcept { instance()._end(); }
 
+#ifdef _WIN32
+    [[nodiscard]] IDirect3DTexture9* createTexture() const noexcept
+    {
+        IDirect3DTexture9* texture;
+        device->CreateTexture(backbufferWidth / blurDownsample, backbufferHeight / blurDownsample, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &texture, nullptr);
+        return texture;
+    }
+#else
+    [[nodiscard]] GLuint createTexture() const noexcept
+    {
+        Gluint lastTexture;
+        glGetIntegerv(GL_TEXTURE_BINDING_2D, &lastTexture);
+
+        GLuint texture;
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, backbufferWidth / blurDownsample, backbufferHeight / blurDownsample, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+
+        glBindTexture(GL_TEXTURE_2D, lastTexture);
+        return texture;
+    }
+#endif
+
     void createTextures() noexcept
     {
         if (const auto [width, height] = ImGui::GetIO().DisplaySize; backbufferWidth != static_cast<int>(width) || backbufferHeight != static_cast<int>(height)) {
@@ -138,33 +165,10 @@ private:
             backbufferHeight = static_cast<int>(height);
         }
 
-#ifdef _WIN32
         if (!blurTexture1)
-            device->CreateTexture(backbufferWidth / blurDownsample, backbufferHeight / blurDownsample, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &blurTexture1, nullptr);
-
+            blurTexture1 = createTexture();
         if (!blurTexture2)
-            device->CreateTexture(backbufferWidth / blurDownsample, backbufferHeight / blurDownsample, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &blurTexture2, nullptr);
-#else
-        if (!blurTexture1) {
-            glGenTextures(1, &blurTexture1);
-            glBindTexture(GL_TEXTURE_2D, blurTexture1);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, backbufferWidth / blurDownsample, backbufferHeight / blurDownsample, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-        }
-
-        if (!blurTexture2) {
-            glGenTextures(1, &blurTexture2);
-            glBindTexture(GL_TEXTURE_2D, blurTexture2);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, backbufferWidth / blurDownsample, backbufferHeight / blurDownsample, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-        }
-#endif
+            blurTexture2 = createTexture();
     }
 
     void _begin() noexcept
