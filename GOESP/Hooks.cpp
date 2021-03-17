@@ -140,7 +140,7 @@ private:
 #else
     [[nodiscard]] GLuint createTexture() const noexcept
     {
-        Gluint lastTexture;
+        GLint lastTexture;
         glGetIntegerv(GL_TEXTURE_BINDING_2D, &lastTexture);
 
         GLuint texture;
