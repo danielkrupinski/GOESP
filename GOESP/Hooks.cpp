@@ -90,12 +90,6 @@ private:
     GLuint vertexShader = 0;
     GLuint shaderProgramX = 0;
     GLuint shaderProgramY = 0;
-
-    GLuint uniformLocationTex = 0;
-    GLuint uniformTexelWidth = 0;
-
-    GLuint uniformLocationTex2 = 0;
-    GLuint uniformTexelHeight = 0;
 #endif
 
     int backbufferWidth = 0;
@@ -239,9 +233,6 @@ private:
             glAttachShader(shaderProgramX, vertexShader);
             glAttachShader(shaderProgramX, fragmentShaderX);
             glLinkProgram(shaderProgramX);
-
-            uniformLocationTex = glGetUniformLocation(shaderProgramX, "texSampler");
-            uniformTexelWidth = glGetUniformLocation(shaderProgramX, "texelWidth");
         }
 
         if (!shaderProgramY) {
@@ -249,9 +240,6 @@ private:
             glAttachShader(shaderProgramY, vertexShader);
             glAttachShader(shaderProgramY, fragmentShaderY);
             glLinkProgram(shaderProgramY);
-
-            uniformLocationTex2 = glGetUniformLocation(shaderProgramY, "texSampler");
-            uniformTexelHeight = glGetUniformLocation(shaderProgramY, "texelHeight");
         }
 
         if (!frameBuffer)
@@ -270,8 +258,8 @@ private:
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
 
-        glVertexAttribPointer(0, 2, GL_FLOAT,         GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, pos));
-        glVertexAttribPointer(1, 2, GL_FLOAT,         GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, uv));
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, pos));
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, uv));
 #endif
     }
 
@@ -292,8 +280,8 @@ private:
         glDrawBuffer(GL_COLOR_ATTACHMENT1);
 
         glUseProgram(shaderProgramX);
-        glUniform1i(uniformLocationTex, 0);
-        glUniform1f(uniformTexelWidth, 1.0f / (backbufferWidth / blurDownsample));
+        glUniform1i(0, 0);
+        glUniform1f(1, 1.0f / (backbufferWidth / blurDownsample));
 #endif
     }
 
@@ -314,8 +302,8 @@ private:
         glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
         glUseProgram(shaderProgramY);
-        glUniform1i(uniformLocationTex2, 0);
-        glUniform1f(uniformTexelHeight, 1.0f / (backbufferHeight / blurDownsample));
+        glUniform1i(0, 0);
+        glUniform1f(1, 1.0f / (backbufferHeight / blurDownsample));
 #endif
     }
 
