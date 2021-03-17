@@ -238,10 +238,6 @@ private:
             shaderProgramX = glCreateProgram();
             glAttachShader(shaderProgramX, vertexShader);
             glAttachShader(shaderProgramX, fragmentShaderX);
-                        
-            glBindAttribLocation(shaderProgramX, 0, "pos");
-            glBindAttribLocation(shaderProgramX, 1, "uv");
-
             glLinkProgram(shaderProgramX);
 
             uniformLocationTex = glGetUniformLocation(shaderProgramX, "texSampler");
@@ -252,10 +248,6 @@ private:
             shaderProgramY = glCreateProgram();
             glAttachShader(shaderProgramY, vertexShader);
             glAttachShader(shaderProgramY, fragmentShaderY);
-
-            glBindAttribLocation(shaderProgramY, 0, "pos");
-            glBindAttribLocation(shaderProgramY, 1, "uv");
-
             glLinkProgram(shaderProgramY);
 
             uniformLocationTex2 = glGetUniformLocation(shaderProgramY, "texSampler");
