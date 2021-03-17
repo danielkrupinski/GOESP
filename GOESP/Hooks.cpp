@@ -206,18 +206,8 @@ private:
         if (!vertexShader) {
             vertexShader = glCreateShader(GL_VERTEX_SHADER);
             constexpr const GLchar* vsSource =
-                "#version 130\n"
-                "in vec2 pos;\n"
-                "in vec2 uv;\n"
-                "in vec4 color;\n"
-                "out vec2 fragUV;\n"
-                "out vec4 fragColor;\n"
-                "void main()\n"
-                "{\n"
-                "    fragUV = uv;\n"
-                "    fragColor = color;\n"
-                "    gl_Position = vec4(pos.xy, 0, 1);\n"
-                "}\n";
+                #include "Resources/Shaders/blur.glsl"
+            ;
             glShaderSource(vertexShader, 1, &vsSource, nullptr);
             glCompileShader(vertexShader);
         }
