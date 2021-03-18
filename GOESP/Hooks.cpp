@@ -95,21 +95,6 @@ private:
     static constexpr auto blurDownsample = 4;
 
     BlurEffect() = default;
-    ~BlurEffect()
-    {
-#ifdef _WIN32
-        if (rtBackup)
-            rtBackup->Release();
-        if (blurShaderX)
-            blurShaderX->Release();
-        if (blurShaderY)
-            blurShaderY->Release();
-        if (blurTexture1)
-            blurTexture1->Release();
-        if (blurTexture2)
-            blurTexture2->Release();
-#endif
-    }
 
     static BlurEffect& instance() noexcept
     {
