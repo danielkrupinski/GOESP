@@ -253,5 +253,8 @@
     <ClInclude Include="Resources\Shaders\blur_y.h">
       <Filter>Resources\Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="PostProcessing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
