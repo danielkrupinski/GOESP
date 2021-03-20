@@ -22,6 +22,7 @@
 #elif __linux__
 #include <SDL2/SDL.h>
 
+#include "imgui/GL/gl3w.h"
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
 #endif
