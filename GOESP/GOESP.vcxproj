@@ -170,6 +170,7 @@
     <ClInclude Include="Resources\Resource.h" />
     <ClInclude Include="Resources\Shaders\blur_x.h" />
     <ClInclude Include="Resources\Shaders\blur_y.h" />
+    <ClInclude Include="Resources\Shaders\default_vs.h" />
     <ClInclude Include="Resources\skillgroups.h" />
     <ClInclude Include="SDK\ClassId.h" />
     <ClInclude Include="SDK\ClientClass.h" />
