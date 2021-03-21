@@ -9,16 +9,15 @@
 #include "Resources/Shaders/blur_x.h"
 #include "Resources/Shaders/blur_y.h"
 
-#include "GUI.h"
 #include "PostProcessing.h"
 
 class BlurEffect {
 public:
 #ifdef _WIN32
-    static void draw(ImDrawList* drawList, IDirect3DDevice9* device) noexcept
+    static void draw(ImDrawList* drawList, float alpha, IDirect3DDevice9* device) noexcept
     {
         instance().device = device;
-        instance()._draw(drawList);
+        instance()._draw(drawList, alpha);
     }
 
     static void clearTextures() noexcept
@@ -34,9 +33,9 @@ public:
     }
 
 #else
-    static void draw(ImDrawList* drawList) noexcept
+    static void draw(ImDrawList* drawList, float alpha) noexcept
     {
-        instance()._draw(drawList);
+        instance()._draw(drawList, alpha);
     }
 
     static void clearTextures() noexcept
@@ -300,7 +299,7 @@ private:
 #endif
     }
 
-    void _draw(ImDrawList* drawList) noexcept
+    void _draw(ImDrawList* drawList, float alpha) noexcept
     {
         createTextures();
         createShaders();
@@ -328,17 +327,17 @@ private:
         drawList->AddCallback(ImDrawCallback_ResetRenderState, nullptr);
 
 #ifdef _WIN32
-        drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, IM_COL32(255, 255, 255, 255 * gui->getTransparency()));
+        drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, IM_COL32(255, 255, 255, 255 * alpha));
 #else
-        drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, IM_COL32(255, 255, 255, 255 * gui->getTransparency()));
+        drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, IM_COL32(255, 255, 255, 255 * alpha));
 #endif
     }
 };
 
 #ifdef _WIN32
-void PostProcessing::performFullscreenBlur(ImDrawList* drawList, IDirect3DDevice9* device) noexcept
+void PostProcessing::performFullscreenBlur(ImDrawList* drawList, float alpha, IDirect3DDevice9* device) noexcept
 {
-    BlurEffect::draw(drawList, device);
+    BlurEffect::draw(drawList, alpha, device);
 }
 
 void PostProcessing::clearBlurTextures() noexcept
@@ -347,8 +346,8 @@ void PostProcessing::clearBlurTextures() noexcept
 }
 
 #else
-void PostProcessing::performFullscreenBlur(ImDrawList* drawList) noexcept
+void PostProcessing::performFullscreenBlur(ImDrawList* drawList, float alpha) noexcept
 {
-    BlurEffect::draw(drawList);
+    BlurEffect::draw(drawList, alpha);
 }
 #endif

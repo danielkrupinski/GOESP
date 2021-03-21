@@ -73,7 +73,7 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     gui->handleToggle();
 
     if (!gui->isFullyClosed())
-        PostProcessing::performFullscreenBlur(ImGui::GetBackgroundDrawList(), device);
+        PostProcessing::performFullscreenBlur(ImGui::GetBackgroundDrawList(), gui->getTransparency(), device);
 
     ImGui::Render();
 
@@ -148,7 +148,7 @@ static void swapWindow(SDL_Window* window) noexcept
     }
 
     if (!gui->isFullyClosed())
-        PostProcessing::performFullscreenBlur(ImGui::GetBackgroundDrawList());
+        PostProcessing::performFullscreenBlur(ImGui::GetBackgroundDrawList(), gui->getTransparency());
 
     ImGui::EndFrame();
     ImGui::Render();
