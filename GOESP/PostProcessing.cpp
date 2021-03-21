@@ -338,10 +338,18 @@ private:
 
 class MonochromeEffect {
 public:
+#ifdef _WIN32
     static void draw(ImDrawList* drawList, IDirect3DDevice9* device) noexcept
     {
         instance()._draw(drawList, device);
     }
+
+#else
+    static void draw(ImDrawList* drawList) noexcept
+    {
+        instance()._draw(drawList);
+    }
+#endif
 
     static void clearTexture() noexcept
     {
@@ -349,18 +357,22 @@ public:
     }
 
 private:
+#ifdef _WIN32
     IDirect3DPixelShader9* shader = nullptr;
     IDirect3DTexture9* texture = nullptr;
+#endif
     int backbufferWidth = 0;
     int backbufferHeight = 0;
 
     MonochromeEffect() = default;
     ~MonochromeEffect()
     {
+#ifdef _WIN32
         if (shader)
             shader->Release();
         if (texture)
             texture->Release();
+#endif
     }
 
     static MonochromeEffect& instance() noexcept
@@ -371,22 +383,29 @@ private:
 
     void _clearTexture() noexcept
     {
+#ifdef _WIN32
         if (texture) {
             texture->Release();
             texture = nullptr;
         }
+#endif
     }
 
     static void begin(const ImDrawList*, const ImDrawCmd* cmd) noexcept
     {
+#ifdef _WIN32
         instance()._begin(reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData));
+#endif
     }
 
     static void end(const ImDrawList*, const ImDrawCmd* cmd) noexcept
     {
+#ifdef _WIN32
         instance()._end(reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData));
+#endif
     }
 
+#ifdef _WIN32
     void _begin(IDirect3DDevice9* device) noexcept
     {
         if (!shader)
@@ -419,18 +438,23 @@ private:
         const float params[4] = { gui->getTransparency() };
         device->SetPixelShaderConstantF(0, params, 1);
     }
+#endif
 
+#ifdef _WIN32
     void _end(IDirect3DDevice9* device) noexcept
     {
         device->SetPixelShader(nullptr);
     }
+#endif
 
+#ifdef _WIN32
     void _draw(ImDrawList* drawList, IDirect3DDevice9* device) noexcept
     {
         drawList->AddCallback(&MonochromeEffect::begin, device);
         drawList->AddImage(texture, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
         drawList->AddCallback(&MonochromeEffect::end, device);
     }
+#endif
 };
 
 #ifdef _WIN32
