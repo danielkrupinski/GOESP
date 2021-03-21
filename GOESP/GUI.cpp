@@ -132,7 +132,7 @@ void GUI::render() noexcept
         if (ImGui::Button("Open config directory")) {
             createConfigDir();
 #ifdef _WIN32
-            int ret = std::system(("start " + path.string()).c_str());
+            ShellExecuteW(nullptr, L"open", path.wstring().c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 #else
             int ret = std::system(("xdg-open " + path.string()).c_str());
 #endif
