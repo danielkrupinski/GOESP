@@ -341,9 +341,9 @@ public:
 #ifdef _WIN32
     static void draw(ImDrawList* drawList, IDirect3DDevice9* device) noexcept
     {
-        instance()._draw(drawList, device);
+        instance().device = device;
+        instance()._draw(drawList);
     }
-
 #else
     static void draw(ImDrawList* drawList) noexcept
     {
@@ -358,6 +358,7 @@ public:
 
 private:
 #ifdef _WIN32
+    IDirect3DDevice9* device = nullptr; // DO NOT RELEASE!
     IDirect3DPixelShader9* shader = nullptr;
     IDirect3DTexture9* texture = nullptr;
 #endif
@@ -391,23 +392,12 @@ private:
 #endif
     }
 
-    static void begin(const ImDrawList*, const ImDrawCmd* cmd) noexcept
-    {
-#ifdef _WIN32
-        instance()._begin(reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData));
-#endif
-    }
+    static void begin(const ImDrawList*, const ImDrawCmd* cmd) noexcept { instance()._begin(); }
+    static void end(const ImDrawList*, const ImDrawCmd* cmd) noexcept { instance()._end(); }
 
-    static void end(const ImDrawList*, const ImDrawCmd* cmd) noexcept
+    void _begin() noexcept
     {
 #ifdef _WIN32
-        instance()._end(reinterpret_cast<IDirect3DDevice9*>(cmd->UserCallbackData));
-#endif
-    }
-
-#ifdef _WIN32
-    void _begin(IDirect3DDevice9* device) noexcept
-    {
         if (!shader)
             device->CreatePixelShader(reinterpret_cast<const DWORD*>(Resource::monochrome.data()), &shader);
 
@@ -437,24 +427,24 @@ private:
         device->SetPixelShader(shader);
         const float params[4] = { gui->getTransparency() };
         device->SetPixelShaderConstantF(0, params, 1);
-    }
 #endif
+    }
 
-#ifdef _WIN32
-    void _end(IDirect3DDevice9* device) noexcept
+    void _end() noexcept
     {
+#ifdef _WIN32
         device->SetPixelShader(nullptr);
-    }
 #endif
+    }
 
-#ifdef _WIN32
-    void _draw(ImDrawList* drawList, IDirect3DDevice9* device) noexcept
+    void _draw(ImDrawList* drawList) noexcept
     {
-        drawList->AddCallback(&MonochromeEffect::begin, device);
+#ifdef _WIN32
+        drawList->AddCallback(&begin, device);
         drawList->AddImage(texture, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
-        drawList->AddCallback(&MonochromeEffect::end, device);
-    }
+        drawList->AddCallback(&end, device);
 #endif
+    }
 };
 
 #ifdef _WIN32
