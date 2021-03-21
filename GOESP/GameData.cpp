@@ -255,63 +255,63 @@ bool GameData::worldToScreen(const Vector& in, ImVec2& out, bool floor) noexcept
     return true;
 }
 
-const LocalPlayerData& GameData::local() noexcept
+[[nodiscard]] const LocalPlayerData& GameData::local() noexcept
 {
     return localPlayerData;
 }
 
-const std::vector<PlayerData>& GameData::players() noexcept
+[[nodiscard]] const std::vector<PlayerData>& GameData::players() noexcept
 {
     return playerData;
 }
 
-const PlayerData* GameData::playerByHandle(int handle) noexcept
+[[nodiscard]] const PlayerData* GameData::playerByHandle(int handle) noexcept
 {
     const auto it = std::ranges::find(std::as_const(playerData), handle, &PlayerData::handle);
     return it != playerData.cend() ? &(*it) : nullptr;
 }
 
-const std::vector<ObserverData>& GameData::observers() noexcept
+[[nodiscard]] const std::vector<ObserverData>& GameData::observers() noexcept
 {
     return observerData;
 }
 
-const std::vector<WeaponData>& GameData::weapons() noexcept
+[[nodiscard]] const std::vector<WeaponData>& GameData::weapons() noexcept
 {
     return weaponData;
 }
 
-const std::vector<EntityData>& GameData::entities() noexcept
+[[nodiscard]] const std::vector<EntityData>& GameData::entities() noexcept
 {
     return entityData;
 }
 
-const std::vector<LootCrateData>& GameData::lootCrates() noexcept
+[[nodiscard]] const std::vector<LootCrateData>& GameData::lootCrates() noexcept
 {
     return lootCrateData;
 }
 
-const std::list<ProjectileData>& GameData::projectiles() noexcept
+[[nodiscard]] const std::list<ProjectileData>& GameData::projectiles() noexcept
 {
     return projectileData;
 }
 
-const std::vector<InfernoData>& GameData::infernos() noexcept
+[[nodiscard]] const std::vector<InfernoData>& GameData::infernos() noexcept
 {
     return infernoData;
 }
 
-const std::vector<SmokeData>& GameData::smokes() noexcept
+[[nodiscard]] const std::vector<SmokeData>& GameData::smokes() noexcept
 {
     return smokeGrenades;
 }
 
-const BombData& GameData::plantedC4() noexcept
+[[nodiscard]] const BombData& GameData::plantedC4() noexcept
 {
     return bombData;
 }
 
-const std::string& GameData::gameMode() noexcept
+[[nodiscard]] const std::string& GameData::gameMode() noexcept
 {
     return gameModeName;
 }

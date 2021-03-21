@@ -40,18 +40,18 @@ namespace GameData
 
     // You have to acquire lock before using these getters
     bool worldToScreen(const Vector& in, ImVec2& out, bool floor = false) noexcept;
-    const LocalPlayerData& local() noexcept;
-    const std::vector<PlayerData>& players() noexcept;
-    const PlayerData* playerByHandle(int handle) noexcept;
-    const std::vector<ObserverData>& observers() noexcept;
-    const std::vector<WeaponData>& weapons() noexcept;
-    const std::vector<EntityData>& entities() noexcept;
-    const std::vector<LootCrateData>& lootCrates() noexcept;
-    const std::list<ProjectileData>& projectiles() noexcept;
-    const std::vector<InfernoData>& infernos() noexcept;
-    const std::vector<SmokeData>& smokes() noexcept;
-    const BombData& plantedC4() noexcept;
-    const std::string& gameMode() noexcept;
+    [[nodiscard]] const LocalPlayerData& local() noexcept;
+    [[nodiscard]] const std::vector<PlayerData>& players() noexcept;
+    [[nodiscard]] const PlayerData* playerByHandle(int handle) noexcept;
+    [[nodiscard]] const std::vector<ObserverData>& observers() noexcept;
+    [[nodiscard]] const std::vector<WeaponData>& weapons() noexcept;
+    [[nodiscard]] const std::vector<EntityData>& entities() noexcept;
+    [[nodiscard]] const std::vector<LootCrateData>& lootCrates() noexcept;
+    [[nodiscard]] const std::list<ProjectileData>& projectiles() noexcept;
+    [[nodiscard]] const std::vector<InfernoData>& infernos() noexcept;
+    [[nodiscard]] const std::vector<SmokeData>& smokes() noexcept;
+    [[nodiscard]] const BombData& plantedC4() noexcept;
+    [[nodiscard]] const std::string& gameMode() noexcept;
 }
 
 struct LocalPlayerData {
