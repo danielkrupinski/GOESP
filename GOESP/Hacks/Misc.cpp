@@ -64,7 +64,8 @@ struct OverlayWindow {
     ImVec2 pos;
 };
 
-struct OffscreenEnemies {
+struct OffscreenEnemies : public Color {
+    OffscreenEnemies() : Color{ 1.0f, 0.26f, 0.21f, 1.0f } {}
     bool enabled = false;
 };
 
@@ -408,7 +409,7 @@ static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
         if (player.fadingEndTime != 0.0f)
             Helpers::setAlphaFactor(player.fadingAlpha());
         const auto color = Helpers::calculateColor(255, 255, 255, 255);
-        const auto triangleColor = Helpers::calculateColor(255, 66, 54, 255);
+        const auto triangleColor = Helpers::calculateColor(miscConfig.offscreenEnemies);
         Helpers::setAlphaFactor(1.0f);
 
         constexpr auto avatarRadius = 13.0f;
@@ -546,7 +547,7 @@ void Misc::drawGUI() noexcept
 
     ImGui::Checkbox("Ignore Flashbang", &miscConfig.ignoreFlashbang);
     ImGui::Checkbox("FPS Counter", &miscConfig.fpsCounter.enabled);
-    ImGui::Checkbox("Offscreen Enemies", &miscConfig.offscreenEnemies.enabled);
+    ImGuiCustom::colorPicker("Offscreen Enemies", miscConfig.offscreenEnemies, &miscConfig.offscreenEnemies.enabled);
 
     ImGui::PushID("Player List");
     ImGui::Checkbox("Player List", &miscConfig.playerList.enabled);
@@ -944,6 +945,8 @@ static void to_json(json& j, const OverlayWindow& o, const OverlayWindow& dummy 
 
 static void to_json(json& j, const OffscreenEnemies& o, const OffscreenEnemies& dummy = {})
 {
+    to_json(j, static_cast<const Color&>(o));
+
     WRITE("Enabled", enabled)
 }
 
@@ -1015,6 +1018,8 @@ static void from_json(const json& j, OverlayWindow& o)
 
 static void from_json(const json& j, OffscreenEnemies& o)
 {
+    from_json(j, static_cast<Color&>(o));
+
     read(j, "Enabled", o.enabled);
 }
 
