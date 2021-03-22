@@ -39,6 +39,8 @@ static LPDIRECT3DINDEXBUFFER9   g_pIB = NULL;
 static LPDIRECT3DTEXTURE9       g_FontTexture = NULL;
 static int                      g_VertexBufferSize = 5000, g_IndexBufferSize = 10000;
 
+static IDirect3DVertexDeclaration9* vertexDeclaration = nullptr;
+
 struct CUSTOMVERTEX {
     float    pos[3];
     D3DCOLOR col;
@@ -217,7 +219,7 @@ bool ImGui_ImplDX9_Init(IDirect3DDevice9* device)
     io.BackendRendererName = "imgui_impl_dx9";
     io.BackendFlags |= ImGuiBackendFlags_RendererHasVtxOffset;  // We can honor the ImDrawCmd::VtxOffset field, allowing for large meshes.
 
-    LoadLibraryW(L"d3d9"); // increment d3d9 reference count
+    LoadLibraryW(L"d3d9"); // increment d3d9.dll reference count
 
     g_pd3dDevice = device;
     g_pd3dDevice->AddRef();
@@ -263,6 +265,16 @@ bool ImGui_ImplDX9_CreateDeviceObjects()
     if (!ImGui_ImplDX9_CreateFontsTexture())
         return false;
 
+    if (!vertexDeclaration) {
+        constexpr D3DVERTEXELEMENT9 elements[]{
+            { 0, 0, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+            { 0, 8, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+            { 0, 16, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0 },
+            D3DDECL_END()
+        };
+        g_pd3dDevice->CreateVertexDeclaration(elements, &vertexDeclaration);
+    }
+
     return true;
 }
 
@@ -272,6 +284,7 @@ void ImGui_ImplDX9_InvalidateDeviceObjects()
         return;
     if (g_pVB) { g_pVB->Release(); g_pVB = nullptr; }
     if (g_pIB) { g_pIB->Release(); g_pIB = nullptr; }
+    if (vertexDeclaration) { vertexDeclaration->Release(); vertexDeclaration = nullptr; }
     ImGui_ImplDX9_DestroyFontsTexture();
 }
 
