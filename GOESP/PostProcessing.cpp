@@ -213,7 +213,7 @@ private:
         device->SetRenderState(D3DRS_SCISSORTESTENABLE, false);
 
         constexpr D3DMATRIX identity{ { { 1.0f, 0.0f, 0.0f, 0.0f,  0.0f, 1.0f, 0.0f, 0.0f,  0.0f, 0.0f, 1.0f, 0.0f,  0.0f, 0.0f, 0.0f, 1.0f } } };
-        device->SetTransform(D3DTS_PROJECTION, &identity);
+        device->SetVertexShaderConstantF(0, &identity.m[0][0], 4);
 #else
         glGetIntegerv(GL_TEXTURE_BINDING_2D, &textureBackup);
         glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &fboBackup);
