@@ -27,6 +27,8 @@
 #include "imgui.h"
 #include "imgui_impl_dx9.h"
 
+#include "../Resources/Shaders/default_vs.h"
+
 // DirectX
 #include <d3d9.h>
 #define DIRECTINPUT_VERSION 0x0800
@@ -40,6 +42,7 @@ static LPDIRECT3DTEXTURE9       g_FontTexture = NULL;
 static int                      g_VertexBufferSize = 5000, g_IndexBufferSize = 10000;
 
 static IDirect3DVertexDeclaration9* vertexDeclaration = nullptr;
+static IDirect3DVertexShader9* vertexShader = nullptr;
 
 struct CUSTOMVERTEX {
     float    pos[3];
@@ -275,6 +278,9 @@ bool ImGui_ImplDX9_CreateDeviceObjects()
         g_pd3dDevice->CreateVertexDeclaration(elements, &vertexDeclaration);
     }
 
+    if (!vertexShader)
+        g_pd3dDevice->CreateVertexShader(reinterpret_cast<const DWORD*>(Resource::default_vs.data()), &vertexShader);
+
     return true;
 }
 
@@ -285,6 +291,7 @@ void ImGui_ImplDX9_InvalidateDeviceObjects()
     if (g_pVB) { g_pVB->Release(); g_pVB = nullptr; }
     if (g_pIB) { g_pIB->Release(); g_pIB = nullptr; }
     if (vertexDeclaration) { vertexDeclaration->Release(); vertexDeclaration = nullptr; }
+    if (vertexShader) { vertexShader->Release(); vertexShader = nullptr; }
     ImGui_ImplDX9_DestroyFontsTexture();
 }
 
