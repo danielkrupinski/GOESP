@@ -44,13 +44,6 @@ static int                      g_VertexBufferSize = 5000, g_IndexBufferSize = 1
 static IDirect3DVertexDeclaration9* vertexDeclaration = nullptr;
 static IDirect3DVertexShader9* vertexShader = nullptr;
 
-struct CUSTOMVERTEX {
-    float    pos[3];
-    D3DCOLOR col;
-    float    uv[2];
-};
-#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1)
-
 static void ImGui_ImplDX9_SetupRenderState(const ImDrawData* draw_data)
 {
     // Setup viewport
@@ -64,7 +57,7 @@ static void ImGui_ImplDX9_SetupRenderState(const ImDrawData* draw_data)
 
     // Setup render state: fixed-pipeline, alpha-blending, no face culling, no depth testing, shade mode (for gradient)
     g_pd3dDevice->SetPixelShader(nullptr);
-    g_pd3dDevice->SetVertexShader(nullptr);
+    g_pd3dDevice->SetVertexShader(vertexShader);
     g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
     g_pd3dDevice->SetRenderState(D3DRS_LIGHTING, false);
     g_pd3dDevice->SetRenderState(D3DRS_ZENABLE, false);
@@ -103,6 +96,8 @@ static void ImGui_ImplDX9_SetupRenderState(const ImDrawData* draw_data)
         g_pd3dDevice->SetTransform(D3DTS_WORLD, &mat_identity);
         g_pd3dDevice->SetTransform(D3DTS_VIEW, &mat_identity);
         g_pd3dDevice->SetTransform(D3DTS_PROJECTION, &mat_projection);
+
+        g_pd3dDevice->SetVertexShaderConstantF(0, &mat_projection.m[0][0], 4);
     }
 }
 
@@ -119,7 +114,7 @@ void ImGui_ImplDX9_RenderDrawData(const ImDrawData* draw_data)
     {
         if (g_pVB) { g_pVB->Release(); g_pVB = nullptr; }
         g_VertexBufferSize = draw_data->TotalVtxCount + 5000;
-        if (g_pd3dDevice->CreateVertexBuffer(g_VertexBufferSize * sizeof(CUSTOMVERTEX), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, 0, D3DPOOL_DEFAULT, &g_pVB, nullptr) < 0)
+        if (g_pd3dDevice->CreateVertexBuffer(g_VertexBufferSize * sizeof(ImDrawVert), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, 0, D3DPOOL_DEFAULT, &g_pVB, nullptr) < 0)
             return;
     }
     if (!g_pIB || g_IndexBufferSize < draw_data->TotalIdxCount)
@@ -138,35 +133,27 @@ void ImGui_ImplDX9_RenderDrawData(const ImDrawData* draw_data)
     if (d3d9_state_block->Capture() != D3D_OK)
         return;
 
-    CUSTOMVERTEX* vtx_dst;
+    ImDrawVert* vtx_dst;
     ImDrawIdx* idx_dst;
-    if (g_pVB->Lock(0, (UINT)(draw_data->TotalVtxCount * sizeof(CUSTOMVERTEX)), (void**)&vtx_dst, D3DLOCK_DISCARD) < 0)
+    if (g_pVB->Lock(0, (UINT)(draw_data->TotalVtxCount * sizeof(ImDrawVert)), (void**)&vtx_dst, D3DLOCK_DISCARD) < 0)
         return;
     if (g_pIB->Lock(0, (UINT)(draw_data->TotalIdxCount * sizeof(ImDrawIdx)), (void**)&idx_dst, D3DLOCK_DISCARD) < 0)
         return;
 
     for (int n = 0; n < draw_data->CmdListsCount; ++n) {
         const ImDrawList* cmd_list = draw_data->CmdLists[n];
-        const ImDrawVert* vtx_src = cmd_list->VtxBuffer.Data;
-        for (int i = 0; i < cmd_list->VtxBuffer.Size; ++i) {
-            vtx_dst->pos[0] = vtx_src->pos.x;
-            vtx_dst->pos[1] = vtx_src->pos.y;
-            vtx_dst->pos[2] = 0.0f;
-            vtx_dst->col = vtx_src->col;
-            vtx_dst->uv[0] = vtx_src->uv.x;
-            vtx_dst->uv[1] = vtx_src->uv.y;
-            vtx_dst++;
-            vtx_src++;
-        }
+        memcpy(vtx_dst, cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(ImDrawVert));
+        vtx_dst += cmd_list->VtxBuffer.Size;
         memcpy(idx_dst, cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx));
         idx_dst += cmd_list->IdxBuffer.Size;
     }
 
     g_pVB->Unlock();
     g_pIB->Unlock();
-    g_pd3dDevice->SetStreamSource(0, g_pVB, 0, sizeof(CUSTOMVERTEX));
+
+    g_pd3dDevice->SetStreamSource(0, g_pVB, 0, sizeof(ImDrawVert));
     g_pd3dDevice->SetIndices(g_pIB);
-    g_pd3dDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
+    g_pd3dDevice->SetVertexDeclaration(vertexDeclaration);
 
     // Setup desired DX state
     ImGui_ImplDX9_SetupRenderState(draw_data);
