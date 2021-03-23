@@ -212,8 +212,13 @@ private:
         device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
         device->SetRenderState(D3DRS_SCISSORTESTENABLE, false);
 
-        constexpr D3DMATRIX identity{ { { 1.0f, 0.0f, 0.0f, 0.0f,  0.0f, 1.0f, 0.0f, 0.0f,  0.0f, 0.0f, 1.0f, 0.0f,  0.0f, 0.0f, 0.0f, 1.0f } } };
-        device->SetVertexShaderConstantF(0, &identity.m[0][0], 4);
+        const D3DMATRIX projection{{{
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            -1.0f / (backbufferWidth / blurDownsample), 1.0f / (backbufferHeight / blurDownsample), 0.0f, 1.0f
+        }}};
+        device->SetVertexShaderConstantF(0, &projection.m[0][0], 4);
 #else
         glGetIntegerv(GL_TEXTURE_BINDING_2D, &textureBackup);
         glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &fboBackup);
@@ -307,21 +312,12 @@ private:
         if (!blurTexture1 || !blurTexture2 || !blurShaderX || !blurShaderY)
             return;
 
-#ifdef _WIN32
-        // half-pixel offset for dx9
-        const float offsetX = -1.0f / (backbufferWidth / blurDownsample);
-        const float offsetY = 1.0f / (backbufferHeight / blurDownsample);
-#else
-        constexpr auto offsetX = 0.0f;
-        constexpr auto offsetY = 0.0f;
-#endif
-
         drawList->AddCallback(&begin, nullptr);
         for (int i = 0; i < 8; ++i) {
             drawList->AddCallback(&firstPass, nullptr);
-            drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { -1.0f + offsetX, -1.0f + offsetY }, { 1.0f + offsetX, 1.0f + offsetY });
+            drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { -1.0f, -1.0f }, { 1.0f, 1.0f });
             drawList->AddCallback(&secondPass, nullptr);
-            drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture2), { -1.0f + offsetX, -1.0f + offsetY }, { 1.0f + offsetX, 1.0f + offsetY });
+            drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture2), { -1.0f, -1.0f }, { 1.0f, 1.0f });
         }
         drawList->AddCallback(&end, nullptr);
         drawList->AddCallback(ImDrawCallback_ResetRenderState, nullptr);
