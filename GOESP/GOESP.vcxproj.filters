@@ -262,5 +262,8 @@
     <ClInclude Include="Resources\Shaders\default_vs.h">
       <Filter>Resources\Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="SDK\Inconstructible.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
