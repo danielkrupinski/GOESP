@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Inconstructible.h"
 #include "Vector.h"
 #include "VirtualMethod.h"
 
@@ -52,5 +53,7 @@ struct Trace {
 
 class EngineTrace {
 public:
+    INCONSTRUCTIBLE(EngineTrace)
+
     VIRTUAL_METHOD(void, traceRay, 5, (const Ray& ray, unsigned int mask, const TraceFilter& filter, Trace& trace), (this, std::cref(ray), mask, std::cref(filter), std::ref(trace)))
 };

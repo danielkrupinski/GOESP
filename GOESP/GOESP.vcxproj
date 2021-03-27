@@ -183,6 +183,7 @@
     <ClInclude Include="SDK\EntityList.h" />
     <ClInclude Include="SDK\GameEvent.h" />
     <ClInclude Include="SDK\GlobalVars.h" />
+    <ClInclude Include="SDK\Inconstructible.h" />
     <ClInclude Include="SDK\InputSystem.h" />
     <ClInclude Include="SDK\ItemSchema.h" />
     <ClInclude Include="SDK\Localize.h" />

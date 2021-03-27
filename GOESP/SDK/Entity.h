@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include "Inconstructible.h"
 #include "Vector.h"
 #include "VirtualMethod.h"
 #include "WeaponInfo.h"
@@ -14,6 +15,8 @@ enum class WeaponType;
 
 class Collideable {
 public:
+    INCONSTRUCTIBLE(Collideable)
+
     VIRTUAL_METHOD(const Vector&, obbMins, 1, (), (this))
     VIRTUAL_METHOD(const Vector&, obbMaxs, 2, (), (this))
 };
@@ -57,6 +60,8 @@ class CSPlayer;
 
 class Entity {
 public:
+    INCONSTRUCTIBLE(Entity)
+
     VIRTUAL_METHOD(ClientClass*, getClientClass, 2, (), (this + sizeof(uintptr_t) * 2))
     VIRTUAL_METHOD(bool, isDormant, 9, (), (this + sizeof(uintptr_t) * 2))
     VIRTUAL_METHOD(int, index, 10, (), (this + sizeof(uintptr_t) * 2))
@@ -171,6 +176,8 @@ public:
 
 class PlantedC4 : public Entity {
 public:
+    INCONSTRUCTIBLE(PlantedC4)
+
     PROP(ticking, WIN32_UNIX(0x2980, 0x3018), bool)                                // CPlantedC4->m_bBombTicking
     PROP(bombSite, WIN32_UNIX(0x2984, 0x301C), int)                                // CPlantedC4->m_nBombSite
     PROP(blowTime, WIN32_UNIX(0x2990, 0x3028), float)                              // CPlantedC4->m_flC4Blow
