@@ -333,7 +333,7 @@
     </ClInclude>
     <ClInclude Include="freetype\freetype\config\ftoption.h">
       <Filter>freetype</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="SDK\Inconstructible.h">
       <Filter>SDK</Filter>
     </ClInclude>
