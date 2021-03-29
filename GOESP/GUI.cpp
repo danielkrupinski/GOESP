@@ -37,7 +37,6 @@ static ImFont* addFontFromVFONT(const std::string& path, float size, const ImWch
     cfg.MergeMode = merge;
     cfg.GlyphRanges = glyphRanges;
     cfg.SizePixels = size;
-    cfg.RasterizerMultiply = 1.2f;
 
     return ImGui::GetIO().Fonts->AddFont(&cfg);
 }
