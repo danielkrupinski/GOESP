@@ -3,6 +3,7 @@
 #include <functional>
 #include <tuple>
 
+#include "Inconstructible.h"
 #include "Vector.h"
 #include "VirtualMethod.h"
 
@@ -44,6 +45,8 @@ struct PlayerInfo {
 
 class Engine {
 public:
+    INCONSTRUCTIBLE(Engine)
+
     VIRTUAL_METHOD(bool, getPlayerInfo, 8, (int entityIndex, PlayerInfo& playerInfo), (this, entityIndex, std::ref(playerInfo)))
     VIRTUAL_METHOD(int, getPlayerForUserId, 9, (int userId), (this, userId))
     VIRTUAL_METHOD(void, getViewAngles, 18, (Vector& angles), (this, std::ref(angles)))

@@ -107,5 +107,7 @@ struct Model;
 
 class ModelInfo {
 public:
+    INCONSTRUCTIBLE(ModelInfo)
+
     VIRTUAL_METHOD(const StudioHdr*, getStudioModel, (IS_WIN32() ? 32 : 31), (const Model* model), (this, model))
 };
