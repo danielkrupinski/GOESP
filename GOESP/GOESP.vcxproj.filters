@@ -27,6 +27,9 @@
     <Filter Include="Resources\Shaders">
       <UniqueIdentifier>{21e4908d-22c7-44e2-8ff2-f3b81a8ca6a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="freetype">
+      <UniqueIdentifier>{f6f738b2-20d1-4783-84e7-5d9a1db9b64a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -85,6 +88,69 @@
     </ClCompile>
     <ClCompile Include="PostProcessing.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_freetype.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\autofit\autofit.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\cff\cff.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\base\ftbase.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\base\ftbitmap.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\base\ftdebug.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\base\ftglyph.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\gzip\ftgzip.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\base\ftinit.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\lzw\ftlzw.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\base\ftsynth.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\base\ftsystem.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\pcf\pcf.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\pfr\pfr.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\truetype\truetype.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\psaux\psaux.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\pshinter\pshinter.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\psnames\psnames.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\raster\raster.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\sfnt\sfnt.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="freetype\src\smooth\smooth.c">
+      <Filter>freetype</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -262,6 +328,11 @@
     <ClInclude Include="Resources\Shaders\default_vs.h">
       <Filter>Resources\Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="imgui\imgui_freetype.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="freetype\freetype\config\ftoption.h">
+      <Filter>freetype</Filter>
     <ClInclude Include="SDK\Inconstructible.h">
       <Filter>SDK</Filter>
     </ClInclude>
