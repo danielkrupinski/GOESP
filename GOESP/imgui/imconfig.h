@@ -16,6 +16,10 @@
 #include <array>
 #include <tuple>
 
+#ifdef _WIN32
+#define IMGUI_ENABLE_FREETYPE
+#endif
+
 //---- Define assertion handler. Defaults to calling assert().
 // If your macro uses multiple statements, make sure is enclosed in a 'do { .. } while (0)' block so it can be used as a single statement.
 //#define IM_ASSERT(_EXPR)  MyAssert(_EXPR)
