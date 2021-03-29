@@ -345,7 +345,7 @@ FT_BEGIN_HEADER
    *   in your 'psnames' module.  The Type~1 driver will not be able to
    *   synthesize a Unicode charmap out of the glyphs found in the fonts.
    */
-#define FT_CONFIG_OPTION_ADOBE_GLYPH_LIST
+//#define FT_CONFIG_OPTION_ADOBE_GLYPH_LIST
 
 
   /**************************************************************************
