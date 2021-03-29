@@ -167,7 +167,7 @@
   }
 
 
-  static int __cdecl
+  static int FT_CDECL
   ft_raccess_sort_ref_by_id( FT_RFork_Ref*  a,
                              FT_RFork_Ref*  b )
   {
@@ -294,7 +294,7 @@
           ft_qsort( ref,
                     (size_t)*count,
                     sizeof ( FT_RFork_Ref ),
-                    (int( __cdecl* )( const void*,
+                    (int(FT_CDECL*)( const void*,
                              const void*) )ft_raccess_sort_ref_by_id );
 
           FT_TRACE3(( "             -- sort resources by their ids --\n" ));

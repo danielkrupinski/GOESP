@@ -101,7 +101,7 @@
   }
 
 
-  FT_CALLBACK_DEF( int ) __cdecl
+  FT_CALLBACK_DEF( int ) FT_CDECL
   compare_tags( const void*  a,
                 const void*  b )
   {
