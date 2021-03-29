@@ -559,7 +559,7 @@ FT_BEGIN_HEADER
    *
    * (By default, the module uses 'psnames' to extract glyph names.)
    */
-#define TT_CONFIG_OPTION_POSTSCRIPT_NAMES
+//#define TT_CONFIG_OPTION_POSTSCRIPT_NAMES
 
 
   /**************************************************************************
