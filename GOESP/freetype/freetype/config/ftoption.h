@@ -252,7 +252,7 @@ FT_BEGIN_HEADER
    * stream support, in the cases where file stream support is not necessary
    * such as memory loading of font files.
    */
-/* #define FT_CONFIG_OPTION_DISABLE_STREAM_SUPPORT */
+#define FT_CONFIG_OPTION_DISABLE_STREAM_SUPPORT
 
 
   /**************************************************************************
