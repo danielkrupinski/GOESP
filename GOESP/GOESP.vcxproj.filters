@@ -337,5 +337,8 @@
     <ClInclude Include="SDK\Inconstructible.h">
       <Filter>SDK</Filter>
     </ClInclude>
+    <ClInclude Include="freetype\freetype\config\ftmodule.h">
+      <Filter>freetype</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
