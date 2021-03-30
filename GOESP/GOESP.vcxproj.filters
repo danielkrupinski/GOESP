@@ -116,9 +116,6 @@
     <ClCompile Include="freetype\src\base\ftinit.c">
       <Filter>freetype</Filter>
     </ClCompile>
-    <ClCompile Include="freetype\src\lzw\ftlzw.c">
-      <Filter>freetype</Filter>
-    </ClCompile>
     <ClCompile Include="freetype\src\base\ftsynth.c">
       <Filter>freetype</Filter>
     </ClCompile>

@@ -136,7 +136,6 @@
     <ClCompile Include="freetype\src\base\ftsystem.c" />
     <ClCompile Include="freetype\src\cff\cff.c" />
     <ClCompile Include="freetype\src\gzip\ftgzip.c" />
-    <ClCompile Include="freetype\src\lzw\ftlzw.c" />
     <ClCompile Include="freetype\src\pfr\pfr.c" />
     <ClCompile Include="freetype\src\psaux\psaux.c" />
     <ClCompile Include="freetype\src\pshinter\pshinter.c" />
