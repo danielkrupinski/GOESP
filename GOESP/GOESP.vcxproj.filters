@@ -110,9 +110,6 @@
     <ClCompile Include="freetype\src\base\ftglyph.c">
       <Filter>freetype</Filter>
     </ClCompile>
-    <ClCompile Include="freetype\src\gzip\ftgzip.c">
-      <Filter>freetype</Filter>
-    </ClCompile>
     <ClCompile Include="freetype\src\base\ftinit.c">
       <Filter>freetype</Filter>
     </ClCompile>
