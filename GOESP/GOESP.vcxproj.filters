@@ -125,9 +125,6 @@
     <ClCompile Include="freetype\src\base\ftsystem.c">
       <Filter>freetype</Filter>
     </ClCompile>
-    <ClCompile Include="freetype\src\pcf\pcf.c">
-      <Filter>freetype</Filter>
-    </ClCompile>
     <ClCompile Include="freetype\src\pfr\pfr.c">
       <Filter>freetype</Filter>
     </ClCompile>
