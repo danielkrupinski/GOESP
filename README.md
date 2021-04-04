@@ -102,7 +102,6 @@ on windows:
 on linux:
 -   SDL_PollEvent
 -   SDL_GL_SwapWindow
--   SDL_WarpMouseInWindow
 
 ### How GOESP renders its stuff?
 GOESP hooks game overlays and draw things using them. Currently supported overlays are Steam and Discord.
