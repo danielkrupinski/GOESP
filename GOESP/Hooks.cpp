@@ -39,6 +39,7 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 
     if (hooks->getState() == Hooks::State::Installed) {
         GameData::update();
+        Misc::updateEventListeners();
 
         ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
         interfaces->inputSystem->enableInput(!gui->isOpen());
@@ -118,6 +119,7 @@ static int pollEvent(SDL_Event* event) noexcept
 
     if (hooks->getState() == Hooks::State::Installed) {
         GameData::update();
+        Misc::updateEventListeners();
         if (result && ImGui_ImplSDL2_ProcessEvent(event) && gui->isOpen())
             event->type = 0;
     }
@@ -244,6 +246,7 @@ static DWORD WINAPI waitOnUnload(HMODULE hModule) noexcept
 
 void Hooks::uninstall() noexcept
 {
+    Misc::updateEventListeners(true);
 #ifdef _WIN32
 
     *reinterpret_cast<decltype(reset)*>(memory->reset) = reset;

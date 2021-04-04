@@ -917,6 +917,25 @@ void Misc::drawPostESP(ImDrawList* drawList) noexcept
     drawBombTimer();
 }
 
+void Misc::updateEventListeners(bool forceRemove) noexcept
+{
+    class PurchaseEventListener : public GameEventListener {
+    public:
+        void fireGameEvent(GameEvent* event) { purchaseList(event); }
+    };
+
+    static PurchaseEventListener listener;
+    static bool listenerRegistered = false;
+
+    if (miscConfig.purchaseList.enabled && !listenerRegistered) {
+        interfaces->gameEventManager->addListener(&listener, "item_purchase");
+        listenerRegistered = true;
+    } else if ((!miscConfig.purchaseList.enabled || forceRemove) && listenerRegistered) {
+        interfaces->gameEventManager->removeListener(&listener);
+        listenerRegistered = false;
+    }
+}
+
 static void to_json(json& j, const PurchaseList& o, const PurchaseList& dummy = {})
 {
     WRITE("Enabled", enabled)
