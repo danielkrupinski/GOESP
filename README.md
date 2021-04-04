@@ -15,7 +15,7 @@ Cross-platform streamproof ESP hack for CS:GO. Currently supports Windows and Li
 
 ### Purchase List
 
-![Purchase List](https://i.imgur.com/58VLB8a.png)
+![Purchase List](https://i.imgur.com/V4lIx1G.png)
 
 ### Player ESP
 
