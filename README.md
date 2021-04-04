@@ -5,25 +5,21 @@ Cross-platform streamproof ESP hack for CS:GO. Currently supports Windows and Li
 
 ## Showcase
 
-### Player List (new!)
+### Player List (updated!)
 
-![Player List](https://i.imgur.com/rtwZP1q.png)
+![Player List](https://i.imgur.com/Hvc4Olk.png)
 
 ### Menu
 
-![Menu](https://i.imgur.com/eJ1oDaL.png)
+![Menu](https://i.imgur.com/3zvz2us.png)
 
 ### Purchase List
 
-![Purchase List](https://i.imgur.com/58VLB8a.png)
+![Purchase List](https://i.imgur.com/V4lIx1G.png)
 
 ### Player ESP
 
 ![Player ESP](https://i.imgur.com/l4cOW0c.png)
-
-### Drag & Drop
-
-![Drag & Drop](https://i.imgur.com/yDhV2eQ.gif)
 
 ## Getting started
 
@@ -102,7 +98,6 @@ on windows:
 on linux:
 -   SDL_PollEvent
 -   SDL_GL_SwapWindow
--   SDL_WarpMouseInWindow
 
 ### How GOESP renders its stuff?
 GOESP hooks game overlays and draw things using them. Currently supported overlays are Steam and Discord.
