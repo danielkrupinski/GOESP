@@ -61,7 +61,6 @@ public:
 #else
     std::uintptr_t pollEvent;
     std::uintptr_t swapWindow;
-    std::uintptr_t warpMouseInWindow;
 #endif
 
 private:

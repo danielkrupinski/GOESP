@@ -185,7 +185,6 @@ Memory::Memory() noexcept
     const auto libSDL = dlopen("libSDL2-2.0.so.0", RTLD_LAZY | RTLD_NOLOAD);
     pollEvent = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_PollEvent")) + 2);
     swapWindow = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_GL_SwapWindow")) + 2);
-    warpMouseInWindow = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_WarpMouseInWindow")) + 2);
     dlclose(libSDL);
 #elif __APPLE__
     debugMsg = decltype(debugMsg)(dlsym(dlopen(TIER0_DLL, RTLD_NOLOAD | RTLD_NOW), "Msg"));
@@ -208,7 +207,6 @@ Memory::Memory() noexcept
     const auto libSDL = dlopen("libsdl2-2.0.0.dylib", RTLD_LAZY | RTLD_NOLOAD);
     pollEvent = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_PollEvent")) + 2);
     swapWindow = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_GL_SwapWindow")) + 2);
-    warpMouseInWindow = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_WarpMouseInWindow")) + 2);
     dlclose(libSDL);
 #endif
 }
