@@ -49,8 +49,8 @@ void ImGuiCustom::colorPopup(const char* name, std::array<float, 4>& color, bool
                 }
 
                 ImGui::PopItemWidth();
-                ImGui::EndChild();
             }
+            ImGui::EndChild();
         }
         ImGui::EndPopup();
     }
