@@ -387,14 +387,33 @@ static void drawFpsCounter() noexcept
     ImGui::End();
 }
 
-static void drawGradientQuadrant(ImDrawList* drawList, const ImVec2& center, float radius, float min, float max, int alpha, ImU32 gradient0, ImU32 gradient1, float gradientExtentY) noexcept
+// ImGui::ShadeVertsLinearColorGradientKeepAlpha() modified to do interpolation in HSV
+void shadeVertsHSVColorGradientKeepAlpha(ImDrawList* draw_list, int vert_start_idx, int vert_end_idx, ImVec2 gradient_p0, ImVec2 gradient_p1, ImU32 col0, ImU32 col1)
 {
-    const int vertStartIdx = drawList->VtxBuffer.Size;
-    drawList->PathArcTo(center, radius, min, max, 40);
-    drawList->PathStroke(IM_COL32(0, 0, 0, alpha), 0, 2.0f);
-    const int vertEndIdx = drawList->VtxBuffer.Size;
+    ImVec2 gradient_extent = gradient_p1 - gradient_p0;
+    float gradient_inv_length2 = 1.0f / ImLengthSqr(gradient_extent);
+    ImDrawVert* vert_start = draw_list->VtxBuffer.Data + vert_start_idx;
+    ImDrawVert* vert_end = draw_list->VtxBuffer.Data + vert_end_idx;
 
-    ImGui::ShadeVertsLinearColorGradientKeepAlpha(drawList, vertStartIdx, vertEndIdx, center, center + ImVec2{ 0.0f, gradientExtentY }, gradient0, gradient1);
+    ImVec4 col0HSV = ImGui::ColorConvertU32ToFloat4(col0);
+    ImVec4 col1HSV = ImGui::ColorConvertU32ToFloat4(col1);
+    ImGui::ColorConvertRGBtoHSV(col0HSV.x, col0HSV.y, col0HSV.z, col0HSV.x, col0HSV.y, col0HSV.z);
+    ImGui::ColorConvertRGBtoHSV(col1HSV.x, col1HSV.y, col1HSV.z, col1HSV.x, col1HSV.y, col1HSV.z);
+    ImVec4 colDelta = col1HSV - col0HSV;
+
+    for (ImDrawVert* vert = vert_start; vert < vert_end; vert++)
+    {
+        float d = ImDot(vert->pos - gradient_p0, gradient_extent);
+        float t = ImClamp(d * gradient_inv_length2, 0.0f, 1.0f);
+
+        float h = col0HSV.x + colDelta.x * t;
+        float s = col0HSV.y + colDelta.y * t;
+        float v = col0HSV.z + colDelta.z * t;
+
+        ImVec4 rgb;
+        ImGui::ColorConvertHSVtoRGB(h, s, v, rgb.x, rgb.y, rgb.z);
+        vert->col = (ImGui::ColorConvertFloat4ToU32(rgb) & ~IM_COL32_A_MASK) | (vert->col & IM_COL32_A_MASK);
+    }
 }
 
 static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
@@ -456,25 +475,23 @@ static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
             drawList->PopTextureID();
 
         if (miscConfig.offscreenEnemies.healthBar.enabled) {
-            drawList->AddCircle(pos, avatarRadius + 2, background, 40, 3.0f);
+            const auto radius = avatarRadius + 2;
+            const auto healthFraction = std::clamp(player.health / 100.0f, 0.0f, 1.0f);
 
-            constexpr float pi = std::numbers::pi_v<float>;
-            if (miscConfig.offscreenEnemies.healthBar.type == HealthBar::Solid) {
-                drawList->PathArcTo(pos, avatarRadius + 2, -pi / 2 + std::clamp(pi * (100 - player.health) / 100, 0.0f, pi), -pi / 2 + pi * 2 - std::clamp(pi * (100 - player.health) / 100, 0.0f, pi), 40);
-                drawList->PathStroke(healthBarColor, false, 2.0f);
+            drawList->AddCircle(pos, radius, background, 40, 3.0f);
+
+            const int vertStartIdx = drawList->VtxBuffer.Size;
+            if (healthFraction == 1.0f) { // sometimes PathArcTo is missing one top pixel when drawing a full circle, so draw it with AddCircle
+                drawList->AddCircle(pos, radius, healthBarColor, 40, 2.0f);
             } else {
-                const auto alpha = white >> IM_COL32_A_SHIFT;
-                const auto radius = avatarRadius + 2;
-                constexpr auto green = IM_COL32(0, 255, 0, 255);
-                constexpr auto yellow = IM_COL32(255, 255, 0, 255);
-                constexpr auto red = IM_COL32(255, 0, 0, 255);
-
-                // quadrants 1-4 in order
-                drawGradientQuadrant(drawList, pos, radius, -pi / 2 + std::clamp(pi * (100 - player.health) / 100, 0.0f, pi / 2), 0.0f, alpha, yellow, green, -radius);
-                drawGradientQuadrant(drawList, pos, radius, pi, -pi / 2 + pi * 2 - std::clamp(pi * (100 - player.health) / 100, 0.0f, pi / 2), alpha, yellow, green, -radius);
-                drawGradientQuadrant(drawList, pos, radius, pi / 2, -pi / 2 + pi * 2 - std::clamp(pi * (100 - player.health) / 100, pi / 2, pi), alpha, yellow, red, radius);
-                drawGradientQuadrant(drawList, pos, radius, -pi / 2 + std::clamp(pi * (100 - player.health) / 100, pi / 2, pi), pi / 2, alpha, yellow, red, radius);
+                constexpr float pi = std::numbers::pi_v<float>;
+                drawList->PathArcTo(pos, radius - 0.5f, pi / 2 - pi * healthFraction, pi / 2 + pi * healthFraction, 40);
+                drawList->PathStroke(healthBarColor, false, 2.0f);
             }
+            const int vertEndIdx = drawList->VtxBuffer.Size;
+
+            if (miscConfig.offscreenEnemies.healthBar.type == HealthBar::Gradient)
+                shadeVertsHSVColorGradientKeepAlpha(drawList, vertStartIdx, vertEndIdx, pos - ImVec2{ 0.0f, radius }, pos + ImVec2{ 0.0f, radius }, IM_COL32(0, 255, 0, 255), IM_COL32(255, 0, 0, 255));
         }
     }
 }
