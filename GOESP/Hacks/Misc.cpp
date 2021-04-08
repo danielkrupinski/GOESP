@@ -423,6 +423,7 @@ static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
         const auto white = Helpers::calculateColor(255, 255, 255, 255);
         const auto background = Helpers::calculateColor(0, 0, 0, 80);
         const auto triangleColor = Helpers::calculateColor(miscConfig.offscreenEnemies);
+        const auto healthBarColor = Helpers::calculateColor(miscConfig.offscreenEnemies.healthBar);
         Helpers::setAlphaFactor(1.0f);
 
         constexpr auto avatarRadius = 13.0f;
@@ -458,9 +459,9 @@ static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
             drawList->AddCircle(pos, avatarRadius + 2, background, 40, 3.0f);
 
             constexpr float pi = std::numbers::pi_v<float>;
-            if (false /* to be added */) {
+            if (miscConfig.offscreenEnemies.healthBar.type == HealthBar::Solid) {
                 drawList->PathArcTo(pos, avatarRadius + 2, -pi / 2 + std::clamp(pi * (100 - player.health) / 100, 0.0f, pi), -pi / 2 + pi * 2 - std::clamp(pi * (100 - player.health) / 100, 0.0f, pi), 40);
-                drawList->PathStroke(triangleColor, false, 2.0f);
+                drawList->PathStroke(healthBarColor, false, 2.0f);
             } else {
                 const auto alpha = white >> IM_COL32_A_SHIFT;
                 const auto radius = avatarRadius + 2;
@@ -592,7 +593,11 @@ void Misc::drawGUI() noexcept
         ImGui::Checkbox("Health Bar", &miscConfig.offscreenEnemies.healthBar.enabled);
         ImGui::SameLine();
         ImGui::SetNextItemWidth(95.0f);
-        ImGui::Combo("Type", &miscConfig.offscreenEnemies.healthBar.type, "Gradient\0");
+        ImGui::Combo("Type", &miscConfig.offscreenEnemies.healthBar.type, "Gradient\0Solid\0");
+        if (miscConfig.offscreenEnemies.healthBar.type == HealthBar::Solid) {
+            ImGui::SameLine();
+            ImGuiCustom::colorPicker("", static_cast<Color&>(miscConfig.offscreenEnemies.healthBar));
+        }
         ImGui::EndPopup();
     }
     ImGui::PopID();
