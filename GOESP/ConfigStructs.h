@@ -181,3 +181,24 @@ static void from_json(const json& j, ImVec2& v)
     read_number(j, "X", v.x);
     read_number(j, "Y", v.y);
 }
+
+struct HealthBar : ColorToggle {
+    enum Type {
+        Gradient = 0,
+        Solid
+    };
+
+    int type = Type::Gradient;
+};
+
+static void to_json(json& j, const HealthBar& o, const HealthBar& dummy = {})
+{
+    to_json(j, static_cast<const ColorToggle&>(o), dummy);
+    WRITE("Type", type);
+}
+
+static void from_json(const json& j, HealthBar& o)
+{
+    from_json(j, static_cast<ColorToggle&>(o));
+    read_number(j, "Type", o.type);
+}

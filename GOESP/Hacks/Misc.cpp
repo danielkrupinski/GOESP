@@ -67,6 +67,7 @@ struct OverlayWindow {
 struct OffscreenEnemies : public Color {
     OffscreenEnemies() : Color{ 1.0f, 0.26f, 0.21f, 1.0f } {}
     bool enabled = false;
+    HealthBar healthBar;
 };
 
 struct PlayerList {
@@ -386,6 +387,16 @@ static void drawFpsCounter() noexcept
     ImGui::End();
 }
 
+static void drawGradientQuadrant(ImDrawList* drawList, const ImVec2& center, float radius, float min, float max, int alpha, ImU32 gradient0, ImU32 gradient1, float gradientExtentY) noexcept
+{
+    const int vertStartIdx = drawList->VtxBuffer.Size;
+    drawList->PathArcTo(center, radius, min, max, 40);
+    drawList->PathStroke(IM_COL32(0, 0, 0, alpha), 0, 2.0f);
+    const int vertEndIdx = drawList->VtxBuffer.Size;
+
+    ImGui::ShadeVertsLinearColorGradientKeepAlpha(drawList, vertStartIdx, vertEndIdx, center, center + ImVec2{ 0.0f, gradientExtentY }, gradient0, gradient1);
+}
+
 static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
 {
     if (!miscConfig.offscreenEnemies.enabled)
@@ -409,7 +420,8 @@ static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
 
         if (player.fadingEndTime != 0.0f)
             Helpers::setAlphaFactor(player.fadingAlpha());
-        const auto color = Helpers::calculateColor(255, 255, 255, 255);
+        const auto white = Helpers::calculateColor(255, 255, 255, 255);
+        const auto background = Helpers::calculateColor(0, 0, 0, 80);
         const auto triangleColor = Helpers::calculateColor(miscConfig.offscreenEnemies);
         Helpers::setAlphaFactor(1.0f);
 
@@ -417,16 +429,16 @@ static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
         constexpr auto triangleSize = 10.0f;
 
         const auto pos = ImGui::GetIO().DisplaySize / 2 + ImVec2{ x, y } * 200;
-        const auto trianglePos = pos + ImVec2{ x, y } * (avatarRadius + 3);
+        const auto trianglePos = pos + ImVec2{ x, y } * (avatarRadius + (miscConfig.offscreenEnemies.healthBar.enabled ? 5 : 3));
 
         const ImVec2 trianglePoints[]{
             trianglePos + ImVec2{  0.4f * y, -0.4f * x } * triangleSize,
             trianglePos + ImVec2{  1.0f * x,  1.0f * y } * triangleSize,
             trianglePos + ImVec2{ -0.4f * y,  0.4f * x } * triangleSize
         };
-        drawList->AddConvexPolyFilled(trianglePoints, 3, triangleColor);
 
-        drawList->AddCircleFilled(pos, avatarRadius + 1, color & IM_COL32_A_MASK, 40);
+        drawList->AddConvexPolyFilled(trianglePoints, 3, triangleColor);
+        drawList->AddCircleFilled(pos, avatarRadius + 1, white & IM_COL32_A_MASK, 40);
 
         const auto texture = player.getAvatarTexture();
 
@@ -435,12 +447,34 @@ static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
             drawList->PushTextureID(texture);
 
         const int vertStartIdx = drawList->VtxBuffer.Size;
-        drawList->AddCircleFilled(pos, avatarRadius, color, 40);
+        drawList->AddCircleFilled(pos, avatarRadius, white, 40);
         const int vertEndIdx = drawList->VtxBuffer.Size;
         ImGui::ShadeVertsLinearUV(drawList, vertStartIdx, vertEndIdx, pos - ImVec2{ avatarRadius, avatarRadius }, pos + ImVec2{ avatarRadius, avatarRadius }, { 0, 0 }, { 1, 1 }, true);
 
         if (pushTextureId)
             drawList->PopTextureID();
+
+        if (miscConfig.offscreenEnemies.healthBar.enabled) {
+            drawList->AddCircle(pos, avatarRadius + 2, background, 40, 3.0f);
+
+            constexpr float pi = std::numbers::pi_v<float>;
+            if (false /* to be added */) {
+                drawList->PathArcTo(pos, avatarRadius + 2, -pi / 2 + std::clamp(pi * (100 - player.health) / 100, 0.0f, pi), -pi / 2 + pi * 2 - std::clamp(pi * (100 - player.health) / 100, 0.0f, pi), 40);
+                drawList->PathStroke(triangleColor, false, 2.0f);
+            } else {
+                const auto alpha = white >> IM_COL32_A_SHIFT;
+                const auto radius = avatarRadius + 2;
+                constexpr auto green = IM_COL32(0, 255, 0, 255);
+                constexpr auto yellow = IM_COL32(255, 255, 0, 255);
+                constexpr auto red = IM_COL32(255, 0, 0, 255);
+
+                // quadrants 1-4 in order
+                drawGradientQuadrant(drawList, pos, radius, -pi / 2 + std::clamp(pi * (100 - player.health) / 100, 0.0f, pi / 2), 0.0f, alpha, yellow, green, -radius);
+                drawGradientQuadrant(drawList, pos, radius, pi, -pi / 2 + pi * 2 - std::clamp(pi * (100 - player.health) / 100, 0.0f, pi / 2), alpha, yellow, green, -radius);
+                drawGradientQuadrant(drawList, pos, radius, pi / 2, -pi / 2 + pi * 2 - std::clamp(pi * (100 - player.health) / 100, pi / 2, pi), alpha, yellow, red, radius);
+                drawGradientQuadrant(drawList, pos, radius, -pi / 2 + std::clamp(pi * (100 - player.health) / 100, pi / 2, pi), pi / 2, alpha, yellow, red, radius);
+            }
+        }
     }
 }
 
@@ -549,6 +583,19 @@ void Misc::drawGUI() noexcept
     ImGui::Checkbox("Ignore Flashbang", &miscConfig.ignoreFlashbang);
     ImGui::Checkbox("FPS Counter", &miscConfig.fpsCounter.enabled);
     ImGuiCustom::colorPicker("Offscreen Enemies", miscConfig.offscreenEnemies, &miscConfig.offscreenEnemies.enabled);
+    ImGui::SameLine();
+    ImGui::PushID("Offscreen Enemies");
+    if (ImGui::Button("..."))
+        ImGui::OpenPopup("");
+
+    if (ImGui::BeginPopup("")) {
+        ImGui::Checkbox("Health Bar", &miscConfig.offscreenEnemies.healthBar.enabled);
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(95.0f);
+        ImGui::Combo("Type", &miscConfig.offscreenEnemies.healthBar.type, "Gradient\0");
+        ImGui::EndPopup();
+    }
+    ImGui::PopID();
 
     ImGui::PushID("Player List");
     ImGui::Checkbox("Player List", &miscConfig.playerList.enabled);
@@ -971,9 +1018,10 @@ static void to_json(json& j, const OverlayWindow& o, const OverlayWindow& dummy 
 
 static void to_json(json& j, const OffscreenEnemies& o, const OffscreenEnemies& dummy = {})
 {
-    to_json(j, static_cast<const Color&>(o));
+    to_json(j, static_cast<const Color&>(o), static_cast<const Color&>(dummy));
 
     WRITE("Enabled", enabled)
+    WRITE_OBJ("Health Bar", healthBar);
 }
 
 static void to_json(json& j, const PlayerList& o, const PlayerList& dummy = {})
@@ -1048,6 +1096,7 @@ static void from_json(const json& j, OffscreenEnemies& o)
     from_json(j, static_cast<Color&>(o));
 
     read(j, "Enabled", o.enabled);
+    read<value_t::object>(j, "Health Bar", o.healthBar);
 }
 
 static void from_json(const json& j, PlayerList& o)
