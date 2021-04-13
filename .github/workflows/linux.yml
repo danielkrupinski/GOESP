@@ -29,7 +29,8 @@ jobs:
     - name: build
       run: cd Release && make -j $(nproc --all)
 
-    - name: include what you use Github action
+    - name: include what you use
       uses: EmilGedda/include-what-you-use-action@v1.0
       with:
         compilation-database-path: './Release/'
+        no-error: 'true'
