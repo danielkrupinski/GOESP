@@ -12,6 +12,10 @@
 
 #include "PostProcessing.h"
 
+#ifdef _WIN32
+static IDirect3DDevice9* device;
+#endif
+
 class BlurEffect {
 public:
 #ifdef _WIN32
@@ -446,6 +450,11 @@ private:
 };
 
 #ifdef _WIN32
+void PostProcessing::setDevice(IDirect3DDevice9* device) noexcept
+{
+    ::device = device;
+}
+
 void PostProcessing::performFullscreenBlur(ImDrawList* drawList, float alpha, IDirect3DDevice9* device) noexcept
 {
     BlurEffect::draw(drawList, alpha, device);
