@@ -441,6 +441,12 @@ void PostProcessing::clearBlurTextures() noexcept
 {
     BlurEffect::clearTextures();
 }
+
+void PostProcessing::onDeviceReset() noexcept
+{
+    BlurEffect::clearTextures();
+    ChromaticAberration::clearTexture();
+}
 #endif
 
 void PostProcessing::performFullscreenBlur(ImDrawList* drawList, float alpha) noexcept
