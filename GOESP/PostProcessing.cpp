@@ -13,18 +13,17 @@
 #include "PostProcessing.h"
 
 #ifdef _WIN32
-static IDirect3DDevice9* device;
+static IDirect3DDevice9* device; // DO NOT RELEASE!
 #endif
 
 class BlurEffect {
 public:
-#ifdef _WIN32
-    static void draw(ImDrawList* drawList, float alpha, IDirect3DDevice9* device) noexcept
+    static void draw(ImDrawList* drawList, float alpha) noexcept
     {
-        instance().device = device;
         instance()._draw(drawList, alpha);
     }
 
+#ifdef _WIN32
     static void clearTextures() noexcept
     {
         if (instance().blurTexture1) {
@@ -36,13 +35,7 @@ public:
             instance().blurTexture2 = nullptr;
         }
     }
-
 #else
-    static void draw(ImDrawList* drawList, float alpha) noexcept
-    {
-        instance()._draw(drawList, alpha);
-    }
-
     static void clearTextures() noexcept
     {
         if (instance().blurTexture1) {
@@ -57,7 +50,6 @@ public:
 #endif
 private:
 #ifdef _WIN32
-    IDirect3DDevice9* device = nullptr; // DO NOT RELEASE!
     IDirect3DSurface9* rtBackup = nullptr;
     IDirect3DPixelShader9* blurShaderX = nullptr;
     IDirect3DPixelShader9* blurShaderY = nullptr;
@@ -337,20 +329,11 @@ private:
 
 class ChromaticAberration {
 public:
-#ifdef _WIN32
-    static void draw(ImDrawList* drawList, float amount, IDirect3DDevice9* device) noexcept
-    {
-        instance().device = device;
-        instance().amount = amount;
-        instance()._draw(drawList);
-    }
-#else
     static void draw(ImDrawList* drawList, float amount) noexcept
     {
         instance().amount = amount;
         instance()._draw(drawList);
     }
-#endif
 
     static void clearTexture() noexcept
     {
@@ -359,7 +342,6 @@ public:
 
 private:
 #ifdef _WIN32
-    IDirect3DDevice9* device = nullptr; // DO NOT RELEASE!
     IDirect3DPixelShader9* shader = nullptr;
     IDirect3DTexture9* texture = nullptr;
 #endif
@@ -455,19 +437,13 @@ void PostProcessing::setDevice(IDirect3DDevice9* device) noexcept
     ::device = device;
 }
 
-void PostProcessing::performFullscreenBlur(ImDrawList* drawList, float alpha, IDirect3DDevice9* device) noexcept
-{
-    BlurEffect::draw(drawList, alpha, device);
-}
-
 void PostProcessing::clearBlurTextures() noexcept
 {
     BlurEffect::clearTextures();
 }
+#endif
 
-#else
 void PostProcessing::performFullscreenBlur(ImDrawList* drawList, float alpha) noexcept
 {
     BlurEffect::draw(drawList, alpha);
 }
-#endif

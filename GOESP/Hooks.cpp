@@ -67,6 +67,8 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
+    PostProcessing::setDevice(device);
+
     Misc::drawPreESP(ImGui::GetBackgroundDrawList());
     ESP::render();
     Misc::drawPostESP(ImGui::GetBackgroundDrawList());
@@ -74,7 +76,7 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     gui->handleToggle();
 
     if (!gui->isFullyClosed())
-        PostProcessing::performFullscreenBlur(ImGui::GetBackgroundDrawList(), gui->getTransparency(), device);
+        PostProcessing::performFullscreenBlur(ImGui::GetBackgroundDrawList(), gui->getTransparency());
 
     ImGui::Render();
 
