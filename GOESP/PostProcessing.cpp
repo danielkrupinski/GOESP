@@ -8,6 +8,7 @@
 
 #include "Resources/Shaders/blur_x.h"
 #include "Resources/Shaders/blur_y.h"
+#include "Resources/Shaders/chromatic_aberration.h"
 
 #include "PostProcessing.h"
 
@@ -326,6 +327,120 @@ private:
         drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, IM_COL32(255, 255, 255, 255 * alpha));
 #else
         drawList->AddImage(reinterpret_cast<ImTextureID>(blurTexture1), { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, IM_COL32(255, 255, 255, 255 * alpha));
+#endif
+    }
+};
+
+class ChromaticAberration {
+public:
+#ifdef _WIN32
+    static void draw(ImDrawList* drawList, float amount, IDirect3DDevice9* device) noexcept
+    {
+        instance().device = device;
+        instance().amount = amount;
+        instance()._draw(drawList);
+    }
+#else
+    static void draw(ImDrawList* drawList, float amount) noexcept
+    {
+        instance().amount = amount;
+        instance()._draw(drawList);
+    }
+#endif
+
+    static void clearTexture() noexcept
+    {
+        instance()._clearTexture();
+    }
+
+private:
+#ifdef _WIN32
+    IDirect3DDevice9* device = nullptr; // DO NOT RELEASE!
+    IDirect3DPixelShader9* shader = nullptr;
+    IDirect3DTexture9* texture = nullptr;
+#endif
+    int backbufferWidth = 0;
+    int backbufferHeight = 0;
+    float amount = 0.0f;
+
+    ChromaticAberration() = default;
+    ~ChromaticAberration()
+    {
+#ifdef _WIN32
+        if (shader)
+            shader->Release();
+        if (texture)
+            texture->Release();
+#endif
+    }
+
+    static ChromaticAberration& instance() noexcept
+    {
+        static ChromaticAberration chromaticAberration;
+        return chromaticAberration;
+    }
+
+    void _clearTexture() noexcept
+    {
+#ifdef _WIN32
+        if (texture) {
+            texture->Release();
+            texture = nullptr;
+        }
+#endif
+    }
+
+    static void begin(const ImDrawList*, const ImDrawCmd* cmd) noexcept { instance()._begin(); }
+    static void end(const ImDrawList*, const ImDrawCmd* cmd) noexcept { instance()._end(); }
+
+    void _begin() noexcept
+    {
+#ifdef _WIN32
+        if (!shader)
+            device->CreatePixelShader(reinterpret_cast<const DWORD*>(Resource::chromatic_aberration.data()), &shader);
+
+        IDirect3DSurface9* backBuffer;
+        device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
+        D3DSURFACE_DESC desc;
+        backBuffer->GetDesc(&desc);
+
+        if (backbufferWidth != desc.Width || backbufferHeight != desc.Height) {
+            _clearTexture();
+
+            backbufferWidth = desc.Width;
+            backbufferHeight = desc.Height;
+        }
+
+        if (!texture)
+            device->CreateTexture(desc.Width, desc.Height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &texture, nullptr);
+
+        {
+            IDirect3DSurface9* surface;
+            texture->GetSurfaceLevel(0, &surface);
+            device->StretchRect(backBuffer, NULL, surface, NULL, D3DTEXF_NONE);
+            surface->Release();
+        }
+
+        backBuffer->Release();
+        device->SetPixelShader(shader);
+        const float params[4] = { amount };
+        device->SetPixelShaderConstantF(0, params, 1);
+#endif
+    }
+
+    void _end() noexcept
+    {
+#ifdef _WIN32
+        device->SetPixelShader(nullptr);
+#endif
+    }
+
+    void _draw(ImDrawList* drawList) noexcept
+    {
+#ifdef _WIN32
+        drawList->AddCallback(&begin, device);
+        drawList->AddImage(texture, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
+        drawList->AddCallback(&end, device);
 #endif
     }
 };
