@@ -447,3 +447,8 @@ void PostProcessing::performFullscreenBlur(ImDrawList* drawList, float alpha) no
 {
     BlurEffect::draw(drawList, alpha);
 }
+
+void PostProcessing::performFullscreenChromaticAberration(ImDrawList* drawList, float amount) noexcept
+{
+    ChromaticAberration::draw(drawList, amount);
+}

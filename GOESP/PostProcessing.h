@@ -13,4 +13,5 @@ namespace PostProcessing
     void clearBlurTextures() noexcept;
 #endif
     void performFullscreenBlur(ImDrawList* drawList, float alpha) noexcept;
+    void performFullscreenChromaticAberration(ImDrawList* drawList, float amount) noexcept;
 }
