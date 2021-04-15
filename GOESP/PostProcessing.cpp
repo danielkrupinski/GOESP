@@ -24,7 +24,7 @@ static [[nodiscard]] IDirect3DTexture9* createTexture(int width, int height) noe
     return texture;
 }
 #else
-[[nodiscard]] GLuint createTexture(int width, int height) noexcept
+static [[nodiscard]] GLuint createTexture(int width, int height) noexcept
 {
     GLint lastTexture;
     glGetIntegerv(GL_TEXTURE_BINDING_2D, &lastTexture);
@@ -379,6 +379,18 @@ private:
     static void begin(const ImDrawList*, const ImDrawCmd* cmd) noexcept { instance()._begin(); }
     static void end(const ImDrawList*, const ImDrawCmd* cmd) noexcept { instance()._end(); }
 
+    void createTexture() noexcept
+    {
+        if (const auto [width, height] = ImGui::GetIO().DisplaySize; backbufferWidth != static_cast<int>(width) || backbufferHeight != static_cast<int>(height)) {
+            clearTexture();
+            backbufferWidth = static_cast<int>(width);
+            backbufferHeight = static_cast<int>(height);
+        }
+
+        if (!texture)
+            texture = ::createTexture(backbufferWidth, backbufferHeight);
+    }
+
     void _begin() noexcept
     {
 #ifdef _WIN32
@@ -387,18 +399,6 @@ private:
 
         IDirect3DSurface9* backBuffer;
         device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
-        D3DSURFACE_DESC desc;
-        backBuffer->GetDesc(&desc);
-
-        if (backbufferWidth != desc.Width || backbufferHeight != desc.Height) {
-            _clearTexture();
-
-            backbufferWidth = desc.Width;
-            backbufferHeight = desc.Height;
-        }
-
-        if (!texture)
-            device->CreateTexture(desc.Width, desc.Height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &texture, nullptr);
 
         {
             IDirect3DSurface9* surface;
@@ -427,6 +427,9 @@ private:
 
     void _draw(ImDrawList* drawList) noexcept
     {
+        createTexture();
+        if (!texture)
+            return;
 #ifdef _WIN32
         drawList->AddCallback(&begin, device);
         drawList->AddImage(texture, { 0.0f, 0.0f }, { backbufferWidth * 1.0f, backbufferHeight * 1.0f });
