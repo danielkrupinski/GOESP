@@ -408,6 +408,10 @@ private:
         }
 
         backBuffer->Release();
+
+        device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+        device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+
         device->SetPixelShader(shader);
         const float params[4] = { amount };
         device->SetPixelShaderConstantF(0, params, 1);
