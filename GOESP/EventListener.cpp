@@ -35,6 +35,7 @@ void EventListener::fireGameEvent(GameEvent* event)
         Misc::purchaseList(event);
         break;
     case fnv::hash("player_hurt"):
+        Misc::hitEffect(*event);
         break;
     }
 }
