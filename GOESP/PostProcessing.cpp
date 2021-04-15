@@ -345,6 +345,7 @@ private:
     IDirect3DPixelShader9* shader = nullptr;
     IDirect3DTexture9* texture = nullptr;
 #endif
+    bool shaderInitialized = false;
     int backbufferWidth = 0;
     int backbufferHeight = 0;
     float amount = 0.0f;
@@ -391,12 +392,20 @@ private:
             texture = ::createTexture(backbufferWidth, backbufferHeight);
     }
 
+    void createShaders() noexcept
+    {
+        if (shaderInitialized)
+            return;
+        shaderInitialized = true;
+
+#ifdef _WIN32
+        device->CreatePixelShader(reinterpret_cast<const DWORD*>(Resource::chromatic_aberration.data()), &shader);
+#endif
+    }
+
     void _begin() noexcept
     {
 #ifdef _WIN32
-        if (!shader)
-            device->CreatePixelShader(reinterpret_cast<const DWORD*>(Resource::chromatic_aberration.data()), &shader);
-
         IDirect3DSurface9* backBuffer;
         device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
 
@@ -428,7 +437,8 @@ private:
     void _draw(ImDrawList* drawList) noexcept
     {
         createTexture();
-        if (!texture)
+        createShaders();
+        if (!texture || !shader)
             return;
 #ifdef _WIN32
         drawList->AddCallback(&begin, device);
