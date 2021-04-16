@@ -7,7 +7,7 @@ Cross-platform streamproof ESP hack for CS:GO. Currently supports Windows and Li
 
 ### Hit Effect (new!)
 
-![Hit Effect](https://i.imgur.com/QyGxILG.gif)
+![Hit Effect](https://i.imgur.com/jcQD7N2.gif)
 
 ### Player List
 
