@@ -454,6 +454,14 @@ private:
         device->SetPixelShader(shader);
         const float params[4] = { amount };
         device->SetPixelShaderConstantF(0, params, 1);
+
+        const D3DMATRIX projection{{{
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, -1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            -1.0f / (backbufferWidth), 1.0f / (backbufferHeight), 0.0f, 1.0f
+        }}};
+        device->SetVertexShaderConstantF(0, &projection.m[0][0], 4);
 #else
         glGetIntegerv(GL_TEXTURE_BINDING_2D, &textureBackup);
         glGetIntegerv(GL_CURRENT_PROGRAM, &programBackup);
