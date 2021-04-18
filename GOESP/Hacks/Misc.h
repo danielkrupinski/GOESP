@@ -12,6 +12,7 @@ namespace Misc
 
     void updateEventListeners(bool forceRemove = false) noexcept;
     void purchaseList(GameEvent* event = nullptr) noexcept;
+    void hitEffect(GameEvent& event) noexcept;
 
     void drawGUI() noexcept;
     bool ignoresFlashbang() noexcept;

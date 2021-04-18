@@ -17,6 +17,7 @@
 #include "../Helpers.h"
 #include "../Interfaces.h"
 #include "../Memory.h"
+#include "../PostProcessing.h"
 #include "../SDK/ConVar.h"
 #include "../SDK/Cvar.h"
 #include "../SDK/Engine.h"
@@ -85,6 +86,10 @@ struct PlayerList {
     ImVec2 size{ 270.0f, 200.0f };
 };
 
+struct HitEffect {
+    bool enabled = false;
+};
+
 struct {
     ColorToggleThickness reloadProgress{ 5.0f };
     ColorToggleThickness recoilCrosshair;
@@ -99,6 +104,7 @@ struct {
     ColorToggle bombTimer{ 1.0f, 0.55f, 0.0f, 1.0f };
     ColorToggle smokeHull{ 0.0f, 0.81f, 1.0f, 0.60f };
     ColorToggle nadeBlast{ 1.0f, 0.0f, 0.09f, 0.51f };
+    HitEffect hitEffect;
 } miscConfig;
 
 static void drawReloadProgress(ImDrawList* drawList) noexcept
@@ -646,6 +652,7 @@ void Misc::drawGUI() noexcept
 
     ImGuiCustom::colorPicker("Smoke Hull", miscConfig.smokeHull);
     ImGuiCustom::colorPicker("Nade Blast", miscConfig.nadeBlast);
+    ImGui::Checkbox("Hit Effect", &miscConfig.hitEffect.enabled);
 
     ImGui::EndTable();
 }
@@ -966,6 +973,27 @@ static void drawNadeBlast(ImDrawList* drawList) noexcept
     }
 }
 
+static void hitEffect(ImDrawList* drawList, GameEvent* event = nullptr) noexcept
+{
+    if (!miscConfig.hitEffect.enabled)
+        return;
+
+    constexpr auto effectDuration = 0.3f;
+    static float lastHitTime = 0.0f;
+
+    if (event) {
+        if (localPlayer && interfaces->engine->getPlayerForUserId(event->getInt("attacker")) == localPlayer->index())
+            lastHitTime = memory->globalVars->realtime;
+    } else if (lastHitTime + effectDuration >= memory->globalVars->realtime) {
+        PostProcessing::performFullscreenChromaticAberration(drawList, (1.0f - (memory->globalVars->realtime - lastHitTime) / effectDuration) * 0.01f);
+    }
+}
+
+void Misc::hitEffect(GameEvent& event) noexcept
+{
+    hitEffect(nullptr, &event);
+}
+
 void Misc::drawPreESP(ImDrawList* drawList) noexcept
 {
     drawMolotovHull(drawList);
@@ -984,6 +1012,7 @@ void Misc::drawPostESP(ImDrawList* drawList) noexcept
     drawOffscreenEnemies(drawList);
     drawPlayerList();
     drawBombTimer();
+    hitEffect(drawList);
 }
 
 void Misc::updateEventListeners(bool forceRemove) noexcept
@@ -1046,6 +1075,11 @@ static void to_json(json& j, const OffscreenEnemies& o, const OffscreenEnemies& 
     WRITE_OBJ("Health Bar", healthBar);
 }
 
+static void to_json(json& j, const HitEffect& o, const HitEffect& dummy = {})
+{
+    WRITE("Enabled", enabled)
+}
+
 static void to_json(json& j, const PlayerList& o, const PlayerList& dummy = {})
 {
     WRITE("Enabled", enabled)
@@ -1084,6 +1118,7 @@ json Misc::toJSON() noexcept
     WRITE_OBJ("Bomb Timer", bombTimer);
     WRITE_OBJ("Smoke Hull", smokeHull);
     WRITE_OBJ("Nade Blast", nadeBlast);
+    WRITE_OBJ("Hit Effect", hitEffect);
 
     return j;
 }
@@ -1121,6 +1156,11 @@ static void from_json(const json& j, OffscreenEnemies& o)
     read<value_t::object>(j, "Health Bar", o.healthBar);
 }
 
+static void from_json(const json& j, HitEffect& o)
+{
+    read(j, "Enabled", o.enabled);
+}
+
 static void from_json(const json& j, PlayerList& o)
 {
     read(j, "Enabled", o.enabled);
@@ -1151,4 +1191,5 @@ void Misc::fromJSON(const json& j) noexcept
     read<value_t::object>(j, "Bomb Timer", miscConfig.bombTimer);
     read<value_t::object>(j, "Smoke Hull", miscConfig.smokeHull);
     read<value_t::object>(j, "Nade Blast", miscConfig.nadeBlast);
+    read<value_t::object>(j, "Hit Effect", miscConfig.hitEffect);
 }

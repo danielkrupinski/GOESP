@@ -9,9 +9,10 @@ struct IDirect3DDevice9;
 namespace PostProcessing
 {
 #ifdef _WIN32
-    void performFullscreenBlur(ImDrawList* drawList, float alpha, IDirect3DDevice9* device) noexcept;
+    void setDevice(IDirect3DDevice9* device) noexcept;
     void clearBlurTextures() noexcept;
-#else
-    void performFullscreenBlur(ImDrawList* drawList, float alpha) noexcept;
+    void onDeviceReset() noexcept;
 #endif
+    void performFullscreenBlur(ImDrawList* drawList, float alpha) noexcept;
+    void performFullscreenChromaticAberration(ImDrawList* drawList, float amount) noexcept;
 }

@@ -51,7 +51,7 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 static HRESULT D3DAPI reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* params) noexcept
 {
     GameData::clearTextures();
-    PostProcessing::clearBlurTextures();
+    PostProcessing::onDeviceReset();
     ImGui_ImplDX9_InvalidateDeviceObjects();
     return hooks->reset(device, params);
 }
@@ -67,6 +67,8 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
+    PostProcessing::setDevice(device);
+
     Misc::drawPreESP(ImGui::GetBackgroundDrawList());
     ESP::render();
     Misc::drawPostESP(ImGui::GetBackgroundDrawList());
@@ -74,7 +76,7 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     gui->handleToggle();
 
     if (!gui->isFullyClosed())
-        PostProcessing::performFullscreenBlur(ImGui::GetBackgroundDrawList(), gui->getTransparency(), device);
+        PostProcessing::performFullscreenBlur(ImGui::GetBackgroundDrawList(), gui->getTransparency());
 
     ImGui::Render();
 

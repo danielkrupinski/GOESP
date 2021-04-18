@@ -8,18 +8,49 @@
 
 #include "Resources/Shaders/blur_x.h"
 #include "Resources/Shaders/blur_y.h"
+#include "Resources/Shaders/chromatic_aberration.h"
 
 #include "PostProcessing.h"
 
+#ifdef _WIN32
+static IDirect3DDevice9* device; // DO NOT RELEASE!
+#endif
+
+#ifdef _WIN32
+[[nodiscard]] static IDirect3DTexture9* createTexture(int width, int height) noexcept
+{
+    IDirect3DTexture9* texture;
+    device->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &texture, nullptr);
+    return texture;
+}
+#else
+[[nodiscard]] static GLuint createTexture(int width, int height) noexcept
+{
+    GLint lastTexture;
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, &lastTexture);
+
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+
+    glBindTexture(GL_TEXTURE_2D, lastTexture);
+    return texture;
+}
+#endif
+
 class BlurEffect {
 public:
-#ifdef _WIN32
-    static void draw(ImDrawList* drawList, float alpha, IDirect3DDevice9* device) noexcept
+    static void draw(ImDrawList* drawList, float alpha) noexcept
     {
-        instance().device = device;
         instance()._draw(drawList, alpha);
     }
 
+#ifdef _WIN32
     static void clearTextures() noexcept
     {
         if (instance().blurTexture1) {
@@ -31,13 +62,7 @@ public:
             instance().blurTexture2 = nullptr;
         }
     }
-
 #else
-    static void draw(ImDrawList* drawList, float alpha) noexcept
-    {
-        instance()._draw(drawList, alpha);
-    }
-
     static void clearTextures() noexcept
     {
         if (instance().blurTexture1) {
@@ -52,7 +77,6 @@ public:
 #endif
 private:
 #ifdef _WIN32
-    IDirect3DDevice9* device = nullptr; // DO NOT RELEASE!
     IDirect3DSurface9* rtBackup = nullptr;
     IDirect3DPixelShader9* blurShaderX = nullptr;
     IDirect3DPixelShader9* blurShaderY = nullptr;
@@ -103,33 +127,6 @@ private:
     static void secondPass(const ImDrawList*, const ImDrawCmd*) noexcept { instance()._secondPass(); }
     static void end(const ImDrawList*, const ImDrawCmd*) noexcept { instance()._end(); }
 
-#ifdef _WIN32
-    [[nodiscard]] IDirect3DTexture9* createTexture() const noexcept
-    {
-        IDirect3DTexture9* texture;
-        device->CreateTexture(backbufferWidth / blurDownsample, backbufferHeight / blurDownsample, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &texture, nullptr);
-        return texture;
-    }
-#else
-    [[nodiscard]] GLuint createTexture() const noexcept
-    {
-        GLint lastTexture;
-        glGetIntegerv(GL_TEXTURE_BINDING_2D, &lastTexture);
-
-        GLuint texture;
-        glGenTextures(1, &texture);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, backbufferWidth / blurDownsample, backbufferHeight / blurDownsample, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-
-        glBindTexture(GL_TEXTURE_2D, lastTexture);
-        return texture;
-    }
-#endif
-
     void createTextures() noexcept
     {
         if (const auto [width, height] = ImGui::GetIO().DisplaySize; backbufferWidth != static_cast<int>(width) || backbufferHeight != static_cast<int>(height)) {
@@ -139,9 +136,9 @@ private:
         }
 
         if (!blurTexture1)
-            blurTexture1 = createTexture();
+            blurTexture1 = createTexture(backbufferWidth / blurDownsample, backbufferHeight / blurDownsample);
         if (!blurTexture2)
-            blurTexture2 = createTexture();
+            blurTexture2 = createTexture(backbufferWidth / blurDownsample, backbufferHeight / blurDownsample);
     }
 
     void createShaders() noexcept
@@ -330,10 +327,200 @@ private:
     }
 };
 
+class ChromaticAberration {
+public:
+    static void draw(ImDrawList* drawList, float amount) noexcept
+    {
+        instance().amount = amount;
+        instance()._draw(drawList);
+    }
+
+    static void clearTexture() noexcept
+    {
+        instance()._clearTexture();
+    }
+
+private:
 #ifdef _WIN32
-void PostProcessing::performFullscreenBlur(ImDrawList* drawList, float alpha, IDirect3DDevice9* device) noexcept
+    IDirect3DPixelShader9* shader = nullptr;
+    IDirect3DTexture9* texture = nullptr;
+#else
+    GLint textureBackup = 0;
+    GLint programBackup = 0;
+
+    GLuint texture = 0;
+    GLuint frameBuffer = 0;
+    GLuint shader = 0;
+#endif
+
+    bool shaderInitialized = false;
+    int backbufferWidth = 0;
+    int backbufferHeight = 0;
+    float amount = 0.0f;
+
+    ChromaticAberration() = default;
+    ~ChromaticAberration()
+    {
+#ifdef _WIN32
+        if (shader)
+            shader->Release();
+        if (texture)
+            texture->Release();
+#endif
+    }
+
+    static ChromaticAberration& instance() noexcept
+    {
+        static ChromaticAberration chromaticAberration;
+        return chromaticAberration;
+    }
+
+    void _clearTexture() noexcept
+    {
+#ifdef _WIN32
+        if (texture) {
+            texture->Release();
+            texture = nullptr;
+        }
+#endif
+    }
+
+    static void begin(const ImDrawList*, const ImDrawCmd* cmd) noexcept { instance()._begin(); }
+    static void end(const ImDrawList*, const ImDrawCmd* cmd) noexcept { instance()._end(); }
+
+    void createTexture() noexcept
+    {
+        if (const auto [width, height] = ImGui::GetIO().DisplaySize; backbufferWidth != static_cast<int>(width) || backbufferHeight != static_cast<int>(height)) {
+            clearTexture();
+            backbufferWidth = static_cast<int>(width);
+            backbufferHeight = static_cast<int>(height);
+        }
+
+        if (!texture)
+            texture = ::createTexture(backbufferWidth, backbufferHeight);
+    }
+
+    void createShaders() noexcept
+    {
+        if (shaderInitialized)
+            return;
+        shaderInitialized = true;
+
+#ifdef _WIN32
+        device->CreatePixelShader(reinterpret_cast<const DWORD*>(Resource::chromatic_aberration.data()), &shader);
+#else
+        GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+        constexpr const GLchar* vsSource =
+        #include "Resources/Shaders/blur.glsl"
+        ;
+        glShaderSource(vertexShader, 1, &vsSource, nullptr);
+        glCompileShader(vertexShader);
+
+        GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+        constexpr const GLchar* fsSourceX =
+        #include "Resources/Shaders/chromatic_aberration.glsl"
+            ;
+        glShaderSource(fragmentShader, 1, &fsSourceX, nullptr);
+        glCompileShader(fragmentShader);
+
+        shader = glCreateProgram();
+        glAttachShader(shader, vertexShader);
+        glAttachShader(shader, fragmentShader);
+        glLinkProgram(shader);
+
+        glDeleteShader(vertexShader);
+        glDeleteShader(fragmentShader);
+    #endif
+    }
+
+    void _begin() noexcept
+    {
+#ifdef _WIN32
+        IDirect3DSurface9* backBuffer;
+        device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
+
+        {
+            IDirect3DSurface9* surface;
+            texture->GetSurfaceLevel(0, &surface);
+            device->StretchRect(backBuffer, NULL, surface, NULL, D3DTEXF_NONE);
+            surface->Release();
+        }
+
+        backBuffer->Release();
+
+        device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+        device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+
+        device->SetPixelShader(shader);
+        const float params[4] = { amount };
+        device->SetPixelShaderConstantF(0, params, 1);
+
+        const D3DMATRIX projection{{{
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, -1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            -1.0f / (backbufferWidth), 1.0f / (backbufferHeight), 0.0f, 1.0f
+        }}};
+        device->SetVertexShaderConstantF(0, &projection.m[0][0], 4);
+#else
+        glGetIntegerv(GL_TEXTURE_BINDING_2D, &textureBackup);
+        glGetIntegerv(GL_CURRENT_PROGRAM, &programBackup);
+
+        if (!frameBuffer) {
+            glGenFramebuffers(1, &frameBuffer);
+        }
+
+        glDisable(GL_SCISSOR_TEST);
+
+        GLint fboBackup = 0;
+        glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &fboBackup);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBuffer);
+        glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+        glReadBuffer(GL_BACK);
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+        glBlitFramebuffer(0, 0, backbufferWidth, backbufferHeight, 0, 0, backbufferWidth, backbufferHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboBackup);
+        
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, pos));
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, uv));
+
+        glUseProgram(shader);
+        glUniform1i(0, 0);
+        glUniform1f(1, amount);
+#endif
+    }
+
+    void _end() noexcept
+    {
+#ifdef _WIN32
+        device->SetPixelShader(nullptr);
+#else
+        glUseProgram(programBackup);
+        glBindTexture(GL_TEXTURE_2D, textureBackup);
+        glEnable(GL_SCISSOR_TEST);
+#endif
+    }
+
+    void _draw(ImDrawList* drawList) noexcept
+    {
+        createTexture();
+        createShaders();
+        if (!texture || !shader)
+            return;
+
+        drawList->AddCallback(&begin, nullptr);
+        drawList->AddImage(reinterpret_cast<ImTextureID>(texture), { -1.0f, -1.0f }, { 1.0f, 1.0f });
+        drawList->AddCallback(&end, nullptr);
+    }
+};
+
+#ifdef _WIN32
+void PostProcessing::setDevice(IDirect3DDevice9* device) noexcept
 {
-    BlurEffect::draw(drawList, alpha, device);
+    ::device = device;
 }
 
 void PostProcessing::clearBlurTextures() noexcept
@@ -341,9 +528,19 @@ void PostProcessing::clearBlurTextures() noexcept
     BlurEffect::clearTextures();
 }
 
-#else
+void PostProcessing::onDeviceReset() noexcept
+{
+    BlurEffect::clearTextures();
+    ChromaticAberration::clearTexture();
+}
+#endif
+
 void PostProcessing::performFullscreenBlur(ImDrawList* drawList, float alpha) noexcept
 {
     BlurEffect::draw(drawList, alpha);
 }
-#endif
+
+void PostProcessing::performFullscreenChromaticAberration(ImDrawList* drawList, float amount) noexcept
+{
+    ChromaticAberration::draw(drawList, amount);
+}
