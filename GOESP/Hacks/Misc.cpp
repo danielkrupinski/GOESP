@@ -801,7 +801,7 @@ static void drawMolotovHull(ImDrawList* drawList) noexcept
                     ++count;
             }
 
-            if (count < 1)
+            if (count < 3)
                 continue;
 
             std::swap(screenPoints[0], *std::min_element(screenPoints.begin(), screenPoints.begin() + count, [](const auto& a, const auto& b) { return a.y < b.y || (a.y == b.y && a.x < b.x); }));
