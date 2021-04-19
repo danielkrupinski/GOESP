@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "Hooks.h"
 
 #ifdef _WIN32

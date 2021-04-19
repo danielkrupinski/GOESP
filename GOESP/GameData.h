@@ -1,15 +1,18 @@
 #pragma once
 
+#include <cstdint>
 #include <list>
 #include <memory>
 #include <mutex>
 #include <string>
 #include <tuple>
+#include <utility>
 #include <vector>
 
 #include "imgui/imgui.h"
 
 #include "SDK/Entity.h"
+#include "SDK/Matrix3x4.h"
 #include "SDK/Vector.h"
 
 struct LocalPlayerData;
@@ -69,8 +72,6 @@ struct LocalPlayerData {
     Vector aimPunch;
     Vector origin;
 };
-
-class Entity;
 
 struct BaseData {
     BaseData(Entity* entity) noexcept;

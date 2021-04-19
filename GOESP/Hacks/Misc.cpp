@@ -1,6 +1,7 @@
+#include <algorithm>
+#include <array>
 #include <numbers>
 #include <numeric>
-#include <ranges>
 #include <sstream>
 #include <unordered_map>
 #include <vector>
@@ -8,8 +9,6 @@
 #include "Misc.h"
 
 #include "../imgui/imgui.h"
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "../imgui/imgui_internal.h"
 
 #include "../fnv.h"
 #include "../GameData.h"
@@ -32,7 +31,6 @@
 #include "../SDK/WeaponSystem.h"
 
 #include "../ImGuiCustom.h"
-#include "../imgui/imgui.h"
 
 struct PurchaseList {
     bool enabled = false;

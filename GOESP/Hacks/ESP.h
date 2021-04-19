@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cstddef>
+#include <string>
+#include <vector>
+
 #include "../ConfigStructs.h"
 
 namespace ESP

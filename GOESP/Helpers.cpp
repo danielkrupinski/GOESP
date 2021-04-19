@@ -1,7 +1,10 @@
+#include <array>
 #include <cmath>
+#include <cstring>
 #include <fstream>
 #include <numbers>
-#include <tuple>
+#include <memory>
+#include <string_view>
 
 #include "imgui/imgui.h"
 

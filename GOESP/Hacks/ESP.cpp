@@ -1,3 +1,8 @@
+#include <array>
+#include <iterator>
+#include <limits>
+#include <numbers>
+
 #ifdef _WIN32
 #include <ShlObj.h>
 #include <Windows.h>
@@ -6,27 +11,19 @@
 #include "ESP.h"
 
 #include "../imgui/imgui.h"
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "../imgui/imgui_internal.h"
 
-#include "../fnv.h"
+#include "../ConfigStructs.h"
 #include "../GameData.h"
 #include "../Helpers.h"
-#include "../SDK/Engine.h"
 #include "../SDK/GlobalVars.h"
 #include "../Memory.h"
 #include "../ImGuiCustom.h"
-
-#include <limits>
-#include <numbers>
-#include <tuple>
 
 struct FontData {
     ImFont* tiny;
     ImFont* medium;
     ImFont* big;
 };
-
 
 static constexpr auto operator-(float sub, const std::array<float, 3>& a) noexcept
 {

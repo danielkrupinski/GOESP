@@ -10,7 +10,6 @@
 struct ClientClass;
 class Matrix3x4;
 enum class WeaponId : short;
-struct WeaponInfo;
 enum class WeaponType;
 
 class Collideable {

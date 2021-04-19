@@ -1,5 +1,7 @@
 #include <cassert>
 #include <cstring>
+#include <string_view>
+#include <utility>
 
 #ifdef _WIN32
 #include <Windows.h>

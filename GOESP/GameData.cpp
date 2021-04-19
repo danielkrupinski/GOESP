@@ -1,6 +1,10 @@
 #include <algorithm>
+#include <array>
+#include <cstdint>
+#include <cstring>
 #include <list>
-#include <mutex>
+#include <memory>
+#include <unordered_map>
 
 #include "imgui/imgui.h"
 #define IMGUI_DEFINE_MATH_OPERATORS
@@ -27,6 +31,7 @@
 #include "Interfaces.h"
 #include "Memory.h"
 
+#include "SDK/ClassId.h"
 #include "SDK/ClientClass.h"
 #include "SDK/ClientTools.h"
 #include "SDK/Engine.h"
@@ -380,7 +385,7 @@ ProjectileData::ProjectileData(Entity* projectile) noexcept : BaseData{ projecti
     name = [](Entity* projectile) {
         switch (projectile->getClientClass()->classId) {
         case ClassId::BaseCSGrenadeProjectile:
-            if (const auto model = projectile->getModel(); model && strstr(model->name, "flashbang"))
+            if (const auto model = projectile->getModel(); model && std::strstr(model->name, "flashbang"))
                 return "Flashbang";
             else
                 return "HE Grenade";

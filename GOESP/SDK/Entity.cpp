@@ -1,5 +1,6 @@
 ﻿#include <algorithm>
 #include <cstring>
+#include <cwchar>
 
 #include "Engine.h"
 #include "EngineTrace.h"
@@ -8,9 +9,9 @@
 #include "../Interfaces.h"
 #include "Localize.h"
 #include "LocalPlayer.h"
+#include "Matrix3x4.h"
 #include "../Memory.h"
 #include "ModelInfo.h"
-#include "PlayerResource.h"
 
 bool CSPlayer::canSee(Entity* other, const Vector& pos) noexcept
 {
@@ -76,7 +77,7 @@ void CSPlayer::getPlayerName(char(&out)[128]) noexcept
     wchar_t wide[128];
     memory->getDecoratedPlayerName(*memory->playerResource, index(), wide, sizeof(wide), 4);
 
-    auto end = std::remove(wide, wide + wcslen(wide), L'\n');
+    auto end = std::remove(wide, wide + std::wcslen(wide), L'\n');
     *end = L'\0';
     end = std::unique(wide, end, [](wchar_t a, wchar_t b) { return a == L' ' && a == b; });
     *end = L'\0';

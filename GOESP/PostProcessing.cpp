@@ -6,9 +6,11 @@
 
 #include "imgui/imgui.h"
 
+#ifdef _WIN32
 #include "Resources/Shaders/blur_x.h"
 #include "Resources/Shaders/blur_y.h"
 #include "Resources/Shaders/chromatic_aberration.h"
+#endif
 
 #include "PostProcessing.h"
 
