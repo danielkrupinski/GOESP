@@ -982,7 +982,7 @@ static void hitEffect(ImDrawList* drawList, GameEvent* event = nullptr) noexcept
     static float lastHitTime = 0.0f;
 
     if (event) {
-        if (localPlayer && interfaces->engine->getPlayerForUserId(event->getInt("attacker")) == localPlayer->index())
+        if (localPlayer && event->getInt("attacker") == localPlayer->getUserId())
             lastHitTime = memory->globalVars->realtime;
     } else if (lastHitTime + effectDuration >= memory->globalVars->realtime) {
         PostProcessing::performFullscreenChromaticAberration(drawList, (1.0f - (memory->globalVars->realtime - lastHitTime) / effectDuration) * 0.01f);
