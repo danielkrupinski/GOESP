@@ -441,8 +441,7 @@ static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
             y /= len;
         }
 
-        if (player.fadingEndTime != 0.0f)
-            Helpers::setAlphaFactor(player.fadingAlpha());
+        Helpers::setAlphaFactor(player.fadingAlpha());
         const auto white = Helpers::calculateColor(255, 255, 255, 255);
         const auto background = Helpers::calculateColor(0, 0, 0, 80);
         const auto triangleColor = Helpers::calculateColor(miscConfig.offscreenEnemies);

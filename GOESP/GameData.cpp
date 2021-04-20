@@ -2,6 +2,7 @@
 #include <array>
 #include <cstdint>
 #include <cstring>
+#include <limits>
 #include <list>
 #include <memory>
 #include <unordered_map>
@@ -198,12 +199,7 @@ void GameData::update() noexcept
     std::erase_if(projectileData, [](const auto& projectile) { return interfaces->entityList->getEntityFromHandle(projectile.handle) == nullptr
         && (projectile.trajectory.empty() || projectile.trajectory.back().first + 60.0f < memory->globalVars->realtime); });
 
-    std::ranges::for_each(playerData, [](auto& player) {
-        if (interfaces->entityList->getEntityFromHandle(player.handle) == nullptr && player.fadingEndTime == 0.0f)
-            player.fadingEndTime = memory->globalVars->realtime + 1.75f;
-    });
-
-    std::erase_if(playerData, [](const auto& player) { return interfaces->entityList->getEntityFromHandle(player.handle) == nullptr && player.fadingEndTime < memory->globalVars->realtime; });
+    std::erase_if(playerData, [](const auto& player) { return interfaces->entityList->getEntityFromHandle(player.handle) == nullptr && player.fadingAlpha() < std::numeric_limits<float>::epsilon(); });
 }
 
 void GameData::clearProjectileList() noexcept
@@ -452,22 +448,20 @@ void PlayerData::update(CSPlayer* entity) noexcept
         if (const auto pr = *memory->playerResource) {
             alive = pr->getIPlayerResource()->isAlive(idx);
             if (!alive)
-                fadingEndTime = -1.0f;
+                lastContactTime = 0.0f;
             health = pr->getIPlayerResource()->getPlayerHealth(idx);
         }
-        if (fadingEndTime == 0.0f)
-            fadingEndTime = memory->globalVars->realtime + 1.75f;
         return;
     }
 
     money = entity->money();
     team = entity->getTeamNumber();
     lastPlaceName = interfaces->localize->findAsUTF8(entity->lastPlaceName());
-    fadingEndTime = 0.0f;   
     static_cast<BaseData&>(*this) = { entity };
     origin = entity->getAbsOrigin();
     inViewFrustum = !interfaces->engine->cullBox(obbMins + origin, obbMaxs + origin);
     alive = entity->isAlive();
+    lastContactTime = alive ? memory->globalVars->realtime : 0.0f;
 
     if (localPlayer) {
         enemy = entity->isEnemy();
@@ -621,8 +615,8 @@ ImTextureID PlayerData::getRankTexture() const noexcept
 
 float PlayerData::fadingAlpha() const noexcept
 {
-    constexpr float fadeTime = 1.75f;
-    return std::clamp(std::max(fadingEndTime - memory->globalVars->realtime, 0.0f) / fadeTime, 0.0f, 1.0f);
+    constexpr float fadeTime = 1.50f;
+    return std::clamp(1.0f - std::max(memory->globalVars->realtime - lastContactTime - 0.25f, 0.0f) / fadeTime, 0.0f, 1.0f);
 }
 
 WeaponData::WeaponData(Entity* entity) noexcept : BaseData{ entity }, clip{ entity->clip() }, reserveAmmo{ entity->reserveAmmoCount() }

@@ -557,8 +557,7 @@ static bool renderPlayerEsp(const PlayerData& playerData, const Player& playerCo
     if (playerData.immune)
         Helpers::setAlphaFactor(0.5f);
 
-    if (playerData.fadingEndTime != 0.0f)
-        Helpers::setAlphaFactor(Helpers::getAlphaFactor() * playerData.fadingAlpha());
+    Helpers::setAlphaFactor(Helpers::getAlphaFactor() * playerData.fadingAlpha());
 
     drawPlayerSkeleton(playerConfig.skeleton, playerData.bones);
     renderPlayerBox(playerData, playerConfig);
