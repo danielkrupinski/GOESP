@@ -704,60 +704,60 @@ static void drawPlayerList() noexcept
             ImGui::TableHeadersRow();
 
             std::vector<std::reference_wrapper<const PlayerData>> playersOrdered{ GameData::players().begin(), GameData::players().end() };
-            std::ranges::sort(playersOrdered, [](const auto& a, const auto& b) {
+            std::ranges::sort(playersOrdered, [](const PlayerData& a, const PlayerData& b) {
                 // enemies first
-                if (a.get().enemy != b.get().enemy)
-                    return a.get().enemy && !b.get().enemy;
+                if (a.enemy != b.enemy)
+                    return a.enemy && !b.enemy;
 
-                return a.get().handle < b.get().handle;
-                });
+                return a.handle < b.handle;
+            });
 
             ImGui::PushFont(gui->getUnicodeFont());
 
-            for (const auto& player : playersOrdered) {
+            for (const PlayerData& player : playersOrdered) {
                 ImGui::TableNextRow();
                 ImGui::PushID(ImGui::TableGetRowIndex());
 
                 if (ImGui::TableNextColumn()) {
                     if (miscConfig.playerList.avatar) {
-                        ImGui::Image(player.get().getAvatarTexture(), { ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight() });
+                        ImGui::Image(player.getAvatarTexture(), { ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight() });
                         ImGui::SameLine();
                     }
-                    ImGui::textEllipsisInTableCell(player.get().name.c_str());
+                    ImGui::textEllipsisInTableCell(player.name.c_str());
                 }
 
-                if (ImGui::TableNextColumn() && ImGui::smallButtonFullWidth("Copy", player.get().steamID == 0))
-                    ImGui::SetClipboardText(std::to_string(player.get().steamID).c_str());
+                if (ImGui::TableNextColumn() && ImGui::smallButtonFullWidth("Copy", player.steamID == 0))
+                    ImGui::SetClipboardText(std::to_string(player.steamID).c_str());
 
                 if (ImGui::TableNextColumn()) {
-                    ImGui::Image(player.get().getRankTexture(), { 2.45f /* -> proportion 49x20px */ * ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight() });
+                    ImGui::Image(player.getRankTexture(), { 2.45f /* -> proportion 49x20px */ * ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight() });
                     if (ImGui::IsItemHovered()) {
                         ImGui::BeginTooltip();
                         ImGui::PushFont(nullptr);
-                        ImGui::TextUnformatted(player.get().getRankName().c_str());
+                        ImGui::TextUnformatted(player.getRankName().c_str());
                         ImGui::PopFont();
                         ImGui::EndTooltip();
                     }
                 }
 
                 if (ImGui::TableNextColumn())
-                    ImGui::Text("%d", player.get().competitiveWins);
+                    ImGui::Text("%d", player.competitiveWins);
 
                 if (ImGui::TableNextColumn())
-                    ImGui::TextColored({ 0.0f, 1.0f, 0.0f, 1.0f }, "$%d", player.get().money);
+                    ImGui::TextColored({ 0.0f, 1.0f, 0.0f, 1.0f }, "$%d", player.money);
 
                 if (ImGui::TableNextColumn()) {
-                    if (!player.get().alive)
+                    if (!player.alive)
                         ImGui::TextColored({ 1.0f, 0.0f, 0.0f, 1.0f }, "%s", "DEAD");
                     else
-                        ImGui::Text("%d HP", player.get().health);
+                        ImGui::Text("%d HP", player.health);
                 }
 
                 if (ImGui::TableNextColumn())
-                    ImGui::Text("%d", player.get().armor);
+                    ImGui::Text("%d", player.armor);
 
                 if (ImGui::TableNextColumn())
-                    ImGui::TextUnformatted(player.get().lastPlaceName.c_str());
+                    ImGui::TextUnformatted(player.lastPlaceName.c_str());
 
                 ImGui::PopID();
             }
