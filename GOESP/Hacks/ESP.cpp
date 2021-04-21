@@ -1241,13 +1241,13 @@ bool ESP::loadScheduledFonts() noexcept
         FontData newFont;
 
         if (fontName == "Default") {
-            cfg.SizePixels = 13.0f;
+            cfg.SizePixels = 15.0f;
             newFont.big = ImGui::GetIO().Fonts->AddFontDefault(&cfg);
 
-            cfg.SizePixels = 10.0f;
+            cfg.SizePixels = 14.0f;
             newFont.medium = ImGui::GetIO().Fonts->AddFontDefault(&cfg);
 
-            cfg.SizePixels = 8.0f;
+            cfg.SizePixels = 12.0f;
             newFont.tiny = ImGui::GetIO().Fonts->AddFontDefault(&cfg);
 
             fonts.emplace(fontName, newFont);
@@ -1264,9 +1264,9 @@ bool ESP::loadScheduledFonts() noexcept
             cfg.FontDataOwnedByAtlas = false;
             const auto ranges = Helpers::getFontGlyphRanges();
 
-            newFont.tiny = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, 8.0f, &cfg, ranges);
-            newFont.medium = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, 10.0f, &cfg, ranges);
-            newFont.big = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, 13.0f, &cfg, ranges);
+            newFont.tiny = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, 12.0f, &cfg, ranges);
+            newFont.medium = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, 14.0f, &cfg, ranges);
+            newFont.big = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(fontData.get(), fontDataSize, 15.0f, &cfg, ranges);
             fonts.emplace(fontName, newFont);
         }
         result = true;
