@@ -57,6 +57,15 @@ void Helpers::convertHSVtoRGB(float h, float s, float v, float& outR, float& out
     ImGui::ColorConvertHSVtoRGB(h, s, v, outR, outG, outB);
 }
 
+unsigned int Helpers::healthColor(float fraction) noexcept
+{
+    constexpr auto greenHue = 1.0f / 3.0f;
+    constexpr auto redHue = 0.0f;
+    float r, g, b;
+    convertHSVtoRGB(std::lerp(redHue, greenHue, fraction), 1.0f, 1.0f, r, g, b);
+    return calculateColor(static_cast<int>(r * 255.0f), static_cast<int>(g * 255.0f), static_cast<int>(b * 255.0f), 255);
+}
+
 ImWchar* Helpers::getFontGlyphRanges() noexcept
 {
     static ImVector<ImWchar> ranges;
