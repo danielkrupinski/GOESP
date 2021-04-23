@@ -151,10 +151,6 @@ struct Shared {
     float textCullDistance = 0.0f;
 };
 
-struct Bar : ColorToggleRounding {
-
-};
-
 struct Player : Shared {
     Player() : Shared{}
     {
@@ -167,7 +163,7 @@ struct Player : Shared {
     bool spottedOnly = false;
     ColorToggleThickness skeleton;
     Box headBox;
-    bool healthBar = false;
+    HealthBar healthBar;
 
     using Shared::operator=;
 };
@@ -379,25 +375,34 @@ struct FontPush {
     }
 };
 
-static void drawHealthBar(const ImVec2& pos, float height, int health) noexcept
+static void drawHealthBar(const HealthBar& config, const ImVec2& pos, float height, int health) noexcept
 {
+    if (!config.enabled)
+        return;
+
     constexpr float width = 3.0f;
 
     drawList->PushClipRect(pos + ImVec2{ 0.0f, (100 - health) / 100.0f * height }, pos + ImVec2{ width + 1.0f, height + 1.0f });
 
-    const auto green = Helpers::calculateColor(0, 255, 0, 255);
-    const auto yellow = Helpers::calculateColor(255, 255, 0, 255);
-    const auto red = Helpers::calculateColor(255, 0, 0, 255);
+    if (config.type == HealthBar::Gradient) {
+        const auto green = Helpers::calculateColor(0, 255, 0, 255);
+        const auto yellow = Helpers::calculateColor(255, 255, 0, 255);
+        const auto red = Helpers::calculateColor(255, 0, 0, 255);
 
-    ImVec2 min = pos;
-    ImVec2 max = min + ImVec2{ width, height / 2.0f };
+        ImVec2 min = pos;
+        ImVec2 max = min + ImVec2{ width, height / 2.0f };
 
-    drawList->AddRectFilled(min + ImVec2{ 1.0f, 1.0f }, pos + ImVec2{ width + 1.0f, height + 1.0f }, Helpers::calculateColor(0, 0, 0, 255));
+        drawList->AddRectFilled(min + ImVec2{ 1.0f, 1.0f }, pos + ImVec2{ width + 1.0f, height + 1.0f }, Helpers::calculateColor(0, 0, 0, 255));
 
-    drawList->AddRectFilledMultiColor(ImFloor(min), ImFloor(max), green, green, yellow, yellow);
-    min.y += height / 2.0f;
-    max.y += height / 2.0f;
-    drawList->AddRectFilledMultiColor(ImFloor(min), ImFloor(max), yellow, yellow, red, red);
+        drawList->AddRectFilledMultiColor(ImFloor(min), ImFloor(max), green, green, yellow, yellow);
+        min.y += height / 2.0f;
+        max.y += height / 2.0f;
+        drawList->AddRectFilledMultiColor(ImFloor(min), ImFloor(max), yellow, yellow, red, red);
+    } else {
+        const auto color = config.type == HealthBar::HealthBased ? Helpers::healthColor(std::clamp(health / 100.0f, 0.0f, 1.0f)) : Helpers::calculateColor(config);
+        drawList->AddRectFilled(pos + ImVec2{ 1.0f, 1.0f }, pos + ImVec2{ width + 1.0f, height + 1.0f }, color & IM_COL32_A_MASK);
+        drawList->AddRectFilled(pos, pos + ImVec2{ width, height }, color);
+    }
 
     drawList->PopClipRect();
 }
@@ -413,8 +418,7 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
 
     ImVec2 offsetMins{}, offsetMaxs{};
 
-    if (config.healthBar)
-        drawHealthBar(bbox.min - ImVec2{ 5.0f, 0.0f }, (bbox.max.y - bbox.min.y), playerData.health);
+    drawHealthBar(config.healthBar, bbox.min - ImVec2{ 5.0f, 0.0f }, (bbox.max.y - bbox.min.y), playerData.health);
 
     FontPush font{ config.font.name, playerData.distanceToLocal };
 
@@ -965,7 +969,26 @@ void ESP::drawGUI() noexcept
             ImGui::PopID();
 
             ImGui::SameLine(spacing);
-            ImGui::Checkbox("Health Bar", &playerConfig.healthBar);
+
+            ImGui::Checkbox("Health Bar", &playerConfig.healthBar.enabled);
+            ImGui::SameLine();
+
+            ImGui::PushID("Health Bar");
+
+            if (ImGui::Button("..."))
+                ImGui::OpenPopup("");
+
+            if (ImGui::BeginPopup("")) {
+                ImGui::SetNextItemWidth(100.0f);
+                ImGui::Combo("Type", &playerConfig.healthBar.type, "Gradient\0Solid\0Health-based\0");
+                if (playerConfig.healthBar.type == HealthBar::Solid) {
+                    ImGui::SameLine();
+                    ImGuiCustom::colorPicker("", static_cast<Color&>(playerConfig.healthBar));
+                }
+                ImGui::EndPopup();
+            }
+
+            ImGui::PopID();
         } else if (currentCategory == 2) {
             auto& weaponConfig = espConfig.weapons[currentItem];
             ImGuiCustom::colorPicker("Ammo", weaponConfig.ammo);
@@ -1049,7 +1072,7 @@ static void to_json(json& j, const Player& o, const Player& dummy = {})
     WRITE("Spotted Only", spottedOnly)
     to_json(j["Skeleton"], o.skeleton, dummy.skeleton);
     to_json(j["Head Box"], o.headBox, dummy.headBox);
-    WRITE("Health Bar", healthBar)
+    to_json(j["Health Bar"], o.healthBar, dummy.healthBar);
 }
 
 static void to_json(json& j, const Weapon& o, const Weapon& dummy = {})
@@ -1130,7 +1153,7 @@ static void from_json(const json& j, Player& p)
     read(j, "Spotted Only", p.spottedOnly);
     read<value_t::object>(j, "Skeleton", p.skeleton);
     read<value_t::object>(j, "Head Box", p.headBox);
-    read(j, "Health Bar", p.healthBar);
+    read<value_t::object>(j, "Health Bar", p.healthBar);
 }
 
 static void from_json(const json& j, Weapon& w)
