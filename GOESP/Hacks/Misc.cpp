@@ -445,7 +445,7 @@ static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
         const auto white = Helpers::calculateColor(255, 255, 255, 255);
         const auto background = Helpers::calculateColor(0, 0, 0, 80);
         const auto triangleColor = Helpers::calculateColor(miscConfig.offscreenEnemies);
-        const auto healthBarColor = Helpers::calculateColor(miscConfig.offscreenEnemies.healthBar);
+        const auto healthBarColor = miscConfig.offscreenEnemies.healthBar.type == HealthBar::HealthBased ? Helpers::healthColor(std::clamp(player.health / 100.0f, 0.0f, 1.0f)) : Helpers::calculateColor(miscConfig.offscreenEnemies.healthBar);
         Helpers::setAlphaFactor(1.0f);
 
         constexpr auto avatarRadius = 13.0f;
@@ -612,8 +612,8 @@ void Misc::drawGUI() noexcept
     if (ImGui::BeginPopup("")) {
         ImGui::Checkbox("Health Bar", &miscConfig.offscreenEnemies.healthBar.enabled);
         ImGui::SameLine();
-        ImGui::SetNextItemWidth(95.0f);
-        ImGui::Combo("Type", &miscConfig.offscreenEnemies.healthBar.type, "Gradient\0Solid\0");
+        ImGui::SetNextItemWidth(100.0f);
+        ImGui::Combo("Type", &miscConfig.offscreenEnemies.healthBar.type, "Gradient\0Solid\0Health-based\0");
         if (miscConfig.offscreenEnemies.healthBar.type == HealthBar::Solid) {
             ImGui::SameLine();
             ImGuiCustom::colorPicker("", static_cast<Color&>(miscConfig.offscreenEnemies.healthBar));

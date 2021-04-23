@@ -185,7 +185,8 @@ static void from_json(const json& j, ImVec2& v)
 struct HealthBar : ColorToggle {
     enum Type {
         Gradient = 0,
-        Solid
+        Solid,
+        HealthBased
     };
 
     int type = Type::Gradient;
