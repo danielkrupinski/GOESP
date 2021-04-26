@@ -485,7 +485,7 @@ static void renderEntityBox(const BaseData& entityData, const char* name, const 
     FontPush font{ config.font.name, entityData.distanceToLocal };
 
     if (config.name.enabled)
-        renderText(entityData.distanceToLocal, config.textCullDistance, config.name, name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 5 });
+        renderText(entityData.distanceToLocal, config.textCullDistance, config.name, name, { (bbox.min.x + bbox.max.x) / 2, bbox.min.y - 2 });
 }
 
 static void drawProjectileTrajectory(const Trail& config, const std::vector<std::pair<float, Vector>>& trajectory) noexcept
