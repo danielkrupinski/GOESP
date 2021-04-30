@@ -295,18 +295,17 @@ ImTextureID ImGui_CreateTextureRGBA(int width, int height, const unsigned char* 
         return nullptr;
     }
 
-    const auto buffer = std::make_unique<std::uint32_t[]>(width * height);
-    std::memcpy(buffer.get(), data, width * height * 4);
+    for (int y = 0; y < height; ++y) {
+        const auto dest = reinterpret_cast<std::uint32_t*>((unsigned char*)lockedRect.pBits + lockedRect.Pitch * y);
+        std::memcpy(dest, data + width * 4 * y, width * 4);
 
-    for (int i = 0; i < width * height; ++i) {
-        // RGBA --> BGRA
-        auto color = buffer[i];
-        color = (color & 0xFF00FF00) | ((color & 0xFF0000) >> 16) | ((color & 0xFF) << 16);
-        buffer[i] = color;
+        for (int i = 0; i < width; ++i) {
+            // RGBA --> BGRA
+            auto color = dest[i];
+            color = (color & 0xFF00FF00) | ((color & 0xFF0000) >> 16) | ((color & 0xFF) << 16);
+            dest[i] = color;
+        }
     }
-
-    for (int y = 0; y < height; ++y)
-        std::memcpy((unsigned char*)lockedRect.pBits + lockedRect.Pitch * y, buffer.get() + width * y, width * 4);
 
     texture->UnlockRect(0);
     return texture;
