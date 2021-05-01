@@ -29,13 +29,14 @@ static IDirect3DDevice9* device; // DO NOT RELEASE!
 static void copyBackbufferToTexture(IDirect3DTexture9* texture, D3DTEXTUREFILTERTYPE filtering) noexcept
 {
     IDirect3DSurface9* backBuffer;
-    device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
+    if (device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer) != D3D_OK)
+        return;
 
-    IDirect3DSurface9* surface;
-    texture->GetSurfaceLevel(0, &surface);
-    device->StretchRect(backBuffer, nullptr, surface, nullptr, filtering);
-
-    surface->Release();
+    if (IDirect3DSurface9* surface; texture->GetSurfaceLevel(0, &surface) == D3D_OK) {
+        device->StretchRect(backBuffer, nullptr, surface, nullptr, filtering);
+        surface->Release();
+    }
+    
     backBuffer->Release();
 }
 #else
