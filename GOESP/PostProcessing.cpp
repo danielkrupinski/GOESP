@@ -25,6 +25,19 @@ static IDirect3DDevice9* device; // DO NOT RELEASE!
     device->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &texture, nullptr);
     return texture;
 }
+
+static void copyBackbufferToTexture(IDirect3DTexture9* texture, D3DTEXTUREFILTERTYPE filtering) noexcept
+{
+    IDirect3DSurface9* backBuffer;
+    device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
+
+    IDirect3DSurface9* surface;
+    texture->GetSurfaceLevel(0, &surface);
+    device->StretchRect(backBuffer, nullptr, surface, nullptr, filtering);
+
+    surface->Release();
+    backBuffer->Release();
+}
 #else
 [[nodiscard]] static GLuint createTexture(int width, int height) noexcept
 {
@@ -195,17 +208,7 @@ private:
 #ifdef _WIN32
         device->GetRenderTarget(0, &rtBackup);
 
-        {
-            IDirect3DSurface9* backBuffer;
-            device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
-
-            IDirect3DSurface9* surface;
-            blurTexture1->GetSurfaceLevel(0, &surface);
-            device->StretchRect(backBuffer, NULL, surface, NULL, D3DTEXF_LINEAR);
-
-            surface->Release();
-            backBuffer->Release();
-        }
+        copyBackbufferToTexture(blurTexture1, D3DTEXF_LINEAR);
 
         device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
         device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
@@ -438,17 +441,7 @@ private:
     void _begin() noexcept
     {
 #ifdef _WIN32
-        IDirect3DSurface9* backBuffer;
-        device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
-
-        {
-            IDirect3DSurface9* surface;
-            texture->GetSurfaceLevel(0, &surface);
-            device->StretchRect(backBuffer, NULL, surface, NULL, D3DTEXF_NONE);
-            surface->Release();
-        }
-
-        backBuffer->Release();
+        copyBackbufferToTexture(texture, D3DTEXF_NONE);
 
         device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
         device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
