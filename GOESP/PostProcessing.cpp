@@ -40,10 +40,10 @@ static void copyBackbufferToTexture(IDirect3DTexture9* texture, D3DTEXTUREFILTER
 
 static void setRenderTarget(IDirect3DTexture9* rtTexture) noexcept
 {
-    IDirect3DSurface9* surface;
-    rtTexture->GetSurfaceLevel(0, &surface);
-    device->SetRenderTarget(0, surface);
-    surface->Release();
+    if (IDirect3DSurface9* surface; rtTexture->GetSurfaceLevel(0, &surface) == D3D_OK) {
+        device->SetRenderTarget(0, surface);
+        surface->Release();
+    }
 }
 
 #else
