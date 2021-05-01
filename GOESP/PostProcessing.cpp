@@ -360,6 +360,8 @@ private:
     float amount = 0.0f;
 
     ChromaticAberration() = default;
+    ChromaticAberration(const ChromaticAberration&) = delete;
+
     ~ChromaticAberration()
     {
 #ifdef _WIN32
