@@ -16,9 +16,7 @@
 
 #ifdef _WIN32
 static IDirect3DDevice9* device; // DO NOT RELEASE!
-#endif
 
-#ifdef _WIN32
 [[nodiscard]] static IDirect3DTexture9* createTexture(int width, int height) noexcept
 {
     IDirect3DTexture9* texture;
@@ -39,6 +37,15 @@ static void copyBackbufferToTexture(IDirect3DTexture9* texture, D3DTEXTUREFILTER
     
     backBuffer->Release();
 }
+
+static void setRenderTarget(IDirect3DTexture9* rtTexture) noexcept
+{
+    IDirect3DSurface9* surface;
+    rtTexture->GetSurfaceLevel(0, &surface);
+    device->SetRenderTarget(0, surface);
+    surface->Release();
+}
+
 #else
 [[nodiscard]] static GLuint createTexture(int width, int height) noexcept
 {
@@ -251,13 +258,7 @@ private:
     void _firstPass() noexcept
     {
 #ifdef _WIN32
-        {
-            IDirect3DSurface9* surface;
-            blurTexture2->GetSurfaceLevel(0, &surface);
-            device->SetRenderTarget(0, surface);
-            surface->Release();
-        }
-
+        setRenderTarget(blurTexture2);
         device->SetPixelShader(blurShaderX);
         const float params[4] = { 1.0f / (backbufferWidth / blurDownsample) };
         device->SetPixelShaderConstantF(0, params, 1);
@@ -273,13 +274,7 @@ private:
     void _secondPass() noexcept
     {
 #ifdef _WIN32
-        {
-            IDirect3DSurface9* surface;
-            blurTexture1->GetSurfaceLevel(0, &surface);
-            device->SetRenderTarget(0, surface);
-            surface->Release();
-        }
-
+        setRenderTarget(blurTexture1);
         device->SetPixelShader(blurShaderY);
         const float params[4] = { 1.0f / (backbufferHeight / blurDownsample) };
         device->SetPixelShaderConstantF(0, params, 1);
