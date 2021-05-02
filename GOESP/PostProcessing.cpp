@@ -123,6 +123,8 @@ private:
     static constexpr auto blurDownsample = 4;
 
     BlurEffect() = default;
+    BlurEffect(const BlurEffect&) = delete;
+
     ~BlurEffect()
     {
 #ifdef _WIN32
