@@ -509,6 +509,7 @@ private:
         drawList->AddCallback(&begin, nullptr);
         drawList->AddImage(reinterpret_cast<ImTextureID>(texture), { -1.0f, -1.0f }, { 1.0f, 1.0f });
         drawList->AddCallback(&end, nullptr);
+        drawList->AddCallback(ImDrawCallback_ResetRenderState, nullptr);
     }
 };
 
