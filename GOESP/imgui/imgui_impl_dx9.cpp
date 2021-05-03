@@ -22,17 +22,17 @@
 //  2018-02-16: Misc: Obsoleted the io.RenderDrawListsFn callback and exposed ImGui_ImplDX9_RenderDrawData() in the .h file so you can call it yourself.
 //  2018-02-06: Misc: Removed call to ImGui::Shutdown() which is not available from 1.60 WIP, user needs to call CreateContext/DestroyContext themselves.
 
+// DirectX
+#include <d3d9.h>
+#define DIRECTINPUT_VERSION 0x0800
+#include <dinput.h>
+
 #include <memory>
 
 #include "imgui.h"
 #include "imgui_impl_dx9.h"
 
-#include "../Resources/Shaders/default_vs.h"
-
-// DirectX
-#include <d3d9.h>
-#define DIRECTINPUT_VERSION 0x0800
-#include <dinput.h>
+#include "../Resources/Shaders/Build/default_vs.h"
 
 // DirectX data
 static LPDIRECT3DDEVICE9        g_pd3dDevice = NULL;
@@ -261,7 +261,7 @@ bool ImGui_ImplDX9_CreateDeviceObjects()
     }
 
     if (!vertexShader)
-        g_pd3dDevice->CreateVertexShader(reinterpret_cast<const DWORD*>(Resource::default_vs.data()), &vertexShader);
+        g_pd3dDevice->CreateVertexShader(reinterpret_cast<const DWORD*>(default_vs), &vertexShader);
 
     return true;
 }

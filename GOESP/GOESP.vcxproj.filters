@@ -304,17 +304,8 @@
     <ClInclude Include="Resources\Resource.h">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\Shaders\blur_x.h">
-      <Filter>Resources\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources\Shaders\blur_y.h">
-      <Filter>Resources\Shaders</Filter>
-    </ClInclude>
     <ClInclude Include="PostProcessing.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources\Shaders\default_vs.h">
-      <Filter>Resources\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_freetype.h">
       <Filter>imgui</Filter>
@@ -328,8 +319,19 @@
     <ClInclude Include="freetype\freetype\config\ftmodule.h">
       <Filter>freetype</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\Shaders\chromatic_aberration.h">
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Resources\Shaders\blur_x.hlsl">
       <Filter>Resources\Shaders</Filter>
-    </ClInclude>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\blur_y.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\chromatic_aberration.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\default_vs.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

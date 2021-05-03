@@ -7,9 +7,10 @@
 #include "imgui/imgui.h"
 
 #ifdef _WIN32
-#include "Resources/Shaders/blur_x.h"
-#include "Resources/Shaders/blur_y.h"
-#include "Resources/Shaders/chromatic_aberration.h"
+// shaders are build during compilation and header files are created
+#include "Resources/Shaders/Build/blur_x.h"
+#include "Resources/Shaders/Build/blur_y.h"
+#include "Resources/Shaders/Build/chromatic_aberration.h"
 #endif
 
 #include "PostProcessing.h"
@@ -173,8 +174,8 @@ private:
         shadersInitialized = true;
 
 #ifdef _WIN32
-        device->CreatePixelShader(reinterpret_cast<const DWORD*>(Resource::blur_x.data()), &blurShaderX);
-        device->CreatePixelShader(reinterpret_cast<const DWORD*>(Resource::blur_y.data()), &blurShaderY);
+        device->CreatePixelShader(reinterpret_cast<const DWORD*>(blur_x), &blurShaderX);
+        device->CreatePixelShader(reinterpret_cast<const DWORD*>(blur_y), &blurShaderY);
 #else
         GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
         constexpr const GLchar* vsSource =
@@ -412,7 +413,7 @@ private:
         shaderInitialized = true;
 
 #ifdef _WIN32
-        device->CreatePixelShader(reinterpret_cast<const DWORD*>(Resource::chromatic_aberration.data()), &shader);
+        device->CreatePixelShader(reinterpret_cast<const DWORD*>(chromatic_aberration), &shader);
 #else
         GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
         constexpr const GLchar* vsSource =
