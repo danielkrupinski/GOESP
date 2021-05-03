@@ -6,8 +6,8 @@ R"(
 in vec2 fragUV;
 out vec4 color;
 
-layout(location = 0) uniform sampler2D texSampler;
-layout(location = 1) uniform float amount;
+layout(location = 0) uniform float amount;
+layout(location = 1) uniform sampler2D texSampler;
 
 void main()
 {

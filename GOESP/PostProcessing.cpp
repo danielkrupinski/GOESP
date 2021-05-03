@@ -268,8 +268,8 @@ private:
         glDrawBuffer(GL_COLOR_ATTACHMENT1);
 
         glUseProgram(blurShaderX);
-        glUniform1i(0, 0);
-        glUniform1f(1, 1.0f / (backbufferWidth / blurDownsample));
+        glUniform1f(0, 1.0f / (backbufferWidth / blurDownsample));
+        glUniform1i(1, 0);
 #endif
     }
 
@@ -284,8 +284,8 @@ private:
         glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
         glUseProgram(blurShaderY);
-        glUniform1i(0, 0);
-        glUniform1f(1, 1.0f / (backbufferHeight / blurDownsample));
+        glUniform1f(0, 1.0f / (backbufferHeight / blurDownsample));
+        glUniform1i(1, 0);
 #endif
     }
 
@@ -483,8 +483,8 @@ private:
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, uv));
 
         glUseProgram(shader);
-        glUniform1i(0, 0);
-        glUniform1f(1, amount);
+        glUniform1f(0, amount);
+        glUniform1i(1, 0);
 #endif
     }
 

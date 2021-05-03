@@ -6,8 +6,8 @@ R"(
 in vec2 fragUV;
 out vec4 color;
 
-layout(location = 0) uniform sampler2D texSampler;
-layout(location = 1) uniform float texelHeight;
+layout(location = 0) uniform float texelHeight;
+layout(location = 1) uniform sampler2D texSampler;
 
 float offsets[3] = float[](0.0f, 1.3846153846f, 3.2307692308f);
 float weights[3] = float[](0.2270270270f, 0.3162162162f, 0.0702702703f);
