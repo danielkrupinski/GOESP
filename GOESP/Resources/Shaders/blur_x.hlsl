@@ -11,8 +11,8 @@ float4 main(float2 uv : TEXCOORD0) : COLOR0
     color.rgb *= weights[0];
 
     for (int i = 1; i < 3; ++i) {
-        color.rgb += tex2D(texSampler, uv - float2(texelWidth * offsets[i], 0.0f)).rgb * weights[i];
-        color.rgb += tex2D(texSampler, uv + float2(texelWidth * offsets[i], 0.0f)).rgb * weights[i];
+        color.rgb += tex2D(texSampler, float2(uv.x - texelWidth * offsets[i], uv.y)).rgb * weights[i];
+        color.rgb += tex2D(texSampler, float2(uv.x + texelWidth * offsets[i], uv.y)).rgb * weights[i];
     }
 
     return color;
