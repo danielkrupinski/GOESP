@@ -68,6 +68,71 @@ static void setRenderTarget(IDirect3DTexture9* rtTexture) noexcept
 }
 #endif
 
+class ShaderProgram {
+public:
+    ~ShaderProgram()
+    {
+#ifdef _WIN32
+        if (pixelShader)
+            pixelShader->Release();
+#else
+        if (program)
+            glDeleteProgram(program);
+#endif
+    }
+
+    void use(float uniform, int location) const noexcept
+    {
+#ifdef _WIN32
+        device->SetPixelShader(pixelShader);
+        const float params[4] = { uniform };
+        device->SetPixelShaderConstantF(location, params, 1);
+#else
+        glUseProgram(program);
+        glUniform1f(location, uniform);
+#endif
+    }
+
+#ifdef _WIN32
+    void init(const BYTE* pixelShaderSrc) noexcept
+#else
+    void init(const char* pixelShaderSrc, const char* vertexShaderSrc) noexcept
+#endif
+    {
+        if (initialized)
+            return;
+        initialized = true;
+
+#ifdef _WIN32
+        device->CreatePixelShader(reinterpret_cast<const DWORD*>(pixelShaderSrc), &pixelShader);
+#else
+        GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fragmentShader, 1, &pixelShaderSrc, nullptr);
+        glCompileShader(fragmentShader);
+
+        GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vertexShader, 1, &vertexShaderSrc, nullptr);
+        glCompileShader(vertexShader);
+
+        program = glCreateProgram();
+        glAttachShader(program, fragmentShader);
+        glAttachShader(program, vertexShader);
+        glLinkProgram(program);
+
+        glDeleteShader(fragmentShader);
+        glDeleteShader(vertexShader);
+#endif
+    }
+
+private:
+#ifdef _WIN32
+    IDirect3DPixelShader9* pixelShader = nullptr;
+#else
+    GLuint program = 0;
+#endif
+    bool initialized = false;
+};
+
 class BlurEffect {
 public:
     static void draw(ImDrawList* drawList, float alpha) noexcept
@@ -103,8 +168,6 @@ public:
 private:
 #ifdef _WIN32
     IDirect3DSurface9* rtBackup = nullptr;
-    IDirect3DPixelShader9* blurShaderX = nullptr;
-    IDirect3DPixelShader9* blurShaderY = nullptr;
     IDirect3DTexture9* blurTexture1 = nullptr;
     IDirect3DTexture9* blurTexture2 = nullptr;
 #else
@@ -115,11 +178,10 @@ private:
     GLuint blurTexture1 = 0;
     GLuint blurTexture2 = 0;
     GLuint frameBuffer = 0;
-    GLuint blurShaderX = 0;
-    GLuint blurShaderY = 0;
 #endif
 
-    bool shadersInitialized = false;
+    ShaderProgram blurShaderX;
+    ShaderProgram blurShaderY;
     int backbufferWidth = 0;
     int backbufferHeight = 0;
     static constexpr auto blurDownsample = 4;
@@ -132,10 +194,6 @@ private:
 #ifdef _WIN32
         if (rtBackup)
             rtBackup->Release();
-        if (blurShaderX)
-            blurShaderX->Release();
-        if (blurShaderY)
-            blurShaderY->Release();
         if (blurTexture1)
             blurTexture1->Release();
         if (blurTexture2)
@@ -170,48 +228,21 @@ private:
 
     void createShaders() noexcept
     {
-        if (shadersInitialized)
-            return;
-        shadersInitialized = true;
-
 #ifdef _WIN32
-        device->CreatePixelShader(reinterpret_cast<const DWORD*>(blur_x), &blurShaderX);
-        device->CreatePixelShader(reinterpret_cast<const DWORD*>(blur_y), &blurShaderY);
+        blurShaderX.init(blur_x);
+        blurShaderY.init(blur_y);
 #else
-        GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-        constexpr const GLchar* vsSource =
-#include "Resources/Shaders/passthrough.glsl"
-            ;
-        glShaderSource(vertexShader, 1, &vsSource, nullptr);
-        glCompileShader(vertexShader);
+        blurShaderX.init(
+        #include "Resources/Shaders/blur_x.glsl"
+        ,
+        #include "Resources/Shaders/passthrough.glsl"
+        );
 
-        GLuint fragmentShaderX = glCreateShader(GL_FRAGMENT_SHADER);
-        constexpr const GLchar* fsSourceX =
-#include "Resources/Shaders/blur_x.glsl"
-            ;
-        glShaderSource(fragmentShaderX, 1, &fsSourceX, nullptr);
-        glCompileShader(fragmentShaderX);
-
-        GLuint fragmentShaderY = glCreateShader(GL_FRAGMENT_SHADER);
-        constexpr const GLchar* fsSourceY =
-#include "Resources/Shaders/blur_y.glsl"
-            ;
-        glShaderSource(fragmentShaderY, 1, &fsSourceY, nullptr);
-        glCompileShader(fragmentShaderY);
-
-        blurShaderX = glCreateProgram();
-        glAttachShader(blurShaderX, vertexShader);
-        glAttachShader(blurShaderX, fragmentShaderX);
-        glLinkProgram(blurShaderX);
-
-        blurShaderY = glCreateProgram();
-        glAttachShader(blurShaderY, vertexShader);
-        glAttachShader(blurShaderY, fragmentShaderY);
-        glLinkProgram(blurShaderY);
-
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShaderX);
-        glDeleteShader(fragmentShaderY);
+        blurShaderY.init(
+        #include "Resources/Shaders/blur_y.glsl"
+        ,
+        #include "Resources/Shaders/passthrough.glsl"
+        );
 #endif
     }
 
@@ -261,32 +292,22 @@ private:
 
     void _firstPass() noexcept
     {
+        blurShaderX.use(1.0f / (backbufferWidth / blurDownsample), 0);
 #ifdef _WIN32
         setRenderTarget(blurTexture2);
-        device->SetPixelShader(blurShaderX);
-        const float params[4] = { 1.0f / (backbufferWidth / blurDownsample) };
-        device->SetPixelShaderConstantF(0, params, 1);
 #else
         glDrawBuffer(GL_COLOR_ATTACHMENT1);
-
-        glUseProgram(blurShaderX);
-        glUniform1f(0, 1.0f / (backbufferWidth / blurDownsample));
         glUniform1i(1, 0);
 #endif
     }
 
     void _secondPass() noexcept
     {
+        blurShaderY.use(1.0f / (backbufferHeight / blurDownsample), 0);
 #ifdef _WIN32
         setRenderTarget(blurTexture1);
-        device->SetPixelShader(blurShaderY);
-        const float params[4] = { 1.0f / (backbufferHeight / blurDownsample) };
-        device->SetPixelShaderConstantF(0, params, 1);
 #else
         glDrawBuffer(GL_COLOR_ATTACHMENT0);
-
-        glUseProgram(blurShaderY);
-        glUniform1f(0, 1.0f / (backbufferHeight / blurDownsample));
         glUniform1i(1, 0);
 #endif
     }
@@ -311,7 +332,7 @@ private:
         createTextures();
         createShaders();
 
-        if (!blurTexture1 || !blurTexture2 || !blurShaderX || !blurShaderY)
+        if (!blurTexture1 || !blurTexture2)
             return;
 
         drawList->AddCallback(&begin, nullptr);
@@ -347,7 +368,6 @@ public:
 
 private:
 #ifdef _WIN32
-    IDirect3DPixelShader9* shader = nullptr;
     IDirect3DTexture9* texture = nullptr;
 #else
     GLint textureBackup = 0;
@@ -355,10 +375,9 @@ private:
 
     GLuint texture = 0;
     GLuint frameBuffer = 0;
-    GLuint shader = 0;
 #endif
 
-    bool shaderInitialized = false;
+    ShaderProgram shader;
     int backbufferWidth = 0;
     int backbufferHeight = 0;
     float amount = 0.0f;
@@ -369,8 +388,6 @@ private:
     ~ChromaticAberration()
     {
 #ifdef _WIN32
-        if (shader)
-            shader->Release();
         if (texture)
             texture->Release();
 #endif
@@ -414,34 +431,14 @@ private:
 
     void createShaders() noexcept
     {
-        if (shaderInitialized)
-            return;
-        shaderInitialized = true;
-
 #ifdef _WIN32
-        device->CreatePixelShader(reinterpret_cast<const DWORD*>(chromatic_aberration), &shader);
+        shader.init(chromatic_aberration);
 #else
-        GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-        constexpr const GLchar* vsSource =
-        #include "Resources/Shaders/passthrough.glsl"
-        ;
-        glShaderSource(vertexShader, 1, &vsSource, nullptr);
-        glCompileShader(vertexShader);
-
-        GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        constexpr const GLchar* fsSourceX =
+        shader.init(
         #include "Resources/Shaders/chromatic_aberration.glsl"
-            ;
-        glShaderSource(fragmentShader, 1, &fsSourceX, nullptr);
-        glCompileShader(fragmentShader);
-
-        shader = glCreateProgram();
-        glAttachShader(shader, vertexShader);
-        glAttachShader(shader, fragmentShader);
-        glLinkProgram(shader);
-
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
+        ,
+        #include "Resources/Shaders/passthrough.glsl"
+        );
     #endif
     }
 
@@ -452,10 +449,6 @@ private:
 
         device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
         device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-
-        device->SetPixelShader(shader);
-        const float params[4] = { amount };
-        device->SetPixelShaderConstantF(0, params, 1);
 
         const D3DMATRIX projection{{{
             1.0f, 0.0f, 0.0f, 0.0f,
@@ -488,9 +481,9 @@ private:
 
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, pos));
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, uv));
-
-        glUseProgram(shader);
-        glUniform1f(0, amount);
+#endif
+        shader.use(amount, 0);
+#ifndef _WIN32
         glUniform1i(1, 0);
 #endif
     }
@@ -510,7 +503,7 @@ private:
     {
         createTexture();
         createShaders();
-        if (!texture || !shader)
+        if (!texture)
             return;
 
         drawList->AddCallback(&begin, nullptr);
@@ -535,7 +528,6 @@ public:
 
 private:
 #ifdef _WIN32
-    IDirect3DPixelShader9* shader = nullptr;
     IDirect3DTexture9* texture = nullptr;
 #else
     GLint textureBackup = 0;
@@ -543,10 +535,9 @@ private:
 
     GLuint texture = 0;
     GLuint frameBuffer = 0;
-    GLuint shader = 0;
 #endif
 
-    bool shaderInitialized = false;
+    ShaderProgram shader;
     int backbufferWidth = 0;
     int backbufferHeight = 0;
     float amount = 0.0f;
@@ -557,8 +548,6 @@ private:
     ~MonochromeEffect()
     {
 #ifdef _WIN32
-        if (shader)
-            shader->Release();
         if (texture)
             texture->Release();
 #endif
@@ -602,34 +591,14 @@ private:
 
     void createShaders() noexcept
     {
-        if (shaderInitialized)
-            return;
-        shaderInitialized = true;
-
 #ifdef _WIN32
-        device->CreatePixelShader(reinterpret_cast<const DWORD*>(monochrome), &shader);
+        shader.init(monochrome);
 #else
-        GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-        constexpr const GLchar* vsSource =
-#include "Resources/Shaders/passthrough.glsl"
-            ;
-        glShaderSource(vertexShader, 1, &vsSource, nullptr);
-        glCompileShader(vertexShader);
-
-        GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        constexpr const GLchar* fsSourceX =
-#include "Resources/Shaders/monochrome.glsl"
-            ;
-        glShaderSource(fragmentShader, 1, &fsSourceX, nullptr);
-        glCompileShader(fragmentShader);
-
-        shader = glCreateProgram();
-        glAttachShader(shader, vertexShader);
-        glAttachShader(shader, fragmentShader);
-        glLinkProgram(shader);
-
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
+        shader.init(
+        #include "Resources/Shaders/monochrome.glsl"
+        ,
+        #include "Resources/Shaders/passthrough.glsl"
+        );
 #endif
     }
 
@@ -640,10 +609,6 @@ private:
 
         device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
         device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-
-        device->SetPixelShader(shader);
-        const float params[4] = { amount };
-        device->SetPixelShaderConstantF(0, params, 1);
 
         const D3DMATRIX projection{ {{
             1.0f, 0.0f, 0.0f, 0.0f,
@@ -676,9 +641,9 @@ private:
 
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, pos));
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, uv));
-
-        glUseProgram(shader);
-        glUniform1f(0, amount);
+#endif
+        shader.use(amount, 0);
+#ifndef _WIN32
         glUniform1i(1, 0);
 #endif
     }
@@ -698,7 +663,7 @@ private:
     {
         createTexture();
         createShaders();
-        if (!texture || !shader)
+        if (!texture)
             return;
 
         drawList->AddCallback(&begin, nullptr);
