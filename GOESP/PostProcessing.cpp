@@ -1,5 +1,8 @@
 #ifdef _WIN32
 #include <d3d9.h>
+#include <wrl/client.h>
+
+using Microsoft::WRL::ComPtr;
 #else
 #include "imgui/GL/gl3w.h"
 #endif
@@ -28,24 +31,16 @@ static IDirect3DDevice9* device; // DO NOT RELEASE!
 
 static void copyBackbufferToTexture(IDirect3DTexture9* texture, D3DTEXTUREFILTERTYPE filtering) noexcept
 {
-    IDirect3DSurface9* backBuffer;
-    if (device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer) != D3D_OK)
-        return;
-
-    if (IDirect3DSurface9* surface; texture->GetSurfaceLevel(0, &surface) == D3D_OK) {
-        device->StretchRect(backBuffer, nullptr, surface, nullptr, filtering);
-        surface->Release();
+    if (ComPtr<IDirect3DSurface9> backBuffer; device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, backBuffer.GetAddressOf()) == D3D_OK) {
+        if (ComPtr<IDirect3DSurface9> surface; texture->GetSurfaceLevel(0, surface.GetAddressOf()) == D3D_OK)
+            device->StretchRect(backBuffer.Get(), nullptr, surface.Get(), nullptr, filtering);
     }
-    
-    backBuffer->Release();
 }
 
 static void setRenderTarget(IDirect3DTexture9* rtTexture) noexcept
 {
-    if (IDirect3DSurface9* surface; rtTexture->GetSurfaceLevel(0, &surface) == D3D_OK) {
-        device->SetRenderTarget(0, surface);
-        surface->Release();
-    }
+    if (ComPtr<IDirect3DSurface9> surface; rtTexture->GetSurfaceLevel(0, surface.GetAddressOf()) == D3D_OK)
+        device->SetRenderTarget(0, surface.Get());
 }
 
 #else
