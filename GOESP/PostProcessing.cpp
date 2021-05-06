@@ -561,8 +561,8 @@ private:
 
     static MonochromeEffect& instance() noexcept
     {
-        static MonochromeEffect chromaticAberration;
-        return chromaticAberration;
+        static MonochromeEffect monochromeEffect;
+        return monochromeEffect;
     }
 
     void _clearTexture() noexcept
@@ -608,7 +608,7 @@ private:
 
         GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
         constexpr const GLchar* fsSourceX =
-""
+#include "Resources/Shaders/monochrome.glsl"
             ;
         glShaderSource(fragmentShader, 1, &fsSourceX, nullptr);
         glCompileShader(fragmentShader);
