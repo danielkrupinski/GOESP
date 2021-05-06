@@ -67,10 +67,7 @@ class ShaderProgram {
 public:
     ~ShaderProgram()
     {
-#ifdef _WIN32
-        if (pixelShader)
-            pixelShader->Release();
-#else
+#ifndef _WIN32
         if (program)
             glDeleteProgram(program);
 #endif
@@ -79,7 +76,7 @@ public:
     void use(float uniform, int location) const noexcept
     {
 #ifdef _WIN32
-        device->SetPixelShader(pixelShader);
+        device->SetPixelShader(pixelShader.Get());
         const float params[4] = { uniform };
         device->SetPixelShaderConstantF(location, params, 1);
 #else
@@ -99,7 +96,7 @@ public:
         initialized = true;
 
 #ifdef _WIN32
-        device->CreatePixelShader(reinterpret_cast<const DWORD*>(pixelShaderSrc), &pixelShader);
+        device->CreatePixelShader(reinterpret_cast<const DWORD*>(pixelShaderSrc), pixelShader.GetAddressOf());
 #else
         GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fragmentShader, 1, &pixelShaderSrc, nullptr);
@@ -121,7 +118,7 @@ public:
 
 private:
 #ifdef _WIN32
-    IDirect3DPixelShader9* pixelShader = nullptr;
+    ComPtr<IDirect3DPixelShader9> pixelShader;
 #else
     GLuint program = 0;
 #endif
