@@ -11,6 +11,7 @@
 #include "Resources/Shaders/Build/blur_x.h"
 #include "Resources/Shaders/Build/blur_y.h"
 #include "Resources/Shaders/Build/chromatic_aberration.h"
+#include "Resources/Shaders/Build/monochrome.h"
 #endif
 
 #include "PostProcessing.h"
@@ -514,6 +515,189 @@ private:
     }
 };
 
+class MonochromeEffect {
+public:
+    static void draw(ImDrawList* drawList, float amount) noexcept
+    {
+        instance().amount = amount;
+        instance()._draw(drawList);
+    }
+
+    static void clearTexture() noexcept
+    {
+        instance()._clearTexture();
+    }
+
+private:
+#ifdef _WIN32
+    IDirect3DPixelShader9* shader = nullptr;
+    IDirect3DTexture9* texture = nullptr;
+#else
+    GLint textureBackup = 0;
+    GLint programBackup = 0;
+
+    GLuint texture = 0;
+    GLuint frameBuffer = 0;
+    GLuint shader = 0;
+#endif
+
+    bool shaderInitialized = false;
+    int backbufferWidth = 0;
+    int backbufferHeight = 0;
+    float amount = 0.0f;
+
+    MonochromeEffect() = default;
+    MonochromeEffect(const MonochromeEffect&) = delete;
+
+    ~MonochromeEffect()
+    {
+#ifdef _WIN32
+        if (shader)
+            shader->Release();
+        if (texture)
+            texture->Release();
+#endif
+    }
+
+    static MonochromeEffect& instance() noexcept
+    {
+        static MonochromeEffect monochromeEffect;
+        return monochromeEffect;
+    }
+
+    void _clearTexture() noexcept
+    {
+#ifdef _WIN32
+        if (texture) {
+            texture->Release();
+            texture = nullptr;
+        }
+#endif
+    }
+
+    static void begin(const ImDrawList*, const ImDrawCmd* cmd) noexcept { instance()._begin(); }
+    static void end(const ImDrawList*, const ImDrawCmd* cmd) noexcept { instance()._end(); }
+
+    void createTexture() noexcept
+    {
+        if (const auto [width, height] = ImGui::GetIO().DisplaySize; backbufferWidth != static_cast<int>(width) || backbufferHeight != static_cast<int>(height)) {
+            clearTexture();
+            backbufferWidth = static_cast<int>(width);
+            backbufferHeight = static_cast<int>(height);
+        }
+
+        if (!texture)
+            texture = ::createTexture(backbufferWidth, backbufferHeight);
+    }
+
+    void createShaders() noexcept
+    {
+        if (shaderInitialized)
+            return;
+        shaderInitialized = true;
+
+#ifdef _WIN32
+        device->CreatePixelShader(reinterpret_cast<const DWORD*>(monochrome), &shader);
+#else
+        GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+        constexpr const GLchar* vsSource =
+#include "Resources/Shaders/blur.glsl"
+            ;
+        glShaderSource(vertexShader, 1, &vsSource, nullptr);
+        glCompileShader(vertexShader);
+
+        GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+        constexpr const GLchar* fsSourceX =
+#include "Resources/Shaders/monochrome.glsl"
+            ;
+        glShaderSource(fragmentShader, 1, &fsSourceX, nullptr);
+        glCompileShader(fragmentShader);
+
+        shader = glCreateProgram();
+        glAttachShader(shader, vertexShader);
+        glAttachShader(shader, fragmentShader);
+        glLinkProgram(shader);
+
+        glDeleteShader(vertexShader);
+        glDeleteShader(fragmentShader);
+#endif
+    }
+
+    void _begin() noexcept
+    {
+#ifdef _WIN32
+        copyBackbufferToTexture(texture, D3DTEXF_NONE);
+
+        device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+        device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+
+        device->SetPixelShader(shader);
+        const float params[4] = { amount };
+        device->SetPixelShaderConstantF(0, params, 1);
+
+        const D3DMATRIX projection{ {{
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, -1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            -1.0f / (backbufferWidth), 1.0f / (backbufferHeight), 0.0f, 1.0f
+        }} };
+        device->SetVertexShaderConstantF(0, &projection.m[0][0], 4);
+#else
+        glGetIntegerv(GL_TEXTURE_BINDING_2D, &textureBackup);
+        glGetIntegerv(GL_CURRENT_PROGRAM, &programBackup);
+
+        if (!frameBuffer) {
+            glGenFramebuffers(1, &frameBuffer);
+        }
+
+        glDisable(GL_SCISSOR_TEST);
+
+        GLint fboBackup = 0;
+        glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &fboBackup);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBuffer);
+        glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+        glReadBuffer(GL_BACK);
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+        glBlitFramebuffer(0, 0, backbufferWidth, backbufferHeight, 0, 0, backbufferWidth, backbufferHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboBackup);
+
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, pos));
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, uv));
+
+        glUseProgram(shader);
+        glUniform1f(0, amount);
+        glUniform1i(1, 0);
+#endif
+    }
+
+    void _end() noexcept
+    {
+#ifdef _WIN32
+        device->SetPixelShader(nullptr);
+#else
+        glUseProgram(programBackup);
+        glBindTexture(GL_TEXTURE_2D, textureBackup);
+        glEnable(GL_SCISSOR_TEST);
+#endif
+    }
+
+    void _draw(ImDrawList* drawList) noexcept
+    {
+        createTexture();
+        createShaders();
+        if (!texture || !shader)
+            return;
+
+        drawList->AddCallback(&begin, nullptr);
+        drawList->AddImage(reinterpret_cast<ImTextureID>(texture), { -1.0f, -1.0f }, { 1.0f, 1.0f });
+        drawList->AddCallback(&end, nullptr);
+        drawList->AddCallback(ImDrawCallback_ResetRenderState, nullptr);
+    }
+};
+
 #ifdef _WIN32
 void PostProcessing::setDevice(IDirect3DDevice9* device) noexcept
 {
@@ -540,4 +724,9 @@ void PostProcessing::performFullscreenBlur(ImDrawList* drawList, float alpha) no
 void PostProcessing::performFullscreenChromaticAberration(ImDrawList* drawList, float amount) noexcept
 {
     ChromaticAberration::draw(drawList, amount);
+}
+
+void PostProcessing::performFullscreenMonochrome(ImDrawList* drawList, float amount) noexcept
+{
+    MonochromeEffect::draw(drawList, amount);
 }
