@@ -180,7 +180,7 @@ private:
 #else
         GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
         constexpr const GLchar* vsSource =
-#include "Resources/Shaders/blur.glsl"
+#include "Resources/Shaders/passthrough.glsl"
             ;
         glShaderSource(vertexShader, 1, &vsSource, nullptr);
         glCompileShader(vertexShader);
@@ -418,7 +418,7 @@ private:
 #else
         GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
         constexpr const GLchar* vsSource =
-        #include "Resources/Shaders/blur.glsl"
+        #include "Resources/Shaders/passthrough.glsl"
         ;
         glShaderSource(vertexShader, 1, &vsSource, nullptr);
         glCompileShader(vertexShader);
@@ -601,7 +601,7 @@ private:
 #else
         GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
         constexpr const GLchar* vsSource =
-#include "Resources/Shaders/blur.glsl"
+#include "Resources/Shaders/passthrough.glsl"
             ;
         glShaderSource(vertexShader, 1, &vsSource, nullptr);
         glCompileShader(vertexShader);
