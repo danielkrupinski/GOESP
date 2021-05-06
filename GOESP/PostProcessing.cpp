@@ -389,6 +389,11 @@ private:
             texture->Release();
             texture = nullptr;
         }
+#else
+        if (texture) {
+            glDeleteTextures(1, &texture);
+            texture = 0;
+        }
 #endif
     }
 
