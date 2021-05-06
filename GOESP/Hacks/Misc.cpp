@@ -86,6 +86,13 @@ struct PlayerList {
 
 struct HitEffect {
     bool enabled = false;
+
+    enum Type {
+        ChromaticAberration = 0,
+        Monochrome
+    };
+
+    int type = ChromaticAberration;
 };
 
 struct {
@@ -650,6 +657,18 @@ void Misc::drawGUI() noexcept
     ImGuiCustom::colorPicker("Smoke Hull", miscConfig.smokeHull);
     ImGuiCustom::colorPicker("Nade Blast", miscConfig.nadeBlast);
     ImGui::Checkbox("Hit Effect", &miscConfig.hitEffect.enabled);
+    ImGui::PushID("Hit Effect");
+    ImGui::SameLine();
+
+    if (ImGui::Button("..."))
+        ImGui::OpenPopup("");
+
+    if (ImGui::BeginPopup("")) {
+        ImGui::SetNextItemWidth(150.0f);
+        ImGui::Combo("", &miscConfig.hitEffect.type, "Chromatic Aberration\0Monochrome\0");
+        ImGui::EndPopup();
+    }
+    ImGui::PopID();
 
     ImGui::EndTable();
 }
@@ -982,7 +1001,10 @@ static void hitEffect(ImDrawList* drawList, GameEvent* event = nullptr) noexcept
         if (localPlayer && event->getInt("attacker") == localPlayer->getUserId())
             lastHitTime = memory->globalVars->realtime;
     } else if (lastHitTime + effectDuration >= memory->globalVars->realtime) {
-        PostProcessing::performFullscreenChromaticAberration(drawList, (1.0f - (memory->globalVars->realtime - lastHitTime) / effectDuration) * 0.01f);
+        if (miscConfig.hitEffect.type == HitEffect::ChromaticAberration)
+            PostProcessing::performFullscreenChromaticAberration(drawList, (1.0f - (memory->globalVars->realtime - lastHitTime) / effectDuration) * 0.01f);
+        else if (miscConfig.hitEffect.type == HitEffect::Monochrome)
+            PostProcessing::performFullscreenMonochrome(drawList, (1.0f - (memory->globalVars->realtime - lastHitTime) / effectDuration));
     }
 }
 
@@ -1075,6 +1097,7 @@ static void to_json(json& j, const OffscreenEnemies& o, const OffscreenEnemies& 
 static void to_json(json& j, const HitEffect& o, const HitEffect& dummy = {})
 {
     WRITE("Enabled", enabled)
+    WRITE("Type", type)
 }
 
 static void to_json(json& j, const PlayerList& o, const PlayerList& dummy = {})
@@ -1156,6 +1179,7 @@ static void from_json(const json& j, OffscreenEnemies& o)
 static void from_json(const json& j, HitEffect& o)
 {
     read(j, "Enabled", o.enabled);
+    read_number(j, "Type", o.type);
 }
 
 static void from_json(const json& j, PlayerList& o)
