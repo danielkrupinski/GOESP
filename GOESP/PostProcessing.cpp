@@ -19,6 +19,9 @@ using Microsoft::WRL::ComPtr;
 
 #include "PostProcessing.h"
 
+static int backbufferWidth = 0;
+static int backbufferHeight = 0;
+
 #ifdef _WIN32
 static IDirect3DDevice9* device; // DO NOT RELEASE!
 
@@ -174,8 +177,6 @@ private:
 
     ShaderProgram blurShaderX;
     ShaderProgram blurShaderY;
-    int backbufferWidth = 0;
-    int backbufferHeight = 0;
     static constexpr auto blurDownsample = 4;
 
     BlurEffect() = default;
@@ -206,12 +207,6 @@ private:
 
     void createTextures() noexcept
     {
-        if (const auto [width, height] = ImGui::GetIO().DisplaySize; backbufferWidth != static_cast<int>(width) || backbufferHeight != static_cast<int>(height)) {
-            clearTextures();
-            backbufferWidth = static_cast<int>(width);
-            backbufferHeight = static_cast<int>(height);
-        }
-
         if (!blurTexture1)
             blurTexture1 = createTexture(backbufferWidth / blurDownsample, backbufferHeight / blurDownsample);
         if (!blurTexture2)
@@ -370,8 +365,6 @@ private:
 #endif
 
     ShaderProgram shader;
-    int backbufferWidth = 0;
-    int backbufferHeight = 0;
     float amount = 0.0f;
 
     ChromaticAberration() = default;
@@ -411,12 +404,6 @@ private:
 
     void createTexture() noexcept
     {
-        if (const auto [width, height] = ImGui::GetIO().DisplaySize; backbufferWidth != static_cast<int>(width) || backbufferHeight != static_cast<int>(height)) {
-            clearTexture();
-            backbufferWidth = static_cast<int>(width);
-            backbufferHeight = static_cast<int>(height);
-        }
-
         if (!texture)
             texture = ::createTexture(backbufferWidth, backbufferHeight);
     }
@@ -530,8 +517,6 @@ private:
 #endif
 
     ShaderProgram shader;
-    int backbufferWidth = 0;
-    int backbufferHeight = 0;
     float amount = 0.0f;
 
     MonochromeEffect() = default;
@@ -571,12 +556,6 @@ private:
 
     void createTexture() noexcept
     {
-        if (const auto [width, height] = ImGui::GetIO().DisplaySize; backbufferWidth != static_cast<int>(width) || backbufferHeight != static_cast<int>(height)) {
-            clearTexture();
-            backbufferWidth = static_cast<int>(width);
-            backbufferHeight = static_cast<int>(height);
-        }
-
         if (!texture)
             texture = ::createTexture(backbufferWidth, backbufferHeight);
     }
@@ -682,6 +661,17 @@ void PostProcessing::onDeviceReset() noexcept
     ChromaticAberration::clearTexture();
 }
 #endif
+
+void PostProcessing::newFrame() noexcept
+{
+    if (const auto [width, height] = ImGui::GetIO().DisplaySize; backbufferWidth != static_cast<int>(width) || backbufferHeight != static_cast<int>(height)) {
+        BlurEffect::clearTextures();
+        ChromaticAberration::clearTexture();
+        MonochromeEffect::clearTexture();
+        backbufferWidth = static_cast<int>(width);
+        backbufferHeight = static_cast<int>(height);
+    }
+}
 
 void PostProcessing::performFullscreenBlur(ImDrawList* drawList, float alpha) noexcept
 {

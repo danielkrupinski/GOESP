@@ -68,6 +68,7 @@ static HRESULT D3DAPI present(IDirect3DDevice9* device, const RECT* src, const R
     ImGui::NewFrame();
 
     PostProcessing::setDevice(device);
+    PostProcessing::newFrame();
 
     Misc::drawPreESP(ImGui::GetBackgroundDrawList());
     ESP::render();
@@ -141,6 +142,8 @@ static void swapWindow(SDL_Window* window) noexcept
     ImGui_ImplSDL2_NewFrame(window);
 
     ImGui::NewFrame();
+
+    PostProcessing::newFrame();
 
     if (const auto& displaySize = ImGui::GetIO().DisplaySize; displaySize.x > 0.0f && displaySize.y > 0.0f) {
         Misc::drawPreESP(ImGui::GetBackgroundDrawList());
