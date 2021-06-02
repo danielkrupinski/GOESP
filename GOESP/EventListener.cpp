@@ -10,10 +10,10 @@ EventListener::EventListener() noexcept
 {
     assert(interfaces);
 
-    // interfaces->gameEventManager->addListener(this, "item_purchase");
-    interfaces->gameEventManager->addListener(this, "round_start");
-    interfaces->gameEventManager->addListener(this, "round_freeze_end");
-    interfaces->gameEventManager->addListener(this, "player_hurt");
+    const auto gameEventManager = interfaces->gameEventManager;
+    gameEventManager->addListener(this, "round_start");
+    gameEventManager->addListener(this, "round_freeze_end");
+    gameEventManager->addListener(this, "player_hurt");
 }
 
 void EventListener::remove() noexcept
@@ -30,7 +30,6 @@ void EventListener::fireGameEvent(GameEvent* event)
         GameData::clearProjectileList();
         GameData::clearPlayersLastLocation();
         [[fallthrough]];
-    // case fnv::hash("item_purchase"):
     case fnv::hash("round_freeze_end"):
         Misc::purchaseList(event);
         break;
