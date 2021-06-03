@@ -496,7 +496,7 @@ static void drawOffscreenEnemies(ImDrawList* drawList) noexcept
             } else {
                 constexpr float pi = std::numbers::pi_v<float>;
                 drawList->PathArcTo(pos, radius - 0.5f, pi / 2 - pi * healthFraction, pi / 2 + pi * healthFraction, 40);
-                drawList->PathStroke(healthBarColor, false, 2.0f);
+                drawList->PathStroke(healthBarColor, ImDrawFlags_None, 2.0f);
             }
             const int vertEndIdx = drawList->VtxBuffer.Size;
 

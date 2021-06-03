@@ -434,10 +434,10 @@ static void renderPlayerBox(const PlayerData& playerData, const Player& config) 
         const auto color = Helpers::calculateColor(config.flashDuration);
         constexpr float pi = std::numbers::pi_v<float>;
         drawList->PathArcTo(flashDurationPos + ImVec2{ 1.0f, 1.0f }, radius, pi / 2 - (playerData.flashDuration / 255.0f * pi), pi / 2 + (playerData.flashDuration / 255.0f * pi), 40);
-        drawList->PathStroke(color & IM_COL32_A_MASK, false, 0.9f + radius * 0.1f);
+        drawList->PathStroke(color & IM_COL32_A_MASK, ImDrawFlags_None, 0.9f + radius * 0.1f);
 
         drawList->PathArcTo(flashDurationPos, radius, pi / 2 - (playerData.flashDuration / 255.0f * pi), pi / 2 + (playerData.flashDuration / 255.0f * pi), 40);
-        drawList->PathStroke(color, false, 0.9f + radius * 0.1f);
+        drawList->PathStroke(color, ImDrawFlags_None, 0.9f + radius * 0.1f);
 
         offsetMins.y -= radius * 2.5f;
     }
@@ -515,8 +515,8 @@ static void drawProjectileTrajectory(const Trail& config, const std::vector<std:
     }
 
     if (config.type == Trail::Line) {
-        drawList->AddPolyline(shadowPoints.data(), shadowPoints.size(), color & IM_COL32_A_MASK, false, config.thickness);
-        drawList->AddPolyline(points.data(), points.size(), color, false, config.thickness);
+        drawList->AddPolyline(shadowPoints.data(), shadowPoints.size(), color & IM_COL32_A_MASK, ImDrawFlags_None, config.thickness);
+        drawList->AddPolyline(points.data(), points.size(), color, ImDrawFlags_None, config.thickness);
     }
 }
 
