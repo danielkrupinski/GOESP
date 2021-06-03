@@ -200,7 +200,7 @@ void Hooks::install() noexcept
     memory = std::make_unique<const Memory>();
 #endif
 
-    eventListener = std::make_unique<EventListener>();
+    EventListener::init();
 
     ImGui::CreateContext();
 #ifdef _WIN32
@@ -237,7 +237,7 @@ static DWORD WINAPI waitOnUnload(HMODULE hModule) noexcept
     Sleep(50);
 
     interfaces->inputSystem->enableInput(true);
-    eventListener->remove();
+    EventListener::remove();
 
     ImGui_ImplDX9_Shutdown();
     ImGui_ImplWin32_Shutdown();
