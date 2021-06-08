@@ -142,7 +142,7 @@ Memory::Memory() noexcept
         setCursorPos = *reinterpret_cast<std::uintptr_t*>(findPattern("discordhook", "\xC2\x08?\x5D") + 6);
     } else {
     steamOverlay:
-        reset = *reinterpret_cast<std::uintptr_t*>(findPattern("gameoverlayrenderer", "\x53\x57\xC7\x45") + 11);
+        reset = *reinterpret_cast<std::uintptr_t*>(findPattern("gameoverlayrenderer", "\x57\x53\xC7\x45") + 11);
         present = reset + 4;
         setCursorPos = *reinterpret_cast<std::uintptr_t*>(findPattern("gameoverlayrenderer", "\xC2\x08?\x5D") + 6);
     }
