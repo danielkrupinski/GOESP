@@ -230,6 +230,8 @@
       <HeaderFileOutput>$(ProjectDir)Resources\Shaders\Build\blur_x.h</HeaderFileOutput>
       <ObjectFileOutput>
       </ObjectFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)Resources\Shaders\Build\Release\blur_x.h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)Resources\Shaders\Build\Debug\blur_x.h</HeaderFileOutput>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\blur_y.hlsl">
       <ShaderType>Pixel</ShaderType>
@@ -238,6 +240,8 @@
       <HeaderFileOutput>$(ProjectDir)Resources\Shaders\Build\blur_y.h</HeaderFileOutput>
       <ObjectFileOutput>
       </ObjectFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)Resources\Shaders\Build\Debug\blur_y.h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)Resources\Shaders\Build\Release\blur_y.h</HeaderFileOutput>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\chromatic_aberration.hlsl">
       <ShaderType>Pixel</ShaderType>
@@ -246,6 +250,8 @@
       <HeaderFileOutput>$(ProjectDir)Resources\Shaders\Build\chromatic_aberration.h</HeaderFileOutput>
       <ObjectFileOutput>
       </ObjectFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)Resources\Shaders\Build\Release\chromatic_aberration.h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)Resources\Shaders\Build\Debug\chromatic_aberration.h</HeaderFileOutput>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\default_vs.hlsl">
       <ShaderType>Vertex</ShaderType>
@@ -254,13 +260,18 @@
       <HeaderFileOutput>$(ProjectDir)Resources\Shaders\Build\default_vs.h</HeaderFileOutput>
       <ObjectFileOutput>
       </ObjectFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)Resources\Shaders\Build\Debug\default_vs.h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)Resources\Shaders\Build\Release\default_vs.h</HeaderFileOutput>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\monochrome.hlsl">
       <ShaderType>Pixel</ShaderType>
       <ShaderModel>2.0</ShaderModel>
       <VariableName>monochrome</VariableName>
-      <ObjectFileOutput></ObjectFileOutput>
+      <ObjectFileOutput>
+      </ObjectFileOutput>
       <HeaderFileOutput>$(ProjectDir)Resources\Shaders\Build\monochrome.h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)Resources\Shaders\Build\Release\monochrome.h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)Resources\Shaders\Build\Debug\monochrome.h</HeaderFileOutput>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

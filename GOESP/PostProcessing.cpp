@@ -11,10 +11,18 @@ using Microsoft::WRL::ComPtr;
 
 #ifdef _WIN32
 // shaders are build during compilation and header files are created
-#include "Resources/Shaders/Build/blur_x.h"
-#include "Resources/Shaders/Build/blur_y.h"
-#include "Resources/Shaders/Build/chromatic_aberration.h"
-#include "Resources/Shaders/Build/monochrome.h"
+#ifdef _DEBUG
+#include "Resources/Shaders/Build/Debug/blur_x.h"
+#include "Resources/Shaders/Build/Debug/blur_y.h"
+#include "Resources/Shaders/Build/Debug/chromatic_aberration.h"
+#include "Resources/Shaders/Build/Debug/monochrome.h"
+#else
+#include "Resources/Shaders/Build/Release/blur_x.h"
+#include "Resources/Shaders/Build/Release/blur_y.h"
+#include "Resources/Shaders/Build/Release/chromatic_aberration.h"
+#include "Resources/Shaders/Build/Release/monochrome.h"
+#endif
+
 #endif
 
 #include "PostProcessing.h"
