@@ -32,7 +32,11 @@
 #include "imgui.h"
 #include "imgui_impl_dx9.h"
 
-#include "../Resources/Shaders/Build/default_vs.h"
+#ifdef _DEBUG
+#include "../Resources/Shaders/Build/Debug/default_vs.h"
+#else
+#include "../Resources/Shaders/Build/Release/default_vs.h"
+#endif
 
 // DirectX data
 static LPDIRECT3DDEVICE9        g_pd3dDevice = NULL;
