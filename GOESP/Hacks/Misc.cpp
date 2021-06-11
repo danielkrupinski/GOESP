@@ -1038,7 +1038,7 @@ void Misc::updateEventListeners(bool forceRemove) noexcept
 {
     class PurchaseEventListener : public GameEventListener {
     public:
-        void fireGameEvent(GameEvent* event) { purchaseList(event); }
+        void fireGameEvent(GameEvent* event) override { purchaseList(event); }
     };
 
     static PurchaseEventListener listener;

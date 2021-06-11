@@ -11,7 +11,7 @@ namespace
 {
     class EventListenerImpl : public GameEventListener {
     public:
-        void fireGameEvent(GameEvent* event)
+        void fireGameEvent(GameEvent* event) override
         {
             switch (fnv::hashRuntime(event->getName())) {
             case fnv::hash("round_start"):
