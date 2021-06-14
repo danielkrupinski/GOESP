@@ -147,6 +147,7 @@ struct PlayerData : BaseData {
     std::vector<std::pair<Vector, Vector>> bones;
     Vector headMins, headMaxs;
     std::string lastPlaceName;
+    int skillgroup;
 
     class Texture {
         ImTextureID texture = nullptr;
@@ -162,8 +163,6 @@ struct PlayerData : BaseData {
         void clear() noexcept;
         ImTextureID get() const noexcept { return texture; }
     };
-private:
-    int skillgroup;
 };
 
 struct WeaponData : BaseData {
