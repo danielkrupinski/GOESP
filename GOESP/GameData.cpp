@@ -408,7 +408,7 @@ ProjectileData::ProjectileData(Entity* projectile) noexcept : BaseData{ projecti
 
 void ProjectileData::update(Entity* projectile) noexcept
 {
-    static_cast<BaseData&>(*this) = { projectile };
+    static_cast<BaseData&>(*this) = BaseData{ projectile };
 
     if (const auto& pos = projectile->getAbsOrigin(); trajectory.empty() || trajectory.back().second != pos)
         trajectory.emplace_back(memory->globalVars->realtime, pos);
@@ -457,7 +457,7 @@ void PlayerData::update(CSPlayer* entity) noexcept
     money = entity->money();
     team = entity->getTeamNumber();
     lastPlaceName = interfaces->localize->findAsUTF8(entity->lastPlaceName());
-    static_cast<BaseData&>(*this) = { entity };
+    static_cast<BaseData&>(*this) = BaseData{ entity };
     origin = entity->getAbsOrigin();
     inViewFrustum = !interfaces->engine->cullBox(obbMins + origin, obbMaxs + origin);
     alive = entity->isAlive();
