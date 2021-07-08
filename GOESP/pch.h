@@ -6,4 +6,6 @@
 
 #ifdef __cplusplus
 #include <mutex>
+
+#include "nlohmann/json.hpp"
 #endif
