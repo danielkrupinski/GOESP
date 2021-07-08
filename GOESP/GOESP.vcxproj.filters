@@ -140,6 +140,9 @@
     <ClCompile Include="freetype\src\smooth\smooth.c">
       <Filter>freetype</Filter>
     </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Interfaces.h">

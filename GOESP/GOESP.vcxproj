@@ -158,6 +158,7 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="Memory.cpp" />
+    <ClCompile Include="pch.cpp" />
     <ClCompile Include="PostProcessing.cpp" />
     <ClCompile Include="SDK\Entity.cpp" />
   </ItemGroup>
