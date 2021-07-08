@@ -126,6 +126,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ConfigStructs.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="EventListener.cpp" />
     <ClCompile Include="freetype\src\autofit\autofit.c">
