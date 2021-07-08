@@ -74,7 +74,7 @@ struct LocalPlayerData {
 };
 
 struct BaseData {
-    BaseData(Entity* entity) noexcept;
+    explicit BaseData(Entity* entity) noexcept;
 
     constexpr auto operator<(const BaseData& other) const
     {
@@ -87,13 +87,13 @@ struct BaseData {
 };
 
 struct EntityData final : BaseData {
-    EntityData(Entity* entity) noexcept;
+    explicit EntityData(Entity* entity) noexcept;
 
     const char* name;
 };
 
 struct ProjectileData : BaseData {
-    ProjectileData(Entity* projectile) noexcept;
+    explicit ProjectileData(Entity* projectile) noexcept;
     void update(Entity* projectile) noexcept;
 
     constexpr auto operator==(int otherHandle) const noexcept
@@ -111,7 +111,7 @@ struct ProjectileData : BaseData {
 };
 
 struct PlayerData : BaseData {
-    PlayerData(CSPlayer* entity) noexcept;
+    explicit PlayerData(CSPlayer* entity) noexcept;
     PlayerData(const PlayerData&) = delete;
     PlayerData& operator=(const PlayerData&) = delete;
     PlayerData(PlayerData&& other) = default;
@@ -166,7 +166,7 @@ struct PlayerData : BaseData {
 };
 
 struct WeaponData : BaseData {
-    WeaponData(Entity* entity) noexcept;
+    explicit WeaponData(Entity* entity) noexcept;
 
     int clip;
     int reserveAmmo;
@@ -176,7 +176,7 @@ struct WeaponData : BaseData {
 };
 
 struct LootCrateData : BaseData {
-    LootCrateData(Entity* entity) noexcept;
+    explicit LootCrateData(Entity* entity) noexcept;
 
     const char* name = nullptr;
 };
@@ -201,7 +201,7 @@ struct BombData {
 };
 
 struct InfernoData {
-    InfernoData(Entity* inferno) noexcept;
+    explicit InfernoData(Entity* inferno) noexcept;
 
     std::vector<Vector> points;
 };
