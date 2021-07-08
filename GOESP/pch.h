@@ -3,6 +3,9 @@
 #include <intrin.h>
 
 #ifdef _WIN32
+#ifdef __cplusplus
+#include <ShlObj.h>
+#endif
 #include <Windows.h>
 #endif
 
