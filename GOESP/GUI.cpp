@@ -3,6 +3,7 @@
 #include <vector>
 
 #ifdef _WIN32
+#include <shellapi.h>
 #include <ShlObj.h>
 #include <Windows.h>
 #else
