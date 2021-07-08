@@ -186,6 +186,7 @@
     <ClInclude Include="Interfaces.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="nlohmann\json.hpp" />
+    <ClInclude Include="pch.h" />
     <ClInclude Include="PostProcessing.h" />
     <ClInclude Include="Resources\avatar_ct.h" />
     <ClInclude Include="Resources\avatar_tt.h" />

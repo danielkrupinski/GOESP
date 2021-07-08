@@ -319,6 +319,9 @@
     <ClInclude Include="freetype\freetype\config\ftmodule.h">
       <Filter>freetype</Filter>
     </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\blur_x.hlsl">
