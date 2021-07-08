@@ -3,3 +3,7 @@
 #ifdef _WIN32
 #include <Windows.h>
 #endif
+
+#ifdef __cplusplus
+#include <mutex>
+#endif
