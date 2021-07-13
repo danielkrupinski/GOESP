@@ -3,7 +3,8 @@
 #include <array>
 #include <string>
 
-struct ImVec2;
+#include "imgui/imgui.h"
+#include "nlohmann/json.hpp"
 
 #pragma pack(push, 1)
 struct Color {
@@ -34,8 +35,6 @@ struct ColorToggleRounding : ColorToggle {
 struct ColorToggleThicknessRounding : ColorToggleRounding {
     float thickness = 1.0f;
 };
-
-#include "nlohmann/json.hpp"
 
 using json = nlohmann::basic_json<std::map, std::vector, std::string, bool, std::int64_t, std::uint64_t, float>;
 using value_t = json::value_t;
