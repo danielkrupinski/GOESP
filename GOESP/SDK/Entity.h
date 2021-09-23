@@ -73,7 +73,7 @@ public:
     VIRTUAL_METHOD_V(Collideable*, getCollideable, 3, (), (this))
 
     VIRTUAL_METHOD(Vector&, getAbsOrigin, WIN32_UNIX(10, 12), (), (this))
-    VIRTUAL_METHOD(Team, getTeamNumber, WIN32_UNIX(87, 127), (), (this))
+    VIRTUAL_METHOD(Team, getTeamNumber, WIN32_UNIX(88, 128), (), (this))
     VIRTUAL_METHOD(int, getHealth, WIN32_UNIX(122, 167), (), (this))
     VIRTUAL_METHOD(bool, isAlive, WIN32_UNIX(156, 208), (), (this))
     VIRTUAL_METHOD(bool, isPlayer, WIN32_UNIX(158, 210), (), (this))
