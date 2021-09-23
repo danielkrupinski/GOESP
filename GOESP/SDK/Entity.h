@@ -128,7 +128,7 @@ public:
 
 class CSPlayer : public Entity {
 public:
-    VIRTUAL_METHOD(Entity*, getActiveWeapon, WIN32_UNIX(267, 330), (), (this))
+    VIRTUAL_METHOD(Entity*, getActiveWeapon, WIN32_UNIX(268, 331), (), (this))
     VIRTUAL_METHOD(ObsMode, getObserverMode, WIN32_UNIX(293, 356), (), (this))
     VIRTUAL_METHOD(Entity*, getObserverTarget, WIN32_UNIX(294, 357), (), (this))
 
