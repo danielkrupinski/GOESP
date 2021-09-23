@@ -74,13 +74,13 @@ public:
 
     VIRTUAL_METHOD(Vector&, getAbsOrigin, WIN32_UNIX(10, 12), (), (this))
     VIRTUAL_METHOD(Team, getTeamNumber, WIN32_UNIX(87, 127), (), (this))
-    VIRTUAL_METHOD(int, getHealth, WIN32_UNIX(121, 166), (), (this))
-    VIRTUAL_METHOD(bool, isAlive, WIN32_UNIX(155, 207), (), (this))
-    VIRTUAL_METHOD(bool, isPlayer, WIN32_UNIX(157, 209), (), (this))
-    VIRTUAL_METHOD(bool, isWeapon, WIN32_UNIX(165, 217), (), (this))
+    VIRTUAL_METHOD(int, getHealth, WIN32_UNIX(122, 167), (), (this))
+    VIRTUAL_METHOD(bool, isAlive, WIN32_UNIX(156, 208), (), (this))
+    VIRTUAL_METHOD(bool, isPlayer, WIN32_UNIX(158, 210), (), (this))
+    VIRTUAL_METHOD(bool, isWeapon, WIN32_UNIX(166, 218), (), (this))
   
-    VIRTUAL_METHOD(WeaponType, getWeaponType, WIN32_UNIX(454, 522), (), (this))
-    VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, WIN32_UNIX(460, 528), (), (this))
+    VIRTUAL_METHOD(WeaponType, getWeaponType, WIN32_UNIX(455, 523), (), (this))
+    VIRTUAL_METHOD(WeaponInfo*, getWeaponInfo, WIN32_UNIX(461, 529), (), (this))
 
     static CSPlayer* asPlayer(Entity* entity) noexcept
     {
@@ -129,27 +129,27 @@ public:
 class CSPlayer : public Entity {
 public:
     VIRTUAL_METHOD(Entity*, getActiveWeapon, WIN32_UNIX(268, 331), (), (this))
-    VIRTUAL_METHOD(ObsMode, getObserverMode, WIN32_UNIX(293, 356), (), (this))
-    VIRTUAL_METHOD(Entity*, getObserverTarget, WIN32_UNIX(294, 357), (), (this))
+    VIRTUAL_METHOD(ObsMode, getObserverMode, WIN32_UNIX(294, 357), (), (this))
+    VIRTUAL_METHOD(Entity*, getObserverTarget, WIN32_UNIX(295, 358), (), (this))
 
 
 #if IS_WIN32()
     auto getEyePosition() noexcept
     {
         Vector v;
-        VirtualMethod::call<void, 284>(this, std::ref(v));
+        VirtualMethod::call<void, 285>(this, std::ref(v));
         return v;
     }
 
     auto getAimPunch() noexcept
     {
         Vector v;
-        VirtualMethod::call<void, 345>(this, std::ref(v));
+        VirtualMethod::call<void, 346>(this, std::ref(v));
         return v;
     }
 #else
-    VIRTUAL_METHOD(Vector, getEyePosition, 347, (), (this))
-    VIRTUAL_METHOD(Vector, getAimPunch, 408, (), (this))
+    VIRTUAL_METHOD(Vector, getEyePosition, 348, (), (this))
+    VIRTUAL_METHOD(Vector, getAimPunch, 409, (), (this))
 #endif
 
     bool canSee(Entity* other, const Vector& pos) noexcept;
