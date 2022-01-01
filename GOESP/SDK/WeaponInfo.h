@@ -31,10 +31,11 @@ struct WeaponInfo {
     WeaponType type;
     PAD(4)
     int price;
-    PAD(IS_WIN32() ? 24 : 28)
+    PAD(12)
     bool fullAuto;
     PAD(3)
     int damage;
+    float headshotMultiplier;
     float armorRatio;
     int bullets;
     float penetration;
