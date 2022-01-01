@@ -971,7 +971,7 @@ static void drawNadeBlast(ImDrawList* drawList) noexcept
     const auto color = Helpers::calculateColor(miscConfig.nadeBlast);
 
     static const auto spherePoints = generateSpherePoints<1000>();
-    static const auto [vertices, indices] = generateAntialiasedDot();
+    static const auto [vertices_, indices_] = generateAntialiasedDot();
 
     constexpr auto blastDuration = 0.35f;
 
@@ -983,7 +983,7 @@ static void drawNadeBlast(ImDrawList* drawList) noexcept
         for (const auto& point : spherePoints) {
             const auto radius = ImLerp(10.0f, 70.0f, (memory->globalVars->realtime - projectile.explosionTime) / blastDuration);
             if (ImVec2 screenPos; GameData::worldToScreen(projectile.coordinateFrame.origin() + point * radius, screenPos)) {
-                drawPrecomputedPrimitive(drawList, screenPos, color, vertices, indices);
+                drawPrecomputedPrimitive(drawList, screenPos, color, vertices_, indices_);
             }
         }
     }
