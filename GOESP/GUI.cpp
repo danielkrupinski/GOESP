@@ -3,9 +3,9 @@
 #include <vector>
 
 #ifdef _WIN32
-#include <shellapi.h>
 #include <ShlObj.h>
 #include <Windows.h>
+#include <shellapi.h>
 #else
 #include <SDL2/SDL.h>
 #endif
