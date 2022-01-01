@@ -103,19 +103,19 @@ public:
 
     PROP(hitboxSet, WIN32_UNIX(0x9FC, 0xFA8), int)                                 // CBaseAnimating->m_nHitboxSet
 
-    PROP(weaponId, WIN32_UNIX(0x2FAA, 0x37B2), WeaponId)                           // CBaseAttributableItem->m_iItemDefinitionIndex
+    PROP(weaponId, WIN32_UNIX(0x2FBA, 0x37B2), WeaponId)                           // CBaseAttributableItem->m_iItemDefinitionIndex
 
-    PROP(clip, WIN32_UNIX(0x3264, 0x3AE4), int)                                    // CBaseCombatWeapon->m_iClip1
-    PROP(isInReload, WIN32_UNIX(0x32A5, 0x3B29), bool)                             // CBaseCombatWeapon->m_bInReload (client-side only)
-    PROP(reserveAmmoCount, WIN32_UNIX(0x326C, 0x3AEC), int)                        // CBaseCombatWeapon->m_iPrimaryReserveAmmoCount
-    PROP(nextPrimaryAttack, WIN32_UNIX(0x3238, 0x3AB8), float)                     // CBaseCombatWeapon->m_flNextPrimaryAttack
+    PROP(clip, WIN32_UNIX(0x3274, 0x3AE4), int)                                    // CBaseCombatWeapon->m_iClip1
+    PROP(isInReload, WIN32_UNIX(0x32B5, 0x3B29), bool)                             // CBaseCombatWeapon->m_bInReload (client-side only)
+    PROP(reserveAmmoCount, WIN32_UNIX(0x327C, 0x3AEC), int)                        // CBaseCombatWeapon->m_iPrimaryReserveAmmoCount
+    PROP(nextPrimaryAttack, WIN32_UNIX(0x3248, 0x3AB8), float)                     // CBaseCombatWeapon->m_flNextPrimaryAttack
 
-    PROP(prevOwner, WIN32_UNIX(0x3384, 0x3C1C), int)                               // CWeaponCSBase->m_hPrevOwner
+    PROP(prevOwner, WIN32_UNIX(0x3394, 0x3C1C), int)                               // CWeaponCSBase->m_hPrevOwner
         
     PROP(ownerEntity, WIN32_UNIX(0x14C, 0x184), int)                               // CBaseEntity->m_hOwnerEntity
     PROP(spotted, WIN32_UNIX(0x93D, 0xECD), bool)                                  // CBaseEntity->m_bSpotted
  
-    PROP(thrower, WIN32_UNIX(0x29A0, 0x3040), int)                                 // CBaseGrenade->m_hThrower
+    PROP(thrower, WIN32_UNIX(0x29B0, 0x3040), int)                                 // CBaseGrenade->m_hThrower
 
     PROP(fireXDelta, WIN32_UNIX(0x9E4, 0xF80), int[100])                           // CInferno->m_fireXDelta
     PROP(fireYDelta, WIN32_UNIX(0xB74, 0x1110), int[100])                          // CInferno->m_fireYDelta
@@ -161,27 +161,27 @@ public:
     bool isGOTV() noexcept;
     std::uint64_t getSteamID() noexcept;
 
-    PROP(fov, WIN32_UNIX(0x31E4, 0x39A8), int)                                     // CBasePlayer->m_iFOV
-    PROP(fovStart, WIN32_UNIX(0x31E8, 0x39AC), int)                                // CBasePlayer->m_iFOVStart
-    PROP(defaultFov, WIN32_UNIX(0x332C, 0x3B14), int)                              // CBasePlayer->m_iDefaultFOV
-    PROP(lastPlaceName, WIN32_UNIX(0x35B4, 0x3DF0), char[18])                      // CBasePlayer->m_szLastPlaceName
+    PROP(fov, WIN32_UNIX(0x31F4, 0x39A8), int)                                     // CBasePlayer->m_iFOV
+    PROP(fovStart, WIN32_UNIX(0x31F8, 0x39AC), int)                                // CBasePlayer->m_iFOVStart
+    PROP(defaultFov, WIN32_UNIX(0x333C, 0x3B14), int)                              // CBasePlayer->m_iDefaultFOV
+    PROP(lastPlaceName, WIN32_UNIX(0x35C4, 0x3DF0), char[18])                      // CBasePlayer->m_szLastPlaceName
 
-    PROP(isScoped, WIN32_UNIX(0x3928, 0x4228), bool)                               // CCSPlayer->m_bIsScoped
-    PROP(gunGameImmunity, WIN32_UNIX(0x3944, 0x4244), bool)                        // CCSPlayer->m_bGunGameImmunity
-    PROP(flashDuration, WIN32_UNIX(0xA41C, 0xAD4C) - 0x8, float)                   // CCSPlayer->m_flFlashMaxAlpha - 0x8
-    PROP(shotsFired, WIN32_UNIX(0xA390, 0xACC0), int)                              // CCSPlayer->m_iShotsFired
-    PROP(money, WIN32_UNIX(0xB364, 0xBCA8), int)                                   // CCSPlayer->m_iAccount
+    PROP(isScoped, WIN32_UNIX(0x9974, 0x4228), bool)                               // CCSPlayer->m_bIsScoped
+    PROP(gunGameImmunity, WIN32_UNIX(0x9990, 0x4244), bool)                        // CCSPlayer->m_bGunGameImmunity
+    PROP(flashDuration, WIN32_UNIX(0x1046C, 0xAD4C) - 0x8, float)                  // CCSPlayer->m_flFlashMaxAlpha - 0x8
+    PROP(shotsFired, WIN32_UNIX(0x103E0, 0xACC0), int)                             // CCSPlayer->m_iShotsFired
+    PROP(money, WIN32_UNIX(0x117B8, 0xBCA8), int)                                  // CCSPlayer->m_iAccount
 };
 
 class PlantedC4 : public Entity {
 public:
     INCONSTRUCTIBLE(PlantedC4)
 
-    PROP(ticking, WIN32_UNIX(0x2980, 0x3018), bool)                                // CPlantedC4->m_bBombTicking
-    PROP(bombSite, WIN32_UNIX(0x2984, 0x301C), int)                                // CPlantedC4->m_nBombSite
-    PROP(blowTime, WIN32_UNIX(0x2990, 0x3028), float)                              // CPlantedC4->m_flC4Blow
-    PROP(timerLength, WIN32_UNIX(0x2994, 0x302C), float)                           // CPlantedC4->m_flTimerLength
-    PROP(defuseLength, WIN32_UNIX(0x29A8, 0x3040), float)                          // CPlantedC4->m_flDefuseLength
-    PROP(defuseCountDown, WIN32_UNIX(0x29AC, 0x3044), float)                       // CPlantedC4->m_flDefuseCountDown
-    PROP(bombDefuser, WIN32_UNIX(0x29B4, 0x304C), int)                             // CPlantedC4->m_hBombDefuser
+    PROP(ticking, WIN32_UNIX(0x2990, 0x3018), bool)                                // CPlantedC4->m_bBombTicking
+    PROP(bombSite, WIN32_UNIX(0x2994, 0x301C), int)                                // CPlantedC4->m_nBombSite
+    PROP(blowTime, WIN32_UNIX(0x29A0, 0x3028), float)                              // CPlantedC4->m_flC4Blow
+    PROP(timerLength, WIN32_UNIX(0x29A4, 0x302C), float)                           // CPlantedC4->m_flTimerLength
+    PROP(defuseLength, WIN32_UNIX(0x29B8, 0x3040), float)                          // CPlantedC4->m_flDefuseLength
+    PROP(defuseCountDown, WIN32_UNIX(0x29BC, 0x3044), float)                       // CPlantedC4->m_flDefuseCountDown
+    PROP(bombDefuser, WIN32_UNIX(0x29C4, 0x304C), int)                             // CPlantedC4->m_hBombDefuser
 };
