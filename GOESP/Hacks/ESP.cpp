@@ -74,13 +74,6 @@ public:
 
 static ImDrawList* drawList;
 
-static void addLine(const ImVec2& p1, const ImVec2& p2, ImU32 col, bool shadow) noexcept
-{
-    if (shadow)
-        drawList->AddLine(p1 + ImVec2{ 1.0f, 1.0f }, p2 + ImVec2{ 1.0f, 1.0f }, col & IM_COL32_A_MASK);
-    drawList->AddLine(p1, p2, col);
-}
-
 static void addRectFilled(const ImVec2& p1, const ImVec2& p2, ImU32 col, bool shadow) noexcept
 {
     if (shadow)
