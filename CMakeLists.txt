@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 3.13.0)
 project(GOESP)
 
+set(CMAKE_C_VISIBILITY_PRESET hidden)
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+
 if (NOT WIN32)
-    set(CMAKE_C_FLAGS_RELEASE "-O3 -march=core2 -mtune=native -fvisibility=hidden -flto -fno-exceptions -DNDEBUG")
+    set(CMAKE_C_FLAGS_RELEASE "-O3 -march=core2 -mtune=native -flto -fno-exceptions -DNDEBUG")
 endif()
 
 if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
