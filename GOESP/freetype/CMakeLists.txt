@@ -18,4 +18,6 @@ add_library(FreeType STATIC
     src/smooth/smooth.c
     src/truetype/truetype.c)
 
+set_target_properties(FreeType PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 include_directories(.)
