@@ -24,7 +24,9 @@
 template <typename T>
 static constexpr auto relativeToAbsolute(std::uintptr_t address) noexcept
 {
-    return (T)(address + 4 + *reinterpret_cast<std::int32_t*>(address));
+    const auto offset = *reinterpret_cast<std::int32_t*>(address);
+    const auto addressOfNextInstruction = address + 4;
+    return (T)(addressOfNextInstruction + offset);
 }
 
 static std::pair<void*, std::size_t> getModuleInformation(const char* name) noexcept
