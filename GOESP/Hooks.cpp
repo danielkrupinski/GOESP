@@ -22,7 +22,9 @@
 #elif __linux__
 #include <SDL2/SDL.h>
 
-#include "imgui/GL/gl3w.h"
+#define GL_GLEXT_PROTOTYPES
+#include <SDL2/SDL_opengl.h>
+
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
 #endif
@@ -206,7 +208,6 @@ void Hooks::install() noexcept
 #ifdef _WIN32
     ImGui_ImplWin32_Init(window);
 #elif __linux__
-    gl3wInit();
     ImGui_ImplOpenGL3_Init();
 #endif
     gui = std::make_unique<GUI>();

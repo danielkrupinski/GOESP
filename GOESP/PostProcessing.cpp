@@ -4,7 +4,8 @@
 
 using Microsoft::WRL::ComPtr;
 #else
-#include "imgui/GL/gl3w.h"
+#define GL_GLEXT_PROTOTYPES
+#include <SDL2/SDL_opengl.h>
 #endif
 
 #include "imgui/imgui.h"
