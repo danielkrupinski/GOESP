@@ -134,7 +134,7 @@ void GUI::render() noexcept
 #ifdef _WIN32
             ShellExecuteW(nullptr, L"open", path.wstring().c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 #else
-            int ret = std::system(("xdg-open " + path.string()).c_str());
+            std::ignore = std::system(("xdg-open " + path.string()).c_str());
 #endif
         }
         ImGui::EndTabItem();
