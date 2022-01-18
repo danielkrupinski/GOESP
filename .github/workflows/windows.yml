@@ -7,6 +7,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
+        toolset: [ClangCL, MSVC]
         configuration: [Debug, Release]
 
     env:
@@ -14,6 +15,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Set toolset
+      if: matrix.toolset == 'ClangCL'
+      run: echo "toolset=/p:PlatformToolset=${{ matrix.toolset }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Build
       shell: cmd
-      run: '"%MSBUILD_PATH%\MSBuild.exe" GOESP/GOESP.vcxproj /p:Platform=Win32 /p:Configuration=${{ matrix.configuration }}'
+      run: '"%MSBUILD_PATH%\MSBuild.exe" GOESP/GOESP.vcxproj /p:Platform=Win32 /p:Configuration=${{ matrix.configuration }} ${{ env.toolset }}'
