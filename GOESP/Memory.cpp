@@ -13,6 +13,8 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+#include "Linux/LinuxFileMap.h"
 #elif __APPLE__
 #include <mach-o/dyld.h>
 #endif
@@ -53,8 +55,8 @@ static std::pair<void*, std::size_t> getModuleInformation(const char* name) noex
 
         if (const auto fd = open(info->dlpi_name, O_RDONLY); fd >= 0) {
             if (struct stat st; fstat(fd, &st) == 0) {
-                if (const auto map = mmap(nullptr, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0); map != MAP_FAILED) {
-                    const auto ehdr = (ElfW(Ehdr)*)map;
+                if (const auto map = LinuxFileMap{ nullptr, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0 }; map.isValid()) {
+                    const auto ehdr = (ElfW(Ehdr)*)map.get();
                     const auto shdrs = (ElfW(Shdr)*)(std::uintptr_t(ehdr) + ehdr->e_shoff);
                     const auto strTab = (const char*)(std::uintptr_t(ehdr) + shdrs[ehdr->e_shstrndx].sh_offset);
 
@@ -66,11 +68,9 @@ static std::pair<void*, std::size_t> getModuleInformation(const char* name) noex
 
                         moduleInfo->base = (void*)(info->dlpi_addr + shdr->sh_offset);
                         moduleInfo->size = shdr->sh_size;
-                        munmap(map, st.st_size);
                         close(fd);
                         return 1;
                     }
-                    munmap(map, st.st_size);
                 }
             }
             close(fd);
