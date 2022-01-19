@@ -56,3 +56,10 @@ endif()
 if (WIN32)
     add_compile_definitions(NOMINMAX)
 endif()
+
+option(BUILD_TESTS "Build unit tests" OFF)
+
+if (BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(Tests)
+endif()
