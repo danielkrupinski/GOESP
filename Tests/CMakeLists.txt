@@ -14,7 +14,7 @@ set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 add_executable(Tests MemoryTests.cpp)
-target_link_libraries(Tests gtest_main Threads::Threads)
+target_link_libraries(Tests gtest_main ${CMAKE_DL_LIBS} Threads::Threads)
 
 include(GoogleTest)
 gtest_discover_tests(Tests)
