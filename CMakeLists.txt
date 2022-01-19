@@ -5,6 +5,10 @@ set(CMAKE_C_VISIBILITY_PRESET hidden)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 if (NOT WIN32)
+    add_compile_options(-Wall -Wextra -pedantic)
+endif()
+
+if (NOT WIN32)
     set(CMAKE_C_FLAGS_RELEASE "-O3 -march=core2 -mtune=native -flto -fno-exceptions -DNDEBUG")
 endif()
 
