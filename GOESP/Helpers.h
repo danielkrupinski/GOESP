@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <numbers>
 #include <string>
 #include <vector>
@@ -30,4 +31,12 @@ namespace Helpers
 
     bool decodeVFONT(std::vector<char>& buffer) noexcept;
     std::vector<char> loadBinaryFile(const std::string& path) noexcept;
+
+    template <typename T>
+    constexpr auto relativeToAbsolute(std::uintptr_t address) noexcept
+    {
+        const auto offset = *reinterpret_cast<std::int32_t*>(address);
+        const auto addressOfNextInstruction = address + 4;
+        return (T)(addressOfNextInstruction + offset);
+    }
 }

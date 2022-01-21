@@ -20,17 +20,12 @@
 #include <mach-o/dyld.h>
 #endif
 
+#include "Helpers.h"
 #include "Interfaces.h"
 #include "Memory.h"
 #include "SDK/LocalPlayer.h"
 
-template <typename T>
-static constexpr auto relativeToAbsolute(std::uintptr_t address) noexcept
-{
-    const auto offset = *reinterpret_cast<std::int32_t*>(address);
-    const auto addressOfNextInstruction = address + 4;
-    return (T)(addressOfNextInstruction + offset);
-}
+using Helpers::relativeToAbsolute;
 
 static std::pair<void*, std::size_t> getModuleInformation(const char* name) noexcept
 {
