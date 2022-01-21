@@ -16,6 +16,11 @@ public:
         return descriptor >= 0;
     }
 
+    [[nodiscard]] int getDescriptor() const noexcept
+    {
+        return descriptor;
+    }
+
     [[nodiscard]] struct stat getStatus() const
     {
         struct stat status;
