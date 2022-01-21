@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "Linux/LinuxFile.h"
 #include "Linux/LinuxFileMap.h"
 #elif __APPLE__
 #include <mach-o/dyld.h>
@@ -53,27 +54,23 @@ static std::pair<void*, std::size_t> getModuleInformation(const char* name) noex
         if (!std::string_view{ info->dlpi_name }.ends_with(moduleInfo->name))
             return 0;
 
-        if (const auto fd = open(info->dlpi_name, O_RDONLY); fd >= 0) {
-            if (struct stat st; fstat(fd, &st) == 0) {
-                if (const auto map = LinuxFileMap{ nullptr, static_cast<std::size_t>(st.st_size), PROT_READ, MAP_PRIVATE, fd, 0 }; map.isValid()) {
-                    const auto ehdr = (ElfW(Ehdr)*)map.get();
-                    const auto shdrs = (ElfW(Shdr)*)(std::uintptr_t(ehdr) + ehdr->e_shoff);
-                    const auto strTab = (const char*)(std::uintptr_t(ehdr) + shdrs[ehdr->e_shstrndx].sh_offset);
+        if (const auto file = LinuxFile{ info->dlpi_name, O_RDONLY }; file.isValid()) {
+            if (const auto map = LinuxFileMap{ nullptr, static_cast<std::size_t>(file.getStatus().st_size), PROT_READ, MAP_PRIVATE, file.getDescriptor(), 0 }; map.isValid()) {
+                const auto ehdr = (ElfW(Ehdr)*)map.get();
+                const auto shdrs = (ElfW(Shdr)*)(std::uintptr_t(ehdr) + ehdr->e_shoff);
+                const auto strTab = (const char*)(std::uintptr_t(ehdr) + shdrs[ehdr->e_shstrndx].sh_offset);
 
-                    for (auto i = 0; i < ehdr->e_shnum; ++i) {
-                        const auto shdr = (ElfW(Shdr)*)(std::uintptr_t(shdrs) + i * ehdr->e_shentsize);
+                for (auto i = 0; i < ehdr->e_shnum; ++i) {
+                    const auto shdr = (ElfW(Shdr)*)(std::uintptr_t(shdrs) + i * ehdr->e_shentsize);
 
-                        if (std::strcmp(strTab + shdr->sh_name, ".text") != 0)
-                            continue;
+                    if (std::strcmp(strTab + shdr->sh_name, ".text") != 0)
+                        continue;
 
-                        moduleInfo->base = (void*)(info->dlpi_addr + shdr->sh_offset);
-                        moduleInfo->size = shdr->sh_size;
-                        close(fd);
-                        return 1;
-                    }
+                    moduleInfo->base = (void*)(info->dlpi_addr + shdr->sh_offset);
+                    moduleInfo->size = shdr->sh_size;
+                    return 1;
                 }
             }
-            close(fd);
         }
 
         moduleInfo->base = (void*)(info->dlpi_addr + info->dlpi_phdr[0].p_vaddr);
