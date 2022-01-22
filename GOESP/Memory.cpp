@@ -79,14 +79,9 @@ static std::pair<void*, std::size_t> getModuleInformation(const char* name) noex
 #endif
 }
 
-static std::uintptr_t findPattern(const char* moduleName, const char* pattern) noexcept
+static std::uintptr_t findPatternInModule(const char* moduleName, const char* pattern) noexcept
 {
-    static auto id = 0;
-    ++id;
-
-    const auto [moduleBase, moduleSize] = getModuleInformation(moduleName);
-
-    if (moduleBase && moduleSize) {
+    if (const auto [moduleBase, moduleSize] = getModuleInformation(moduleName); moduleBase && moduleSize) {
         auto start = static_cast<const char*>(moduleBase);
         const auto end = start + moduleSize;
 
@@ -97,8 +92,7 @@ static std::uintptr_t findPattern(const char* moduleName, const char* pattern) n
             if (*first == *second || *second == '?') {
                 ++first;
                 ++second;
-            }
-            else {
+            } else {
                 first = ++start;
                 second = pattern;
             }
@@ -107,12 +101,22 @@ static std::uintptr_t findPattern(const char* moduleName, const char* pattern) n
         if (!*second)
             return reinterpret_cast<std::uintptr_t>(start);
     }
-
-    assert(false);
-#ifdef _WIN32
-    MessageBoxA(nullptr, ("Failed to find pattern #" + std::to_string(id) + '!').c_str(), "GOESP", MB_OK | MB_ICONWARNING);
-#endif
     return 0;
+}
+
+static std::uintptr_t findPattern(const char* moduleName, const char* pattern) noexcept
+{
+    static auto id = 0;
+    ++id;
+
+    const auto result = findPatternInModule(moduleName, pattern);
+
+    assert(result != 0);
+#ifdef _WIN32
+    if (result == 0)
+        MessageBoxA(nullptr, ("Failed to find pattern #" + std::to_string(id) + '!').c_str(), "GOESP", MB_OK | MB_ICONWARNING);
+#endif
+    return result;
 }
 
 Memory::Memory() noexcept
