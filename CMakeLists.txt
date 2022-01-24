@@ -5,7 +5,7 @@ set(CMAKE_C_VISIBILITY_PRESET hidden)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 if (NOT WIN32)
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -march=core2 -mtune=native -flto -fno-exceptions")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -march=core2 -mtune=native -flto -fno-exceptions")
 endif()
 
 if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
