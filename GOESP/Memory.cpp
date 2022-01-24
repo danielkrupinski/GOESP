@@ -59,14 +59,14 @@ private:
     std::size_t size = 0;
 };
 
-static std::pair<void*, std::size_t> getModuleInformation(const char* name) noexcept
+static DLLModule getModuleInformation(const char* name) noexcept
 {
 #ifdef _WIN32
     if (HMODULE handle = GetModuleHandleA(name)) {
         if (MODULEINFO moduleInfo; GetModuleInformation(GetCurrentProcess(), handle, &moduleInfo, sizeof(moduleInfo)))
-            return std::make_pair(moduleInfo.lpBaseOfDll, moduleInfo.SizeOfImage);
+            return DLLModule{ moduleInfo.lpBaseOfDll, moduleInfo.SizeOfImage };
     }
-    return {};
+    return { nullptr, 0 };
 #elif __linux__
     struct ModuleInfo {
         const char* name;
@@ -105,33 +105,13 @@ static std::pair<void*, std::size_t> getModuleInformation(const char* name) noex
         return 1;
     }, &moduleInfo);
 
-    return std::make_pair(moduleInfo.base, moduleInfo.size);
+    return DLLModule{ moduleInfo.base, moduleInfo.size };
 #endif
 }
 
 static std::uintptr_t findPatternInModule(const char* moduleName, const char* pattern) noexcept
 {
-    if (const auto [moduleBase, moduleSize] = getModuleInformation(moduleName); moduleBase && moduleSize) {
-        auto start = static_cast<const char*>(moduleBase);
-        const auto end = start + moduleSize;
-
-        auto first = start;
-        auto second = pattern;
-
-        while (first < end && *second) {
-            if (*first == *second || *second == '?') {
-                ++first;
-                ++second;
-            } else {
-                first = ++start;
-                second = pattern;
-            }
-        }
-
-        if (!*second)
-            return reinterpret_cast<std::uintptr_t>(start);
-    }
-    return 0;
+    return getModuleInformation(moduleName).findPattern(pattern);
 }
 
 static std::uintptr_t findPattern(const char* moduleName, const char* pattern) noexcept
