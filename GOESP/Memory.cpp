@@ -25,6 +25,40 @@
 
 using Helpers::relativeToAbsolute;
 
+class DLLModule {
+public:
+    DLLModule(void* base, std::size_t size) : base{ base }, size{ size } {}
+
+    std::uintptr_t findPattern(const char* pattern) noexcept
+    {
+        if (base && size) {
+            auto start = static_cast<const char*>(base);
+            const auto end = start + size;
+
+            auto first = start;
+            auto second = pattern;
+
+            while (first < end && *second) {
+                if (*first == *second || *second == '?') {
+                    ++first;
+                    ++second;
+                } else {
+                    first = ++start;
+                    second = pattern;
+                }
+            }
+
+            if (!*second)
+                return reinterpret_cast<std::uintptr_t>(start);
+        }
+        return 0;
+    }
+
+private:
+    void* base = nullptr;
+    std::size_t size = 0;
+};
+
 static std::pair<void*, std::size_t> getModuleInformation(const char* name) noexcept
 {
 #ifdef _WIN32
