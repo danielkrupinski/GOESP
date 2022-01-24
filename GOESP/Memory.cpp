@@ -109,17 +109,12 @@ static DLLModule getModuleInformation(const char* name) noexcept
 #endif
 }
 
-static std::uintptr_t findPatternInModule(const char* moduleName, const char* pattern) noexcept
-{
-    return getModuleInformation(moduleName).findPattern(pattern);
-}
-
 static std::uintptr_t findPattern(const char* moduleName, const char* pattern) noexcept
 {
     static auto id = 0;
     ++id;
 
-    const auto result = findPatternInModule(moduleName, pattern);
+    const auto result = getModuleInformation(moduleName).findPattern(pattern);
 
     assert(result != 0);
 #ifdef _WIN32
