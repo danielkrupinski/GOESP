@@ -48,7 +48,13 @@ constexpr auto TIER0_DLL = "libtier0.dylib";
 #ifdef _WIN32
 #define IS_WIN32() true
 #define WIN32_UNIX(win32, unix) win32
+#define WIN32_LINUX(win32, linux) win32
+#elif __linux__
+#define IS_WIN32() false
+#define WIN32_UNIX(win32, unix) unix
+#define WIN32_LINUX(win32, linux) linux
 #else
 #define IS_WIN32() false
 #define WIN32_UNIX(win32, unix) unix
+#define WIN32_LINUX(win32, linux)
 #endif
