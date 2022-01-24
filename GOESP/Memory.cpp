@@ -16,8 +16,6 @@
 
 #include "Linux/LinuxFile.h"
 #include "Linux/LinuxFileMap.h"
-#elif __APPLE__
-#include <mach-o/dyld.h>
 #endif
 
 #include "Helpers.h"
@@ -74,8 +72,6 @@ static std::pair<void*, std::size_t> getModuleInformation(const char* name) noex
     }, &moduleInfo);
 
     return std::make_pair(moduleInfo.base, moduleInfo.size);
-#elif __APPLE__
-    return {};
 #endif
 }
 
@@ -185,28 +181,6 @@ Memory::Memory() noexcept
     getGameModeNameFn = findPattern(CLIENT_DLL, "\x48\x8B\x05????\x55\x48\x89\xE5\x41\x54\x41\x89\xF4\x53\x48\x8B\x38\x48\x8B\x07\xFF\x50\x60");
 
     const auto libSDL = dlopen("libSDL2-2.0.so.0", RTLD_LAZY | RTLD_NOLOAD);
-    pollEvent = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_PollEvent")) + 2);
-    swapWindow = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_GL_SwapWindow")) + 2);
-    dlclose(libSDL);
-#elif __APPLE__
-    debugMsg = decltype(debugMsg)(dlsym(dlopen(TIER0_DLL, RTLD_NOLOAD | RTLD_NOW), "Msg"));
-
-    globalVars = *relativeToAbsolute<GlobalVars**>((*reinterpret_cast<std::uintptr_t**>(interfaces->client))[11] + 18);
-    itemSystem = relativeToAbsolute<decltype(itemSystem)>(findPattern(CLIENT_DLL, "\x74\x06\x48\x83\xC7\x08") - 7);
-    weaponSystem = *relativeToAbsolute<WeaponSystem**>(findPattern(CLIENT_DLL, "\x74\x1F\x48\x8B\x1D") + 5);
-    localPlayer.init(relativeToAbsolute<CSPlayer**>(findPattern(CLIENT_DLL, "\x74\x10\x48\x63\xC7") + 8));
-
-    isOtherEnemy = relativeToAbsolute<decltype(isOtherEnemy)>(findPattern(CLIENT_DLL, "\xE8????\x34\x01\xEB\x06") + 1);
-    lineGoesThroughSmoke = relativeToAbsolute<decltype(lineGoesThroughSmoke)>(findPattern(CLIENT_DLL, "\xE8????\x84\xC0\x75\x20\x4C\x89\xFF") + 1);
-    getDecoratedPlayerName = relativeToAbsolute<decltype(getDecoratedPlayerName)>(findPattern(CLIENT_DLL, "\xE8????\x41\x83\xFE\x07") + 1);
-
-    const auto channelsTemp = findPattern(ENGINE_DLL, "\x45\x31\xE4\x48\x8D\x1D????\x66\x0F\x1F\x44");
-    activeChannels = relativeToAbsolute<ActiveChannels*>(channelsTemp - 61);
-    channels = relativeToAbsolute<Channel*>(channelsTemp + 6);
-    plantedC4s = reinterpret_cast<decltype(plantedC4s)>(relativeToAbsolute<uintptr_t>(findPattern(CLIENT_DLL, "\x8B\x1D????\x45\x84\xFF\x74\x44") + 2) - 4);
-    playerResource = relativeToAbsolute<PlayerResource**>(findPattern(CLIENT_DLL, "\x48\x8D\x05????\x48\x8B\x18\x48\x85\xDB\x74\x26") + 3);
-    
-    const auto libSDL = dlopen("libsdl2-2.0.0.dylib", RTLD_LAZY | RTLD_NOLOAD);
     pollEvent = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_PollEvent")) + 2);
     swapWindow = relativeToAbsolute<uintptr_t>(uintptr_t(dlsym(libSDL, "SDL_GL_SwapWindow")) + 2);
     dlclose(libSDL);
