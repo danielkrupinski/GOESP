@@ -5,8 +5,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "LinuxFileMap.h"
-
 class LinuxFile {
 public:
     LinuxFile(const char* path, int flags) : descriptor{ open(path, flags) } {}
@@ -26,11 +24,6 @@ public:
         struct stat status;
         fstat(descriptor, &status);
         return status;
-    }
-
-    [[nodiscard]] LinuxFileMap map(void* address, std::size_t length, int protection, int flags, off_t offset) const
-    {
-        return LinuxFileMap{ address, length, protection, flags, descriptor, offset };
     }
 
     ~LinuxFile()
