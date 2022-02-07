@@ -10,14 +10,13 @@ jobs:
         toolset: [ClangCL, MSVC]
         configuration: [Debug, Release]
 
-    env:
-      MSBUILD_PATH: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\
-
     steps:
     - uses: actions/checkout@v2
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
     - name: Set toolset
       if: matrix.toolset == 'ClangCL'
       run: echo "toolset=/p:PlatformToolset=${{ matrix.toolset }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Build
       shell: cmd
-      run: '"%MSBUILD_PATH%\MSBuild.exe" GOESP/GOESP.vcxproj /p:Platform=Win32 /p:Configuration=${{ matrix.configuration }} ${{ env.toolset }}'
+      run: msbuild GOESP/GOESP.vcxproj /p:Platform=Win32 /p:Configuration=${{ matrix.configuration }} ${{ env.toolset }}
