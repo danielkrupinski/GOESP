@@ -172,14 +172,14 @@ static void swapWindow(SDL_Window* window) noexcept
 Hooks::Hooks() noexcept
 {
     interfaces = std::make_unique<const Interfaces>();
-    memory = std::make_unique<const Memory>();
+    memory.emplace(Memory{});
 }
 
 #elif __APPLE__
 Hooks::Hooks() noexcept
 {
     interfaces = std::make_unique<const Interfaces>();
-    memory = std::make_unique<const Memory>();
+    memory.emplace(Memory{});
 }
 #endif
 
@@ -199,7 +199,7 @@ void Hooks::install() noexcept
 
 #ifndef __linux__
     interfaces = std::make_unique<const Interfaces>();
-    memory = std::make_unique<const Memory>();
+    memory.emplace(Memory{});
 #endif
 
     EventListener::init();
