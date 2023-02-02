@@ -114,6 +114,6 @@ Yes, GOESP shouldn't collide with any other game modification.
 
 ## License
 
-> Copyright (c) 2019-2021 Daniel Krupiński
+> Copyright (c) 2019-2023 Daniel Krupiński
 
 This project is licensed under the [MIT License](https://opensource.org/licenses/mit-license.php) - see the [LICENSE](LICENSE) file for details.
